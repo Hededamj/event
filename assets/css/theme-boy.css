@@ -1,0 +1,161 @@
+/* ========================================
+   BOY THEME - Deep Slate & Silver
+   Modern, refined, distinguished
+   ======================================== */
+
+:root {
+    /* Core Palette */
+    --color-bg: #F7F9FC;
+    --color-bg-subtle: #EEF2F7;
+    --color-surface: #FFFFFF;
+    --color-surface-raised: #FFFFFF;
+
+    /* Primary - Deep Slate Blue */
+    --color-primary: #5A7094;
+    --color-primary-deep: #3D526E;
+    --color-primary-soft: #8BA3C1;
+    --color-primary-pale: #E3EAF3;
+
+    /* Accent - Silver/Platinum */
+    --color-accent: #8E9AAB;
+    --color-accent-soft: #C5CDD8;
+    --color-accent-pale: #E8ECF1;
+
+    /* Text */
+    --color-text: #1E2A3B;
+    --color-text-soft: #4A5568;
+    --color-text-muted: #8492A6;
+
+    /* Borders */
+    --color-border: #DDE3ED;
+    --color-border-soft: #EDF1F7;
+
+    /* Feedback */
+    --color-success: #5B8C5A;
+    --color-warning: #C49A3F;
+    --color-error: #B85C5C;
+
+    /* Theme-specific shadows */
+    --shadow-glow: 0 0 60px rgba(90, 112, 148, 0.2);
+    --shadow-accent-glow: 0 0 40px rgba(142, 154, 171, 0.25);
+}
+
+/* Theme-specific decorative elements */
+.theme-gradient {
+    background: linear-gradient(
+        135deg,
+        var(--color-primary-pale) 0%,
+        var(--color-bg) 50%,
+        var(--color-accent-pale) 100%
+    );
+}
+
+.theme-gradient-radial {
+    background: radial-gradient(
+        ellipse at top,
+        var(--color-primary-pale) 0%,
+        var(--color-bg) 60%
+    );
+}
+
+/* Decorative flourish - more geometric for boy theme */
+.flourish {
+    position: relative;
+}
+
+.flourish::before,
+.flourish::after {
+    content: '';
+    position: absolute;
+    width: 40px;
+    height: 2px;
+    background: var(--color-primary);
+    top: 50%;
+}
+
+.flourish::before {
+    right: calc(100% + 16px);
+}
+
+.flourish::after {
+    left: calc(100% + 16px);
+}
+
+/* Glowing accent for special elements */
+.glow-accent {
+    box-shadow: var(--shadow-accent-glow);
+}
+
+.glow-primary {
+    box-shadow: var(--shadow-glow);
+}
+
+/* Special button treatment */
+.btn--theme {
+    background: linear-gradient(
+        135deg,
+        var(--color-primary) 0%,
+        var(--color-primary-deep) 100%
+    );
+    color: white;
+}
+
+.btn--theme:hover {
+    background: linear-gradient(
+        135deg,
+        var(--color-primary-deep) 0%,
+        var(--color-text) 100%
+    );
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-glow);
+}
+
+/* Decorative background pattern - subtle geometric grid */
+.pattern-dots {
+    background-image: linear-gradient(
+        var(--color-border-soft) 1px,
+        transparent 1px
+    ),
+    linear-gradient(
+        90deg,
+        var(--color-border-soft) 1px,
+        transparent 1px
+    );
+    background-size: 32px 32px;
+}
+
+/* Special card variant */
+.card--highlight {
+    border: 1px solid var(--color-primary-soft);
+    background: linear-gradient(
+        180deg,
+        var(--color-surface) 0%,
+        var(--color-primary-pale) 100%
+    );
+}
+
+/* Form focus states with theme color */
+.form-input:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 4px rgba(90, 112, 148, 0.15);
+}
+
+/* Code input special styling */
+.code-input {
+    background: linear-gradient(
+        180deg,
+        var(--color-bg) 0%,
+        var(--color-primary-pale) 100%
+    );
+    border-color: var(--color-primary-soft);
+}
+
+.code-input:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 4px rgba(90, 112, 148, 0.2);
+}
+
+/* Stat values in theme color */
+.stat__value {
+    color: var(--color-primary-deep);
+}

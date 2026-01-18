@@ -1,0 +1,8 @@
+# Ignore
+uploads/photos/*
+!uploads/photos/.gitkeep
+*.log
+.DS_Store
+Thumbs.db
+tmpclaude-*
+nul

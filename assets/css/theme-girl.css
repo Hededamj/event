@@ -1,0 +1,157 @@
+/* ========================================
+   GIRL THEME - Soft Rose & Champagne Gold
+   Elegant, warm, celebratory
+   ======================================== */
+
+:root {
+    /* Core Palette */
+    --color-bg: #FFFBF7;
+    --color-bg-subtle: #FFF6EF;
+    --color-surface: #FFFFFF;
+    --color-surface-raised: #FFFFFF;
+
+    /* Primary - Dusty Rose */
+    --color-primary: #D4A5A5;
+    --color-primary-deep: #B87878;
+    --color-primary-soft: #E8CFCF;
+    --color-primary-pale: #F5E8E8;
+
+    /* Accent - Champagne Gold */
+    --color-accent: #C9A227;
+    --color-accent-soft: #E8D5A3;
+    --color-accent-pale: #F7F0DC;
+
+    /* Text */
+    --color-text: #2D2A26;
+    --color-text-soft: #6B6560;
+    --color-text-muted: #9A948D;
+
+    /* Borders */
+    --color-border: #E8E2DB;
+    --color-border-soft: #F0EBE5;
+
+    /* Feedback */
+    --color-success: #7BA05B;
+    --color-warning: #D4A04A;
+    --color-error: #C76B6B;
+
+    /* Theme-specific shadows */
+    --shadow-glow: 0 0 60px rgba(212, 165, 165, 0.25);
+    --shadow-accent-glow: 0 0 40px rgba(201, 162, 39, 0.2);
+}
+
+/* Theme-specific decorative elements */
+.theme-gradient {
+    background: linear-gradient(
+        135deg,
+        var(--color-primary-pale) 0%,
+        var(--color-bg) 50%,
+        var(--color-accent-pale) 100%
+    );
+}
+
+.theme-gradient-radial {
+    background: radial-gradient(
+        ellipse at top,
+        var(--color-primary-pale) 0%,
+        var(--color-bg) 60%
+    );
+}
+
+/* Decorative flourish */
+.flourish {
+    position: relative;
+}
+
+.flourish::before,
+.flourish::after {
+    content: '';
+    position: absolute;
+    width: 60px;
+    height: 1px;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        var(--color-accent),
+        transparent
+    );
+    top: 50%;
+}
+
+.flourish::before {
+    right: calc(100% + 20px);
+}
+
+.flourish::after {
+    left: calc(100% + 20px);
+}
+
+/* Glowing accent for special elements */
+.glow-accent {
+    box-shadow: var(--shadow-accent-glow);
+}
+
+.glow-primary {
+    box-shadow: var(--shadow-glow);
+}
+
+/* Special button treatment */
+.btn--theme {
+    background: linear-gradient(
+        135deg,
+        var(--color-primary) 0%,
+        var(--color-primary-deep) 100%
+    );
+    color: white;
+}
+
+.btn--theme:hover {
+    background: linear-gradient(
+        135deg,
+        var(--color-accent) 0%,
+        var(--color-accent-soft) 100%
+    );
+    color: var(--color-text);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-accent-glow);
+}
+
+/* Decorative background pattern (subtle) */
+.pattern-dots {
+    background-image: radial-gradient(
+        var(--color-primary-soft) 1px,
+        transparent 1px
+    );
+    background-size: 24px 24px;
+}
+
+/* Special card variant */
+.card--highlight {
+    border: 1px solid var(--color-primary-soft);
+    background: linear-gradient(
+        180deg,
+        var(--color-surface) 0%,
+        var(--color-primary-pale) 100%
+    );
+}
+
+/* Form focus states with theme color */
+.form-input:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 4px rgba(212, 165, 165, 0.2);
+}
+
+/* Code input special styling */
+.code-input {
+    background: linear-gradient(
+        180deg,
+        var(--color-bg) 0%,
+        var(--color-primary-pale) 100%
+    );
+    border-color: var(--color-primary-soft);
+}
+
+.code-input:focus {
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 4px rgba(201, 162, 39, 0.15);
+}

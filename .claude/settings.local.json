@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Skill(superpowers:brainstorming)",
+      "Skill(superpowers:writing-plans)",
+      "Skill(frontend-design:frontend-design)",
+      "Bash(where:*)",
+      "Bash(curl -s --ftp-create-dirs -u \"hededam.dk:Plantagevej12\" \"ftp://linux291.unoeuro.com/sofie/\")",
+      "Bash(curl:*)",
+      "Bash(for:*)",
+      "Bash(do curl -s -T \"$f\" -u \"hededam.dk:Plantagevej12\" \"ftp://linux291.unoeuro.com/sofie/$f\")",
+      "Bash(done)",
+      "Bash(echo:*)",
+      "Bash(git init:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nfeat: initial event platform for Sofie''s confirmation\n\n- Elegant landing page with guest code and organizer login\n- Admin dashboard with stats, guest list, checklist\n- Guest views: RSVP, wishlist, menu, schedule, photos\n- Theming system \\(girl: rosa/guld, boy: blå/sølv\\)\n- Complete database schema with seed data\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")"
+    ]
+  }
+}
