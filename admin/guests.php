@@ -40,8 +40,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ]);
 
             setFlash('success', "Gæst tilføjet! Kode: $code");
-            redirect('/admin/guests.php');
+            redirect(BASE_PATH . '/admin/guests.php');
         }
+
+    } elseif ($action === 'bulk_add') {
+        $names = trim($_POST['names'] ?? '');
+        $lines = array_filter(array_map('trim', explode("\n", $names)));
+        $added = 0;
+
+        foreach ($lines as $name) {
+            if (empty($name)) continue;
+
+            // Generate unique code
+            $code = generateGuestCode();
+            $stmt = $db->prepare("SELECT id FROM guests WHERE unique_code = ? AND event_id = ?");
+            $stmt->execute([$code, $eventId]);
+
+            while ($stmt->fetch()) {
+                $code = generateGuestCode();
+                $stmt->execute([$code, $eventId]);
+            }
+
+            $stmt = $db->prepare("
+                INSERT INTO guests (event_id, name, unique_code)
+                VALUES (?, ?, ?)
+            ");
+            $stmt->execute([$eventId, $name, $code]);
+            $added++;
+        }
+
+        setFlash('success', "$added gæster tilføjet!");
+        redirect(BASE_PATH . '/admin/guests.php');
+
     } elseif ($action === 'update') {
         $id = (int)($_POST['id'] ?? 0);
         $name = trim($_POST['name'] ?? '');
@@ -65,8 +95,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ]);
 
             setFlash('success', 'Gæst opdateret');
-            redirect('/admin/guests.php');
+            redirect(BASE_PATH . '/admin/guests.php');
         }
+
     } elseif ($action === 'delete') {
         $id = (int)($_POST['id'] ?? 0);
         if ($id) {
@@ -74,7 +105,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->execute([$id, $eventId]);
 
             setFlash('success', 'Gæst slettet');
-            redirect('/admin/guests.php');
+            redirect(BASE_PATH . '/admin/guests.php');
+        }
+
+    } elseif ($action === 'toggle_invitation') {
+        $id = (int)($_POST['id'] ?? 0);
+        if ($id) {
+            $stmt = $db->prepare("
+                UPDATE guests
+                SET invitation_sent = NOT COALESCE(invitation_sent, 0),
+                    invitation_sent_at = CASE WHEN COALESCE(invitation_sent, 0) = 0 THEN NOW() ELSE NULL END
+                WHERE id = ? AND event_id = ?
+            ");
+            $stmt->execute([$id, $eventId]);
+
+            redirect(BASE_PATH . '/admin/guests.php?filter=' . ($_GET['filter'] ?? 'all'));
         }
     }
 }
@@ -93,6 +138,10 @@ if ($filter === 'yes') {
     $whereClause .= " AND rsvp_status = 'no'";
 } elseif ($filter === 'pending') {
     $whereClause .= " AND rsvp_status = 'pending'";
+} elseif ($filter === 'not_invited') {
+    $whereClause .= " AND (invitation_sent = 0 OR invitation_sent IS NULL)";
+} elseif ($filter === 'invited') {
+    $whereClause .= " AND invitation_sent = 1";
 }
 
 if ($search) {
@@ -121,8 +170,22 @@ while ($row = $stmt->fetch()) {
 }
 $totalGuests = array_sum($statusCounts);
 
-// Check if we should open add modal
+// Count invitations
+$stmt = $db->prepare("
+    SELECT
+        SUM(CASE WHEN invitation_sent = 1 THEN 1 ELSE 0 END) as sent,
+        SUM(CASE WHEN invitation_sent = 0 OR invitation_sent IS NULL THEN 1 ELSE 0 END) as not_sent
+    FROM guests
+    WHERE event_id = ?
+");
+$stmt->execute([$eventId]);
+$invitationCounts = $stmt->fetch();
+$invitationsSent = (int)($invitationCounts['sent'] ?? 0);
+$invitationsNotSent = (int)($invitationCounts['not_sent'] ?? 0);
+
+// Check if we should open modals
 $showAddModal = isset($_GET['action']) && $_GET['action'] === 'add';
+$showBulkModal = isset($_GET['action']) && $_GET['action'] === 'bulk';
 
 require_once __DIR__ . '/../includes/admin-sidebar.php';
 ?>
@@ -132,13 +195,41 @@ require_once __DIR__ . '/../includes/admin-sidebar.php';
     <div>
         <h1 class="page-header__title">Gæsteliste</h1>
         <p class="page-header__subtitle">
-            <?= $guestStats['confirmed'] ?> bekræftet af <?= $totalGuests ?> inviterede
+            <?= $guestStats['confirmed'] ?> bekræftet af <?= $totalGuests ?> gæster
+            &middot;
+            <span class="<?= $invitationsNotSent > 0 ? 'text-warning' : 'text-success' ?>">
+                <?= $invitationsSent ?>/<?= $totalGuests ?> invitationer sendt
+            </span>
         </p>
     </div>
     <div class="page-header__actions">
+        <button onclick="openModal('bulk-modal')" class="btn btn--secondary">+ Tilføj mange</button>
         <button onclick="openModal('add-modal')" class="btn btn--primary">+ Tilføj gæst</button>
     </div>
 </div>
+
+<!-- Invitation Progress -->
+<?php if ($totalGuests > 0): ?>
+<div class="card mb-md">
+    <div class="flex flex-between items-center mb-sm">
+        <span class="small"><strong>Invitationer sendt</strong></span>
+        <span class="small" style="font-weight: 600;">
+            <?= $invitationsSent ?> af <?= $totalGuests ?>
+            (<?= $totalGuests > 0 ? round($invitationsSent / $totalGuests * 100) : 0 ?>%)
+        </span>
+    </div>
+    <div class="progress" style="height: 8px;">
+        <div class="progress__bar progress__bar--success" style="width: <?= $totalGuests > 0 ? ($invitationsSent / $totalGuests * 100) : 0 ?>%;"></div>
+    </div>
+    <?php if ($invitationsNotSent > 0): ?>
+        <p class="small text-muted mt-xs">
+            <a href="?filter=not_invited" style="color: var(--color-warning);">
+                <?= $invitationsNotSent ?> gæst<?= $invitationsNotSent !== 1 ? 'er' : '' ?> mangler invitation
+            </a>
+        </p>
+    <?php endif; ?>
+</div>
+<?php endif; ?>
 
 <!-- Filters -->
 <div class="card mb-md">
@@ -147,11 +238,14 @@ require_once __DIR__ . '/../includes/admin-sidebar.php';
             <a href="?filter=all" class="filter-tab <?= $filter === 'all' ? 'filter-tab--active' : '' ?>">
                 Alle (<?= $totalGuests ?>)
             </a>
-            <a href="?filter=yes" class="filter-tab <?= $filter === 'yes' ? 'filter-tab--active' : '' ?>">
-                Kommer (<?= $statusCounts['yes'] ?? 0 ?>)
+            <a href="?filter=not_invited" class="filter-tab <?= $filter === 'not_invited' ? 'filter-tab--active' : '' ?>">
+                Mangler invitation (<?= $invitationsNotSent ?>)
             </a>
             <a href="?filter=pending" class="filter-tab <?= $filter === 'pending' ? 'filter-tab--active' : '' ?>">
-                Afventer (<?= $statusCounts['pending'] ?? 0 ?>)
+                Afventer svar (<?= $statusCounts['pending'] ?? 0 ?>)
+            </a>
+            <a href="?filter=yes" class="filter-tab <?= $filter === 'yes' ? 'filter-tab--active' : '' ?>">
+                Kommer (<?= $statusCounts['yes'] ?? 0 ?>)
             </a>
             <a href="?filter=no" class="filter-tab <?= $filter === 'no' ? 'filter-tab--active' : '' ?>">
                 Afbud (<?= $statusCounts['no'] ?? 0 ?>)
@@ -182,6 +276,8 @@ require_once __DIR__ . '/../includes/admin-sidebar.php';
             <h3 class="empty-state__title">
                 <?php if ($search): ?>
                     Ingen resultater for "<?= escape($search) ?>"
+                <?php elseif ($filter === 'not_invited'): ?>
+                    Alle gæster har fået invitation!
                 <?php elseif ($filter !== 'all'): ?>
                     Ingen gæster med denne status
                 <?php else: ?>
@@ -190,13 +286,18 @@ require_once __DIR__ . '/../includes/admin-sidebar.php';
             </h3>
             <p class="empty-state__text">
                 <?php if (!$search && $filter === 'all'): ?>
-                    Tilføj din første gæst for at komme i gang
+                    Tilføj gæster enkeltvis eller mange på én gang
                 <?php endif; ?>
             </p>
             <?php if (!$search && $filter === 'all'): ?>
-                <button onclick="openModal('add-modal')" class="btn btn--primary mt-md">
-                    + Tilføj gæst
-                </button>
+                <div class="flex gap-sm justify-center mt-md">
+                    <button onclick="openModal('bulk-modal')" class="btn btn--secondary">
+                        + Tilføj mange gæster
+                    </button>
+                    <button onclick="openModal('add-modal')" class="btn btn--primary">
+                        + Tilføj gæst
+                    </button>
+                </div>
             <?php endif; ?>
         </div>
     <?php else: ?>
@@ -204,17 +305,33 @@ require_once __DIR__ . '/../includes/admin-sidebar.php';
             <table class="table">
                 <thead>
                     <tr>
+                        <th>Invitation</th>
                         <th>Navn</th>
                         <th>Kode</th>
-                        <th>Status</th>
+                        <th>RSVP</th>
                         <th>Antal</th>
-                        <th>Kostbehov</th>
-                        <th style="width: 120px;">Handlinger</th>
+                        <th style="width: 100px;">Handlinger</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php foreach ($guests as $guest): ?>
                         <tr>
+                            <td>
+                                <form method="POST" style="display: inline;">
+                                    <input type="hidden" name="action" value="toggle_invitation">
+                                    <input type="hidden" name="id" value="<?= $guest['id'] ?>">
+                                    <button type="submit"
+                                            class="btn btn--ghost"
+                                            title="<?= $guest['invitation_sent'] ? 'Markér som ikke sendt' : 'Markér som sendt' ?>"
+                                            style="font-size: 1.2em; padding: 4px 8px;">
+                                        <?php if ($guest['invitation_sent']): ?>
+                                            <span style="color: var(--color-success);">✓</span>
+                                        <?php else: ?>
+                                            <span style="color: var(--color-text-muted);">○</span>
+                                        <?php endif; ?>
+                                    </button>
+                                </form>
+                            </td>
                             <td>
                                 <strong><?= escape($guest['name']) ?></strong>
                                 <?php if ($guest['email']): ?>
@@ -230,6 +347,12 @@ require_once __DIR__ . '/../includes/admin-sidebar.php';
                                 <code style="background: var(--color-bg-subtle); padding: 4px 8px; border-radius: 4px; font-family: 'Cormorant Garamond', serif; font-size: 1.1em; letter-spacing: 0.1em;">
                                     <?= escape($guest['unique_code']) ?>
                                 </code>
+                                <button onclick="copyCode('<?= escape($guest['unique_code']) ?>')"
+                                        class="btn btn--ghost small"
+                                        title="Kopiér kode"
+                                        style="padding: 2px 6px; margin-left: 4px;">
+                                    📋
+                                </button>
                             </td>
                             <td>
                                 <?php if ($guest['rsvp_status'] === 'yes'): ?>
@@ -246,16 +369,6 @@ require_once __DIR__ . '/../includes/admin-sidebar.php';
                                     <?php if ($guest['children_count'] > 0): ?>
                                         + <?= $guest['children_count'] ?>b
                                     <?php endif; ?>
-                                <?php else: ?>
-                                    <span class="text-muted">-</span>
-                                <?php endif; ?>
-                            </td>
-                            <td>
-                                <?php if ($guest['dietary_notes']): ?>
-                                    <span title="<?= escape($guest['dietary_notes']) ?>">
-                                        <?= escape(mb_substr($guest['dietary_notes'], 0, 30)) ?>
-                                        <?= mb_strlen($guest['dietary_notes']) > 30 ? '...' : '' ?>
-                                    </span>
                                 <?php else: ?>
                                     <span class="text-muted">-</span>
                                 <?php endif; ?>
@@ -296,6 +409,43 @@ require_once __DIR__ . '/../includes/admin-sidebar.php';
             </p>
         </div>
     <?php endif; ?>
+</div>
+
+<!-- Bulk Add Modal -->
+<div id="bulk-modal" class="modal-overlay <?= $showBulkModal ? 'modal-overlay--active' : '' ?>">
+    <div class="modal" style="max-width: 500px;">
+        <div class="modal__header">
+            <h2 class="modal__title">Tilføj mange gæster</h2>
+            <button class="modal__close" onclick="closeModal('bulk-modal')">&times;</button>
+        </div>
+        <form method="POST">
+            <input type="hidden" name="action" value="bulk_add">
+            <div class="modal__body">
+                <div class="form-group">
+                    <label class="form-label">Navne (ét navn per linje)</label>
+                    <textarea name="names"
+                              class="form-input"
+                              rows="12"
+                              required
+                              placeholder="Mormor og Morfar
+Onkel Peter
+Tante Lisa og Onkel Hans
+Fætter Magnus
+Kusine Emma
+..."
+                              style="font-family: inherit;"></textarea>
+                    <p class="small text-muted mt-xs">
+                        Skriv ét navn eller én familie per linje.
+                        Hver linje får sin egen unikke kode.
+                    </p>
+                </div>
+            </div>
+            <div class="modal__footer">
+                <button type="button" class="btn btn--secondary" onclick="closeModal('bulk-modal')">Annuller</button>
+                <button type="submit" class="btn btn--primary">Tilføj alle</button>
+            </div>
+        </form>
+    </div>
 </div>
 
 <!-- Add Guest Modal -->
@@ -387,7 +537,7 @@ require_once __DIR__ . '/../includes/admin-sidebar.php';
 
 <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
 
-<script src="/assets/js/main.js"></script>
+<script src="<?= BASE_PATH ?>/assets/js/main.js"></script>
 <script>
 function toggleSidebar() {
     const sidebar = document.getElementById('sidebar');
@@ -415,6 +565,16 @@ function editGuest(guest) {
     }
 
     openModal('edit-modal');
+}
+
+function copyCode(code) {
+    navigator.clipboard.writeText(code).then(() => {
+        // Show brief feedback
+        const btn = event.target;
+        const originalText = btn.textContent;
+        btn.textContent = '✓';
+        setTimeout(() => btn.textContent = originalText, 1000);
+    });
 }
 
 // Confirm delete

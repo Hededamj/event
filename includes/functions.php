@@ -14,6 +14,10 @@ function escape(string $str): string {
  * Redirect to URL and exit
  */
 function redirect(string $url): never {
+    // Clean any output buffer to allow redirect after output
+    while (ob_get_level()) {
+        ob_end_clean();
+    }
     header("Location: $url");
     exit;
 }

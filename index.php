@@ -1,14 +1,14 @@
 <?php
 /**
  * Event Platform - Landing Page
- * The first impression - elegant, memorable, inviting
+ * Clean, personal invitation page for guests
  */
 
 require_once __DIR__ . '/config/database.php';
 require_once __DIR__ . '/includes/functions.php';
 require_once __DIR__ . '/includes/auth.php';
 
-// Get the event (for MVP, we get the first one)
+// Get the event
 $db = getDB();
 $stmt = $db->query("SELECT * FROM events ORDER BY id LIMIT 1");
 $event = $stmt->fetch();
@@ -22,6 +22,17 @@ if (!$event) {
     $error = $_GET['error'] ?? null;
 }
 
+// Check if there's a guest code in the URL (for personalized links)
+$guestFromUrl = null;
+if (!$showSetup && isset($_GET['kode'])) {
+    $code = preg_replace('/[^0-9]/', '', $_GET['kode']);
+    if (strlen($code) === 6) {
+        $stmt = $db->prepare("SELECT * FROM guests WHERE unique_code = ? AND event_id = ?");
+        $stmt->execute([$code, $event['id']]);
+        $guestFromUrl = $stmt->fetch();
+    }
+}
+
 // Handle guest code submission
 if (!$showSetup && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['guest_code'])) {
     $code = preg_replace('/[^0-9]/', '', $_POST['guest_code']);
@@ -33,29 +44,12 @@ if (!$showSetup && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['guest_
 
         if ($guest) {
             loginGuest($guest['id'], $event['id']);
-            redirect('/guest/index.php');
+            redirect(BASE_PATH . '/guest/index.php');
         } else {
             $error = 'invalid_code';
         }
     } else {
         $error = 'invalid_code';
-    }
-}
-
-// Handle organizer login
-if (!$showSetup && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login_email'])) {
-    $email = trim($_POST['login_email']);
-    $password = $_POST['login_password'];
-
-    $stmt = $db->prepare("SELECT * FROM users WHERE email = ? AND event_id = ?");
-    $stmt->execute([$email, $event['id']]);
-    $user = $stmt->fetch();
-
-    if ($user && password_verify($password, $user['password_hash'])) {
-        login($user['id'], $event['id']);
-        redirect('/admin/index.php');
-    } else {
-        $error = 'invalid_credentials';
     }
 }
 
@@ -82,8 +76,8 @@ function formatEventDate($date): string {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= $showSetup ? 'Event Platform' : escape($event['name']) ?></title>
-    <meta name="description" content="<?= $showSetup ? 'Event Platform' : escape($event['name']) ?>">
+    <title><?= $showSetup ? 'Event Platform' : escape($event['confirmand_name']) . 's ' . escape($event['name']) ?></title>
+    <meta name="description" content="<?= $showSetup ? 'Event Platform' : 'Du er inviteret til ' . escape($event['confirmand_name']) . 's ' . escape($event['name']) ?>">
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -91,9 +85,9 @@ function formatEventDate($date): string {
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
 
     <!-- Styles -->
-    <link rel="stylesheet" href="/assets/css/main.css">
+    <link rel="stylesheet" href="<?= BASE_PATH ?>/assets/css/main.css">
     <?php if (!$showSetup): ?>
-    <link rel="stylesheet" href="/assets/css/theme-<?= escape($theme) ?>.css">
+    <link rel="stylesheet" href="<?= BASE_PATH ?>/assets/css/theme-<?= escape($theme) ?>.css">
     <?php endif; ?>
 
     <style>
@@ -190,9 +184,16 @@ function formatEventDate($date): string {
 
         /* Main content */
         .hero__content {
-            max-width: 600px;
+            max-width: 500px;
             opacity: 0;
             animation: fadeInUp 1s var(--ease-out-expo) 0.2s forwards;
+        }
+
+        .hero__greeting {
+            font-size: var(--text-lg);
+            color: var(--color-accent);
+            margin-bottom: var(--space-xs);
+            font-weight: 500;
         }
 
         .hero__eyebrow {
@@ -243,103 +244,75 @@ function formatEventDate($date): string {
             color: var(--color-accent);
         }
 
-        .hero__location {
+        .hero__address {
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             justify-content: center;
-            gap: var(--space-2xs);
-            color: var(--color-text-muted);
-            font-size: var(--text-sm);
+            gap: var(--space-sm);
             margin-bottom: var(--space-lg);
+            padding: var(--space-md) var(--space-lg);
+            background: var(--color-surface);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            max-width: 320px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hero__address-icon {
+            color: var(--color-primary);
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .hero__address-text {
+            font-style: normal;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: var(--text-base);
+            color: var(--color-text);
+            line-height: 1.5;
+            text-align: left;
         }
 
         .hero__welcome {
             max-width: 480px;
-            margin: 0 auto var(--space-xl);
+            margin: 0 auto var(--space-lg);
             line-height: 1.8;
             color: var(--color-text-soft);
         }
 
-        /* Entry cards */
-        .entry-cards {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: var(--space-md);
-            width: 100%;
-            max-width: 640px;
+        /* Code entry */
+        .code-entry {
+            background: var(--color-surface);
+            border-radius: var(--radius-xl);
+            padding: var(--space-lg);
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--color-border-soft);
+            max-width: 320px;
+            margin: 0 auto;
             opacity: 0;
             animation: fadeInUp 1s var(--ease-out-expo) 0.5s forwards;
         }
 
-        .entry-card {
-            background: var(--color-surface);
-            border-radius: var(--radius-xl);
-            padding: var(--space-md);
-            box-shadow: var(--shadow-md);
-            border: 1px solid var(--color-border-soft);
-            transition: all var(--duration-normal) var(--ease-out-expo);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .entry-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
-            transform: scaleX(0);
-            transition: transform var(--duration-normal) var(--ease-out-expo);
-        }
-
-        .entry-card:hover {
-            transform: translateY(-4px);
-            box-shadow: var(--shadow-lg);
-        }
-
-        .entry-card:hover::before {
-            transform: scaleX(1);
-        }
-
-        .entry-card:focus-within {
-            box-shadow: var(--shadow-lg), 0 0 0 3px var(--color-primary-soft);
-        }
-
-        .entry-card__header {
-            display: flex;
-            align-items: center;
-            gap: var(--space-xs);
-            margin-bottom: var(--space-sm);
-        }
-
-        .entry-card__icon {
-            width: 44px;
-            height: 44px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: var(--color-primary-pale);
-            border-radius: var(--radius-md);
-            font-size: 1.25rem;
-        }
-
-        .entry-card--organizer .entry-card__icon {
-            background: var(--color-bg-subtle);
-        }
-
-        .entry-card__title {
+        .code-entry__title {
             font-family: 'Cormorant Garamond', serif;
             font-size: var(--text-lg);
             font-weight: 500;
             color: var(--color-text);
+            margin-bottom: var(--space-sm);
         }
 
-        .entry-card__desc {
+        .code-entry__desc {
             font-size: var(--text-sm);
             color: var(--color-text-muted);
-            margin-bottom: var(--space-sm);
+            margin-bottom: var(--space-md);
+        }
+
+        .code-input {
+            text-align: center;
+            font-size: var(--text-2xl) !important;
+            letter-spacing: 0.3em;
+            font-family: 'Cormorant Garamond', serif;
         }
 
         /* Alert styling */
@@ -348,19 +321,6 @@ function formatEventDate($date): string {
             margin: 0 auto var(--space-md);
             opacity: 0;
             animation: fadeInUp 0.5s var(--ease-out-expo) forwards;
-        }
-
-        /* Login form (hidden by default) */
-        .login-form {
-            display: none;
-            margin-top: var(--space-sm);
-            padding-top: var(--space-sm);
-            border-top: 1px solid var(--color-border-soft);
-        }
-
-        .login-form.active {
-            display: block;
-            animation: fadeInUp 0.3s var(--ease-out-expo);
         }
 
         /* Footer */
@@ -400,12 +360,12 @@ function formatEventDate($date): string {
 
         /* Responsive */
         @media (max-width: 640px) {
-            .entry-cards {
-                grid-template-columns: 1fr;
-            }
-
             .hero__decoration {
                 display: none;
+            }
+
+            .hero__title {
+                font-size: var(--text-3xl);
             }
         }
     </style>
@@ -418,12 +378,9 @@ function formatEventDate($date): string {
             <div class="setup-card__icon">✨</div>
             <h1 class="h2 mb-sm">Velkommen til Event Platform</h1>
             <p class="lead mb-md">
-                Der er endnu ikke oprettet et event. Kør <code>database/schema.sql</code> og <code>database/seed.sql</code> for at komme i gang.
+                Der er endnu ikke oprettet et event.
             </p>
-            <p class="text-muted small">
-                Derefter kan du logge ind som administrator med:<br>
-                <strong>admin@example.com</strong> / <strong>password</strong>
-            </p>
+            <a href="<?= BASE_PATH ?>/admin/login.php" class="btn btn--primary">Gå til admin</a>
         </div>
     </div>
 
@@ -439,6 +396,11 @@ function formatEventDate($date): string {
             <span class="hero__decoration hero__decoration--3">✧</span>
 
             <div class="hero__content">
+                <?php if ($guestFromUrl): ?>
+                    <!-- Personalized greeting -->
+                    <p class="hero__greeting">Kære <?= escape($guestFromUrl['name']) ?></p>
+                <?php endif; ?>
+
                 <p class="hero__eyebrow">Du er inviteret til</p>
 
                 <h1 class="hero__title">
@@ -456,10 +418,17 @@ function formatEventDate($date): string {
                 </div>
 
                 <?php if ($event['location']): ?>
-                    <p class="hero__location">
-                        <span>📍</span>
-                        <span><?= escape($event['location']) ?></span>
-                    </p>
+                    <div class="hero__address">
+                        <div class="hero__address-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                                <circle cx="12" cy="10" r="3"/>
+                            </svg>
+                        </div>
+                        <address class="hero__address-text">
+                            <?= nl2br(escape($event['location'])) ?>
+                        </address>
+                    </div>
                 <?php endif; ?>
 
                 <?php if ($event['welcome_text']): ?>
@@ -473,24 +442,25 @@ function formatEventDate($date): string {
                         <span>⚠</span>
                         <span>Koden er ugyldig. Tjek din invitation og prøv igen.</span>
                     </div>
-                <?php elseif ($error === 'invalid_credentials'): ?>
-                    <div class="alert alert--error hero__alert">
-                        <span>⚠</span>
-                        <span>Forkert email eller adgangskode.</span>
-                    </div>
                 <?php endif; ?>
 
-                <div class="entry-cards">
-                    <!-- Guest Entry -->
-                    <div class="entry-card">
-                        <div class="entry-card__header">
-                            <div class="entry-card__icon">🎉</div>
-                            <h2 class="entry-card__title">Gæst</h2>
-                        </div>
-                        <p class="entry-card__desc">
-                            Indtast din personlige kode fra invitationen
+                <!-- Code Entry -->
+                <div class="code-entry">
+                    <?php if ($guestFromUrl): ?>
+                        <!-- Auto-fill for personalized link -->
+                        <p class="code-entry__title">Bekræft din kode</p>
+                        <form method="POST">
+                            <input type="hidden" name="guest_code" value="<?= escape($guestFromUrl['unique_code']) ?>">
+                            <button type="submit" class="btn btn--primary btn--block btn--large">
+                                Gå til tilmelding
+                            </button>
+                        </form>
+                    <?php else: ?>
+                        <p class="code-entry__title">Indtast din kode</p>
+                        <p class="code-entry__desc">
+                            Du finder koden i din invitation
                         </p>
-                        <form method="POST" id="guest-form">
+                        <form method="POST">
                             <div class="form-group">
                                 <input type="text"
                                        name="guest_code"
@@ -507,46 +477,7 @@ function formatEventDate($date): string {
                                 Fortsæt
                             </button>
                         </form>
-                    </div>
-
-                    <!-- Organizer Entry -->
-                    <div class="entry-card entry-card--organizer">
-                        <div class="entry-card__header">
-                            <div class="entry-card__icon">⚙️</div>
-                            <h2 class="entry-card__title">Arrangør</h2>
-                        </div>
-                        <p class="entry-card__desc">
-                            Log ind for at administrere eventet
-                        </p>
-                        <button type="button"
-                                class="btn btn--secondary btn--block"
-                                onclick="toggleLoginForm()"
-                                id="login-toggle">
-                            Log ind
-                        </button>
-
-                        <form method="POST" class="login-form" id="login-form">
-                            <div class="form-group">
-                                <input type="email"
-                                       name="login_email"
-                                       class="form-input"
-                                       placeholder="Email"
-                                       required
-                                       autocomplete="email">
-                            </div>
-                            <div class="form-group">
-                                <input type="password"
-                                       name="login_password"
-                                       class="form-input"
-                                       placeholder="Adgangskode"
-                                       required
-                                       autocomplete="current-password">
-                            </div>
-                            <button type="submit" class="btn btn--primary btn--block">
-                                Log ind
-                            </button>
-                        </form>
-                    </div>
+                    <?php endif; ?>
                 </div>
             </div>
         </main>
@@ -580,28 +511,6 @@ function formatEventDate($date): string {
                 codeInput.focus();
             }, 800);
         }
-
-        // Toggle login form
-        function toggleLoginForm() {
-            const form = document.getElementById('login-form');
-            const toggle = document.getElementById('login-toggle');
-
-            form.classList.toggle('active');
-
-            if (form.classList.contains('active')) {
-                toggle.style.display = 'none';
-                form.querySelector('input[type="email"]').focus();
-            } else {
-                toggle.style.display = 'block';
-            }
-        }
-
-        // Show login form if there was a credentials error
-        <?php if ($error === 'invalid_credentials'): ?>
-        document.addEventListener('DOMContentLoaded', function() {
-            toggleLoginForm();
-        });
-        <?php endif; ?>
     </script>
     <?php endif; ?>
 </body>

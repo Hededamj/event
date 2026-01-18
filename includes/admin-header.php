@@ -4,6 +4,9 @@
  * Included at the top of all admin pages
  */
 
+// Start output buffering to allow redirects
+ob_start();
+
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/functions.php';
 require_once __DIR__ . '/auth.php';
@@ -22,7 +25,7 @@ $event = $stmt->fetch();
 
 if (!$event) {
     logout();
-    redirect('/index.php');
+    redirect(BASE_PATH . '/index.php');
 }
 
 $theme = $event['theme'] ?? 'girl';
@@ -71,9 +74,9 @@ $currentPage = basename($_SERVER['PHP_SELF'], '.php');
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
 
     <!-- Styles -->
-    <link rel="stylesheet" href="/assets/css/main.css">
-    <link rel="stylesheet" href="/assets/css/theme-<?= escape($theme) ?>.css">
-    <link rel="stylesheet" href="/assets/css/admin.css">
+    <link rel="stylesheet" href="<?= BASE_PATH ?>/assets/css/main.css">
+    <link rel="stylesheet" href="<?= BASE_PATH ?>/assets/css/theme-<?= escape($theme) ?>.css">
+    <link rel="stylesheet" href="<?= BASE_PATH ?>/assets/css/admin.css">
 </head>
 <body class="admin-body">
     <div class="admin-layout">
