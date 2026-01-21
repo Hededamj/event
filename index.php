@@ -1,28 +1,26 @@
 <?php
 /**
  * Event Platform - Landing Page
- * Clean, personal invitation page for guests
+ * Immersive Portrait Design - Photo IS the page
+ * Cache bust: 20260118-1756
  */
 
 require_once __DIR__ . '/config/database.php';
 require_once __DIR__ . '/includes/functions.php';
 require_once __DIR__ . '/includes/auth.php';
 
-// Get the event
 $db = getDB();
 $stmt = $db->query("SELECT * FROM events ORDER BY id LIMIT 1");
 $event = $stmt->fetch();
 
-// If no event exists, show setup message
 if (!$event) {
     $showSetup = true;
 } else {
     $showSetup = false;
-    $theme = $event['theme'] ?? 'girl';
     $error = $_GET['error'] ?? null;
 }
 
-// Check if there's a guest code in the URL (for personalized links)
+// Auto-login if valid code in URL (but stay on landing page)
 $guestFromUrl = null;
 if (!$showSetup && isset($_GET['kode'])) {
     $code = preg_replace('/[^0-9]/', '', $_GET['kode']);
@@ -30,21 +28,28 @@ if (!$showSetup && isset($_GET['kode'])) {
         $stmt = $db->prepare("SELECT * FROM guests WHERE unique_code = ? AND event_id = ?");
         $stmt->execute([$code, $event['id']]);
         $guestFromUrl = $stmt->fetch();
+
+        // Log in but stay on invitation page
+        if ($guestFromUrl) {
+            loginGuest($guestFromUrl['id'], $event['id']);
+        }
     }
 }
 
-// Handle guest code submission
 if (!$showSetup && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['guest_code'])) {
     $code = preg_replace('/[^0-9]/', '', $_POST['guest_code']);
-
     if (strlen($code) === 6) {
         $stmt = $db->prepare("SELECT * FROM guests WHERE unique_code = ? AND event_id = ?");
         $stmt->execute([$code, $event['id']]);
         $guest = $stmt->fetch();
-
         if ($guest) {
             loginGuest($guest['id'], $event['id']);
-            redirect(BASE_PATH . '/guest/index.php');
+            // If already RSVP'd, go to home page. Otherwise go to RSVP form
+            if ($guest['rsvp_status'] !== 'pending') {
+                redirect(BASE_PATH . '/guest/index.php');
+            } else {
+                redirect(BASE_PATH . '/guest/rsvp.php');
+            }
         } else {
             $error = 'invalid_code';
         }
@@ -53,22 +58,10 @@ if (!$showSetup && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['guest_
     }
 }
 
-// Format event date beautifully
-function formatEventDate($date): string {
-    $months = [
-        1 => 'januar', 2 => 'februar', 3 => 'marts', 4 => 'april',
-        5 => 'maj', 6 => 'juni', 7 => 'juli', 8 => 'august',
-        9 => 'september', 10 => 'oktober', 11 => 'november', 12 => 'december'
-    ];
-    $days = ['søndag', 'mandag', 'tirsdag', 'onsdag', 'torsdag', 'fredag', 'lørdag'];
-
-    $timestamp = strtotime($date);
-    $dayName = $days[date('w', $timestamp)];
-    $day = date('j', $timestamp);
-    $month = $months[(int)date('n', $timestamp)];
-    $year = date('Y', $timestamp);
-
-    return ucfirst($dayName) . ' d. ' . $day . '. ' . $month . ' ' . $year;
+function formatDanishDate($date): string {
+    $months = [1=>'januar',2=>'februar',3=>'marts',4=>'april',5=>'maj',6=>'juni',7=>'juli',8=>'august',9=>'september',10=>'oktober',11=>'november',12=>'december'];
+    $t = strtotime($date);
+    return date('j', $t) . '. ' . $months[(int)date('n', $t)] . ' ' . date('Y', $t);
 }
 ?>
 <!DOCTYPE html>
@@ -77,439 +70,613 @@ function formatEventDate($date): string {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= $showSetup ? 'Event Platform' : escape($event['confirmand_name']) . 's ' . escape($event['name']) ?></title>
-    <meta name="description" content="<?= $showSetup ? 'Event Platform' : 'Du er inviteret til ' . escape($event['confirmand_name']) . 's ' . escape($event['name']) ?>">
 
-    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
-
-    <!-- Styles -->
-    <link rel="stylesheet" href="<?= BASE_PATH ?>/assets/css/main.css">
-    <?php if (!$showSetup): ?>
-    <link rel="stylesheet" href="<?= BASE_PATH ?>/assets/css/theme-<?= escape($theme) ?>.css">
-    <?php endif; ?>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Manrope:wght@300;400;500;600&display=swap" rel="stylesheet">
 
     <style>
-        /* Landing Page Specific Styles */
-        .landing {
-            min-height: 100vh;
-            min-height: 100dvh;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            overflow: hidden;
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
-        /* Animated background */
-        .landing__bg {
+        :root {
+            --blush: #D4A5A5;
+            --blush-dark: #B88A8A;
+            --blush-light: #E8CECE;
+            --cream: #FFF9F7;
+            --ink: #2A2222;
+            --white: #FFFFFF;
+        }
+
+        html, body {
+            height: 100%;
+        }
+
+        @media (min-width: 769px) {
+            html, body {
+                overflow: hidden;
+            }
+        }
+
+        body {
+            font-family: 'Manrope', sans-serif;
+            background: var(--ink);
+            color: var(--white);
+        }
+
+        /* ===== FULL SCREEN PHOTO BACKGROUND ===== */
+        .hero {
             position: fixed;
             inset: 0;
-            z-index: -1;
-            background: var(--color-bg);
+            z-index: 1;
         }
 
-        .landing__bg::before {
-            content: '';
+        .hero__photo {
             position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(
-                ellipse at 30% 20%,
-                var(--color-primary-pale) 0%,
-                transparent 50%
-            ),
-            radial-gradient(
-                ellipse at 70% 80%,
-                var(--color-accent-pale) 0%,
-                transparent 40%
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center top;
+            opacity: 0;
+            transform: scale(1.1);
+            transition: opacity 1.5s ease, transform 8s ease-out;
+        }
+
+        /* Billede 3 - juster position op */
+        .hero__photo[data-index="2"] {
+            object-position: center 20%;
+        }
+
+        .hero__photo.active {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        /* Color overlay matching the blush palette */
+        .hero__overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(
+                to bottom,
+                rgba(212, 165, 165, 0.15) 0%,
+                rgba(42, 34, 34, 0.3) 60%,
+                rgba(42, 34, 34, 0.85) 100%
             );
-            animation: bgFloat 20s ease-in-out infinite;
+            z-index: 2;
         }
 
-        @keyframes bgFloat {
-            0%, 100% { transform: translate(0, 0) rotate(0deg); }
-            33% { transform: translate(2%, 1%) rotate(1deg); }
-            66% { transform: translate(-1%, 2%) rotate(-1deg); }
-        }
-
-        /* Hero Section */
-        .hero {
-            flex: 1;
+        /* ===== FLOATING CONTENT ===== */
+        .content {
+            position: relative;
+            z-index: 10;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: var(--space-xl) var(--space-md);
-            position: relative;
+            justify-content: flex-end;
+            padding: 0 6vw 8vh;
         }
 
-        /* Decorative elements */
-        .hero__decoration {
-            position: absolute;
-            opacity: 0.15;
-            pointer-events: none;
+        @media (max-width: 768px) {
+            .content {
+                padding: 15vh 5vw 4vh;
+                justify-content: flex-start;
+                overflow-y: auto;
+            }
+
+            .event-type {
+                font-size: 1.3rem !important;
+                margin-bottom: 0.25rem;
+            }
+
+            .hero-name {
+                font-size: clamp(3rem, 15vw, 5rem) !important;
+                margin-bottom: 1rem;
+            }
+
+            .welcome-text {
+                font-size: 0.95rem !important;
+                margin-bottom: 1rem;
+            }
+
+            .info-row {
+                gap: 1rem !important;
+            }
+
+            .info-block__value {
+                font-size: 1rem;
+            }
+
+            .code-card {
+                padding: 1rem 1.25rem;
+            }
         }
 
-        .hero__decoration--1 {
-            top: 10%;
-            left: 5%;
-            font-size: 8rem;
-            animation: float 6s ease-in-out infinite;
-        }
-
-        .hero__decoration--2 {
-            bottom: 15%;
-            right: 8%;
-            font-size: 6rem;
-            animation: float 8s ease-in-out infinite;
-            animation-delay: -3s;
-        }
-
-        .hero__decoration--3 {
-            top: 20%;
-            right: 12%;
-            font-size: 4rem;
-            animation: float 7s ease-in-out infinite;
-            animation-delay: -5s;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0) rotate(0deg); }
-            50% { transform: translateY(-20px) rotate(5deg); }
-        }
-
-        /* Main content */
-        .hero__content {
-            max-width: 500px;
-            opacity: 0;
-            animation: fadeInUp 1s var(--ease-out-expo) 0.2s forwards;
-        }
-
-        .hero__greeting {
-            font-size: var(--text-lg);
-            color: var(--color-accent);
-            margin-bottom: var(--space-xs);
-            font-weight: 500;
-        }
-
-        .hero__eyebrow {
-            font-size: var(--text-xs);
-            text-transform: uppercase;
-            letter-spacing: 0.2em;
-            color: var(--color-accent);
-            margin-bottom: var(--space-sm);
-            font-weight: 500;
-        }
-
-        .hero__title {
-            font-size: var(--text-display);
-            font-weight: 400;
-            color: var(--color-primary-deep);
-            margin-bottom: var(--space-xs);
-            line-height: 0.95;
-        }
-
-        .hero__title em {
+        /* ===== EVENT TYPE - Above name ===== */
+        .event-type {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(1.8rem, 5vw, 3.5rem);
             font-style: italic;
-            color: var(--color-text);
-        }
-
-        .hero__subtitle {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: var(--text-xl);
             font-weight: 400;
-            color: var(--color-text-soft);
-            margin-bottom: var(--space-sm);
-        }
-
-        .hero__date {
-            display: inline-flex;
-            align-items: center;
-            gap: var(--space-xs);
-            padding: var(--space-xs) var(--space-md);
-            background: var(--color-surface);
-            border-radius: var(--radius-full);
-            box-shadow: var(--shadow-sm);
-            font-family: 'Cormorant Garamond', serif;
-            font-size: var(--text-lg);
-            color: var(--color-text);
-            margin-bottom: var(--space-md);
-        }
-
-        .hero__date-icon {
-            color: var(--color-accent);
-        }
-
-        .hero__address {
-            display: flex;
-            align-items: flex-start;
-            justify-content: center;
-            gap: var(--space-sm);
-            margin-bottom: var(--space-lg);
-            padding: var(--space-md) var(--space-lg);
-            background: var(--color-surface);
-            border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-sm);
-            max-width: 320px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .hero__address-icon {
-            color: var(--color-primary);
-            flex-shrink: 0;
-            margin-top: 2px;
-        }
-
-        .hero__address-text {
-            font-style: normal;
-            font-family: 'Cormorant Garamond', serif;
-            font-size: var(--text-base);
-            color: var(--color-text);
-            line-height: 1.5;
-            text-align: left;
-        }
-
-        .hero__welcome {
-            max-width: 480px;
-            margin: 0 auto var(--space-lg);
-            line-height: 1.8;
-            color: var(--color-text-soft);
-        }
-
-        /* Code entry */
-        .code-entry {
-            background: var(--color-surface);
-            border-radius: var(--radius-xl);
-            padding: var(--space-lg);
-            box-shadow: var(--shadow-md);
-            border: 1px solid var(--color-border-soft);
-            max-width: 320px;
-            margin: 0 auto;
+            color: var(--blush-light);
+            text-shadow: 0 2px 30px rgba(0,0,0,0.3);
+            margin-bottom: 0.5rem;
             opacity: 0;
-            animation: fadeInUp 1s var(--ease-out-expo) 0.5s forwards;
+            animation: fadeUp 1s ease 0.3s forwards;
         }
 
-        .code-entry__title {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: var(--text-lg);
-            font-weight: 500;
-            color: var(--color-text);
-            margin-bottom: var(--space-sm);
+        /* ===== WELCOME TEXT ===== */
+        .welcome-text {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.1rem;
+            font-style: italic;
+            color: var(--blush-light);
+            text-shadow: 0 2px 20px rgba(0,0,0,0.3);
+            max-width: 500px;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+            opacity: 0;
+            animation: fadeUp 1s ease 1.1s forwards;
         }
 
-        .code-entry__desc {
-            font-size: var(--text-sm);
-            color: var(--color-text-muted);
-            margin-bottom: var(--space-md);
+        /* ===== THE NAME - Huge, bottom-aligned ===== */
+        .hero-name {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(5rem, 20vw, 18rem);
+            font-weight: 400;
+            line-height: 0.8;
+            letter-spacing: -0.02em;
+            color: var(--white);
+            text-shadow: 0 4px 60px rgba(0,0,0,0.4);
+            margin-bottom: 2rem;
+            opacity: 0;
+            transform: translateY(80px);
+            animation: heroReveal 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.5s forwards;
+        }
+
+        @keyframes heroReveal {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ===== EVENT INFO ROW ===== */
+        .info-row {
+            display: flex;
+            align-items: flex-end;
+            gap: 4rem;
+            flex-wrap: wrap;
+            opacity: 0;
+            animation: fadeUp 1s ease 1s forwards;
+        }
+
+        @media (max-width: 768px) {
+            .info-row {
+                gap: 2rem;
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+
+        .info-block {
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+        }
+
+        .info-block__label {
+            font-size: 0.65rem;
+            font-weight: 600;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--blush-light);
+        }
+
+        .info-block__value {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.2rem;
+            font-style: italic;
+            color: var(--white);
+        }
+
+        /* ===== CODE ENTRY CARD ===== */
+        .code-card {
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 16px;
+            padding: 1.5rem 2rem;
+            max-width: 360px;
+            opacity: 0;
+            animation: fadeUp 1s ease 1.2s forwards;
+        }
+
+        .code-card__title {
+            font-size: 0.7rem;
+            font-weight: 600;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--blush-light);
+            margin-bottom: 1rem;
+        }
+
+        .code-form {
+            display: flex;
+            gap: 0.75rem;
         }
 
         .code-input {
-            text-align: center;
-            font-size: var(--text-2xl) !important;
+            flex: 1;
+            padding: 1rem 1.2rem;
+            font-family: 'Playfair Display', serif;
+            font-size: 1.3rem;
             letter-spacing: 0.3em;
-            font-family: 'Cormorant Garamond', serif;
-        }
-
-        /* Alert styling */
-        .hero__alert {
-            max-width: 400px;
-            margin: 0 auto var(--space-md);
-            opacity: 0;
-            animation: fadeInUp 0.5s var(--ease-out-expo) forwards;
-        }
-
-        /* Footer */
-        .landing__footer {
             text-align: center;
-            padding: var(--space-md);
-            color: var(--color-text-muted);
-            font-size: var(--text-xs);
-            opacity: 0;
-            animation: fadeIn 1s var(--ease-out-expo) 1s forwards;
+            color: var(--white);
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            outline: none;
+            transition: all 0.3s ease;
         }
 
-        /* Setup screen */
-        .setup-screen {
+        .code-input:focus {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: var(--blush);
+        }
+
+        .code-input::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        .btn {
+            padding: 1rem 1.8rem;
+            font-family: 'Manrope', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            text-decoration: none;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn--primary {
+            background: var(--blush);
+            color: var(--ink);
+        }
+
+        .btn--primary:hover {
+            background: var(--blush-light);
+            transform: translateY(-2px);
+        }
+
+        .btn--large {
+            padding: 1.2rem 2.5rem;
+        }
+
+        /* Alert */
+        .alert {
+            background: rgba(212, 165, 165, 0.2);
+            border-left: 3px solid var(--blush);
+            color: var(--white);
+            padding: 0.8rem 1rem;
+            margin-bottom: 1rem;
+            font-size: 0.85rem;
+            border-radius: 0 8px 8px 0;
+        }
+
+        /* Guest Greeting */
+        .guest-greeting {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.4rem;
+            font-style: italic;
+            color: var(--blush-light);
+            margin-bottom: 0.5rem;
+            opacity: 0;
+            animation: fadeUp 1s ease 0.8s forwards;
+        }
+
+        /* ===== THUMBNAIL NAVIGATION - Top Right ===== */
+        .thumbnails {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            z-index: 20;
+            display: flex;
+            gap: 0.75rem;
+            opacity: 0;
+            animation: fadeIn 1s ease 1.5s forwards;
+        }
+
+        @media (max-width: 768px) {
+            .thumbnails {
+                top: 1rem;
+                right: 1rem;
+                gap: 0.5rem;
+            }
+        }
+
+        .thumbnail {
+            width: 70px;
+            height: 90px;
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            opacity: 0.6;
+        }
+
+        @media (max-width: 768px) {
+            .thumbnail {
+                width: 50px;
+                height: 65px;
+            }
+        }
+
+        .thumbnail:hover {
+            opacity: 0.9;
+            transform: translateY(-4px);
+        }
+
+        .thumbnail.active {
+            border-color: var(--blush);
+            opacity: 1;
+            transform: scale(1.05);
+        }
+
+        .thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* ===== EVENT LABEL - Top Left ===== */
+        .event-badge {
+            position: fixed;
+            top: 2rem;
+            left: 2rem;
+            z-index: 20;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            opacity: 0;
+            animation: fadeIn 1s ease 1.3s forwards;
+        }
+
+        @media (max-width: 768px) {
+            .event-badge {
+                top: 1rem;
+                left: 1rem;
+            }
+        }
+
+        .event-badge__icon {
+            width: 32px;
+            height: 32px;
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+        }
+
+        .event-badge__text {
+            font-size: 0.7rem;
+            font-weight: 500;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--white);
+        }
+
+        /* Animations */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Setup Screen */
+        .setup-page {
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: var(--space-xl) var(--space-md);
-            background: linear-gradient(135deg, #FFFBF7 0%, #F7F9FC 100%);
+            padding: 2rem;
+            background: var(--cream);
+            color: var(--ink);
         }
 
         .setup-card {
-            background: white;
-            border-radius: var(--radius-xl);
-            padding: var(--space-xl);
-            box-shadow: var(--shadow-lg);
-            max-width: 500px;
-            width: 100%;
             text-align: center;
+            max-width: 400px;
         }
 
-        .setup-card__icon {
-            font-size: 4rem;
-            margin-bottom: var(--space-md);
+        .setup-card h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            margin-bottom: 1rem;
         }
 
-        /* Responsive */
-        @media (max-width: 640px) {
-            .hero__decoration {
-                display: none;
-            }
+        .setup-card p {
+            color: #666;
+            margin-bottom: 2rem;
+        }
 
-            .hero__title {
-                font-size: var(--text-3xl);
-            }
+        .setup-card .btn--primary {
+            color: var(--white);
+            background: var(--ink);
         }
     </style>
 </head>
 <body>
     <?php if ($showSetup): ?>
-    <!-- Setup Screen -->
-    <div class="setup-screen">
+    <div class="setup-page">
         <div class="setup-card">
-            <div class="setup-card__icon">✨</div>
-            <h1 class="h2 mb-sm">Velkommen til Event Platform</h1>
-            <p class="lead mb-md">
-                Der er endnu ikke oprettet et event.
-            </p>
+            <h1>Event Platform</h1>
+            <p>Der er endnu ikke oprettet et event.</p>
             <a href="<?= BASE_PATH ?>/admin/login.php" class="btn btn--primary">Gå til admin</a>
         </div>
     </div>
 
     <?php else: ?>
-    <!-- Landing Page -->
-    <div class="landing">
-        <div class="landing__bg"></div>
-
-        <main class="hero">
-            <!-- Decorative elements -->
-            <span class="hero__decoration hero__decoration--1">✦</span>
-            <span class="hero__decoration hero__decoration--2">❋</span>
-            <span class="hero__decoration hero__decoration--3">✧</span>
-
-            <div class="hero__content">
-                <?php if ($guestFromUrl): ?>
-                    <!-- Personalized greeting -->
-                    <p class="hero__greeting">Kære <?= escape($guestFromUrl['name']) ?></p>
-                <?php endif; ?>
-
-                <p class="hero__eyebrow">Du er inviteret til</p>
-
-                <h1 class="hero__title">
-                    <?= escape($event['confirmand_name']) ?><em>s</em>
-                </h1>
-
-                <p class="hero__subtitle"><?= escape($event['name']) ?></p>
-
-                <div class="hero__date">
-                    <span class="hero__date-icon">✦</span>
-                    <span><?= formatEventDate($event['event_date']) ?></span>
-                    <?php if ($event['event_time']): ?>
-                        <span>kl. <?= date('H:i', strtotime($event['event_time'])) ?></span>
-                    <?php endif; ?>
-                </div>
-
-                <?php if ($event['location']): ?>
-                    <div class="hero__address">
-                        <div class="hero__address-icon">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-                                <circle cx="12" cy="10" r="3"/>
-                            </svg>
-                        </div>
-                        <address class="hero__address-text">
-                            <?= nl2br(escape($event['location'])) ?>
-                        </address>
-                    </div>
-                <?php endif; ?>
-
-                <?php if ($event['welcome_text']): ?>
-                    <p class="hero__welcome">
-                        <?= nl2br(escape($event['welcome_text'])) ?>
-                    </p>
-                <?php endif; ?>
-
-                <?php if ($error === 'invalid_code'): ?>
-                    <div class="alert alert--error hero__alert">
-                        <span>⚠</span>
-                        <span>Koden er ugyldig. Tjek din invitation og prøv igen.</span>
-                    </div>
-                <?php endif; ?>
-
-                <!-- Code Entry -->
-                <div class="code-entry">
-                    <?php if ($guestFromUrl): ?>
-                        <!-- Auto-fill for personalized link -->
-                        <p class="code-entry__title">Bekræft din kode</p>
-                        <form method="POST">
-                            <input type="hidden" name="guest_code" value="<?= escape($guestFromUrl['unique_code']) ?>">
-                            <button type="submit" class="btn btn--primary btn--block btn--large">
-                                Gå til tilmelding
-                            </button>
-                        </form>
-                    <?php else: ?>
-                        <p class="code-entry__title">Indtast din kode</p>
-                        <p class="code-entry__desc">
-                            Du finder koden i din invitation
-                        </p>
-                        <form method="POST">
-                            <div class="form-group">
-                                <input type="text"
-                                       name="guest_code"
-                                       class="form-input code-input"
-                                       placeholder="000000"
-                                       maxlength="6"
-                                       pattern="[0-9]{6}"
-                                       inputmode="numeric"
-                                       autocomplete="off"
-                                       required
-                                       aria-label="Din personlige kode">
-                            </div>
-                            <button type="submit" class="btn btn--primary btn--block">
-                                Fortsæt
-                            </button>
-                        </form>
-                    <?php endif; ?>
-                </div>
-            </div>
-        </main>
-
-        <footer class="landing__footer">
-            <p>Lavet med ❤️ til <?= escape($event['confirmand_name']) ?></p>
-        </footer>
+    <!-- FULL SCREEN HERO PHOTO -->
+    <div class="hero">
+        <img src="<?= BASE_PATH ?>/assets/images/sofie-1.jpg" class="hero__photo active" data-index="0" alt="">
+        <img src="<?= BASE_PATH ?>/assets/images/sofie-2.jpg" class="hero__photo" data-index="1" alt="">
+        <img src="<?= BASE_PATH ?>/assets/images/sofie-3.jpg" class="hero__photo" data-index="2" alt="">
+        <div class="hero__overlay"></div>
     </div>
 
-    <script>
-        // Auto-format guest code input
-        const codeInput = document.querySelector('.code-input');
-        if (codeInput) {
-            codeInput.addEventListener('input', function(e) {
-                // Only allow numbers
-                this.value = this.value.replace(/[^0-9]/g, '');
-            });
+    <!-- Thumbnail Navigation - Top Right -->
+    <nav class="thumbnails">
+        <button class="thumbnail active" data-index="0">
+            <img src="<?= BASE_PATH ?>/assets/images/sofie-1.jpg" alt="">
+        </button>
+        <button class="thumbnail" data-index="1">
+            <img src="<?= BASE_PATH ?>/assets/images/sofie-2.jpg" alt="">
+        </button>
+        <button class="thumbnail" data-index="2">
+            <img src="<?= BASE_PATH ?>/assets/images/sofie-3.jpg" alt="">
+        </button>
+    </nav>
 
-            // Auto-submit when 6 digits entered
-            codeInput.addEventListener('keyup', function(e) {
-                if (this.value.length === 6) {
-                    // Small delay for visual feedback
-                    setTimeout(() => {
-                        this.form.submit();
-                    }, 150);
+    <!-- Main Content - Bottom -->
+    <main class="content">
+        <?php if ($guestFromUrl): ?>
+            <p class="guest-greeting">Kære <?= escape($guestFromUrl['name']) ?></p>
+        <?php endif; ?>
+
+        <p class="event-type"><?= escape($event['name']) ?></p>
+        <h1 class="hero-name"><?= escape($event['confirmand_name']) ?></h1>
+
+        <?php if ($event['welcome_text']): ?>
+            <p class="welcome-text"><?= nl2br(escape($event['welcome_text'])) ?></p>
+        <?php endif; ?>
+
+        <div class="info-row">
+            <div class="info-block">
+                <span class="info-block__label">Dato</span>
+                <span class="info-block__value"><?= formatDanishDate($event['event_date']) ?></span>
+            </div>
+            <?php if ($event['event_time']): ?>
+            <div class="info-block">
+                <span class="info-block__label">Tid</span>
+                <span class="info-block__value">Kl. <?= date('H:i', strtotime($event['event_time'])) ?></span>
+            </div>
+            <?php endif; ?>
+            <?php if ($event['location']): ?>
+            <div class="info-block">
+                <span class="info-block__label">Sted</span>
+                <span class="info-block__value"><?= escape(explode("\n", $event['location'])[0]) ?></span>
+            </div>
+            <?php endif; ?>
+
+            <div class="code-card">
+                <?php if ($error === 'invalid_code'): ?>
+                    <div class="alert">Ugyldig kode - prøv igen</div>
+                <?php endif; ?>
+
+                <?php if ($guestFromUrl): ?>
+                    <?php if ($guestFromUrl['rsvp_status'] === 'pending'): ?>
+                        <a href="<?= BASE_PATH ?>/guest/rsvp.php" class="btn btn--primary btn--large">Svar på invitation</a>
+                    <?php else: ?>
+                        <a href="<?= BASE_PATH ?>/guest/index.php" class="btn btn--primary btn--large">Se invitation</a>
+                    <?php endif; ?>
+                <?php else: ?>
+                    <p class="code-card__title">Indtast din kode</p>
+                    <form method="POST" class="code-form">
+                        <input type="text"
+                               name="guest_code"
+                               class="code-input"
+                               placeholder="000000"
+                               maxlength="6"
+                               pattern="[0-9]{6}"
+                               inputmode="numeric"
+                               autocomplete="off"
+                               required>
+                        <button type="submit" class="btn btn--primary">OK</button>
+                    </form>
+                <?php endif; ?>
+            </div>
+
+            <!-- Diskret admin login -->
+            <a href="<?= BASE_PATH ?>/admin/login.php" class="admin-link">⚙️</a>
+        </div>
+    </main>
+
+    <style>
+    .admin-link {
+        position: fixed;
+        bottom: 1rem;
+        right: 1rem;
+        width: 36px;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255,255,255,0.1);
+        border-radius: 50%;
+        text-decoration: none;
+        font-size: 1rem;
+        opacity: 0.3;
+        transition: opacity 0.3s;
+    }
+    .admin-link:hover {
+        opacity: 1;
+        background: rgba(255,255,255,0.2);
+    }
+    </style>
+
+    <script>
+        // Photo switching
+        const photos = document.querySelectorAll('.hero__photo');
+        const thumbs = document.querySelectorAll('.thumbnail');
+        let current = 0;
+
+        function showPhoto(index) {
+            photos.forEach((p, i) => p.classList.toggle('active', i === index));
+            thumbs.forEach((t, i) => t.classList.toggle('active', i === index));
+            current = index;
+        }
+
+        thumbs.forEach(thumb => {
+            thumb.addEventListener('click', () => {
+                showPhoto(parseInt(thumb.dataset.index));
+            });
+        });
+
+        // Auto-rotate
+        setInterval(() => {
+            showPhoto((current + 1) % photos.length);
+        }, 6000);
+
+        // Code auto-submit
+        const input = document.querySelector('.code-input');
+        if (input) {
+            let done = false;
+            input.addEventListener('input', function() {
+                this.value = this.value.replace(/\D/g, '');
+                if (this.value.length === 6 && !done) {
+                    done = true;
+                    this.style.background = 'rgba(139, 168, 136, 0.3)';
+                    setTimeout(() => this.form.submit(), 400);
                 }
             });
-
-            // Focus code input on page load
-            setTimeout(() => {
-                codeInput.focus();
-            }, 800);
+            setTimeout(() => input.focus(), 1500);
         }
     </script>
     <?php endif; ?>
