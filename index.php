@@ -1,67 +1,19 @@
 <?php
 /**
- * Event Platform - Landing Page
- * Immersive Portrait Design - Photo IS the page
- * Cache bust: 20260118-1756
+ * Sales Landing Page / Root Router
+ *
+ * - If accessing from /sofie/, the original event pages handle it
+ * - Root (/) shows the sales landing page
  */
-
 require_once __DIR__ . '/config/database.php';
 require_once __DIR__ . '/includes/functions.php';
-require_once __DIR__ . '/includes/auth.php';
 
-$db = getDB();
-$stmt = $db->query("SELECT * FROM events ORDER BY id LIMIT 1");
-$event = $stmt->fetch();
-
-if (!$event) {
-    $showSetup = true;
-} else {
-    $showSetup = false;
-    $error = $_GET['error'] ?? null;
-}
-
-// Auto-login if valid code in URL (but stay on landing page)
-$guestFromUrl = null;
-if (!$showSetup && isset($_GET['kode'])) {
-    $code = preg_replace('/[^0-9]/', '', $_GET['kode']);
-    if (strlen($code) === 6) {
-        $stmt = $db->prepare("SELECT * FROM guests WHERE unique_code = ? AND event_id = ?");
-        $stmt->execute([$code, $event['id']]);
-        $guestFromUrl = $stmt->fetch();
-
-        // Log in but stay on invitation page
-        if ($guestFromUrl) {
-            loginGuest($guestFromUrl['id'], $event['id']);
-        }
-    }
-}
-
-if (!$showSetup && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['guest_code'])) {
-    $code = preg_replace('/[^0-9]/', '', $_POST['guest_code']);
-    if (strlen($code) === 6) {
-        $stmt = $db->prepare("SELECT * FROM guests WHERE unique_code = ? AND event_id = ?");
-        $stmt->execute([$code, $event['id']]);
-        $guest = $stmt->fetch();
-        if ($guest) {
-            loginGuest($guest['id'], $event['id']);
-            // If already RSVP'd, go to home page. Otherwise go to RSVP form
-            if ($guest['rsvp_status'] !== 'pending') {
-                redirect(BASE_PATH . '/guest/index.php');
-            } else {
-                redirect(BASE_PATH . '/guest/rsvp.php');
-            }
-        } else {
-            $error = 'invalid_code';
-        }
-    } else {
-        $error = 'invalid_code';
-    }
-}
-
-function formatDanishDate($date): string {
-    $months = [1=>'januar',2=>'februar',3=>'marts',4=>'april',5=>'maj',6=>'juni',7=>'juli',8=>'august',9=>'september',10=>'oktober',11=>'november',12=>'december'];
-    $t = strtotime($date);
-    return date('j', $t) . '. ' . $months[(int)date('n', $t)] . ' ' . date('Y', $t);
+// Check if this is being accessed from a legacy path
+// If so, let the existing system handle it
+$requestUri = $_SERVER['REQUEST_URI'] ?? '';
+if (strpos($requestUri, '/sofie') === 0) {
+    // Legacy path - let the original code in /sofie/ handle it
+    // This file should not be reached for /sofie/ paths
 }
 ?>
 <!DOCTYPE html>
@@ -69,616 +21,458 @@ function formatDanishDate($date): string {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= $showSetup ? 'Event Platform' : escape($event['confirmand_name']) . 's ' . escape($event['name']) ?></title>
-
+    <title>EventPlatform - Planlæg dit arrangement nemt og hurtigt</title>
+    <meta name="description" content="EventPlatform gør det nemt at planlægge konfirmationer, bryllupper, fødselsdage og andre arrangementer. Gæstehåndtering, ønskeliste, menu og meget mere.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Manrope:wght@300;400;500;600&display=swap" rel="stylesheet">
-
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        *, *::before, *::after {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         :root {
-            --blush: #D4A5A5;
-            --blush-dark: #B88A8A;
-            --blush-light: #E8CECE;
-            --cream: #FFF9F7;
-            --ink: #2A2222;
-            --white: #FFFFFF;
-        }
-
-        html, body {
-            height: 100%;
-        }
-
-        @media (min-width: 769px) {
-            html, body {
-                overflow: hidden;
-            }
+            --primary: #667eea;
+            --secondary: #764ba2;
+            --text: #1f2937;
+            --gray-500: #6b7280;
+            --gray-600: #4b5563;
         }
 
         body {
-            font-family: 'Manrope', sans-serif;
-            background: var(--ink);
-            color: var(--white);
-        }
-
-        /* ===== FULL SCREEN PHOTO BACKGROUND ===== */
-        .hero {
-            position: fixed;
-            inset: 0;
-            z-index: 1;
-        }
-
-        .hero__photo {
-            position: absolute;
-            inset: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            object-position: center top;
-            opacity: 0;
-            transform: scale(1.1);
-            transition: opacity 1.5s ease, transform 8s ease-out;
-        }
-
-        /* Billede 3 - juster position op */
-        .hero__photo[data-index="2"] {
-            object-position: center 20%;
-        }
-
-        .hero__photo.active {
-            opacity: 1;
-            transform: scale(1);
-        }
-
-        /* Color overlay matching the blush palette */
-        .hero__overlay {
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(
-                to bottom,
-                rgba(212, 165, 165, 0.15) 0%,
-                rgba(42, 34, 34, 0.3) 60%,
-                rgba(42, 34, 34, 0.85) 100%
-            );
-            z-index: 2;
-        }
-
-        /* ===== FLOATING CONTENT ===== */
-        .content {
-            position: relative;
-            z-index: 10;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-end;
-            padding: 0 6vw 8vh;
-        }
-
-        @media (max-width: 768px) {
-            .content {
-                padding: 15vh 5vw 4vh;
-                justify-content: flex-start;
-                overflow-y: auto;
-            }
-
-            .event-type {
-                font-size: 1.3rem !important;
-                margin-bottom: 0.25rem;
-            }
-
-            .hero-name {
-                font-size: clamp(3rem, 15vw, 5rem) !important;
-                margin-bottom: 1rem;
-            }
-
-            .welcome-text {
-                font-size: 0.95rem !important;
-                margin-bottom: 1rem;
-            }
-
-            .info-row {
-                gap: 1rem !important;
-            }
-
-            .info-block__value {
-                font-size: 1rem;
-            }
-
-            .code-card {
-                padding: 1rem 1.25rem;
-            }
-        }
-
-        /* ===== EVENT TYPE - Above name ===== */
-        .event-type {
-            font-family: 'Playfair Display', serif;
-            font-size: clamp(1.8rem, 5vw, 3.5rem);
-            font-style: italic;
-            font-weight: 400;
-            color: var(--blush-light);
-            text-shadow: 0 2px 30px rgba(0,0,0,0.3);
-            margin-bottom: 0.5rem;
-            opacity: 0;
-            animation: fadeUp 1s ease 0.3s forwards;
-        }
-
-        /* ===== WELCOME TEXT ===== */
-        .welcome-text {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.1rem;
-            font-style: italic;
-            color: var(--blush-light);
-            text-shadow: 0 2px 20px rgba(0,0,0,0.3);
-            max-width: 500px;
+            font-family: 'Inter', -apple-system, sans-serif;
+            color: var(--text);
             line-height: 1.6;
-            margin-bottom: 1.5rem;
-            opacity: 0;
-            animation: fadeUp 1s ease 1.1s forwards;
         }
 
-        /* ===== THE NAME - Huge, bottom-aligned ===== */
-        .hero-name {
-            font-family: 'Playfair Display', serif;
-            font-size: clamp(5rem, 20vw, 18rem);
-            font-weight: 400;
-            line-height: 0.8;
-            letter-spacing: -0.02em;
-            color: var(--white);
-            text-shadow: 0 4px 60px rgba(0,0,0,0.4);
-            margin-bottom: 2rem;
-            opacity: 0;
-            transform: translateY(80px);
-            animation: heroReveal 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.5s forwards;
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
         }
 
-        @keyframes heroReveal {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        .header {
+            padding: 20px 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            z-index: 100;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
         }
 
-        /* ===== EVENT INFO ROW ===== */
-        .info-row {
+        .header .container {
             display: flex;
-            align-items: flex-end;
-            gap: 4rem;
-            flex-wrap: wrap;
-            opacity: 0;
-            animation: fadeUp 1s ease 1s forwards;
+            align-items: center;
+            justify-content: space-between;
         }
 
-        @media (max-width: 768px) {
-            .info-row {
-                gap: 2rem;
-                flex-direction: column;
-                align-items: flex-start;
-            }
+        .logo {
+            font-size: 24px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-decoration: none;
         }
 
-        .info-block {
+        .nav-links {
             display: flex;
-            flex-direction: column;
-            gap: 0.3rem;
+            align-items: center;
+            gap: 32px;
         }
 
-        .info-block__label {
-            font-size: 0.65rem;
-            font-weight: 600;
-            letter-spacing: 0.2em;
-            text-transform: uppercase;
-            color: var(--blush-light);
+        .nav-links a {
+            color: var(--gray-600);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 15px;
         }
 
-        .info-block__value {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.2rem;
-            font-style: italic;
-            color: var(--white);
-        }
-
-        /* ===== CODE ENTRY CARD ===== */
-        .code-card {
-            background: rgba(255, 255, 255, 0.12);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 16px;
-            padding: 1.5rem 2rem;
-            max-width: 360px;
-            opacity: 0;
-            animation: fadeUp 1s ease 1.2s forwards;
-        }
-
-        .code-card__title {
-            font-size: 0.7rem;
-            font-weight: 600;
-            letter-spacing: 0.15em;
-            text-transform: uppercase;
-            color: var(--blush-light);
-            margin-bottom: 1rem;
-        }
-
-        .code-form {
-            display: flex;
-            gap: 0.75rem;
-        }
-
-        .code-input {
-            flex: 1;
-            padding: 1rem 1.2rem;
-            font-family: 'Playfair Display', serif;
-            font-size: 1.3rem;
-            letter-spacing: 0.3em;
-            text-align: center;
-            color: var(--white);
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 8px;
-            outline: none;
-            transition: all 0.3s ease;
-        }
-
-        .code-input:focus {
-            background: rgba(255, 255, 255, 0.15);
-            border-color: var(--blush);
-        }
-
-        .code-input::placeholder {
-            color: rgba(255, 255, 255, 0.3);
-        }
+        .nav-links a:hover { color: var(--primary); }
 
         .btn {
-            padding: 1rem 1.8rem;
-            font-family: 'Manrope', sans-serif;
-            font-size: 0.75rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            font-size: 15px;
             font-weight: 600;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            text-decoration: none;
             border: none;
-            border-radius: 8px;
+            border-radius: 10px;
             cursor: pointer;
-            transition: all 0.3s ease;
+            text-decoration: none;
+            transition: all 0.2s;
         }
 
-        .btn--primary {
-            background: var(--blush);
-            color: var(--ink);
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
         }
 
-        .btn--primary:hover {
-            background: var(--blush-light);
+        .btn-primary:hover {
             transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
         }
 
-        .btn--large {
-            padding: 1.2rem 2.5rem;
+        .btn-outline {
+            background: white;
+            color: var(--text);
+            border: 2px solid #e5e7eb;
         }
 
-        /* Alert */
-        .alert {
-            background: rgba(212, 165, 165, 0.2);
-            border-left: 3px solid var(--blush);
-            color: var(--white);
-            padding: 0.8rem 1rem;
-            margin-bottom: 1rem;
-            font-size: 0.85rem;
-            border-radius: 0 8px 8px 0;
+        .hero {
+            padding: 160px 0 100px;
+            text-align: center;
+            background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
         }
 
-        /* Guest Greeting */
-        .guest-greeting {
+        .hero-badge {
+            display: inline-block;
+            padding: 8px 16px;
+            background: rgba(102, 126, 234, 0.1);
+            color: var(--primary);
+            border-radius: 50px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 24px;
+        }
+
+        .hero h1 {
             font-family: 'Playfair Display', serif;
-            font-size: 1.4rem;
-            font-style: italic;
-            color: var(--blush-light);
-            margin-bottom: 0.5rem;
-            opacity: 0;
-            animation: fadeUp 1s ease 0.8s forwards;
+            font-size: 56px;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 24px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
-        /* ===== THUMBNAIL NAVIGATION - Top Right ===== */
-        .thumbnails {
-            position: fixed;
-            top: 2rem;
-            right: 2rem;
-            z-index: 20;
+        .hero p {
+            font-size: 20px;
+            color: var(--gray-500);
+            max-width: 600px;
+            margin: 0 auto 40px;
+        }
+
+        .hero-buttons {
             display: flex;
-            gap: 0.75rem;
-            opacity: 0;
-            animation: fadeIn 1s ease 1.5s forwards;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
         }
 
-        @media (max-width: 768px) {
-            .thumbnails {
-                top: 1rem;
-                right: 1rem;
-                gap: 0.5rem;
-            }
+        .hero-buttons .btn { padding: 16px 32px; font-size: 16px; }
+
+        .features { padding: 100px 0; }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
         }
 
-        .thumbnail {
-            width: 70px;
-            height: 90px;
-            border-radius: 8px;
-            overflow: hidden;
-            cursor: pointer;
-            border: 2px solid transparent;
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-            opacity: 0.6;
+        .section-header h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 40px;
+            font-weight: 700;
+            margin-bottom: 16px;
         }
 
-        @media (max-width: 768px) {
-            .thumbnail {
-                width: 50px;
-                height: 65px;
-            }
+        .section-header p { font-size: 18px; color: var(--gray-500); }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 32px;
         }
 
-        .thumbnail:hover {
-            opacity: 0.9;
+        .feature-card {
+            padding: 32px;
+            background: white;
+            border-radius: 20px;
+            border: 1px solid #e5e7eb;
+            transition: all 0.3s;
+        }
+
+        .feature-card:hover {
             transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.08);
         }
 
-        .thumbnail.active {
-            border-color: var(--blush);
-            opacity: 1;
+        .feature-icon {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .feature-icon svg { width: 28px; height: 28px; color: white; }
+        .feature-card h3 { font-size: 20px; font-weight: 700; margin-bottom: 12px; }
+        .feature-card p { color: var(--gray-500); font-size: 15px; }
+
+        .pricing { padding: 100px 0; background: #f8fafc; }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+        }
+
+        .pricing-card {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            border: 2px solid #e5e7eb;
+            position: relative;
+        }
+
+        .pricing-card.popular {
+            border-color: var(--primary);
             transform: scale(1.05);
         }
 
-        .thumbnail img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+        .popular-badge {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--primary);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 50px;
+            font-size: 12px;
+            font-weight: 700;
         }
 
-        /* ===== EVENT LABEL - Top Left ===== */
-        .event-badge {
-            position: fixed;
-            top: 2rem;
-            left: 2rem;
-            z-index: 20;
+        .pricing-card h3 { font-size: 22px; font-weight: 700; margin-bottom: 8px; }
+        .pricing-price { font-size: 40px; font-weight: 800; margin-bottom: 4px; }
+        .pricing-price span { font-size: 16px; font-weight: 500; color: var(--gray-500); }
+        .pricing-desc { color: var(--gray-500); font-size: 14px; margin-bottom: 24px; }
+        .pricing-features { list-style: none; margin-bottom: 24px; }
+
+        .pricing-features li {
             display: flex;
             align-items: center;
-            gap: 0.75rem;
-            opacity: 0;
-            animation: fadeIn 1s ease 1.3s forwards;
+            gap: 10px;
+            padding: 8px 0;
+            font-size: 14px;
+            color: var(--gray-600);
+        }
+
+        .pricing-features li svg { width: 18px; height: 18px; color: #22c55e; }
+        .pricing-card .btn { width: 100%; justify-content: center; }
+
+        .cta { padding: 100px 0; text-align: center; }
+
+        .cta-box {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 32px;
+            padding: 80px 40px;
+            color: white;
+        }
+
+        .cta-box h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 40px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .cta-box p { font-size: 18px; opacity: 0.9; margin-bottom: 32px; }
+        .cta-box .btn { background: white; color: var(--primary); }
+
+        .footer { padding: 60px 0; background: var(--text); color: white; }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-logo { font-size: 20px; font-weight: 800; }
+        .footer-links { display: flex; gap: 32px; }
+        .footer-links a { color: rgba(255,255,255,0.7); text-decoration: none; font-size: 14px; }
+        .footer-links a:hover { color: white; }
+
+        @media (max-width: 1024px) {
+            .features-grid { grid-template-columns: repeat(2, 1fr); }
+            .pricing-grid { grid-template-columns: repeat(2, 1fr); }
+            .pricing-card.popular { transform: none; }
         }
 
         @media (max-width: 768px) {
-            .event-badge {
-                top: 1rem;
-                left: 1rem;
-            }
-        }
-
-        .event-badge__icon {
-            width: 32px;
-            height: 32px;
-            border: 1px solid rgba(255,255,255,0.3);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.9rem;
-        }
-
-        .event-badge__text {
-            font-size: 0.7rem;
-            font-weight: 500;
-            letter-spacing: 0.15em;
-            text-transform: uppercase;
-            color: var(--white);
-        }
-
-        /* Animations */
-        @keyframes fadeUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        /* Setup Screen */
-        .setup-page {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 2rem;
-            background: var(--cream);
-            color: var(--ink);
-        }
-
-        .setup-card {
-            text-align: center;
-            max-width: 400px;
-        }
-
-        .setup-card h1 {
-            font-family: 'Playfair Display', serif;
-            font-size: 2rem;
-            margin-bottom: 1rem;
-        }
-
-        .setup-card p {
-            color: #666;
-            margin-bottom: 2rem;
-        }
-
-        .setup-card .btn--primary {
-            color: var(--white);
-            background: var(--ink);
+            .nav-links { display: none; }
+            .hero h1 { font-size: 36px; }
+            .hero p { font-size: 18px; }
+            .features-grid { grid-template-columns: 1fr; }
+            .pricing-grid { grid-template-columns: 1fr; }
+            .footer-content { flex-direction: column; gap: 24px; text-align: center; }
         }
     </style>
 </head>
 <body>
-    <?php if ($showSetup): ?>
-    <div class="setup-page">
-        <div class="setup-card">
-            <h1>Event Platform</h1>
-            <p>Der er endnu ikke oprettet et event.</p>
-            <a href="<?= BASE_PATH ?>/admin/login.php" class="btn btn--primary">Gå til admin</a>
+    <header class="header">
+        <div class="container">
+            <a href="/" class="logo">EventPlatform</a>
+            <nav class="nav-links">
+                <a href="#features">Funktioner</a>
+                <a href="#pricing">Priser</a>
+                <a href="/app/auth/login.php">Log ind</a>
+                <a href="/app/auth/register.php" class="btn btn-primary">Kom i gang</a>
+            </nav>
         </div>
-    </div>
+    </header>
 
-    <?php else: ?>
-    <!-- FULL SCREEN HERO PHOTO -->
-    <div class="hero">
-        <img src="<?= BASE_PATH ?>/assets/images/sofie-1.jpg" class="hero__photo active" data-index="0" alt="">
-        <img src="<?= BASE_PATH ?>/assets/images/sofie-2.jpg" class="hero__photo" data-index="1" alt="">
-        <img src="<?= BASE_PATH ?>/assets/images/sofie-3.jpg" class="hero__photo" data-index="2" alt="">
-        <div class="hero__overlay"></div>
-    </div>
-
-    <!-- Thumbnail Navigation - Top Right -->
-    <nav class="thumbnails">
-        <button class="thumbnail active" data-index="0">
-            <img src="<?= BASE_PATH ?>/assets/images/sofie-1.jpg" alt="">
-        </button>
-        <button class="thumbnail" data-index="1">
-            <img src="<?= BASE_PATH ?>/assets/images/sofie-2.jpg" alt="">
-        </button>
-        <button class="thumbnail" data-index="2">
-            <img src="<?= BASE_PATH ?>/assets/images/sofie-3.jpg" alt="">
-        </button>
-    </nav>
-
-    <!-- Main Content - Bottom -->
-    <main class="content">
-        <?php if ($guestFromUrl): ?>
-            <p class="guest-greeting">Kære <?= escape($guestFromUrl['name']) ?></p>
-        <?php endif; ?>
-
-        <p class="event-type"><?= escape($event['name']) ?></p>
-        <h1 class="hero-name"><?= escape($event['confirmand_name']) ?></h1>
-
-        <?php if ($event['welcome_text']): ?>
-            <p class="welcome-text"><?= nl2br(escape($event['welcome_text'])) ?></p>
-        <?php endif; ?>
-
-        <div class="info-row">
-            <div class="info-block">
-                <span class="info-block__label">Dato</span>
-                <span class="info-block__value"><?= formatDanishDate($event['event_date']) ?></span>
+    <section class="hero">
+        <div class="container">
+            <span class="hero-badge">Planlæg dit arrangement nemt</span>
+            <h1>Det perfekte værktøj til dit næste arrangement</h1>
+            <p>EventPlatform gør det nemt at planlægge konfirmationer, bryllupper, fødselsdage og andre arrangementer. Alt på ét sted.</p>
+            <div class="hero-buttons">
+                <a href="/app/auth/register.php" class="btn btn-primary">Opret gratis konto</a>
+                <a href="#features" class="btn btn-outline">Se funktioner</a>
             </div>
-            <?php if ($event['event_time']): ?>
-            <div class="info-block">
-                <span class="info-block__label">Tid</span>
-                <span class="info-block__value">Kl. <?= date('H:i', strtotime($event['event_time'])) ?></span>
-            </div>
-            <?php endif; ?>
-            <?php if ($event['location']): ?>
-            <div class="info-block">
-                <span class="info-block__label">Sted</span>
-                <span class="info-block__value"><?= escape(explode("\n", $event['location'])[0]) ?></span>
-            </div>
-            <?php endif; ?>
-
-            <div class="code-card">
-                <?php if ($error === 'invalid_code'): ?>
-                    <div class="alert">Ugyldig kode - prøv igen</div>
-                <?php endif; ?>
-
-                <?php if ($guestFromUrl): ?>
-                    <?php if ($guestFromUrl['rsvp_status'] === 'pending'): ?>
-                        <a href="<?= BASE_PATH ?>/guest/rsvp.php" class="btn btn--primary btn--large">Svar på invitation</a>
-                    <?php else: ?>
-                        <a href="<?= BASE_PATH ?>/guest/index.php" class="btn btn--primary btn--large">Se invitation</a>
-                    <?php endif; ?>
-                <?php else: ?>
-                    <p class="code-card__title">Indtast din kode</p>
-                    <form method="POST" class="code-form">
-                        <input type="text"
-                               name="guest_code"
-                               class="code-input"
-                               placeholder="000000"
-                               maxlength="6"
-                               pattern="[0-9]{6}"
-                               inputmode="numeric"
-                               autocomplete="off"
-                               required>
-                        <button type="submit" class="btn btn--primary">OK</button>
-                    </form>
-                <?php endif; ?>
-            </div>
-
-            <!-- Diskret admin login -->
-            <a href="<?= BASE_PATH ?>/admin/login.php" class="admin-link">⚙️</a>
         </div>
-    </main>
+    </section>
 
-    <style>
-    .admin-link {
-        position: fixed;
-        bottom: 1rem;
-        right: 1rem;
-        width: 36px;
-        height: 36px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: rgba(255,255,255,0.1);
-        border-radius: 50%;
-        text-decoration: none;
-        font-size: 1rem;
-        opacity: 0.3;
-        transition: opacity 0.3s;
-    }
-    .admin-link:hover {
-        opacity: 1;
-        background: rgba(255,255,255,0.2);
-    }
-    </style>
+    <section class="features" id="features">
+        <div class="container">
+            <div class="section-header">
+                <h2>Alt hvad du behøver</h2>
+                <p>Kraftfulde værktøjer til at gøre planlægningen nem</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                    </div>
+                    <h3>Gæstehåndtering</h3>
+                    <p>Hold styr på alle dine gæster, send invitationer og følg RSVP-status i realtid.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"></path></svg>
+                    </div>
+                    <h3>Ønskeliste</h3>
+                    <p>Opret en ønskeliste så gæsterne kan reservere gaver og undgå dobbeltgaver.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    </div>
+                    <h3>Program & Menu</h3>
+                    <p>Del programmet og menuen med dine gæster så de ved hvad der skal ske.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                    </div>
+                    <h3>Fotogalleri</h3>
+                    <p>Lad gæsterne uploade billeder fra dagen til et fælles galleri.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+                    </div>
+                    <h3>Tjekliste</h3>
+                    <p>Hold styr på alle opgaver med en smart tjekliste. Glem aldrig noget.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"></path></svg>
+                    </div>
+                    <h3>Bordplan</h3>
+                    <p>Planlæg bordplanen visuelt og sørg for at alle sidder godt.</p>
+                </div>
+            </div>
+        </div>
+    </section>
 
-    <script>
-        // Photo switching
-        const photos = document.querySelectorAll('.hero__photo');
-        const thumbs = document.querySelectorAll('.thumbnail');
-        let current = 0;
+    <section class="pricing" id="pricing">
+        <div class="container">
+            <div class="section-header">
+                <h2>Enkle priser</h2>
+                <p>Vælg den plan der passer til dit arrangement</p>
+            </div>
+            <div class="pricing-grid">
+                <div class="pricing-card">
+                    <h3>Gratis</h3>
+                    <div class="pricing-price">0 kr <span>/md</span></div>
+                    <p class="pricing-desc">For små arrangementer</p>
+                    <ul class="pricing-features">
+                        <li><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Op til 30 gæster</li>
+                        <li><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> 1 arrangement</li>
+                        <li><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Gæstehåndtering</li>
+                        <li><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Ønskeliste & menu</li>
+                    </ul>
+                    <a href="/app/auth/register.php" class="btn btn-outline">Kom i gang</a>
+                </div>
+                <div class="pricing-card">
+                    <h3>Basis</h3>
+                    <div class="pricing-price">99 kr <span>/md</span></div>
+                    <p class="pricing-desc">For de fleste arrangementer</p>
+                    <ul class="pricing-features">
+                        <li><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Op til 100 gæster</li>
+                        <li><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> 3 arrangementer</li>
+                        <li><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Bordplan</li>
+                        <li><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Tjekliste</li>
+                    </ul>
+                    <a href="/app/auth/register.php" class="btn btn-outline">Vælg Basis</a>
+                </div>
+                <div class="pricing-card popular">
+                    <span class="popular-badge">Populær</span>
+                    <h3>Premium</h3>
+                    <div class="pricing-price">199 kr <span>/md</span></div>
+                    <p class="pricing-desc">For større arrangementer</p>
+                    <ul class="pricing-features">
+                        <li><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Op til 300 gæster</li>
+                        <li><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> 10 arrangementer</li>
+                        <li><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Budget-styring</li>
+                        <li><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Toastmaster</li>
+                    </ul>
+                    <a href="/app/auth/register.php" class="btn btn-primary">Vælg Premium</a>
+                </div>
+                <div class="pricing-card">
+                    <h3>Pro</h3>
+                    <div class="pricing-price">499 kr <span>/md</span></div>
+                    <p class="pricing-desc">For professionelle</p>
+                    <ul class="pricing-features">
+                        <li><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Op til 1000 gæster</li>
+                        <li><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Ubegrænsede arr.</li>
+                        <li><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Eget domæne</li>
+                        <li><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Prioriteret support</li>
+                    </ul>
+                    <a href="/app/auth/register.php" class="btn btn-outline">Vælg Pro</a>
+                </div>
+            </div>
+        </div>
+    </section>
 
-        function showPhoto(index) {
-            photos.forEach((p, i) => p.classList.toggle('active', i === index));
-            thumbs.forEach((t, i) => t.classList.toggle('active', i === index));
-            current = index;
-        }
+    <section class="cta">
+        <div class="container">
+            <div class="cta-box">
+                <h2>Klar til at komme i gang?</h2>
+                <p>Opret din gratis konto i dag og begynd at planlægge dit arrangement.</p>
+                <a href="/app/auth/register.php" class="btn">Opret gratis konto</a>
+            </div>
+        </div>
+    </section>
 
-        thumbs.forEach(thumb => {
-            thumb.addEventListener('click', () => {
-                showPhoto(parseInt(thumb.dataset.index));
-            });
-        });
-
-        // Auto-rotate
-        setInterval(() => {
-            showPhoto((current + 1) % photos.length);
-        }, 6000);
-
-        // Code auto-submit
-        const input = document.querySelector('.code-input');
-        if (input) {
-            let done = false;
-            input.addEventListener('input', function() {
-                this.value = this.value.replace(/\D/g, '');
-                if (this.value.length === 6 && !done) {
-                    done = true;
-                    this.style.background = 'rgba(139, 168, 136, 0.3)';
-                    setTimeout(() => this.form.submit(), 400);
-                }
-            });
-            setTimeout(() => input.focus(), 1500);
-        }
-    </script>
-    <?php endif; ?>
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">EventPlatform</div>
+                <div class="footer-links">
+                    <a href="#">Vilkår</a>
+                    <a href="#">Privatlivspolitik</a>
+                    <a href="#">Kontakt</a>
+                </div>
+            </div>
+        </div>
+    </footer>
 </body>
 </html>

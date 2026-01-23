@@ -1,1 +1,42 @@
 DirectoryIndex index.php index.html
+
+# Enable URL Rewriting
+RewriteEngine On
+
+# Set base path
+RewriteBase /
+
+# Protect sensitive directories
+RewriteRule ^config/ - [F,L]
+RewriteRule ^includes/ - [F,L]
+RewriteRule ^database/ - [F,L]
+
+# Allow existing files and directories
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# Guest event pages: /e/{slug}/ -> /e/index.php?slug={slug}
+RewriteRule ^e/([a-zA-Z0-9_-]+)/?$ /e/index.php?slug=$1 [QSA,L]
+RewriteRule ^e/([a-zA-Z0-9_-]+)/([a-zA-Z0-9_-]+)/?$ /e/index.php?slug=$1&page=$2 [QSA,L]
+
+# App routes (let PHP handle the routing directly)
+# Dashboard
+RewriteRule ^app/?$ /app/dashboard.php [L]
+
+# Security headers
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "SAMEORIGIN"
+    Header set X-XSS-Protection "1; mode=block"
+</IfModule>
+
+# Prevent directory listing
+Options -Indexes
+
+# PHP settings (if allowed)
+<IfModule mod_php.c>
+    php_flag display_errors off
+    php_value upload_max_filesize 20M
+    php_value post_max_size 20M
+</IfModule>
