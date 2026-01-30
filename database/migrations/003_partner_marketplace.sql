@@ -2,7 +2,7 @@
 -- Creates tables for partner/vendor marketplace functionality
 
 -- Add is_platform_admin column to accounts
-ALTER TABLE accounts ADD COLUMN IF NOT EXISTS is_platform_admin TINYINT(1) DEFAULT 0;
+ALTER TABLE accounts ADD COLUMN is_platform_admin TINYINT(1) DEFAULT 0;
 
 -- Partner categories
 CREATE TABLE IF NOT EXISTS partner_categories (
@@ -139,8 +139,11 @@ CREATE TABLE IF NOT EXISTS platform_settings (
 -- Insert default settings
 INSERT INTO platform_settings (setting_key, setting_value, description) VALUES
 ('platform_name', 'EventPlatform', 'Platform display name'),
-('support_email', 'support@example.com', 'Support contact email'),
+('support_email', 'mail@hededam.dk', 'Support contact email'),
 ('partner_approval_required', '1', 'Require admin approval for new partners'),
 ('commission_percentage', '10', 'Platform commission percentage'),
 ('trial_days', '14', 'Number of trial days for new accounts')
 ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value);
+
+-- Set platform admin
+UPDATE accounts SET is_platform_admin = 1 WHERE email = 'mail@hededam.dk';

@@ -5,7 +5,7 @@
  * Handles authentication for the SaaS admin dashboard
  */
 
-require_once __DIR__ . '/../config/database.php';
+require_once __DIR__ . '/../config/saas.php';
 require_once __DIR__ . '/functions.php';
 
 // Start session with extended lifetime
@@ -117,53 +117,73 @@ function logoutPlatformAdmin(): void {
 function getPlatformStats(): array {
     $db = getDB();
 
-    $stats = [];
+    $stats = [
+        'total_accounts' => 0,
+        'active_accounts' => 0,
+        'new_accounts_month' => 0,
+        'total_events' => 0,
+        'active_subscriptions' => 0,
+        'mrr' => 0,
+        'revenue_month' => 0,
+        'pending_partners' => 0,
+        'approved_partners' => 0,
+    ];
 
-    // Total accounts
-    $stmt = $db->query("SELECT COUNT(*) FROM accounts WHERE is_platform_admin = 0");
-    $stats['total_accounts'] = $stmt->fetchColumn();
+    try {
+        // Total accounts
+        $stmt = $db->query("SELECT COUNT(*) FROM accounts WHERE is_platform_admin = 0");
+        $stats['total_accounts'] = $stmt->fetchColumn();
 
-    // Active accounts (logged in within 30 days)
-    $stmt = $db->query("SELECT COUNT(*) FROM accounts WHERE is_platform_admin = 0 AND last_login_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)");
-    $stats['active_accounts'] = $stmt->fetchColumn();
+        // Active accounts (logged in within 30 days)
+        $stmt = $db->query("SELECT COUNT(*) FROM accounts WHERE is_platform_admin = 0 AND last_login_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)");
+        $stats['active_accounts'] = $stmt->fetchColumn();
 
-    // New accounts this month
-    $stmt = $db->query("SELECT COUNT(*) FROM accounts WHERE is_platform_admin = 0 AND created_at >= DATE_FORMAT(NOW(), '%Y-%m-01')");
-    $stats['new_accounts_month'] = $stmt->fetchColumn();
+        // New accounts this month
+        $stmt = $db->query("SELECT COUNT(*) FROM accounts WHERE is_platform_admin = 0 AND created_at >= DATE_FORMAT(NOW(), '%Y-%m-01')");
+        $stats['new_accounts_month'] = $stmt->fetchColumn();
+    } catch (Exception $e) {}
 
-    // Total events
-    $stmt = $db->query("SELECT COUNT(*) FROM events");
-    $stats['total_events'] = $stmt->fetchColumn();
+    try {
+        // Total events
+        $stmt = $db->query("SELECT COUNT(*) FROM events");
+        $stats['total_events'] = $stmt->fetchColumn();
+    } catch (Exception $e) {}
 
-    // Active subscriptions
-    $stmt = $db->query("SELECT COUNT(*) FROM subscriptions WHERE status = 'active'");
-    $stats['active_subscriptions'] = $stmt->fetchColumn();
+    try {
+        // Active subscriptions
+        $stmt = $db->query("SELECT COUNT(*) FROM subscriptions WHERE status = 'active'");
+        $stats['active_subscriptions'] = $stmt->fetchColumn();
 
-    // MRR (Monthly Recurring Revenue)
-    $stmt = $db->query("
-        SELECT COALESCE(SUM(p.price_monthly), 0) as mrr
-        FROM subscriptions s
-        JOIN plans p ON s.plan_id = p.id
-        WHERE s.status = 'active'
-    ");
-    $stats['mrr'] = $stmt->fetchColumn();
+        // MRR (Monthly Recurring Revenue)
+        $stmt = $db->query("
+            SELECT COALESCE(SUM(p.price_monthly), 0) as mrr
+            FROM subscriptions s
+            JOIN plans p ON s.plan_id = p.id
+            WHERE s.status = 'active'
+        ");
+        $stats['mrr'] = $stmt->fetchColumn();
+    } catch (Exception $e) {}
 
-    // Total revenue this month
-    $stmt = $db->query("
-        SELECT COALESCE(SUM(amount), 0)
-        FROM payment_history
-        WHERE status = 'succeeded'
-        AND created_at >= DATE_FORMAT(NOW(), '%Y-%m-01')
-    ");
-    $stats['revenue_month'] = $stmt->fetchColumn();
+    try {
+        // Total revenue this month
+        $stmt = $db->query("
+            SELECT COALESCE(SUM(amount), 0)
+            FROM payment_history
+            WHERE status = 'succeeded'
+            AND created_at >= DATE_FORMAT(NOW(), '%Y-%m-01')
+        ");
+        $stats['revenue_month'] = $stmt->fetchColumn();
+    } catch (Exception $e) {}
 
-    // Pending partners
-    $stmt = $db->query("SELECT COUNT(*) FROM partners WHERE status = 'pending'");
-    $stats['pending_partners'] = $stmt->fetchColumn();
+    try {
+        // Pending partners
+        $stmt = $db->query("SELECT COUNT(*) FROM partners WHERE status = 'pending'");
+        $stats['pending_partners'] = $stmt->fetchColumn();
 
-    // Approved partners
-    $stmt = $db->query("SELECT COUNT(*) FROM partners WHERE status = 'approved'");
-    $stats['approved_partners'] = $stmt->fetchColumn();
+        // Approved partners
+        $stmt = $db->query("SELECT COUNT(*) FROM partners WHERE status = 'approved'");
+        $stats['approved_partners'] = $stmt->fetchColumn();
+    } catch (Exception $e) {}
 
     return $stats;
 }
@@ -172,11 +192,15 @@ function getPlatformStats(): array {
  * Get platform setting
  */
 function getPlatformSetting(string $key, $default = null) {
-    $db = getDB();
-    $stmt = $db->prepare("SELECT setting_value FROM platform_settings WHERE setting_key = ?");
-    $stmt->execute([$key]);
-    $value = $stmt->fetchColumn();
-    return $value !== false ? $value : $default;
+    try {
+        $db = getDB();
+        $stmt = $db->prepare("SELECT setting_value FROM platform_settings WHERE setting_key = ?");
+        $stmt->execute([$key]);
+        $value = $stmt->fetchColumn();
+        return $value !== false ? $value : $default;
+    } catch (Exception $e) {
+        return $default;
+    }
 }
 
 /**

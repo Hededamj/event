@@ -3,7 +3,7 @@
  * Partner Authentication Helpers
  */
 
-require_once __DIR__ . '/../config/database.php';
+require_once __DIR__ . '/../config/saas.php';
 require_once __DIR__ . '/functions.php';
 
 // Start session
