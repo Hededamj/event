@@ -56,13 +56,13 @@ if ($city) {
 
 $whereClause = implode(' AND ', $where);
 
-$orderBy = match($sort) {
+$orderByMap = [
     'price_asc' => 'p.price_from ASC',
     'price_desc' => 'p.price_from DESC',
     'popular' => 'p.view_count DESC',
-    'name' => 'p.company_name ASC',
-    default => 'p.approved_at DESC'
-};
+    'name' => 'p.company_name ASC'
+];
+$orderBy = isset($orderByMap[$sort]) ? $orderByMap[$sort] : 'p.approved_at DESC';
 
 // Pagination
 $page = max(1, (int)($_GET['page'] ?? 1));

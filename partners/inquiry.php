@@ -3,7 +3,7 @@
  * Partner Marketplace - Handle Inquiry Submission
  */
 
-require_once __DIR__ . '/../config/database.php';
+require_once __DIR__ . '/../config/saas.php';
 require_once __DIR__ . '/../includes/functions.php';
 require_once __DIR__ . '/../includes/partner-auth.php';
 

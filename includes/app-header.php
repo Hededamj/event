@@ -4,7 +4,7 @@
  * Include this at the top of all /app/ pages
  */
 
-require_once __DIR__ . '/../config/database.php';
+require_once __DIR__ . '/../config/saas.php';
 require_once __DIR__ . '/functions.php';
 require_once __DIR__ . '/auth-account.php';
 require_once __DIR__ . '/subscription.php';

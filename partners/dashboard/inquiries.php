@@ -183,19 +183,10 @@ $flash = getFlash();
             <?php else: ?>
                 <?php foreach ($inquiries as $inquiry): ?>
                     <?php
-                    $statusBadge = match($inquiry['status']) {
-                        'new' => 'badge-error',
-                        'read' => 'badge-warning',
-                        'replied' => 'badge-success',
-                        default => 'badge-info'
-                    };
-                    $statusText = match($inquiry['status']) {
-                        'new' => 'Ny',
-                        'read' => 'Læst',
-                        'replied' => 'Besvaret',
-                        'closed' => 'Lukket',
-                        default => $inquiry['status']
-                    };
+                    $inqBadgeMap = ['new' => 'badge-error', 'read' => 'badge-warning', 'replied' => 'badge-success'];
+                    $inqTextMap = ['new' => 'Ny', 'read' => 'Læst', 'replied' => 'Besvaret', 'closed' => 'Lukket'];
+                    $statusBadge = isset($inqBadgeMap[$inquiry['status']]) ? $inqBadgeMap[$inquiry['status']] : 'badge-info';
+                    $statusText = isset($inqTextMap[$inquiry['status']]) ? $inqTextMap[$inquiry['status']] : $inquiry['status'];
                     ?>
                     <div class="card">
                         <div class="inquiry-header <?= $inquiry['status'] === 'new' ? 'new' : '' ?>">

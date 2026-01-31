@@ -434,19 +434,10 @@ try {
                     <div class="stat-label">Status</div>
                     <div>
                         <?php
-                        $statusBadge = match($partner['status']) {
-                            'approved' => 'badge-success',
-                            'pending' => 'badge-warning',
-                            'rejected' => 'badge-error',
-                            default => 'badge-info'
-                        };
-                        $statusText = match($partner['status']) {
-                            'approved' => 'Godkendt',
-                            'pending' => 'Afventer',
-                            'rejected' => 'Afvist',
-                            'suspended' => 'Suspenderet',
-                            default => $partner['status']
-                        };
+                        $partnerBadgeMap = ['approved' => 'badge-success', 'pending' => 'badge-warning', 'rejected' => 'badge-error'];
+                        $partnerTextMap = ['approved' => 'Godkendt', 'pending' => 'Afventer', 'rejected' => 'Afvist', 'suspended' => 'Suspenderet'];
+                        $statusBadge = isset($partnerBadgeMap[$partner['status']]) ? $partnerBadgeMap[$partner['status']] : 'badge-info';
+                        $statusText = isset($partnerTextMap[$partner['status']]) ? $partnerTextMap[$partner['status']] : $partner['status'];
                         ?>
                         <span class="badge <?= $statusBadge ?>" style="font-size: 1rem; padding: 0.5rem 1rem;">
                             <?= $statusText ?>
@@ -485,19 +476,10 @@ try {
                                     <td><?= date('d/m/Y', strtotime($inquiry['created_at'])) ?></td>
                                     <td>
                                         <?php
-                                        $inquiryBadge = match($inquiry['status']) {
-                                            'new' => 'badge-error',
-                                            'read' => 'badge-warning',
-                                            'replied' => 'badge-success',
-                                            default => 'badge-info'
-                                        };
-                                        $inquiryText = match($inquiry['status']) {
-                                            'new' => 'Ny',
-                                            'read' => 'Læst',
-                                            'replied' => 'Besvaret',
-                                            'closed' => 'Lukket',
-                                            default => $inquiry['status']
-                                        };
+                                        $inqBadgeMap = ['new' => 'badge-error', 'read' => 'badge-warning', 'replied' => 'badge-success'];
+                                        $inqTextMap = ['new' => 'Ny', 'read' => 'Læst', 'replied' => 'Besvaret', 'closed' => 'Lukket'];
+                                        $inquiryBadge = isset($inqBadgeMap[$inquiry['status']]) ? $inqBadgeMap[$inquiry['status']] : 'badge-info';
+                                        $inquiryText = isset($inqTextMap[$inquiry['status']]) ? $inqTextMap[$inquiry['status']] : $inquiry['status'];
                                         ?>
                                         <span class="badge <?= $inquiryBadge ?>"><?= $inquiryText ?></span>
                                     </td>

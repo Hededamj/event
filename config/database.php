@@ -5,15 +5,21 @@
  * Update these settings to match your UnoEuro MySQL database
  */
 
-define('DB_HOST', 'mysql71.unoeuro.com');
-define('DB_NAME', 'hededam_dk_db');
-define('DB_USER', 'hededam_dk');
-define('DB_PASS', 'Plantagevej12');
-define('DB_CHARSET', 'utf8mb4');
+if (!defined('DB_HOST')) define('DB_HOST', 'mysql71.unoeuro.com');
+if (!defined('DB_NAME')) define('DB_NAME', 'hededam_dk_db_event');
+if (!defined('DB_USER')) define('DB_USER', 'hededam_dk');
+if (!defined('DB_PASS')) define('DB_PASS', 'Plantagevej12');
+if (!defined('DB_CHARSET')) define('DB_CHARSET', 'utf8mb4');
+
+/**
+ * Base URL path - change this if site is in a subdirectory
+ */
+if (!defined('BASE_PATH')) define('BASE_PATH', '/sofie');
 
 /**
  * Get PDO database connection (singleton pattern)
  */
+if (!function_exists('getDB')) {
 function getDB(): PDO {
     static $pdo = null;
 
@@ -39,4 +45,5 @@ function getDB(): PDO {
     }
 
     return $pdo;
+}
 }

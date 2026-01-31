@@ -2,7 +2,7 @@
 /**
  * Subscription Management Page
  */
-require_once __DIR__ . '/../../config/database.php';
+require_once __DIR__ . '/../../config/saas.php';
 require_once __DIR__ . '/../../includes/functions.php';
 require_once __DIR__ . '/../../includes/auth-account.php';
 require_once __DIR__ . '/../../includes/subscription.php';
@@ -17,12 +17,12 @@ $accountId = $account['id'];
 // Handle Stripe checkout return
 if (isset($_GET['success']) && $_GET['success'] == '1') {
     setFlash('success', 'Dit abonnement er nu aktivt! Tak for din tilmelding.');
-    redirect('/app/account/subscription.php');
+    redirect(BASE_PATH . '/app/account/subscription.php');
 }
 
 if (isset($_GET['cancelled']) && $_GET['cancelled'] == '1') {
     setFlash('info', 'Betalingen blev annulleret. Du kan prøve igen når som helst.');
-    redirect('/app/account/subscription.php');
+    redirect(BASE_PATH . '/app/account/subscription.php');
 }
 
 // Handle subscribe action
@@ -47,10 +47,10 @@ $pageTitle = 'Abonnement';
 require_once __DIR__ . '/../../includes/app-header.php';
 
 // Get all plans
-$allPlans = getAllPlans($db);
+$allPlans = getAllPlans();
 
 // Get current subscription details
-$subscription = getAccountSubscription($db, $accountId);
+$subscription = getAccountSubscription($accountId);
 $currentPlan = $subscription ?? null;
 $currentPlanSlug = $currentPlan['plan_slug'] ?? 'free';
 ?>
@@ -222,7 +222,11 @@ $currentPlanSlug = $currentPlan['plan_slug'] ?? 'free';
             <?php if ($isCurrentPlan): ?>
                 <button class="btn btn-secondary" disabled>Din nuværende plan</button>
             <?php elseif ($plan['price_monthly'] == 0): ?>
-                <button class="btn btn-secondary" disabled>Gratis plan</button>
+                <form method="POST" style="width: 100%;">
+                    <input type="hidden" name="action" value="subscribe">
+                    <input type="hidden" name="plan" value="<?= htmlspecialchars($plan['slug']) ?>">
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">Vælg gratis plan</button>
+                </form>
             <?php else: ?>
                 <form method="POST" style="width: 100%;">
                     <input type="hidden" name="action" value="subscribe">

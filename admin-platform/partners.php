@@ -254,20 +254,10 @@ while ($row = $stmt->fetch()) {
                                 </td>
                                 <td>
                                     <?php
-                                    $statusBadge = match($partner['status']) {
-                                        'approved' => 'badge-success',
-                                        'pending' => 'badge-warning',
-                                        'rejected' => 'badge-error',
-                                        'suspended' => 'badge-error',
-                                        default => 'badge-info'
-                                    };
-                                    $statusText = match($partner['status']) {
-                                        'approved' => 'Godkendt',
-                                        'pending' => 'Afventer',
-                                        'rejected' => 'Afvist',
-                                        'suspended' => 'Suspenderet',
-                                        default => $partner['status']
-                                    };
+                                    $partnerBadgeMap = ['approved' => 'badge-success', 'pending' => 'badge-warning', 'rejected' => 'badge-error', 'suspended' => 'badge-error'];
+                                    $partnerTextMap = ['approved' => 'Godkendt', 'pending' => 'Afventer', 'rejected' => 'Afvist', 'suspended' => 'Suspenderet'];
+                                    $statusBadge = isset($partnerBadgeMap[$partner['status']]) ? $partnerBadgeMap[$partner['status']] : 'badge-info';
+                                    $statusText = isset($partnerTextMap[$partner['status']]) ? $partnerTextMap[$partner['status']] : $partner['status'];
                                     ?>
                                     <span class="badge <?= $statusBadge ?>"><?= $statusText ?></span>
                                 </td>

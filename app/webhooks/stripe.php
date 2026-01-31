@@ -15,7 +15,7 @@
  * - invoice.payment_failed
  */
 
-require_once __DIR__ . '/../../config/database.php';
+require_once __DIR__ . '/../../config/saas.php';
 require_once __DIR__ . '/../../includes/stripe.php';
 
 // Get raw POST body

@@ -2,7 +2,7 @@
 /**
  * Account Billing & Payment History
  */
-require_once __DIR__ . '/../../config/database.php';
+require_once __DIR__ . '/../../config/saas.php';
 require_once __DIR__ . '/../../includes/functions.php';
 require_once __DIR__ . '/../../includes/auth-account.php';
 require_once __DIR__ . '/../../includes/subscription.php';

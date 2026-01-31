@@ -178,20 +178,10 @@ $maxRevenue = max(array_column($monthlyRevenue, 'revenue')) ?: 1;
                                 </td>
                                 <td>
                                     <?php
-                                    $statusBadge = match($payment['status']) {
-                                        'succeeded' => 'badge-success',
-                                        'pending' => 'badge-warning',
-                                        'failed' => 'badge-error',
-                                        'refunded' => 'badge-info',
-                                        default => 'badge-info'
-                                    };
-                                    $statusText = match($payment['status']) {
-                                        'succeeded' => 'Gennemført',
-                                        'pending' => 'Afventer',
-                                        'failed' => 'Fejlet',
-                                        'refunded' => 'Refunderet',
-                                        default => $payment['status']
-                                    };
+                                    $payBadgeMap = ['succeeded' => 'badge-success', 'pending' => 'badge-warning', 'failed' => 'badge-error', 'refunded' => 'badge-info'];
+                                    $payTextMap = ['succeeded' => 'Gennemført', 'pending' => 'Afventer', 'failed' => 'Fejlet', 'refunded' => 'Refunderet'];
+                                    $statusBadge = isset($payBadgeMap[$payment['status']]) ? $payBadgeMap[$payment['status']] : 'badge-info';
+                                    $statusText = isset($payTextMap[$payment['status']]) ? $payTextMap[$payment['status']] : $payment['status'];
                                     ?>
                                     <span class="badge <?= $statusBadge ?>"><?= $statusText ?></span>
                                 </td>

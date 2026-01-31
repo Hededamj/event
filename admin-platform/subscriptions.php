@@ -183,21 +183,10 @@ $planMRR = $stmt->fetchAll();
                                     </td>
                                     <td>
                                         <?php
-                                        $statusBadge = match($sub['status']) {
-                                            'active' => 'badge-success',
-                                            'cancelled' => 'badge-error',
-                                            'past_due' => 'badge-warning',
-                                            'trialing' => 'badge-info',
-                                            default => 'badge-info'
-                                        };
-                                        $statusText = match($sub['status']) {
-                                            'active' => 'Aktiv',
-                                            'cancelled' => 'Opsagt',
-                                            'past_due' => 'Forfaldent',
-                                            'trialing' => 'Prøveperiode',
-                                            'paused' => 'Pauseret',
-                                            default => $sub['status']
-                                        };
+                                        $subBadgeMap = ['active' => 'badge-success', 'cancelled' => 'badge-error', 'past_due' => 'badge-warning', 'trialing' => 'badge-info'];
+                                        $subTextMap = ['active' => 'Aktiv', 'cancelled' => 'Opsagt', 'past_due' => 'Forfaldent', 'trialing' => 'Prøveperiode', 'paused' => 'Pauseret'];
+                                        $statusBadge = isset($subBadgeMap[$sub['status']]) ? $subBadgeMap[$sub['status']] : 'badge-info';
+                                        $statusText = isset($subTextMap[$sub['status']]) ? $subTextMap[$sub['status']] : $sub['status'];
                                         ?>
                                         <span class="badge <?= $statusBadge ?>"><?= $statusText ?></span>
                                         <?php if ($sub['cancel_at_period_end']): ?>

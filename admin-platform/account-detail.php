@@ -229,21 +229,10 @@ $sessions = $stmt->fetchAll();
                         <div class="text-sm text-muted">Status</div>
                         <div class="font-medium">
                             <?php
-                            $statusBadge = match($subscription['status']) {
-                                'active' => 'badge-success',
-                                'cancelled' => 'badge-error',
-                                'past_due' => 'badge-warning',
-                                'trialing' => 'badge-info',
-                                default => 'badge-info'
-                            };
-                            $statusText = match($subscription['status']) {
-                                'active' => 'Aktiv',
-                                'cancelled' => 'Opsagt',
-                                'past_due' => 'Forfaldent',
-                                'trialing' => 'Prøveperiode',
-                                'paused' => 'Pauseret',
-                                default => $subscription['status']
-                            };
+                            $subBadgeMap = ['active' => 'badge-success', 'cancelled' => 'badge-error', 'past_due' => 'badge-warning', 'trialing' => 'badge-info'];
+                            $subTextMap = ['active' => 'Aktiv', 'cancelled' => 'Opsagt', 'past_due' => 'Forfaldent', 'trialing' => 'Prøveperiode', 'paused' => 'Pauseret'];
+                            $statusBadge = isset($subBadgeMap[$subscription['status']]) ? $subBadgeMap[$subscription['status']] : 'badge-info';
+                            $statusText = isset($subTextMap[$subscription['status']]) ? $subTextMap[$subscription['status']] : $subscription['status'];
                             ?>
                             <span class="badge <?= $statusBadge ?>"><?= $statusText ?></span>
                         </div>
@@ -312,15 +301,11 @@ $sessions = $stmt->fetchAll();
                                 <td><?= $event['guest_count'] ?></td>
                                 <td>
                                     <?php
-                                    $statusBadge = match($event['status'] ?? 'active') {
-                                        'active' => 'badge-success',
-                                        'draft' => 'badge-warning',
-                                        'completed' => 'badge-info',
-                                        'archived' => 'badge-error',
-                                        default => 'badge-info'
-                                    };
+                                    $eventBadgeMap = ['active' => 'badge-success', 'draft' => 'badge-warning', 'completed' => 'badge-info', 'archived' => 'badge-error'];
+                                    $evStatus = $event['status'] ?? 'active';
+                                    $statusBadge = isset($eventBadgeMap[$evStatus]) ? $eventBadgeMap[$evStatus] : 'badge-info';
                                     ?>
-                                    <span class="badge <?= $statusBadge ?>"><?= ucfirst($event['status'] ?? 'active') ?></span>
+                                    <span class="badge <?= $statusBadge ?>"><?= ucfirst($evStatus) ?></span>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
@@ -357,20 +342,10 @@ $sessions = $stmt->fetchAll();
                                 <td class="font-medium"><?= number_format($payment['amount'], 0, ',', '.') ?> <?= $payment['currency'] ?></td>
                                 <td>
                                     <?php
-                                    $statusBadge = match($payment['status']) {
-                                        'succeeded' => 'badge-success',
-                                        'pending' => 'badge-warning',
-                                        'failed' => 'badge-error',
-                                        'refunded' => 'badge-info',
-                                        default => 'badge-info'
-                                    };
-                                    $statusText = match($payment['status']) {
-                                        'succeeded' => 'Gennemført',
-                                        'pending' => 'Afventer',
-                                        'failed' => 'Fejlet',
-                                        'refunded' => 'Refunderet',
-                                        default => $payment['status']
-                                    };
+                                    $payBadgeMap = ['succeeded' => 'badge-success', 'pending' => 'badge-warning', 'failed' => 'badge-error', 'refunded' => 'badge-info'];
+                                    $payTextMap = ['succeeded' => 'Gennemført', 'pending' => 'Afventer', 'failed' => 'Fejlet', 'refunded' => 'Refunderet'];
+                                    $statusBadge = isset($payBadgeMap[$payment['status']]) ? $payBadgeMap[$payment['status']] : 'badge-info';
+                                    $statusText = isset($payTextMap[$payment['status']]) ? $payTextMap[$payment['status']] : $payment['status'];
                                     ?>
                                     <span class="badge <?= $statusBadge ?>"><?= $statusText ?></span>
                                 </td>

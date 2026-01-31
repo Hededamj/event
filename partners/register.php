@@ -3,7 +3,7 @@
  * Partner Registration
  */
 
-require_once __DIR__ . '/../config/database.php';
+require_once __DIR__ . '/../config/saas.php';
 require_once __DIR__ . '/../includes/functions.php';
 require_once __DIR__ . '/../includes/partner-auth.php';
 
@@ -115,7 +115,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             } catch (Exception $e) {
                 $db->rollBack();
-                $errors[] = 'Der opstod en fejl. Prøv igen.';
+                $errors[] = 'Fejl: ' . $e->getMessage();
             }
         }
     }

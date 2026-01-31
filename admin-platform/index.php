@@ -13,23 +13,28 @@ for ($i = 5; $i >= 0; $i--) {
     $month = date('Y-m', strtotime("-$i months"));
     $monthName = date('M', strtotime("-$i months"));
 
-    // New accounts
-    $stmt = $db->prepare("
-        SELECT COUNT(*) FROM accounts
-        WHERE is_platform_admin = 0
-        AND DATE_FORMAT(created_at, '%Y-%m') = ?
-    ");
-    $stmt->execute([$month]);
-    $newAccounts = $stmt->fetchColumn();
+    $newAccounts = 0;
+    $revenue = 0;
 
-    // Revenue
-    $stmt = $db->prepare("
-        SELECT COALESCE(SUM(amount), 0) FROM payment_history
-        WHERE status = 'succeeded'
-        AND DATE_FORMAT(created_at, '%Y-%m') = ?
-    ");
-    $stmt->execute([$month]);
-    $revenue = $stmt->fetchColumn();
+    try {
+        $stmt = $db->prepare("
+            SELECT COUNT(*) FROM accounts
+            WHERE is_platform_admin = 0
+            AND DATE_FORMAT(created_at, '%Y-%m') = ?
+        ");
+        $stmt->execute([$month]);
+        $newAccounts = $stmt->fetchColumn();
+    } catch (Exception $e) {}
+
+    try {
+        $stmt = $db->prepare("
+            SELECT COALESCE(SUM(amount), 0) FROM payment_history
+            WHERE status = 'succeeded'
+            AND DATE_FORMAT(created_at, '%Y-%m') = ?
+        ");
+        $stmt->execute([$month]);
+        $revenue = $stmt->fetchColumn();
+    } catch (Exception $e) {}
 
     $monthlyStats[] = [
         'month' => $monthName,
@@ -39,36 +44,45 @@ for ($i = 5; $i >= 0; $i--) {
 }
 
 // Get recent accounts
-$stmt = $db->query("
-    SELECT a.*, p.name as plan_name, s.status as subscription_status
-    FROM accounts a
-    LEFT JOIN subscriptions s ON a.id = s.account_id AND s.status = 'active'
-    LEFT JOIN plans p ON s.plan_id = p.id
-    WHERE a.is_platform_admin = 0
-    ORDER BY a.created_at DESC
-    LIMIT 5
-");
-$recentAccounts = $stmt->fetchAll();
+$recentAccounts = [];
+try {
+    $stmt = $db->query("
+        SELECT a.*, p.name as plan_name, s.status as subscription_status
+        FROM accounts a
+        LEFT JOIN subscriptions s ON a.id = s.account_id AND s.status = 'active'
+        LEFT JOIN plans p ON s.plan_id = p.id
+        WHERE a.is_platform_admin = 0
+        ORDER BY a.created_at DESC
+        LIMIT 5
+    ");
+    $recentAccounts = $stmt->fetchAll();
+} catch (Exception $e) {}
 
 // Get recent payments
-$stmt = $db->query("
-    SELECT ph.*, a.name as account_name, a.email as account_email
-    FROM payment_history ph
-    JOIN accounts a ON ph.account_id = a.id
-    ORDER BY ph.created_at DESC
-    LIMIT 5
-");
-$recentPayments = $stmt->fetchAll();
+$recentPayments = [];
+try {
+    $stmt = $db->query("
+        SELECT ph.*, a.name as account_name, a.email as account_email
+        FROM payment_history ph
+        JOIN accounts a ON ph.account_id = a.id
+        ORDER BY ph.created_at DESC
+        LIMIT 5
+    ");
+    $recentPayments = $stmt->fetchAll();
+} catch (Exception $e) {}
 
 // Plans breakdown
-$stmt = $db->query("
-    SELECT p.name, p.price_monthly, COUNT(s.id) as subscriber_count
-    FROM plans p
-    LEFT JOIN subscriptions s ON p.id = s.plan_id AND s.status = 'active'
-    GROUP BY p.id
-    ORDER BY p.sort_order
-");
-$plansBreakdown = $stmt->fetchAll();
+$plansBreakdown = [];
+try {
+    $stmt = $db->query("
+        SELECT p.name, p.price_monthly, COUNT(s.id) as subscriber_count
+        FROM plans p
+        LEFT JOIN subscriptions s ON p.id = s.plan_id AND s.status = 'active'
+        GROUP BY p.id
+        ORDER BY p.sort_order
+    ");
+    $plansBreakdown = $stmt->fetchAll();
+} catch (Exception $e) {}
 ?>
 
 <header class="platform-header">
@@ -222,20 +236,10 @@ $plansBreakdown = $stmt->fetchAll();
                                 <td class="font-medium"><?= number_format($payment['amount'], 0, ',', '.') ?> <?= $payment['currency'] ?></td>
                                 <td>
                                     <?php
-                                    $statusBadge = match($payment['status']) {
-                                        'succeeded' => 'badge-success',
-                                        'pending' => 'badge-warning',
-                                        'failed' => 'badge-error',
-                                        'refunded' => 'badge-info',
-                                        default => 'badge-info'
-                                    };
-                                    $statusText = match($payment['status']) {
-                                        'succeeded' => 'Gennemført',
-                                        'pending' => 'Afventer',
-                                        'failed' => 'Fejlet',
-                                        'refunded' => 'Refunderet',
-                                        default => $payment['status']
-                                    };
+                                    $badgeMap = ['succeeded' => 'badge-success', 'pending' => 'badge-warning', 'failed' => 'badge-error', 'refunded' => 'badge-info'];
+                                    $textMap = ['succeeded' => 'Gennemført', 'pending' => 'Afventer', 'failed' => 'Fejlet', 'refunded' => 'Refunderet'];
+                                    $statusBadge = isset($badgeMap[$payment['status']]) ? $badgeMap[$payment['status']] : 'badge-info';
+                                    $statusText = isset($textMap[$payment['status']]) ? $textMap[$payment['status']] : $payment['status'];
                                     ?>
                                     <span class="badge <?= $statusBadge ?>"><?= $statusText ?></span>
                                 </td>
