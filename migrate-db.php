@@ -13,9 +13,9 @@ if (($_GET['token'] ?? '') !== $authToken) {
     die('<!DOCTYPE html><html><head><title>Access Denied</title></head><body style="font-family:sans-serif;padding:40px;text-align:center;"><h1>Access Denied</h1><p>Invalid or missing token.</p></body></html>');
 }
 
-require_once __DIR__ . '/../config/database.php';
+require_once __DIR__ . '/config/database.php';
 
-$migrationsDir = __DIR__ . '/migrations';
+$migrationsDir = __DIR__ . '/database/migrations';
 $action = $_POST['action'] ?? $_GET['action'] ?? 'status';
 $messages = [];
 $errors = [];
