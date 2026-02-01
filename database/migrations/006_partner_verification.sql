@@ -40,11 +40,10 @@ CREATE TABLE IF NOT EXISTS partner_verification_documents (
 -- ============================================
 -- Add verification columns to partners table
 -- ============================================
-ALTER TABLE partners
-ADD COLUMN IF NOT EXISTS is_verified TINYINT(1) DEFAULT 0 COMMENT 'Has completed verification',
-ADD COLUMN IF NOT EXISTS verified_at TIMESTAMP NULL COMMENT 'When verification was completed',
-ADD COLUMN IF NOT EXISTS verification_level ENUM('none', 'basic', 'full') DEFAULT 'none' COMMENT 'Verification tier',
-ADD COLUMN IF NOT EXISTS cvr_number VARCHAR(20) DEFAULT NULL COMMENT 'Danish CVR number';
+ALTER TABLE partners ADD COLUMN is_verified TINYINT(1) DEFAULT 0 COMMENT 'Has completed verification';
+ALTER TABLE partners ADD COLUMN verified_at TIMESTAMP NULL COMMENT 'When verification was completed';
+ALTER TABLE partners ADD COLUMN verification_level ENUM('none', 'basic', 'full') DEFAULT 'none' COMMENT 'Verification tier';
+ALTER TABLE partners ADD COLUMN cvr_number VARCHAR(20) DEFAULT NULL COMMENT 'Danish CVR number';
 
 -- ============================================
 -- VERIFICATION REQUIREMENTS

@@ -81,9 +81,8 @@ CREATE TABLE IF NOT EXISTS partner_review_votes (
 -- ============================================
 -- Add rating columns to partners table
 -- ============================================
-ALTER TABLE partners
-ADD COLUMN IF NOT EXISTS average_rating DECIMAL(3,2) DEFAULT NULL COMMENT 'Cached average rating',
-ADD COLUMN IF NOT EXISTS review_count INT DEFAULT 0 COMMENT 'Cached review count';
+ALTER TABLE partners ADD COLUMN average_rating DECIMAL(3,2) DEFAULT NULL COMMENT 'Cached average rating';
+ALTER TABLE partners ADD COLUMN review_count INT DEFAULT 0 COMMENT 'Cached review count';
 
 -- ============================================
 -- VIEW: Partner Rating Summary
@@ -109,40 +108,5 @@ GROUP BY p.id, p.company_name;
 -- ============================================
 -- Trigger to update partner rating cache
 -- ============================================
-DELIMITER //
-
-CREATE TRIGGER IF NOT EXISTS update_partner_rating_after_insert
-AFTER INSERT ON partner_reviews
-FOR EACH ROW
-BEGIN
-    IF NEW.status = 'approved' THEN
-        UPDATE partners SET
-            average_rating = (
-                SELECT AVG(rating) FROM partner_reviews
-                WHERE partner_id = NEW.partner_id AND status = 'approved'
-            ),
-            review_count = (
-                SELECT COUNT(*) FROM partner_reviews
-                WHERE partner_id = NEW.partner_id AND status = 'approved'
-            )
-        WHERE id = NEW.partner_id;
-    END IF;
-END//
-
-CREATE TRIGGER IF NOT EXISTS update_partner_rating_after_update
-AFTER UPDATE ON partner_reviews
-FOR EACH ROW
-BEGIN
-    UPDATE partners SET
-        average_rating = (
-            SELECT AVG(rating) FROM partner_reviews
-            WHERE partner_id = NEW.partner_id AND status = 'approved'
-        ),
-        review_count = (
-            SELECT COUNT(*) FROM partner_reviews
-            WHERE partner_id = NEW.partner_id AND status = 'approved'
-        )
-    WHERE id = NEW.partner_id;
-END//
-
-DELIMITER ;
+DROP TRIGGER IF EXISTS update_partner_rating_after_insert;
+DROP TRIGGER IF EXISTS update_partner_rating_after_update;

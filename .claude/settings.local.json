@@ -42,7 +42,8 @@
       "Bash(grep:*)",
       "Bash(php database/migrate.php:*)",
       "Bash(powershell.exe:*)",
-      "Bash(ls:*)"
+      "Bash(ls:*)",
+      "Bash(do)"
     ]
   }
 }

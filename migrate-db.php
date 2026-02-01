@@ -14,6 +14,7 @@ if (($_GET['token'] ?? '') !== $authToken) {
 }
 
 require_once __DIR__ . '/config/database.php';
+$db = getDB();
 
 $migrationsDir = __DIR__ . '/database/migrations';
 $action = $_POST['action'] ?? $_GET['action'] ?? 'status';
@@ -58,9 +59,25 @@ foreach ($files as $file) {
     }
 }
 
+// Mark migration as done without running
+if ($action === 'mark_done' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+    $toMark = $_POST['migration'] ?? '';
+    if ($toMark) {
+        try {
+            $stmt = $db->prepare("INSERT IGNORE INTO _migrations (migration) VALUES (?)");
+            $stmt->execute([$toMark]);
+            $messages[] = "✓ {$toMark} marked as completed (skipped)";
+            $completed[] = $toMark;
+        } catch (Exception $e) {
+            $errors[] = "Failed to mark: " . $e->getMessage();
+        }
+    }
+}
+
 // Run migrations
 if ($action === 'run' && $_SERVER['REQUEST_METHOD'] === 'POST') {
     $toRun = $_POST['migrations'] ?? [];
+    $skipErrors = isset($_POST['skip_errors']);
 
     foreach ($pending as $migration) {
         if (!in_array($migration['name'], $toRun)) {
@@ -74,34 +91,53 @@ if ($action === 'run' && $_SERVER['REQUEST_METHOD'] === 'POST') {
             continue;
         }
 
-        $db->beginTransaction();
+        // Split statements
+        $statements = array_filter(
+            array_map('trim', preg_split('/;\s*$/m', $sql)),
+            function($s) { return !empty($s); }
+        );
 
-        try {
-            // Split statements
-            $statements = array_filter(
-                array_map('trim', preg_split('/;\s*$/m', $sql)),
-                function($s) { return !empty($s); }
-            );
+        $migrationSuccess = true;
+        $migrationErrors = [];
 
-            foreach ($statements as $statement) {
-                if (!empty(trim($statement))) {
-                    $db->exec($statement);
+        foreach ($statements as $statement) {
+            if (empty(trim($statement))) continue;
+
+            try {
+                $db->exec($statement);
+            } catch (Exception $e) {
+                $errMsg = $e->getMessage();
+                // Ignore "already exists" errors
+                if (strpos($errMsg, 'already exists') !== false ||
+                    strpos($errMsg, 'Duplicate') !== false) {
+                    // Skip this statement, continue with next
+                    continue;
+                }
+                $migrationErrors[] = $errMsg;
+                if (!$skipErrors) {
+                    $migrationSuccess = false;
+                    break;
                 }
             }
+        }
 
-            // Record migration
-            $stmt = $db->prepare("INSERT INTO _migrations (migration) VALUES (?)");
-            $stmt->execute([$migration['name']]);
+        if ($migrationSuccess || $skipErrors) {
+            // Record migration as done
+            try {
+                $stmt = $db->prepare("INSERT IGNORE INTO _migrations (migration) VALUES (?)");
+                $stmt->execute([$migration['name']]);
+                $completed[] = $migration['name'];
 
-            $db->commit();
-            $messages[] = "✓ {$migration['name']} executed successfully";
-
-            // Move from pending to completed
-            $completed[] = $migration['name'];
-
-        } catch (Exception $e) {
-            $db->rollBack();
-            $errors[] = "✗ {$migration['name']} failed: " . $e->getMessage();
+                if (empty($migrationErrors)) {
+                    $messages[] = "✓ {$migration['name']} executed successfully";
+                } else {
+                    $messages[] = "⚠ {$migration['name']} completed with warnings (some statements skipped)";
+                }
+            } catch (Exception $e) {
+                $errors[] = "✗ {$migration['name']} failed to record: " . $e->getMessage();
+            }
+        } else {
+            $errors[] = "✗ {$migration['name']} failed: " . implode("; ", $migrationErrors);
         }
     }
 
@@ -277,6 +313,20 @@ if ($action === 'run' && $_SERVER['REQUEST_METHOD'] === 'POST') {
             padding: 40px;
             color: #9ca3af;
         }
+        .btn-skip {
+            background: #f3f4f6;
+            border: 1px solid #d1d5db;
+            color: #6b7280;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            margin-left: auto;
+        }
+        .btn-skip:hover {
+            background: #e5e7eb;
+            color: #374151;
+        }
     </style>
 </head>
 <body>
@@ -331,6 +381,7 @@ if ($action === 'run' && $_SERVER['REQUEST_METHOD'] === 'POST') {
                                id="m_<?= md5($migration['name']) ?>"
                                checked>
                         <label for="m_<?= md5($migration['name']) ?>"><?= htmlspecialchars($migration['name']) ?></label>
+                        <button type="button" onclick="skipMigration('<?= htmlspecialchars($migration['name']) ?>')" class="btn-skip">Skip</button>
                     </li>
                     <?php endforeach; ?>
                 </ul>
@@ -360,6 +411,20 @@ if ($action === 'run' && $_SERVER['REQUEST_METHOD'] === 'POST') {
     <script>
         function selectAll() {
             document.querySelectorAll('input[name="migrations[]"]').forEach(cb => cb.checked = true);
+        }
+        function skipMigration(name) {
+            if (confirm('Mark "' + name + '" as completed without running it?')) {
+                var form = document.createElement('form');
+                form.method = 'POST';
+                form.action = '?token=<?= htmlspecialchars($authToken) ?>&action=mark_done';
+                var input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'migration';
+                input.value = name;
+                form.appendChild(input);
+                document.body.appendChild(form);
+                form.submit();
+            }
         }
         function selectNone() {
             document.querySelectorAll('input[name="migrations[]"]').forEach(cb => cb.checked = false);

@@ -131,20 +131,18 @@ ON DUPLICATE KEY UPDATE description = VALUES(description);
 -- ============================================
 -- Add consent columns to guests table
 -- ============================================
-ALTER TABLE guests
-ADD COLUMN IF NOT EXISTS privacy_consent TINYINT(1) DEFAULT 0 COMMENT 'Agreed to privacy policy',
-ADD COLUMN IF NOT EXISTS privacy_consent_at TIMESTAMP NULL,
-ADD COLUMN IF NOT EXISTS privacy_consent_version VARCHAR(20) DEFAULT NULL,
-ADD COLUMN IF NOT EXISTS marketing_consent TINYINT(1) DEFAULT 0 COMMENT 'Agreed to marketing',
-ADD COLUMN IF NOT EXISTS marketing_consent_at TIMESTAMP NULL;
+ALTER TABLE guests ADD COLUMN privacy_consent TINYINT(1) DEFAULT 0 COMMENT 'Agreed to privacy policy';
+ALTER TABLE guests ADD COLUMN privacy_consent_at TIMESTAMP NULL;
+ALTER TABLE guests ADD COLUMN privacy_consent_version VARCHAR(20) DEFAULT NULL;
+ALTER TABLE guests ADD COLUMN marketing_consent TINYINT(1) DEFAULT 0 COMMENT 'Agreed to marketing';
+ALTER TABLE guests ADD COLUMN marketing_consent_at TIMESTAMP NULL;
 
 -- ============================================
 -- Add deletion tracking to accounts
 -- ============================================
-ALTER TABLE accounts
-ADD COLUMN IF NOT EXISTS deletion_requested_at TIMESTAMP NULL,
-ADD COLUMN IF NOT EXISTS deletion_scheduled_for DATE NULL,
-ADD COLUMN IF NOT EXISTS is_deleted TINYINT(1) DEFAULT 0;
+ALTER TABLE accounts ADD COLUMN deletion_requested_at TIMESTAMP NULL;
+ALTER TABLE accounts ADD COLUMN deletion_scheduled_for DATE NULL;
+ALTER TABLE accounts ADD COLUMN is_deleted TINYINT(1) DEFAULT 0;
 
 -- ============================================
 -- Privacy policy version tracking
