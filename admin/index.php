@@ -517,28 +517,28 @@ $invitationStats = $stmt->fetch();
 
 <!-- Stat Cards -->
 <div class="stat-grid">
-    <!-- Gæster -->
+    <!-- Inviterede -->
     <div class="stat-card">
         <div class="stat-card__icon">
             <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
         </div>
-        <div class="stat-card__value"><?= $guestStats['confirmed'] ?></div>
-        <div class="stat-card__label">Bekræftede gæster</div>
+        <div class="stat-card__value"><?= $guestStats['total_invited'] ?? 0 ?></div>
+        <div class="stat-card__label">Inviterede personer</div>
         <div class="stat-card__detail">
-            <strong><?= $guestStats['total_adults'] ?></strong> voksne &middot;
-            <strong><?= $guestStats['total_children'] ?></strong> børn
+            <strong><?= $guestStats['total_invitations'] ?></strong> invitationer sendt
         </div>
     </div>
 
-    <!-- Afventer -->
+    <!-- Tilmeldte -->
     <div class="stat-card">
         <div class="stat-card__icon">
-            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
         </div>
-        <div class="stat-card__value"><?= $guestStats['pending'] ?></div>
-        <div class="stat-card__label">Afventer svar</div>
+        <div class="stat-card__value"><?= $guestStats['total_confirmed'] ?? 0 ?></div>
+        <div class="stat-card__label">Tilmeldte deltagere</div>
         <div class="stat-card__detail">
-            <strong><?= $invitationStats['sent'] ?? 0 ?></strong> af <strong><?= $invitationStats['total'] ?? 0 ?></strong> invitationer sendt
+            <strong><?= $guestStats['total_adults'] ?></strong> voksne &middot;
+            <strong><?= $guestStats['total_children'] ?></strong> børn
         </div>
     </div>
 
@@ -579,15 +579,15 @@ $invitationStats = $stmt->fetch();
             <a href="<?= BASE_PATH ?>/admin/guests.php" class="btn btn--ghost btn--sm">Se alle</a>
         </div>
         <div class="section-card__body">
-            <?php if ($guestStats['total_guests'] > 0): ?>
+            <?php if ($guestStats['total_invited'] > 0): ?>
                 <?php
-                $confirmedPct = $guestStats['confirmed'] / $guestStats['total_guests'] * 100;
-                $declinedPct = $guestStats['declined'] / $guestStats['total_guests'] * 100;
-                $pendingPct = $guestStats['pending'] / $guestStats['total_guests'] * 100;
+                $totalInvited = $guestStats['total_invited'];
+                $totalConfirmed = $guestStats['total_confirmed'] ?? 0;
+                $confirmedPct = min(100, $totalConfirmed / $totalInvited * 100);
+                $pendingPct = max(0, 100 - $confirmedPct);
                 ?>
                 <div class="rsvp-bar">
                     <div class="rsvp-bar__segment rsvp-bar__segment--yes" style="width: <?= $confirmedPct ?>%;"></div>
-                    <div class="rsvp-bar__segment rsvp-bar__segment--no" style="width: <?= $declinedPct ?>%;"></div>
                     <div class="rsvp-bar__segment rsvp-bar__segment--pending" style="width: <?= $pendingPct ?>%;"></div>
                 </div>
 
@@ -595,21 +595,21 @@ $invitationStats = $stmt->fetch();
                     <div class="rsvp-legend__item">
                         <span class="rsvp-legend__label">
                             <span class="rsvp-legend__dot rsvp-legend__dot--yes"></span>
-                            Kommer
+                            Tilmeldte personer
                         </span>
-                        <span class="rsvp-legend__value"><?= $guestStats['confirmed'] ?></span>
+                        <span class="rsvp-legend__value"><?= $totalConfirmed ?></span>
                     </div>
                     <div class="rsvp-legend__item">
                         <span class="rsvp-legend__label">
                             <span class="rsvp-legend__dot rsvp-legend__dot--pending"></span>
-                            Afventer
+                            Invitationer afventer
                         </span>
                         <span class="rsvp-legend__value"><?= $guestStats['pending'] ?></span>
                     </div>
                     <div class="rsvp-legend__item">
                         <span class="rsvp-legend__label">
                             <span class="rsvp-legend__dot rsvp-legend__dot--no"></span>
-                            Afbud
+                            Afbud (invitationer)
                         </span>
                         <span class="rsvp-legend__value"><?= $guestStats['declined'] ?></span>
                     </div>

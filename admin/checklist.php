@@ -37,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ]);
 
             setFlash('success', 'Opgave tilføjet');
-            redirect('/admin/checklist.php');
+            redirect(BASE_PATH . '/admin/checklist.php');
         }
     } elseif ($action === 'toggle') {
         $id = (int)($_POST['id'] ?? 0);
@@ -53,7 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (isset($_SERVER['HTTP_X_REQUESTED_WITH'])) {
                 jsonResponse(['success' => true]);
             }
-            redirect('/admin/checklist.php');
+            redirect(BASE_PATH . '/admin/checklist.php');
         }
     } elseif ($action === 'delete') {
         $id = (int)($_POST['id'] ?? 0);
@@ -62,7 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->execute([$id, $eventId]);
 
             setFlash('success', 'Opgave slettet');
-            redirect('/admin/checklist.php');
+            redirect(BASE_PATH . '/admin/checklist.php');
         }
     } elseif ($action === 'update') {
         $id = (int)($_POST['id'] ?? 0);
@@ -87,7 +87,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ]);
 
             setFlash('success', 'Opgave opdateret');
-            redirect('/admin/checklist.php');
+            redirect(BASE_PATH . '/admin/checklist.php');
         }
     }
 }
@@ -312,7 +312,7 @@ require_once __DIR__ . '/../includes/admin-sidebar.php';
 
 <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
 
-<script src="/assets/js/main.js"></script>
+<script src="<?= BASE_PATH ?>/assets/js/main.js"></script>
 <script>
 function toggleSidebar() {
     const sidebar = document.getElementById('sidebar');

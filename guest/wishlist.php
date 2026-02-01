@@ -4,6 +4,11 @@
  */
 require_once __DIR__ . '/../includes/guest-header.php';
 
+// Check if wishlist is visible
+if (!($event['show_wishlist'] ?? true)) {
+    redirect(BASE_PATH . '/guest/index.php');
+}
+
 // Handle reservation
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = $_POST['action'] ?? '';
@@ -26,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->execute([$guestId, $itemId, $eventId]);
             setFlash('success', 'Du har reserveret gaven!');
         }
-        redirect('/guest/wishlist.php');
+        redirect(BASE_PATH . '/guest/wishlist.php');
 
     } elseif ($action === 'unreserve' && $itemId) {
         // Only unreserve if this guest reserved it
@@ -37,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ");
         $stmt->execute([$itemId, $eventId, $guestId]);
         setFlash('success', 'Reservationen er fjernet');
-        redirect('/guest/wishlist.php');
+        redirect(BASE_PATH . '/guest/wishlist.php');
     }
 }
 
@@ -62,6 +67,72 @@ $myReservations = array_filter($items, fn($i) => $i['reserved_by_guest_id'] == $
 <p class="text-center text-muted mb-md">
     Reservér et ønske for at undgå at flere køber det samme
 </p>
+
+<!-- Ønskeskyen Link -->
+<a href="https://onskeskyen.dk/s/em06ej" target="_blank" rel="noopener" class="onskeskyen-card">
+    <div class="onskeskyen-card__icon">☁️</div>
+    <div class="onskeskyen-card__content">
+        <div class="onskeskyen-card__title">Se også <?= escape($event['confirmand_name']) ?>s Ønskeskyen</div>
+        <div class="onskeskyen-card__subtitle">Flere ønsker på onskeskyen.dk</div>
+    </div>
+    <div class="onskeskyen-card__arrow">→</div>
+</a>
+
+<style>
+.onskeskyen-card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: linear-gradient(135deg, #E8F4FC 0%, #F0E6F6 100%);
+    border: 1px solid rgba(130, 180, 220, 0.3);
+    border-radius: 16px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.5rem;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.onskeskyen-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(130, 180, 220, 0.25);
+    border-color: rgba(130, 180, 220, 0.5);
+}
+
+.onskeskyen-card:active {
+    transform: scale(0.98);
+}
+
+.onskeskyen-card__icon {
+    font-size: 2rem;
+    line-height: 1;
+}
+
+.onskeskyen-card__content {
+    flex: 1;
+}
+
+.onskeskyen-card__title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    color: #2A4A6A;
+    margin-bottom: 0.15rem;
+}
+
+.onskeskyen-card__subtitle {
+    font-size: 0.85rem;
+    color: #6A8AAA;
+}
+
+.onskeskyen-card__arrow {
+    font-size: 1.25rem;
+    color: #82B4DC;
+    transition: transform 0.3s ease;
+}
+
+.onskeskyen-card:hover .onskeskyen-card__arrow {
+    transform: translateX(4px);
+}
+</style>
 
 <?php if (!empty($myReservations)): ?>
     <div class="card mb-md" style="background: var(--color-bg-subtle); border-color: var(--color-primary-soft);">

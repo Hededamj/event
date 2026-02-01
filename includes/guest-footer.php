@@ -111,6 +111,10 @@
                     <span>Ønsker</span>
                 </a>
                 <?php endif; ?>
+                <a href="<?= BASE_PATH ?>/guest/indslag.php" class="guest-bottom-nav__link <?= $currentPage === 'indslag' ? 'guest-bottom-nav__link--active' : '' ?>">
+                    <span class="guest-bottom-nav__icon">🎤</span>
+                    <span>Indslag</span>
+                </a>
                 <?php if ($event['show_menu'] ?? true): ?>
                 <a href="<?= BASE_PATH ?>/guest/menu.php" class="guest-bottom-nav__link <?= $currentPage === 'menu' ? 'guest-bottom-nav__link--active' : '' ?>">
                     <span class="guest-bottom-nav__icon">🍽️</span>

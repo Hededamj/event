@@ -4,13 +4,34 @@
  */
 require_once __DIR__ . '/../includes/guest-header.php';
 
-// Get schedule items
-$stmt = $db->prepare("
-    SELECT * FROM schedule_items
-    WHERE event_id = ?
-    ORDER BY time ASC, sort_order ASC
-");
-$stmt->execute([$eventId]);
+// Check if schedule is visible
+if (!($event['show_schedule'] ?? true)) {
+    redirect(BASE_PATH . '/guest/index.php');
+}
+
+// Check if item_date column exists
+$hasItemDate = false;
+try {
+    $checkStmt = $db->query("SHOW COLUMNS FROM schedule_items LIKE 'item_date'");
+    $hasItemDate = $checkStmt->rowCount() > 0;
+} catch (Exception $e) {}
+
+// Get schedule items - sort by date and time if available, otherwise by sort_order
+if ($hasItemDate) {
+    $stmt = $db->prepare("
+        SELECT * FROM schedule_items
+        WHERE event_id = ?
+        ORDER BY COALESCE(item_date, ?) ASC, time ASC
+    ");
+    $stmt->execute([$eventId, $event['event_date']]);
+} else {
+    $stmt = $db->prepare("
+        SELECT * FROM schedule_items
+        WHERE event_id = ?
+        ORDER BY sort_order ASC, time ASC
+    ");
+    $stmt->execute([$eventId]);
+}
 $scheduleItems = $stmt->fetchAll();
 ?>
 

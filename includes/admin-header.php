@@ -38,16 +38,21 @@ $currentUser = $stmt->fetch();
 // Get quick stats for sidebar/header
 $stmt = $db->prepare("
     SELECT
-        COUNT(*) as total_guests,
-        SUM(CASE WHEN rsvp_status = 'yes' THEN 1 ELSE 0 END) as confirmed,
+        COUNT(*) as total_invitations,
+        SUM(COALESCE(max_guests, 1)) as total_invited,
+        SUM(CASE WHEN rsvp_status = 'yes' THEN 1 ELSE 0 END) as confirmed_invitations,
         SUM(CASE WHEN rsvp_status = 'pending' THEN 1 ELSE 0 END) as pending,
         SUM(CASE WHEN rsvp_status = 'no' THEN 1 ELSE 0 END) as declined,
         SUM(CASE WHEN rsvp_status = 'yes' THEN adults_count ELSE 0 END) as total_adults,
-        SUM(CASE WHEN rsvp_status = 'yes' THEN children_count ELSE 0 END) as total_children
+        SUM(CASE WHEN rsvp_status = 'yes' THEN children_count ELSE 0 END) as total_children,
+        SUM(CASE WHEN rsvp_status = 'yes' THEN (adults_count + children_count) ELSE 0 END) as total_confirmed
     FROM guests WHERE event_id = ?
 ");
 $stmt->execute([$eventId]);
 $guestStats = $stmt->fetch();
+// For backwards compatibility
+$guestStats['total_guests'] = $guestStats['total_invitations'];
+$guestStats['confirmed'] = $guestStats['confirmed_invitations'];
 
 // Days until event
 $eventDate = new DateTime($event['event_date']);

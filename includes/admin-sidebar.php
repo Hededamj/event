@@ -29,13 +29,13 @@
     <nav class="sidebar__nav">
         <ul class="sidebar__menu">
             <li>
-                <a href="/admin/index.php" class="sidebar__link <?= $currentPage === 'index' ? 'sidebar__link--active' : '' ?>">
+                <a href="<?= BASE_PATH ?>/admin/index.php" class="sidebar__link <?= $currentPage === 'index' ? 'sidebar__link--active' : '' ?>">
                     <span class="sidebar__link-icon">📊</span>
                     <span>Overblik</span>
                 </a>
             </li>
             <li>
-                <a href="/admin/guests.php" class="sidebar__link <?= $currentPage === 'guests' ? 'sidebar__link--active' : '' ?>">
+                <a href="<?= BASE_PATH ?>/admin/guests.php" class="sidebar__link <?= $currentPage === 'guests' ? 'sidebar__link--active' : '' ?>">
                     <span class="sidebar__link-icon">👥</span>
                     <span>Gæsteliste</span>
                     <?php if ($guestStats['pending'] > 0): ?>
@@ -44,48 +44,62 @@
                 </a>
             </li>
             <li>
-                <a href="/admin/checklist.php" class="sidebar__link <?= $currentPage === 'checklist' ? 'sidebar__link--active' : '' ?>">
+                <a href="<?= BASE_PATH ?>/admin/checklist.php" class="sidebar__link <?= $currentPage === 'checklist' ? 'sidebar__link--active' : '' ?>">
                     <span class="sidebar__link-icon">✅</span>
                     <span>Huskeliste</span>
                 </a>
             </li>
             <li>
-                <a href="/admin/wishlist.php" class="sidebar__link <?= $currentPage === 'wishlist' ? 'sidebar__link--active' : '' ?>">
+                <a href="<?= BASE_PATH ?>/admin/wishlist.php" class="sidebar__link <?= $currentPage === 'wishlist' ? 'sidebar__link--active' : '' ?>">
                     <span class="sidebar__link-icon">🎁</span>
                     <span>Ønskeliste</span>
                 </a>
             </li>
             <li>
-                <a href="/admin/menu.php" class="sidebar__link <?= $currentPage === 'menu' ? 'sidebar__link--active' : '' ?>">
+                <a href="<?= BASE_PATH ?>/admin/menu.php" class="sidebar__link <?= $currentPage === 'menu' ? 'sidebar__link--active' : '' ?>">
                     <span class="sidebar__link-icon">🍽️</span>
                     <span>Menu</span>
                 </a>
             </li>
             <li>
-                <a href="/admin/schedule.php" class="sidebar__link <?= $currentPage === 'schedule' ? 'sidebar__link--active' : '' ?>">
+                <a href="<?= BASE_PATH ?>/admin/schedule.php" class="sidebar__link <?= $currentPage === 'schedule' ? 'sidebar__link--active' : '' ?>">
                     <span class="sidebar__link-icon">🕐</span>
                     <span>Tidsplan</span>
                 </a>
             </li>
             <li>
-                <a href="/admin/photos.php" class="sidebar__link <?= $currentPage === 'photos' ? 'sidebar__link--active' : '' ?>">
+                <a href="<?= BASE_PATH ?>/admin/photos.php" class="sidebar__link <?= $currentPage === 'photos' ? 'sidebar__link--active' : '' ?>">
                     <span class="sidebar__link-icon">📷</span>
                     <span>Billeder</span>
                 </a>
             </li>
             <li>
-                <a href="/admin/budget.php" class="sidebar__link <?= $currentPage === 'budget' ? 'sidebar__link--active' : '' ?>">
+                <a href="<?= BASE_PATH ?>/admin/bordplan.php" class="sidebar__link <?= $currentPage === 'bordplan' ? 'sidebar__link--active' : '' ?>">
+                    <span class="sidebar__link-icon">🪑</span>
+                    <span>Bordplan</span>
+                </a>
+            </li>
+            <li>
+                <a href="<?= BASE_PATH ?>/admin/toastmaster.php" class="sidebar__link <?= $currentPage === 'toastmaster' ? 'sidebar__link--active' : '' ?>">
+                    <span class="sidebar__link-icon">🎤</span>
+                    <span>Toastmaster</span>
+                </a>
+            </li>
+            <?php if (!isConfirmand()): ?>
+            <li>
+                <a href="<?= BASE_PATH ?>/admin/budget.php" class="sidebar__link <?= $currentPage === 'budget' ? 'sidebar__link--active' : '' ?>">
                     <span class="sidebar__link-icon">💰</span>
                     <span>Budget</span>
                 </a>
             </li>
+            <?php endif; ?>
         </ul>
 
         <div class="sidebar__divider"></div>
 
         <ul class="sidebar__menu">
             <li>
-                <a href="/admin/settings.php" class="sidebar__link <?= $currentPage === 'settings' ? 'sidebar__link--active' : '' ?>">
+                <a href="<?= BASE_PATH ?>/admin/settings.php" class="sidebar__link <?= $currentPage === 'settings' ? 'sidebar__link--active' : '' ?>">
                     <span class="sidebar__link-icon">⚙️</span>
                     <span>Indstillinger</span>
                 </a>
@@ -103,7 +117,7 @@
                 <span class="sidebar__user-role"><?= ucfirst($currentUser['role']) ?></span>
             </div>
         </div>
-        <a href="/admin/logout.php" class="btn btn--ghost btn--block mt-sm">
+        <a href="<?= BASE_PATH ?>/admin/logout.php" class="btn btn--ghost btn--block mt-sm">
             Log ud
         </a>
     </div>
@@ -122,7 +136,7 @@
     <header class="admin-topbar hide-desktop">
         <button class="admin-topbar__menu" onclick="toggleSidebar()">☰</button>
         <span class="admin-topbar__title"><?= escape($event['confirmand_name']) ?></span>
-        <a href="/" class="admin-topbar__preview" title="Se gæstevisning">👁</a>
+        <a href="<?= BASE_PATH ?>/" class="admin-topbar__preview" title="Se gæstevisning">👁</a>
     </header>
 
     <?php if ($flash): ?>

@@ -3,9 +3,36 @@
  * Authentication Functions
  */
 
-// Start session if not already started
+// Start session with extended lifetime (30 days)
 if (session_status() === PHP_SESSION_NONE) {
+    // Set session cookie to last 30 days
+    $sessionLifetime = 60 * 60 * 24 * 30; // 30 days in seconds
+
+    session_set_cookie_params([
+        'lifetime' => $sessionLifetime,
+        'path' => '/',
+        'secure' => isset($_SERVER['HTTPS']),
+        'httponly' => true,
+        'samesite' => 'Lax'
+    ]);
+
+    // Also set the session garbage collection lifetime
+    ini_set('session.gc_maxlifetime', $sessionLifetime);
+
     session_start();
+
+    // Refresh the session cookie on each request to extend it
+    if (isset($_COOKIE[session_name()])) {
+        setcookie(
+            session_name(),
+            session_id(),
+            time() + $sessionLifetime,
+            '/',
+            '',
+            isset($_SERVER['HTTPS']),
+            true
+        );
+    }
 }
 
 /**
@@ -34,7 +61,7 @@ function isAuthenticated(): bool {
  */
 function requireLogin(): void {
     if (!isLoggedIn()) {
-        redirect('/index.php?error=login_required');
+        redirect(BASE_PATH . '/index.php?error=login_required');
     }
 }
 
@@ -43,7 +70,7 @@ function requireLogin(): void {
  */
 function requireGuest(): void {
     if (!isGuest() && !isLoggedIn()) {
-        redirect('/index.php?error=code_required');
+        redirect(BASE_PATH . '/index.php?error=code_required');
     }
 }
 
@@ -62,6 +89,20 @@ function getCurrentUserId(): ?int {
 }
 
 /**
+ * Get current user role
+ */
+function getCurrentUserRole(): ?string {
+    return $_SESSION['user_role'] ?? null;
+}
+
+/**
+ * Check if current user is confirmand (limited view)
+ */
+function isConfirmand(): bool {
+    return getCurrentUserRole() === 'confirmand';
+}
+
+/**
  * Get current guest ID
  */
 function getCurrentGuestId(): ?int {
@@ -71,12 +112,13 @@ function getCurrentGuestId(): ?int {
 /**
  * Login as organizer
  */
-function login(int $userId, int $eventId): void {
+function login(int $userId, int $eventId, string $role = 'organizer'): void {
     // Regenerate session ID for security
     session_regenerate_id(true);
 
     $_SESSION['user_id'] = $userId;
     $_SESSION['event_id'] = $eventId;
+    $_SESSION['user_role'] = $role;
     $_SESSION['login_time'] = time();
 
     // Clear any guest session

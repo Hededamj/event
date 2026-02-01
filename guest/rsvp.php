@@ -8,12 +8,33 @@ $decline = isset($_GET['decline']);
 $success = false;
 $successType = null;
 
+// Get max guests for this invitation
+$maxGuests = max(1, (int)($guest['max_guests'] ?? 1));
+
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $rsvpStatus = $_POST['rsvp_status'] ?? 'yes';
-    $adultsCount = max(1, (int)($_POST['adults_count'] ?? 1));
+    $adultsCount = max(1, min($maxGuests, (int)($_POST['adults_count'] ?? 1))); // Limit to max_guests
     $childrenCount = max(0, (int)($_POST['children_count'] ?? 0));
     $dietaryNotes = trim($_POST['dietary_notes'] ?? '');
+
+    // Collect guest names
+    $guestNames = [];
+    if ($rsvpStatus === 'yes' && isset($_POST['guest_names']) && is_array($_POST['guest_names'])) {
+        foreach ($_POST['guest_names'] as $name) {
+            $name = trim($name);
+            if (!empty($name)) {
+                $guestNames[] = $name;
+            }
+        }
+    }
+    $guestNamesJson = !empty($guestNames) ? json_encode($guestNames, JSON_UNESCAPED_UNICODE) : null;
+
+    // Ensure total doesn't exceed max
+    $totalGuests = $adultsCount + $childrenCount;
+    if ($totalGuests > $maxGuests) {
+        $childrenCount = max(0, $maxGuests - $adultsCount);
+    }
 
     $stmt = $db->prepare("
         UPDATE guests
@@ -21,6 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             adults_count = ?,
             children_count = ?,
             dietary_notes = ?,
+            guest_names = ?,
             rsvp_date = NOW()
         WHERE id = ? AND event_id = ?
     ");
@@ -30,6 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $rsvpStatus === 'yes' ? $adultsCount : 0,
         $rsvpStatus === 'yes' ? $childrenCount : 0,
         $dietaryNotes ?: null,
+        $guestNamesJson,
         $guestId,
         $eventId
     ]);
@@ -66,10 +89,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <?php if ($successType === 'yes'): ?>
             <h3 class="mb-sm">Din tilmelding</h3>
             <p class="mb-xs">
-                <strong><?= $guest['adults_count'] ?></strong> voksen<?= $guest['adults_count'] > 1 ? 'e' : '' ?>
-                <?php if ($guest['children_count'] > 0): ?>
-                    og <strong><?= $guest['children_count'] ?></strong> barn/børn
-                <?php endif; ?>
+                <strong><?= $guest['adults_count'] ?></strong> person<?= $guest['adults_count'] > 1 ? 'er' : '' ?>
             </p>
             <?php if ($guest['dietary_notes']): ?>
                 <p class="small text-muted">
@@ -78,7 +98,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <?php endif; ?>
         <?php endif; ?>
 
-        <a href="/guest/index.php" class="btn btn--primary btn--block mt-md">
+        <a href="<?= BASE_PATH ?>/guest/index.php" class="btn btn--primary btn--block mt-md">
             Tilbage til forsiden
         </a>
     </div>
@@ -86,13 +106,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="card">
         <h3 class="card__title mb-sm">Se mere</h3>
         <div style="display: grid; gap: var(--space-xs);">
-            <a href="/guest/wishlist.php" class="btn btn--secondary btn--block" style="justify-content: flex-start;">
+            <a href="<?= BASE_PATH ?>/guest/wishlist.php" class="btn btn--secondary btn--block" style="justify-content: flex-start;">
                 🎁 Se ønskeliste
             </a>
-            <a href="/guest/menu.php" class="btn btn--secondary btn--block" style="justify-content: flex-start;">
+            <a href="<?= BASE_PATH ?>/guest/menu.php" class="btn btn--secondary btn--block" style="justify-content: flex-start;">
                 🍽️ Se menu
             </a>
-            <a href="/guest/schedule.php" class="btn btn--secondary btn--block" style="justify-content: flex-start;">
+            <a href="<?= BASE_PATH ?>/guest/schedule.php" class="btn btn--secondary btn--block" style="justify-content: flex-start;">
                 🕐 Se program
             </a>
         </div>
@@ -116,27 +136,51 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <input type="hidden" name="rsvp_status" value="<?= $decline ? 'no' : 'yes' ?>">
 
             <?php if (!$decline): ?>
+                <?php
+                // Get existing guest names
+                $existingNames = [];
+                if (!empty($guest['guest_names'])) {
+                    $existingNames = json_decode($guest['guest_names'], true) ?: [];
+                }
+                $currentCount = max(1, (int)($guest['adults_count'] ?? 1));
+                ?>
                 <!-- Coming - need details -->
                 <div class="form-group">
-                    <label class="form-label">Antal voksne *</label>
-                    <select name="adults_count" class="form-input">
-                        <?php for ($i = 1; $i <= 10; $i++): ?>
-                            <option value="<?= $i ?>" <?= ($guest['adults_count'] ?? 1) == $i ? 'selected' : '' ?>>
-                                <?= $i ?> voksen<?= $i > 1 ? 'e' : '' ?>
+                    <label class="form-label">Antal personer *</label>
+                    <select name="adults_count" id="adults_count" class="form-input" onchange="updateNameFields()">
+                        <?php for ($i = 1; $i <= $maxGuests; $i++): ?>
+                            <option value="<?= $i ?>" <?= $currentCount == $i ? 'selected' : '' ?>>
+                                <?= $i ?> person<?= $i > 1 ? 'er' : '' ?>
                             </option>
                         <?php endfor; ?>
                     </select>
+                    <p class="small text-muted mt-xs">
+                        <?php if ($maxGuests > 1): ?>
+                            Denne invitation gælder for op til <?= $maxGuests ?> personer.
+                        <?php else: ?>
+                            Hvor mange kommer I i alt?
+                        <?php endif; ?>
+                    </p>
                 </div>
 
-                <div class="form-group">
-                    <label class="form-label">Antal børn</label>
-                    <select name="children_count" class="form-input">
-                        <?php for ($i = 0; $i <= 10; $i++): ?>
-                            <option value="<?= $i ?>" <?= ($guest['children_count'] ?? 0) == $i ? 'selected' : '' ?>>
-                                <?= $i ?> barn/børn
-                            </option>
+                <input type="hidden" name="children_count" value="0">
+
+                <!-- Guest Names -->
+                <div class="form-group" id="guest-names-section">
+                    <label class="form-label">Navne på deltagere *</label>
+                    <p class="small text-muted mb-sm">Til bordplan</p>
+                    <div id="guest-names-container">
+                        <?php for ($i = 0; $i < $maxGuests; $i++): ?>
+                            <div class="guest-name-field" id="name-field-<?= $i ?>" style="<?= $i >= $currentCount ? 'display:none;' : '' ?> margin-bottom: 0.5rem;">
+                                <input type="text"
+                                       name="guest_names[]"
+                                       class="form-input"
+                                       placeholder="Navn på person <?= $i + 1 ?>"
+                                       value="<?= escape($existingNames[$i] ?? '') ?>"
+                                       <?= $i < $currentCount ? 'required' : '' ?>>
+                            </div>
                         <?php endfor; ?>
-                    </select>
+                    </div>
                 </div>
 
                 <div class="form-group">
@@ -149,6 +193,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         Fortæl os gerne hvis du eller dine gæster har særlige behov, så vi kan tage højde for det.
                     </p>
                 </div>
+
+                <script>
+                function updateNameFields() {
+                    const count = parseInt(document.getElementById('adults_count').value);
+                    const maxGuests = <?= $maxGuests ?>;
+
+                    for (let i = 0; i < maxGuests; i++) {
+                        const field = document.getElementById('name-field-' + i);
+                        const input = field.querySelector('input');
+
+                        if (i < count) {
+                            field.style.display = 'block';
+                            input.required = true;
+                        } else {
+                            field.style.display = 'none';
+                            input.required = false;
+                            input.value = '';
+                        }
+                    }
+                }
+                </script>
 
             <?php else: ?>
                 <!-- Declining -->
@@ -174,7 +239,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <?= $decline ? 'Send afbud' : 'Bekræft tilmelding' ?>
             </button>
 
-            <a href="/guest/index.php" class="btn btn--ghost btn--block mt-sm">
+            <a href="<?= BASE_PATH ?>/guest/index.php" class="btn btn--ghost btn--block mt-sm">
                 Annuller
             </a>
         </form>

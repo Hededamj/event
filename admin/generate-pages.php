@@ -117,6 +117,21 @@ function generateInvitationHTML($guest, $event, $theme) {
     <title>Invitation til {$guestName} - {$confirmandName}s {$eventName}</title>
     <meta name="description" content="Kære {$guestName}, du er inviteret til {$confirmandName}s {$eventName}">
 
+    <!-- Open Graph for social sharing -->
+    <meta property="og:title" content="Invitation til {$confirmandName}s {$eventName}">
+    <meta property="og:description" content="Du er inviteret til {$confirmandName}s {$eventName} - {$eventDate}">
+    <meta property="og:image" content="https://hededam.dk/sofie/assets/images/sofie-1.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="da_DK">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Invitation til {$confirmandName}s {$eventName}">
+    <meta name="twitter:description" content="Du er inviteret til {$confirmandName}s {$eventName} - {$eventDate}">
+    <meta name="twitter:image" content="https://hededam.dk/sofie/assets/images/sofie-1.jpg">
+
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

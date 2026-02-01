@@ -18,6 +18,13 @@ CREATE TABLE IF NOT EXISTS events (
     theme ENUM('girl', 'boy') DEFAULT 'girl',
     welcome_text TEXT COMMENT 'Welcome message shown to guests',
     confirmand_name VARCHAR(100) COMMENT 'Name of the person being celebrated',
+
+    -- Visibility settings for guest pages
+    show_wishlist BOOLEAN DEFAULT TRUE COMMENT 'Show wishlist to guests',
+    show_menu BOOLEAN DEFAULT TRUE COMMENT 'Show menu to guests',
+    show_schedule BOOLEAN DEFAULT TRUE COMMENT 'Show schedule/program to guests',
+    show_photos BOOLEAN DEFAULT TRUE COMMENT 'Show photo gallery to guests',
+
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 

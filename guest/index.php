@@ -52,10 +52,10 @@ $wishlistStats = $stmt->fetch();
             Vi har endnu ikke modtaget dit svar. Kan du komme til festen?
         </p>
         <div class="flex gap-sm">
-            <a href="/guest/rsvp.php" class="btn btn--primary" style="flex: 1;">
+            <a href="<?= BASE_PATH ?>/guest/rsvp.php" class="btn btn--primary" style="flex: 1;">
                 Ja, jeg kommer! 🎉
             </a>
-            <a href="/guest/rsvp.php?decline=1" class="btn btn--secondary" style="flex: 1;">
+            <a href="<?= BASE_PATH ?>/guest/rsvp.php?decline=1" class="btn btn--secondary" style="flex: 1;">
                 Jeg kan desværre ikke
             </a>
         </div>
@@ -67,11 +67,7 @@ $wishlistStats = $stmt->fetch();
         </div>
         <div class="mb-sm">
             <p class="small">
-                <strong>Antal:</strong>
-                <?= $guest['adults_count'] ?> voksen<?= $guest['adults_count'] > 1 ? 'e' : '' ?>
-                <?php if ($guest['children_count'] > 0): ?>
-                    og <?= $guest['children_count'] ?> barn/børn
-                <?php endif; ?>
+                <strong>Antal:</strong> <?= $guest['adults_count'] ?> person<?= $guest['adults_count'] > 1 ? 'er' : '' ?>
             </p>
             <?php if ($guest['dietary_notes']): ?>
                 <p class="small">
@@ -79,9 +75,14 @@ $wishlistStats = $stmt->fetch();
                 </p>
             <?php endif; ?>
         </div>
-        <a href="/guest/rsvp.php" class="btn btn--secondary btn--block">
-            Ret tilmelding
-        </a>
+        <div class="flex gap-sm">
+            <a href="<?= BASE_PATH ?>/guest/rsvp.php" class="btn btn--secondary" style="flex: 1;">
+                Ret tilmelding
+            </a>
+            <a href="<?= BASE_PATH ?>/guest/rsvp.php?decline=1" class="btn btn--ghost" style="flex: 1;">
+                Meld afbud
+            </a>
+        </div>
 
     <?php else: ?>
         <div class="alert alert--warning mb-sm">
@@ -91,18 +92,23 @@ $wishlistStats = $stmt->fetch();
         <p class="small text-muted mb-sm">
             Har du skiftet mening? Du er stadig velkommen!
         </p>
-        <a href="/guest/rsvp.php" class="btn btn--primary btn--block">
+        <a href="<?= BASE_PATH ?>/guest/rsvp.php" class="btn btn--primary btn--block">
             Tilmeld dig alligevel
         </a>
     <?php endif; ?>
 </div>
 
 <!-- Quick Links -->
+<?php
+$hasAnyLinks = ($event['show_wishlist'] ?? true) || ($event['show_menu'] ?? true) || ($event['show_schedule'] ?? true) || ($event['show_photos'] ?? true);
+?>
+<?php if ($hasAnyLinks): ?>
 <div class="card">
     <h2 class="card__title mb-sm">Mere information</h2>
 
     <div style="display: grid; gap: var(--space-xs);">
-        <a href="/guest/wishlist.php" class="card card--flat" style="display: flex; align-items: center; gap: var(--space-sm); padding: var(--space-sm);">
+        <?php if ($event['show_wishlist'] ?? true): ?>
+        <a href="<?= BASE_PATH ?>/guest/wishlist.php" class="card card--flat" style="display: flex; align-items: center; gap: var(--space-sm); padding: var(--space-sm);">
             <span style="font-size: 1.5rem;">🎁</span>
             <div style="flex: 1;">
                 <strong>Ønskeliste</strong>
@@ -112,8 +118,10 @@ $wishlistStats = $stmt->fetch();
             </div>
             <span class="text-muted">→</span>
         </a>
+        <?php endif; ?>
 
-        <a href="/guest/menu.php" class="card card--flat" style="display: flex; align-items: center; gap: var(--space-sm); padding: var(--space-sm);">
+        <?php if ($event['show_menu'] ?? true): ?>
+        <a href="<?= BASE_PATH ?>/guest/menu.php" class="card card--flat" style="display: flex; align-items: center; gap: var(--space-sm); padding: var(--space-sm);">
             <span style="font-size: 1.5rem;">🍽️</span>
             <div style="flex: 1;">
                 <strong>Menu</strong>
@@ -121,8 +129,10 @@ $wishlistStats = $stmt->fetch();
             </div>
             <span class="text-muted">→</span>
         </a>
+        <?php endif; ?>
 
-        <a href="/guest/schedule.php" class="card card--flat" style="display: flex; align-items: center; gap: var(--space-sm); padding: var(--space-sm);">
+        <?php if ($event['show_schedule'] ?? true): ?>
+        <a href="<?= BASE_PATH ?>/guest/schedule.php" class="card card--flat" style="display: flex; align-items: center; gap: var(--space-sm); padding: var(--space-sm);">
             <span style="font-size: 1.5rem;">🕐</span>
             <div style="flex: 1;">
                 <strong>Program</strong>
@@ -130,8 +140,10 @@ $wishlistStats = $stmt->fetch();
             </div>
             <span class="text-muted">→</span>
         </a>
+        <?php endif; ?>
 
-        <a href="/guest/photos.php" class="card card--flat" style="display: flex; align-items: center; gap: var(--space-sm); padding: var(--space-sm);">
+        <?php if ($event['show_photos'] ?? true): ?>
+        <a href="<?= BASE_PATH ?>/guest/photos.php" class="card card--flat" style="display: flex; align-items: center; gap: var(--space-sm); padding: var(--space-sm);">
             <span style="font-size: 1.5rem;">📷</span>
             <div style="flex: 1;">
                 <strong>Billeder</strong>
@@ -139,8 +151,10 @@ $wishlistStats = $stmt->fetch();
             </div>
             <span class="text-muted">→</span>
         </a>
+        <?php endif; ?>
     </div>
 </div>
+<?php endif; ?>
 
 <?php require_once __DIR__ . '/../includes/guest-footer.php'; ?>
 </body>

@@ -2,12 +2,30 @@
 /**
  * Guest - Photos View & Upload
  */
-require_once __DIR__ . '/../includes/guest-header.php';
+require_once __DIR__ . '/../config/database.php';
+require_once __DIR__ . '/../includes/functions.php';
+require_once __DIR__ . '/../includes/auth.php';
+
+requireGuest();
+
+$db = getDB();
+$eventId = getCurrentEventId();
+$guestId = getCurrentGuestId();
+
+// Get event for visibility check
+$stmt = $db->prepare("SELECT * FROM events WHERE id = ?");
+$stmt->execute([$eventId]);
+$event = $stmt->fetch();
+
+// Check if photos is visible
+if (!($event['show_photos'] ?? true)) {
+    redirect(BASE_PATH . '/guest/index.php');
+}
 
 $uploadError = null;
 $uploadSuccess = false;
 
-// Handle photo upload
+// Handle photo upload BEFORE any output
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['photo'])) {
     $file = $_FILES['photo'];
     $errors = validateImageUpload($file);
@@ -15,6 +33,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['photo'])) {
     if (empty($errors)) {
         $filename = generateUploadFilename($file['name']);
         $uploadPath = __DIR__ . '/../uploads/photos/' . $filename;
+
+        // Create uploads directory if it doesn't exist
+        if (!is_dir(dirname($uploadPath))) {
+            mkdir(dirname($uploadPath), 0755, true);
+        }
 
         if (move_uploaded_file($file['tmp_name'], $uploadPath)) {
             $caption = trim($_POST['caption'] ?? '');
@@ -33,7 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['photo'])) {
 
             $uploadSuccess = true;
             setFlash('success', 'Tak for billedet!');
-            redirect('/guest/photos.php');
+            redirect(BASE_PATH . '/guest/photos.php');
         } else {
             $uploadError = 'Kunne ikke uploade filen. Prøv igen.';
         }
@@ -41,6 +64,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['photo'])) {
         $uploadError = implode(' ', $errors);
     }
 }
+
+// Now include header (outputs HTML)
+require_once __DIR__ . '/../includes/guest-header.php';
 
 // Get photos
 $stmt = $db->prepare("
@@ -112,7 +138,7 @@ $photos = $stmt->fetchAll();
     <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: var(--space-sm);">
         <?php foreach ($photos as $photo): ?>
             <div class="card" style="padding: 0; overflow: hidden;">
-                <img src="/uploads/photos/<?= escape($photo['filename']) ?>"
+                <img src="<?= BASE_PATH ?>/uploads/photos/<?= escape($photo['filename']) ?>"
                      alt="<?= escape($photo['caption'] ?? 'Billede fra festen') ?>"
                      style="width: 100%; aspect-ratio: 1; object-fit: cover; cursor: pointer;"
                      onclick="openPhotoModal('<?= escape($photo['filename']) ?>', '<?= escape(addslashes($photo['caption'] ?? '')) ?>')">
@@ -136,8 +162,9 @@ $photos = $stmt->fetchAll();
 </div>
 
 <script>
+var basePath = '<?= BASE_PATH ?>';
 function openPhotoModal(filename, caption) {
-    document.getElementById('modal-photo').src = '/uploads/photos/' + filename;
+    document.getElementById('modal-photo').src = basePath + '/uploads/photos/' + filename;
     document.getElementById('modal-caption').textContent = caption || '';
     openModal('photo-modal');
 }

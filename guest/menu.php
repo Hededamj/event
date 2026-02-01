@@ -4,6 +4,11 @@
  */
 require_once __DIR__ . '/../includes/guest-header.php';
 
+// Check if menu is visible
+if (!($event['show_menu'] ?? true)) {
+    redirect(BASE_PATH . '/guest/index.php');
+}
+
 // Get menu items grouped by course
 $stmt = $db->prepare("
     SELECT * FROM menu_items

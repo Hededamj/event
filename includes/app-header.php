@@ -542,6 +542,50 @@ $pageTitle = $pageTitle ?? 'Dashboard';
             color: var(--gray-500);
             margin-bottom: 24px;
         }
+
+        /* Forms */
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--gray-700);
+            margin-bottom: 6px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 10px 14px;
+            font-size: 14px;
+            border: 1px solid var(--gray-300);
+            border-radius: 8px;
+            background: white;
+            color: var(--gray-900);
+            transition: border-color 0.2s, box-shadow 0.2s;
+            font-family: inherit;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
+        }
+
+        .form-input::placeholder {
+            color: var(--gray-400);
+        }
+
+        select.form-input {
+            cursor: pointer;
+        }
+
+        textarea.form-input {
+            resize: vertical;
+            min-height: 80px;
+        }
     </style>
 </head>
 <body>

@@ -30,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $user = $stmt->fetch();
 
         if ($user && password_verify($password, $user['password_hash'])) {
-            login($user['id'], $event['id']);
+            login($user['id'], $event['id'], $user['role']);
             redirect(BASE_PATH . '/admin/index.php');
         } else {
             $error = 'Forkert email eller adgangskode.';

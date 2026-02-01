@@ -42,7 +42,7 @@ function getPlanBySlug(string $slug): ?array {
  */
 function getAllEventTypes(): array {
     $db = getDB();
-    $stmt = $db->query("SELECT * FROM event_types WHERE is_active = TRUE ORDER BY sort_order ASC");
+    $stmt = $db->query("SELECT * FROM event_types ORDER BY sort_order ASC");
     return $stmt->fetchAll();
 }
 
@@ -51,7 +51,7 @@ function getAllEventTypes(): array {
  */
 function getEventTypeBySlug(string $slug): ?array {
     $db = getDB();
-    $stmt = $db->prepare("SELECT * FROM event_types WHERE slug = ? AND is_active = TRUE LIMIT 1");
+    $stmt = $db->prepare("SELECT * FROM event_types WHERE slug = ? LIMIT 1");
     $stmt->execute([$slug]);
     return $stmt->fetch() ?: null;
 }
