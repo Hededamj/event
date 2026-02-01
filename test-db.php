@@ -8,7 +8,7 @@ echo "<h2>Database Test</h2>";
 echo "<p>1. Testing database connection...</p>";
 
 try {
-    $dsn = 'mysql:host=mysql71.unoeuro.com;dbname=hededam_dk_db;charset=utf8mb4';
+    $dsn = 'mysql:host=mysql71.unoeuro.com;dbname=hededam_dk_db_event;charset=utf8mb4';
     $pdo = new PDO($dsn, 'hededam_dk', 'Plantagevej12', [
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
