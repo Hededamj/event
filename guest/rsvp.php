@@ -3,6 +3,7 @@
  * Guest - RSVP Form
  */
 require_once __DIR__ . '/../includes/guest-header.php';
+require_once __DIR__ . '/../includes/gdpr.php';
 
 $decline = isset($_GET['decline']);
 $success = false;
@@ -13,6 +14,7 @@ $maxGuests = max(1, (int)($guest['max_guests'] ?? 1));
 
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    requireCsrf();
     $rsvpStatus = $_POST['rsvp_status'] ?? 'yes';
     $adultsCount = max(1, min($maxGuests, (int)($_POST['adults_count'] ?? 1))); // Limit to max_guests
     $childrenCount = max(0, (int)($_POST['children_count'] ?? 0));
@@ -56,6 +58,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $guestId,
         $eventId
     ]);
+
+    // Record GDPR consent
+    $privacyConsent = isset($_POST['privacy_consent']);
+    $marketingConsent = isset($_POST['marketing_consent']);
+    if ($privacyConsent) {
+        recordGuestPrivacyConsent($db, $guestId, $privacyConsent, $marketingConsent);
+    }
 
     $success = true;
     $successType = $rsvpStatus;
@@ -133,6 +142,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <div class="card">
         <form method="POST">
+            <?= csrfField() ?>
             <input type="hidden" name="rsvp_status" value="<?= $decline ? 'no' : 'yes' ?>">
 
             <?php if (!$decline): ?>
@@ -234,6 +244,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <input type="hidden" name="adults_count" value="0">
                 <input type="hidden" name="children_count" value="0">
             <?php endif; ?>
+
+            <!-- GDPR Consent -->
+            <div class="form-group consent-section" style="margin-top: var(--space-md); padding-top: var(--space-md); border-top: 1px solid var(--color-border);">
+                <div class="consent-checkbox" style="margin-bottom: var(--space-sm);">
+                    <label style="display: flex; align-items: flex-start; gap: var(--space-xs); cursor: pointer;">
+                        <input type="checkbox"
+                               name="privacy_consent"
+                               value="1"
+                               required
+                               style="margin-top: 3px; flex-shrink: 0;"
+                               <?= !empty($guest['privacy_consent']) ? 'checked' : '' ?>>
+                        <span class="small">
+                            Jeg accepterer at mine oplysninger gemmes til brug for dette arrangement.
+                            <a href="<?= BASE_PATH ?>/legal/privacy.php" target="_blank" class="link-underline">Læs privatlivspolitik</a> *
+                        </span>
+                    </label>
+                </div>
+                <div class="consent-checkbox">
+                    <label style="display: flex; align-items: flex-start; gap: var(--space-xs); cursor: pointer;">
+                        <input type="checkbox"
+                               name="marketing_consent"
+                               value="1"
+                               style="margin-top: 3px; flex-shrink: 0;"
+                               <?= !empty($guest['marketing_consent']) ? 'checked' : '' ?>>
+                        <span class="small text-muted">
+                            Jeg vil gerne modtage nyheder og tilbud fra Partypart (valgfrit)
+                        </span>
+                    </label>
+                </div>
+            </div>
 
             <button type="submit" class="btn btn--primary btn--large btn--block">
                 <?= $decline ? 'Send afbud' : 'Bekræft tilmelding' ?>

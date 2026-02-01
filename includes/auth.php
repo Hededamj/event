@@ -3,6 +3,8 @@
  * Authentication Functions
  */
 
+require_once __DIR__ . '/audit.php';
+
 // Start session with extended lifetime (30 days)
 if (session_status() === PHP_SESSION_NONE) {
     // Set session cookie to last 30 days
@@ -184,4 +186,31 @@ function verifyCsrfToken(string $token): bool {
  */
 function csrfField(): string {
     return '<input type="hidden" name="csrf_token" value="' . escape(generateCsrfToken()) . '">';
+}
+
+/**
+ * Require valid CSRF token for POST requests
+ * Call at the start of POST handling
+ */
+function requireCsrf(): void {
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $token = $_POST['csrf_token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';
+        if (!verifyCsrfToken($token)) {
+            http_response_code(403);
+            if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
+                header('Content-Type: application/json');
+                echo json_encode(['success' => false, 'error' => 'Invalid CSRF token']);
+                exit;
+            }
+            setFlash('error', 'Sikkerhedsfejl. Prøv igen.');
+            redirect($_SERVER['HTTP_REFERER'] ?? BASE_PATH . '/admin/');
+        }
+    }
+}
+
+/**
+ * Get CSRF token for JavaScript (AJAX requests)
+ */
+function csrfMeta(): string {
+    return '<meta name="csrf-token" content="' . escape(generateCsrfToken()) . '">';
 }

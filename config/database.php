@@ -2,19 +2,46 @@
 /**
  * Database Configuration
  *
- * Update these settings to match your UnoEuro MySQL database
+ * Credentials can be set via:
+ * 1. Environment variables (recommended for production)
+ * 2. .env file in project root
+ * 3. Default values below (for development only)
  */
 
-if (!defined('DB_HOST')) define('DB_HOST', 'mysql71.unoeuro.com');
-if (!defined('DB_NAME')) define('DB_NAME', 'hededam_dk_db_event');
-if (!defined('DB_USER')) define('DB_USER', 'hededam_dk');
-if (!defined('DB_PASS')) define('DB_PASS', 'Plantagevej12');
+// Load environment variables
+require_once __DIR__ . '/../includes/env.php';
+
+// Database credentials - prefer environment variables
+if (!defined('DB_HOST')) define('DB_HOST', env('DB_HOST', 'mysql71.unoeuro.com'));
+if (!defined('DB_NAME')) define('DB_NAME', env('DB_NAME', 'hededam_dk_db_event'));
+if (!defined('DB_USER')) define('DB_USER', env('DB_USER', 'hededam_dk'));
+if (!defined('DB_PASS')) define('DB_PASS', env('DB_PASS', 'Plantagevej12'));
 if (!defined('DB_CHARSET')) define('DB_CHARSET', 'utf8mb4');
 
 /**
  * Base URL path - change this if site is in a subdirectory
  */
-if (!defined('BASE_PATH')) define('BASE_PATH', '/sofie');
+if (!defined('BASE_PATH')) define('BASE_PATH', env('BASE_PATH', '/sofie'));
+
+/**
+ * Get full application URL
+ */
+if (!defined('APP_URL')) define('APP_URL', env('APP_URL', ''));
+
+/**
+ * Get base URL for links (with protocol and domain)
+ */
+function getBaseUrl(): string {
+    $appUrl = APP_URL;
+    if (!empty($appUrl)) {
+        return rtrim($appUrl, '/') . BASE_PATH;
+    }
+
+    // Auto-detect from request
+    $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+    $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+    return $protocol . '://' . $host . BASE_PATH;
+}
 
 /**
  * Get PDO database connection (singleton pattern)

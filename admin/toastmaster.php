@@ -401,7 +401,7 @@ require_once __DIR__ . '/../includes/admin-sidebar.php';
                                     <div class="small text-muted"><?= escape($access['email']) ?></div>
                                 <?php endif; ?>
                                 <div class="small text-muted">
-                                    Link: <?= 'https://hededam.dk/sofie/toastmaster/?kode=' . $access['access_code'] ?>
+                                    Link: <?= getBaseUrl() ?>/toastmaster/?kode=<?= $access['access_code'] ?>
                                 </div>
                             </div>
                             <div class="access-item__actions">
@@ -788,14 +788,14 @@ function setPrimary(accessId) {
 }
 
 function copyAccessLink(code) {
-    const link = 'https://hededam.dk/sofie/toastmaster/?kode=' + code;
+    const link = '<?= getBaseUrl() ?>/toastmaster/?kode=' + code;
     navigator.clipboard.writeText(link).then(() => {
         showToast('Link kopieret!');
     });
 }
 
 function copyGuestLink() {
-    const link = 'https://hededam.dk/sofie/guest/indslag.php';
+    const link = '<?= getBaseUrl() ?>/guest/indslag.php';
     navigator.clipboard.writeText(link).then(() => {
         showToast('Tilmeldingslink kopieret!');
     });

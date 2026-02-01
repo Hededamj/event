@@ -6,6 +6,7 @@
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../includes/functions.php';
 require_once __DIR__ . '/../includes/auth.php';
+require_once __DIR__ . '/../includes/rate-limiter.php';
 
 $db = getDB();
 
@@ -57,18 +58,37 @@ if ($guestLoggedIn) {
 
 // Handle guest login
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['guest_code'])) {
-    $code = preg_replace('/[^0-9]/', '', $_POST['guest_code']);
+    // Check rate limit first (5 attempts per 15 minutes)
+    $rateLimit = checkRateLimit($db, 'guest_login_' . $eventId, 5, 900);
 
-    $stmt = $db->prepare("SELECT * FROM guests WHERE event_id = ? AND unique_code = ?");
-    $stmt->execute([$eventId, $code]);
-    $guest = $stmt->fetch();
-
-    if ($guest) {
-        loginGuest($guest['id'], $eventId);
-        $redirectPage = $guest['rsvp_status'] === 'pending' ? 'rsvp' : 'home';
-        redirect("/e/$slug/$redirectPage");
+    if (!$rateLimit['allowed']) {
+        $loginError = 'For mange forsøg. Prøv igen om ' . formatRetryTime($rateLimit['retry_after']) . '.';
     } else {
-        $loginError = 'Ugyldig kode. Prøv igen.';
+        // Clean code - accept both old numeric (6 digits) and new alphanumeric (8 chars)
+        $code = strtoupper(preg_replace('/[^A-Za-z0-9]/', '', $_POST['guest_code']));
+
+        $stmt = $db->prepare("SELECT * FROM guests WHERE event_id = ? AND unique_code = ?");
+        $stmt->execute([$eventId, $code]);
+        $guest = $stmt->fetch();
+
+        if ($guest) {
+            // Success - clear rate limit and login
+            clearRateLimit($db, 'guest_login_' . $eventId);
+            loginGuest($guest['id'], $eventId);
+            auditGuestLogin($db, $guest['id'], $eventId);
+            $redirectPage = $guest['rsvp_status'] === 'pending' ? 'rsvp' : 'home';
+            redirect("/e/$slug/$redirectPage");
+        } else {
+            // Failed attempt - record for rate limiting
+            recordRateLimitAttempt($db, 'guest_login_' . $eventId, 5, 900, 1800);
+            auditGuestFailed($db, $code);
+            $remaining = $rateLimit['remaining'] - 1;
+            if ($remaining > 0) {
+                $loginError = "Ugyldig kode. Du har $remaining forsøg tilbage.";
+            } else {
+                $loginError = 'For mange forsøg. Prøv igen om 30 minutter.';
+            }
+        }
     }
 }
 

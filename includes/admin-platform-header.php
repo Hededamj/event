@@ -615,6 +615,12 @@ $platformName = getPlatformSetting('platform_name', 'EventPlatform');
                                 <?php endif; ?>
                             </a>
                         </li>
+                        <li>
+                            <a href="<?= BASE_PATH ?>/admin-platform/commissions.php" class="nav-link <?= $currentPage === 'commissions' ? 'active' : '' ?>">
+                                <span class="nav-link-icon">&#128176;</span>
+                                Kommission
+                            </a>
+                        </li>
                     </ul>
                 </div>
 

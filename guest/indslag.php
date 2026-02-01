@@ -51,6 +51,7 @@ $activeTab = $_GET['tab'] ?? 'indslag';
 
 // Handle form submissions
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    requireCsrf();
     $action = $_POST['action'] ?? 'add_indslag';
 
     if ($action === 'add_indslag') {
@@ -219,6 +220,7 @@ $typeLabels = [
         </p>
 
         <form method="POST">
+            <?= csrfField() ?>
             <input type="hidden" name="action" value="add_indslag">
 
             <div class="form-group">
@@ -343,6 +345,7 @@ $typeLabels = [
 
             <!-- Send Message Form -->
             <form method="POST" class="chat-form">
+                <?= csrfField() ?>
                 <input type="hidden" name="action" value="send_message">
                 <input type="hidden" name="sender_name" value="<?= escape($guest['name'] ?? 'Gæst') ?>">
 

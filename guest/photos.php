@@ -27,19 +27,16 @@ $uploadSuccess = false;
 
 // Handle photo upload BEFORE any output
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['photo'])) {
+    requireCsrf();
     $file = $_FILES['photo'];
     $errors = validateImageUpload($file);
 
     if (empty($errors)) {
-        $filename = generateUploadFilename($file['name']);
-        $uploadPath = __DIR__ . '/../uploads/photos/' . $filename;
+        // Process and re-encode image to strip potentially malicious content
+        $uploadDir = __DIR__ . '/../uploads/photos';
+        $filename = processUploadedImage($file['tmp_name'], $uploadDir, $file['name']);
 
-        // Create uploads directory if it doesn't exist
-        if (!is_dir(dirname($uploadPath))) {
-            mkdir(dirname($uploadPath), 0755, true);
-        }
-
-        if (move_uploaded_file($file['tmp_name'], $uploadPath)) {
+        if ($filename) {
             $caption = trim($_POST['caption'] ?? '');
 
             $stmt = $db->prepare("
@@ -58,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['photo'])) {
             setFlash('success', 'Tak for billedet!');
             redirect(BASE_PATH . '/guest/photos.php');
         } else {
-            $uploadError = 'Kunne ikke uploade filen. Prøv igen.';
+            $uploadError = 'Kunne ikke behandle billedet. Prøv en anden fil.';
         }
     } else {
         $uploadError = implode(' ', $errors);
@@ -95,6 +92,7 @@ $photos = $stmt->fetchAll();
     <?php endif; ?>
 
     <form method="POST" enctype="multipart/form-data">
+        <?= csrfField() ?>
         <div class="form-group">
             <label class="form-label">Vælg billede</label>
             <input type="file"

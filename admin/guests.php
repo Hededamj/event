@@ -25,6 +25,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' &&
             exit;
         }
 
+        // Verify CSRF token for AJAX requests
+        $csrfToken = $_POST['csrf_token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';
+        if (!verifyCsrfToken($csrfToken)) {
+            echo json_encode(['success' => false, 'error' => 'Invalid CSRF token']);
+            exit;
+        }
+
         $db = getDB();
         $eventId = getCurrentEventId();
         $action = $_POST['action'] ?? '';
@@ -166,6 +173,7 @@ try {
 
 // Handle form submissions
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    requireCsrf();
     $action = $_POST['action'] ?? '';
 
     if ($action === 'add') {
@@ -555,7 +563,7 @@ $showBulkModal = isset($_GET['action']) && $_GET['action'] === 'bulk';
 $showExport = isset($_GET['action']) && $_GET['action'] === 'export';
 
 // Get base URL for links
-$baseUrl = 'https://hededam.dk/sofie/';
+$baseUrl = getBaseUrl() . '/';
 
 // If export view, show simple list
 if ($showExport):
@@ -990,6 +998,7 @@ require_once __DIR__ . '/../includes/admin-sidebar.php';
                                         ✏️
                                     </button>
                                     <form method="POST" style="display: inline;">
+                                        <?= csrfField() ?>
                                         <input type="hidden" name="action" value="delete">
                                         <input type="hidden" name="id" value="<?= $guest['id'] ?>">
                                         <button type="submit"
@@ -1095,6 +1104,7 @@ Marie Jensen;marie@email.dk;;1"
                 </div>
 
                 <form method="POST" id="import-form">
+                    <?= csrfField() ?>
                     <input type="hidden" name="action" value="csv_import">
                     <input type="hidden" name="csv_data" id="csv-data-input">
                     <input type="hidden" name="mapping" id="mapping-input">
@@ -1118,6 +1128,7 @@ Marie Jensen;marie@email.dk;;1"
             <button class="modal__close" onclick="closeModal('bulk-modal')">&times;</button>
         </div>
         <form method="POST">
+            <?= csrfField() ?>
             <input type="hidden" name="action" value="bulk_add">
             <div class="modal__body">
                 <div class="form-group">
@@ -1159,6 +1170,7 @@ Fætter Magnus (1)
             <button class="modal__close" onclick="closeModal('add-modal')">&times;</button>
         </div>
         <form method="POST">
+            <?= csrfField() ?>
             <input type="hidden" name="action" value="add">
             <div class="modal__body">
                 <div style="display: grid; grid-template-columns: 1fr auto; gap: var(--space-md);">
@@ -1200,6 +1212,7 @@ Fætter Magnus (1)
             <button class="modal__close" onclick="closeModal('edit-modal')">&times;</button>
         </div>
         <form method="POST">
+            <?= csrfField() ?>
             <input type="hidden" name="action" value="update">
             <input type="hidden" name="id" id="edit-id">
             <div class="modal__body">
@@ -1367,7 +1380,7 @@ function toggleRsvpDetails() {
 }
 
 function copyCode(code) {
-    const fullLink = 'https://hededam.dk/sofie/?kode=' + code;
+    const fullLink = '<?= getBaseUrl() ?>/?kode=' + code;
     navigator.clipboard.writeText(fullLink).then(() => {
         showToast('Link kopieret til udklipsholder!');
     });
@@ -1411,9 +1424,10 @@ function makeToastmaster(guestId, guestName) {
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
-            'X-Requested-With': 'XMLHttpRequest'
+            'X-Requested-With': 'XMLHttpRequest',
+            'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content
         },
-        body: `action=make_toastmaster&guest_id=${guestId}`
+        body: `action=make_toastmaster&guest_id=${guestId}&csrf_token=${document.querySelector('meta[name="csrf-token"]').content}`
     })
     .then(r => r.json())
     .then(data => {
@@ -1436,9 +1450,10 @@ function removeToastmaster(guestId, guestName) {
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
-            'X-Requested-With': 'XMLHttpRequest'
+            'X-Requested-With': 'XMLHttpRequest',
+            'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content
         },
-        body: `action=remove_toastmaster&guest_id=${guestId}`
+        body: `action=remove_toastmaster&guest_id=${guestId}&csrf_token=${document.querySelector('meta[name="csrf-token"]').content}`
     })
     .then(r => r.json())
     .then(data => {
@@ -1463,9 +1478,10 @@ document.querySelectorAll('.invitation-toggle').forEach(btn => {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
-                'X-Requested-With': 'XMLHttpRequest'
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content
             },
-            body: 'action=toggle_invitation&id=' + id
+            body: 'action=toggle_invitation&id=' + id + '&csrf_token=' + document.querySelector('meta[name="csrf-token"]').content
         })
         .then(response => response.json())
         .then(data => {

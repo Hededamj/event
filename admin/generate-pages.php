@@ -73,7 +73,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['generate'])) {
                 'name' => $guest['name'],
                 'code' => $guest['unique_code'],
                 'file' => $filename,
-                'url' => 'https://hededam.dk/sofie/invitationer/' . $filename
+                'url' => getBaseUrl() . '/invitationer/' . $filename
             ];
         } else {
             $errors[] = "Kunne ikke oprette fil for: " . $guest['name'];
@@ -106,7 +106,8 @@ function generateInvitationHTML($guest, $event, $theme) {
         . '&location=' . urlencode($locationRaw)
         . '&details=' . urlencode('Invitation til ' . $calendarTitle);
 
-    $basePath = '/sofie';
+    $basePath = BASE_PATH;
+    $baseFullUrl = getBaseUrl();
 
     return <<<HTML
 <!DOCTYPE html>
@@ -120,7 +121,7 @@ function generateInvitationHTML($guest, $event, $theme) {
     <!-- Open Graph for social sharing -->
     <meta property="og:title" content="Invitation til {$confirmandName}s {$eventName}">
     <meta property="og:description" content="Du er inviteret til {$confirmandName}s {$eventName} - {$eventDate}">
-    <meta property="og:image" content="https://hededam.dk/sofie/assets/images/sofie-1.jpg">
+    <meta property="og:image" content="{$baseFullUrl}/assets/images/sofie-1.jpg">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
     <meta property="og:type" content="website">
@@ -130,7 +131,7 @@ function generateInvitationHTML($guest, $event, $theme) {
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Invitation til {$confirmandName}s {$eventName}">
     <meta name="twitter:description" content="Du er inviteret til {$confirmandName}s {$eventName} - {$eventDate}">
-    <meta name="twitter:image" content="https://hededam.dk/sofie/assets/images/sofie-1.jpg">
+    <meta name="twitter:image" content="{$baseFullUrl}/assets/images/sofie-1.jpg">
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -583,7 +584,7 @@ $theme = $event['theme'] ?? 'girl';
             <div class="card">
                 <p>Dette vil oprette en personlig invitationsside for hver gæst.</p>
                 <p style="margin-top: 0.5rem; color: #666;">
-                    F.eks. <code>hededam.dk/sofie/invitationer/farmor.html</code>
+                    F.eks. <code><?= str_replace(['https://', 'http://'], '', getBaseUrl()) ?>/invitationer/gæstekode.html</code>
                 </p>
 
                 <form method="POST" style="margin-top: 1.5rem;">

@@ -6,8 +6,12 @@
 require_once __DIR__ . '/../config/saas.php';
 require_once __DIR__ . '/../includes/functions.php';
 require_once __DIR__ . '/../includes/partner-auth.php';
+require_once __DIR__ . '/../includes/partner-reviews.php';
 
 $db = getDB();
+
+// Ensure review tables exist
+ensureReviewTables($db);
 
 $partnerId = (int)($_GET['id'] ?? 0);
 
@@ -49,6 +53,10 @@ $stmt = $db->prepare("
 ");
 $stmt->execute([$partner['category_id'], $partnerId]);
 $similarPartners = $stmt->fetchAll();
+
+// Get reviews and rating summary
+$ratingSummary = getPartnerRatingSummary($db, $partnerId);
+$reviews = getPartnerReviews($db, $partnerId, 5);
 
 $pageTitle = $partner['company_name'];
 $currentCategory = $partner['category_slug'];
@@ -245,6 +253,97 @@ require_once __DIR__ . '/../includes/partner-header.php';
         background: var(--color-bg-subtle);
     }
 
+    /* Star Rating */
+    .star-rating { display: inline-flex; align-items: center; gap: 0.25rem; }
+    .star { color: #fbbf24; font-size: 1rem; }
+    .star--empty { color: #d1d5db; }
+    .star-rating__number { margin-left: 0.5rem; font-weight: 600; color: var(--color-text); }
+
+    .profile-rating { display: inline-flex; align-items: center; gap: 0.5rem; }
+
+    /* Rating Summary */
+    .rating-summary {
+        display: flex;
+        gap: 2rem;
+        padding: 1.5rem;
+        background: var(--color-bg-subtle);
+        border-radius: var(--radius-lg);
+        margin-bottom: 1.5rem;
+    }
+    .rating-summary__score { text-align: center; min-width: 120px; }
+    .rating-summary__number { font-size: 3rem; font-weight: 700; color: var(--color-text); line-height: 1; }
+    .rating-summary__stars { margin: 0.5rem 0; }
+    .rating-summary__stars .star { font-size: 1.25rem; }
+    .rating-summary__count { font-size: 0.875rem; color: var(--color-text-muted); }
+    .rating-summary__breakdown { flex: 1; }
+
+    .rating-bar { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.375rem; }
+    .rating-bar__label { font-size: 0.8rem; width: 35px; color: var(--color-text-soft); }
+    .rating-bar__track { flex: 1; height: 8px; background: var(--color-border); border-radius: 4px; overflow: hidden; }
+    .rating-bar__fill { height: 100%; background: #fbbf24; border-radius: 4px; }
+    .rating-bar__count { font-size: 0.8rem; width: 25px; text-align: right; color: var(--color-text-muted); }
+
+    /* Reviews */
+    .review-list { display: flex; flex-direction: column; gap: 1rem; }
+    .review-card {
+        padding: 1.25rem;
+        background: var(--color-surface);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-lg);
+    }
+    .review-card__header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem; }
+    .review-card__author { display: flex; align-items: center; gap: 0.75rem; }
+    .review-card__avatar {
+        width: 40px; height: 40px; border-radius: 50%;
+        background: var(--color-primary-soft); color: var(--color-primary);
+        display: flex; align-items: center; justify-content: center;
+        font-weight: 600; font-size: 1rem;
+    }
+    .review-card__name { font-weight: 500; display: flex; align-items: center; gap: 0.5rem; }
+    .review-card__date { font-size: 0.8rem; color: var(--color-text-muted); }
+    .review-card__rating .star { font-size: 0.9rem; }
+    .review-card__title { font-size: 1rem; margin-bottom: 0.5rem; }
+    .review-card__text { color: var(--color-text-soft); line-height: 1.6; }
+    .review-card__event { font-size: 0.8rem; color: var(--color-text-muted); margin-top: 0.75rem; }
+    .review-card__response {
+        margin-top: 1rem; padding: 1rem;
+        background: var(--color-bg-subtle); border-radius: var(--radius-md);
+        font-size: 0.9rem;
+    }
+    .review-card__response strong { display: block; margin-bottom: 0.5rem; }
+
+    .badge-verified { font-size: 0.7rem; padding: 0.15rem 0.4rem; background: #dcfce7; color: #166534; border-radius: 4px; }
+
+    .empty-reviews { text-align: center; padding: 2rem; color: var(--color-text-muted); }
+
+    /* Modal */
+    .modal-overlay {
+        display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+        z-index: 1000; align-items: center; justify-content: center; padding: 1rem;
+    }
+    .modal-overlay.active { display: flex; }
+    .modal {
+        background: white; border-radius: var(--radius-lg);
+        max-width: 500px; width: 100%; max-height: 90vh; overflow-y: auto;
+    }
+    .modal__header {
+        padding: 1.25rem; border-bottom: 1px solid var(--color-border);
+        display: flex; justify-content: space-between; align-items: center;
+    }
+    .modal__title { font-size: 1.1rem; font-weight: 600; }
+    .modal__close { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--color-text-muted); }
+    .modal__body { padding: 1.25rem; }
+    .modal__footer { padding: 1.25rem; border-top: 1px solid var(--color-border); display: flex; justify-content: flex-end; gap: 0.75rem; }
+
+    /* Star Input */
+    .star-input { display: flex; gap: 0.25rem; font-size: 1.5rem; }
+    .star-input label { cursor: pointer; color: #d1d5db; transition: color 0.15s; }
+    .star-input label:hover,
+    .star-input label:hover ~ label,
+    .star-input input:checked ~ label { color: #fbbf24; }
+    .star-input { flex-direction: row-reverse; justify-content: flex-end; }
+    .star-input input { display: none; }
+
     @media (max-width: 968px) {
         .profile-header,
         .profile-main {
@@ -253,6 +352,17 @@ require_once __DIR__ . '/../includes/partner-header.php';
 
         .contact-card {
             position: static;
+        }
+
+        .rating-summary {
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .rating-summary__score {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            text-align: left;
         }
     }
 </style>
@@ -284,6 +394,12 @@ require_once __DIR__ . '/../includes/partner-header.php';
                     <?php endif; ?>
                 </div>
                 <div class="profile-stats">
+                    <?php if ($ratingSummary['total_reviews'] > 0): ?>
+                        <span class="profile-rating">
+                            <?= renderStars($ratingSummary['average_rating']) ?>
+                            <a href="#reviews" style="color: inherit;">(<?= $ratingSummary['total_reviews'] ?> anmeldelse<?= $ratingSummary['total_reviews'] > 1 ? 'r' : '' ?>)</a>
+                        </span>
+                    <?php endif; ?>
                     <span>&#128065; <?= number_format($partner['view_count']) ?> visninger</span>
                     <?php if ($partner['city']): ?>
                         <span>&#128205; <?= $partner['nationwide'] ? 'Hele landet' : escape($partner['city']) ?></span>
@@ -319,6 +435,103 @@ require_once __DIR__ . '/../includes/partner-header.php';
                     </div>
                 </div>
             <?php endif; ?>
+
+            <!-- Reviews Section -->
+            <div class="profile-section" id="reviews">
+                <h2>Anmeldelser <?php if ($ratingSummary['total_reviews'] > 0): ?>(<?= $ratingSummary['total_reviews'] ?>)<?php endif; ?></h2>
+
+                <?php if ($ratingSummary['total_reviews'] > 0): ?>
+                    <!-- Rating Summary -->
+                    <div class="rating-summary">
+                        <div class="rating-summary__score">
+                            <div class="rating-summary__number"><?= number_format($ratingSummary['average_rating'], 1) ?></div>
+                            <div class="rating-summary__stars"><?= renderStars($ratingSummary['average_rating'], false) ?></div>
+                            <div class="rating-summary__count"><?= $ratingSummary['total_reviews'] ?> anmeldelse<?= $ratingSummary['total_reviews'] > 1 ? 'r' : '' ?></div>
+                        </div>
+                        <div class="rating-summary__breakdown">
+                            <?php foreach ([5, 4, 3, 2, 1] as $stars): ?>
+                                <?php
+                                $starKey = ['', 'one_star', 'two_star', 'three_star', 'four_star', 'five_star'][$stars];
+                                $count = $ratingSummary[$starKey] ?? 0;
+                                $pct = $ratingSummary['total_reviews'] > 0 ? ($count / $ratingSummary['total_reviews']) * 100 : 0;
+                                ?>
+                                <div class="rating-bar">
+                                    <span class="rating-bar__label"><?= $stars ?> ★</span>
+                                    <div class="rating-bar__track">
+                                        <div class="rating-bar__fill" style="width: <?= $pct ?>%;"></div>
+                                    </div>
+                                    <span class="rating-bar__count"><?= $count ?></span>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+
+                    <!-- Review List -->
+                    <div class="review-list">
+                        <?php foreach ($reviews as $review): ?>
+                            <div class="review-card">
+                                <div class="review-card__header">
+                                    <div class="review-card__author">
+                                        <div class="review-card__avatar"><?= strtoupper(substr($review['reviewer_name'], 0, 1)) ?></div>
+                                        <div>
+                                            <div class="review-card__name">
+                                                <?= escape($review['reviewer_name']) ?>
+                                                <?php if ($review['is_verified']): ?>
+                                                    <span class="badge badge-verified" title="Verificeret køb">✓ Verificeret</span>
+                                                <?php endif; ?>
+                                            </div>
+                                            <div class="review-card__date"><?= formatReviewDate($review['created_at']) ?></div>
+                                        </div>
+                                    </div>
+                                    <div class="review-card__rating"><?= renderStars($review['rating'], false) ?></div>
+                                </div>
+
+                                <?php if ($review['title']): ?>
+                                    <h4 class="review-card__title"><?= escape($review['title']) ?></h4>
+                                <?php endif; ?>
+
+                                <p class="review-card__text"><?= nl2br(escape($review['review_text'])) ?></p>
+
+                                <?php if ($review['event_type']): ?>
+                                    <div class="review-card__event">
+                                        Event: <?= escape($review['event_type']) ?>
+                                        <?php if ($review['event_date']): ?>
+                                            (<?= date('M Y', strtotime($review['event_date'])) ?>)
+                                        <?php endif; ?>
+                                    </div>
+                                <?php endif; ?>
+
+                                <?php if ($review['partner_response']): ?>
+                                    <div class="review-card__response">
+                                        <strong><?= escape($partner['company_name']) ?> svarede:</strong>
+                                        <p><?= nl2br(escape($review['partner_response'])) ?></p>
+                                    </div>
+                                <?php endif; ?>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+
+                    <?php if ($ratingSummary['total_reviews'] > 5): ?>
+                        <div style="text-align: center; margin-top: 1rem;">
+                            <a href="<?= BASE_PATH ?>/partners/reviews.php?id=<?= $partnerId ?>" class="btn btn-secondary">
+                                Se alle <?= $ratingSummary['total_reviews'] ?> anmeldelser
+                            </a>
+                        </div>
+                    <?php endif; ?>
+                <?php else: ?>
+                    <div class="empty-reviews">
+                        <p>Ingen anmeldelser endnu</p>
+                        <p class="text-muted">Vær den første til at anmelde <?= escape($partner['company_name']) ?></p>
+                    </div>
+                <?php endif; ?>
+
+                <!-- Write Review Button -->
+                <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--color-border);">
+                    <button onclick="openModal('review-modal')" class="btn btn-secondary">
+                        ✍️ Skriv en anmeldelse
+                    </button>
+                </div>
+            </div>
 
             <!-- Inquiry Form -->
             <div class="profile-section">
@@ -481,5 +694,95 @@ require_once __DIR__ . '/../includes/partner-header.php';
         </div>
     </section>
 <?php endif; ?>
+
+<!-- Review Modal -->
+<div class="modal-overlay" id="review-modal">
+    <div class="modal">
+        <div class="modal__header">
+            <h3 class="modal__title">Skriv en anmeldelse</h3>
+            <button class="modal__close" onclick="closeModal('review-modal')">&times;</button>
+        </div>
+        <form method="POST" action="<?= BASE_PATH ?>/partners/submit-review.php">
+            <div class="modal__body">
+                <input type="hidden" name="partner_id" value="<?= $partnerId ?>">
+                <?= csrfField() ?>
+
+                <div class="form-group">
+                    <label class="form-label">Din bedømmelse *</label>
+                    <div class="star-input">
+                        <?php for ($i = 5; $i >= 1; $i--): ?>
+                            <input type="radio" name="rating" id="star<?= $i ?>" value="<?= $i ?>" required>
+                            <label for="star<?= $i ?>">★</label>
+                        <?php endfor; ?>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="form-group">
+                        <label class="form-label">Dit navn *</label>
+                        <input type="text" name="reviewer_name" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Email *</label>
+                        <input type="email" name="reviewer_email" class="form-input" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Overskrift</label>
+                    <input type="text" name="title" class="form-input" placeholder="Opsummer din oplevelse">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Din anmeldelse *</label>
+                    <textarea name="review_text" class="form-input" rows="4" required
+                              placeholder="Beskriv din oplevelse med <?= escape($partner['company_name']) ?>..."></textarea>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="form-group">
+                        <label class="form-label">Event type</label>
+                        <select name="event_type" class="form-input">
+                            <option value="">Vælg...</option>
+                            <option value="Bryllup">Bryllup</option>
+                            <option value="Fødselsdag">Fødselsdag</option>
+                            <option value="Konfirmation">Konfirmation</option>
+                            <option value="Firmafest">Firmafest</option>
+                            <option value="Barnedåb">Barnedåb</option>
+                            <option value="Jubilæum">Jubilæum</option>
+                            <option value="Andet">Andet</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Event dato</label>
+                        <input type="date" name="event_date" class="form-input">
+                    </div>
+                </div>
+
+                <div style="font-size: 0.8rem; color: var(--color-text-muted); margin-top: 0.5rem;">
+                    Din anmeldelse vil blive gennemgået før publicering.
+                </div>
+            </div>
+            <div class="modal__footer">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('review-modal')">Annuller</button>
+                <button type="submit" class="btn btn-primary">Send anmeldelse</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function openModal(id) {
+    document.getElementById(id).classList.add('active');
+}
+function closeModal(id) {
+    document.getElementById(id).classList.remove('active');
+}
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+    overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) closeModal(overlay.id);
+    });
+});
+</script>
 
 <?php require_once __DIR__ . '/../includes/partner-footer.php'; ?>

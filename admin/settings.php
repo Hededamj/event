@@ -58,6 +58,7 @@ if (!$oenskeskyColumnExists) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    requireCsrf();
     $action = $_POST['action'] ?? '';
 
     if ($action === 'update_event') {
@@ -179,6 +180,7 @@ require_once __DIR__ . '/../includes/admin-sidebar.php';
 <!-- Settings Form -->
 <div class="card">
     <form method="POST">
+        <?= csrfField() ?>
         <input type="hidden" name="action" value="update_event">
 
         <h2 class="card__title mb-md">Event-information</h2>
@@ -419,7 +421,7 @@ require_once __DIR__ . '/../includes/admin-sidebar.php';
     <div style="display: flex; gap: var(--space-sm); align-items: center;">
         <input type="text"
                class="form-input"
-               value="https://hededam.dk/sofie/"
+               value="<?= escape(getBaseUrl()) ?>/"
                readonly
                id="invite-link"
                style="flex: 1; font-family: monospace;">

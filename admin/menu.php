@@ -16,6 +16,7 @@ $courses = [
 
 // Handle form submissions
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    requireCsrf();
     $action = $_POST['action'] ?? '';
 
     if ($action === 'add') {
@@ -154,6 +155,7 @@ require_once __DIR__ . '/../includes/admin-sidebar.php';
                                     ✏️
                                 </button>
                                 <form method="POST" style="display: inline;">
+                                    <?= csrfField() ?>
                                     <input type="hidden" name="action" value="delete">
                                     <input type="hidden" name="id" value="<?= $item['id'] ?>">
                                     <button type="submit"
@@ -221,6 +223,7 @@ require_once __DIR__ . '/../includes/admin-sidebar.php';
             <button class="modal__close" onclick="closeModal('add-modal')">&times;</button>
         </div>
         <form method="POST">
+            <?= csrfField() ?>
             <input type="hidden" name="action" value="add">
             <div class="modal__body">
                 <div class="form-group">
@@ -258,6 +261,7 @@ require_once __DIR__ . '/../includes/admin-sidebar.php';
             <button class="modal__close" onclick="closeModal('edit-modal')">&times;</button>
         </div>
         <form method="POST">
+            <?= csrfField() ?>
             <input type="hidden" name="action" value="update">
             <input type="hidden" name="id" id="edit-id">
             <div class="modal__body">

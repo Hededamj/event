@@ -38,6 +38,7 @@ $currentPage = basename($_SERVER['PHP_SELF'], '.php');
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <?= csrfMeta() ?>
     <title><?= escape($event['confirmand_name']) ?>s <?= escape($event['name']) ?></title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">

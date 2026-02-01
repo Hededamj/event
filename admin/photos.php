@@ -6,6 +6,7 @@ require_once __DIR__ . '/../includes/admin-header.php';
 
 // Handle form submissions
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    requireCsrf();
     $action = $_POST['action'] ?? '';
 
     if ($action === 'approve') {
@@ -95,11 +96,13 @@ require_once __DIR__ . '/../includes/admin-sidebar.php';
                         </div>
                         <div class="photo-card__actions">
                             <form method="POST" style="display: inline;">
+                                <?= csrfField() ?>
                                 <input type="hidden" name="action" value="approve">
                                 <input type="hidden" name="id" value="<?= $photo['id'] ?>">
                                 <button type="submit" class="btn btn--primary btn--sm">Godkend</button>
                             </form>
                             <form method="POST" style="display: inline;">
+                                <?= csrfField() ?>
                                 <input type="hidden" name="action" value="delete">
                                 <input type="hidden" name="id" value="<?= $photo['id'] ?>">
                                 <button type="submit" class="btn btn--ghost btn--sm" data-confirm="Slet dette billede?">Slet</button>
@@ -139,6 +142,7 @@ require_once __DIR__ . '/../includes/admin-sidebar.php';
                         </div>
                         <div class="photo-card__actions">
                             <form method="POST" style="display: inline;">
+                                <?= csrfField() ?>
                                 <input type="hidden" name="action" value="delete">
                                 <input type="hidden" name="id" value="<?= $photo['id'] ?>">
                                 <button type="submit" class="btn btn--ghost btn--sm" data-confirm="Slet dette billede?">🗑️</button>

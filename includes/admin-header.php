@@ -10,6 +10,7 @@ ob_start();
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/functions.php';
 require_once __DIR__ . '/auth.php';
+require_once __DIR__ . '/rbac.php';
 
 // Require organizer login
 requireLogin();
@@ -17,6 +18,9 @@ requireLogin();
 $db = getDB();
 $eventId = getCurrentEventId();
 $userId = getCurrentUserId();
+
+// Verify user has access to this event (RBAC check)
+verifyEventAccess($db, $eventId);
 
 // Get event details
 $stmt = $db->prepare("SELECT * FROM events WHERE id = ?");
@@ -71,6 +75,7 @@ $currentPage = basename($_SERVER['PHP_SELF'], '.php');
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <?= csrfMeta() ?>
     <title><?= escape($event['name']) ?> - Admin</title>
 
     <!-- Fonts -->

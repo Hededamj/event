@@ -2,6 +2,7 @@
 /**
  * Guest RSVP Page
  */
+require_once __DIR__ . '/../../includes/gdpr.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['rsvp_action'])) {
     $rsvpStatus = $_POST['rsvp_action'] === 'accept' ? 'accepted' : 'declined';
@@ -26,6 +27,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['rsvp_action'])) {
         $currentGuest['id'],
         $eventId
     ]);
+
+    // Record GDPR consent
+    $privacyConsent = isset($_POST['privacy_consent']);
+    $marketingConsent = isset($_POST['marketing_consent']);
+    if ($privacyConsent) {
+        recordGuestPrivacyConsent($db, $currentGuest['id'], $privacyConsent, $marketingConsent);
+    }
 
     $message = $rsvpStatus === 'accepted' ? 'Tak for din tilmelding!' : 'Vi har registreret dit afbud.';
     setFlash('success', $message);
@@ -64,6 +72,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['rsvp_action'])) {
             <div class="form-group">
                 <label class="form-label">Allergier eller diætbehov</label>
                 <textarea name="dietary_notes" class="form-input" rows="3" placeholder="F.eks. glutenfri, vegetar, nøddeallergi..."><?= htmlspecialchars($currentGuest['dietary_notes'] ?? '') ?></textarea>
+            </div>
+
+            <!-- GDPR Consent -->
+            <div class="form-group" style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--gray-200);">
+                <label style="display: flex; align-items: flex-start; gap: 8px; cursor: pointer; margin-bottom: 12px;">
+                    <input type="checkbox"
+                           name="privacy_consent"
+                           value="1"
+                           required
+                           style="margin-top: 3px;"
+                           <?= !empty($currentGuest['privacy_consent']) ? 'checked' : '' ?>>
+                    <span style="font-size: 13px; color: var(--gray-600);">
+                        Jeg accepterer at mine oplysninger gemmes til brug for dette arrangement.
+                        <a href="/legal/privacy" target="_blank" style="color: var(--primary);">Læs privatlivspolitik</a> *
+                    </span>
+                </label>
+                <label style="display: flex; align-items: flex-start; gap: 8px; cursor: pointer;">
+                    <input type="checkbox"
+                           name="marketing_consent"
+                           value="1"
+                           style="margin-top: 3px;"
+                           <?= !empty($currentGuest['marketing_consent']) ? 'checked' : '' ?>>
+                    <span style="font-size: 13px; color: var(--gray-400);">
+                        Jeg vil gerne modtage nyheder og tilbud fra Partypart (valgfrit)
+                    </span>
+                </label>
             </div>
 
             <button type="submit" name="rsvp_action" value="accept" class="btn btn-primary btn-full" style="margin-bottom: 12px;">

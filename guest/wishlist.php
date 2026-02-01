@@ -11,6 +11,7 @@ if (!($event['show_wishlist'] ?? true)) {
 
 // Handle reservation
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    requireCsrf();
     $action = $_POST['action'] ?? '';
     $itemId = (int)($_POST['item_id'] ?? 0);
 
@@ -146,6 +147,7 @@ $myReservations = array_filter($items, fn($i) => $i['reserved_by_guest_id'] == $
                     <?php endif; ?>
                 </div>
                 <form method="POST">
+                    <?= csrfField() ?>
                     <input type="hidden" name="action" value="unreserve">
                     <input type="hidden" name="item_id" value="<?= $item['id'] ?>">
                     <button type="submit" class="btn btn--ghost small" onclick="return confirm('Fjern reservation?')">
@@ -213,6 +215,7 @@ $myReservations = array_filter($items, fn($i) => $i['reserved_by_guest_id'] == $
                                     <?php endif; ?>
 
                                     <form method="POST">
+                                        <?= csrfField() ?>
                                         <input type="hidden" name="action" value="reserve">
                                         <input type="hidden" name="item_id" value="<?= $item['id'] ?>">
                                         <button type="submit" class="btn btn--primary small">

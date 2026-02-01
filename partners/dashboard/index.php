@@ -4,14 +4,21 @@
  */
 
 require_once __DIR__ . '/../../includes/partner-auth.php';
+require_once __DIR__ . '/../../includes/partner-commission.php';
 requirePartner();
 
 $db = getDB();
 $partner = getCurrentPartner();
 $partnerId = getCurrentPartnerId();
 
+// Ensure commission tables exist
+ensureCommissionTables($db);
+
 // Get stats
 $stats = [];
+
+// Commission stats
+$commissionStats = getPartnerCommissionSummary($db, $partnerId);
 
 // Inquiry count
 $stmt = $db->prepare("SELECT COUNT(*) FROM partner_inquiries WHERE partner_id = ?");
@@ -367,6 +374,21 @@ try {
                         </a>
                     </li>
                     <li>
+                        <a href="<?= BASE_PATH ?>/partners/dashboard/bookings.php" class="nav-link">
+                            &#128197; Bookinger
+                        </a>
+                    </li>
+                    <li>
+                        <a href="<?= BASE_PATH ?>/partners/dashboard/commission.php" class="nav-link">
+                            &#128176; Økonomi
+                        </a>
+                    </li>
+                    <li>
+                        <a href="<?= BASE_PATH ?>/partners/dashboard/verification.php" class="nav-link">
+                            &#9989; Verifikation
+                        </a>
+                    </li>
+                    <li>
                         <a href="<?= BASE_PATH ?>/partners/dashboard/gallery.php" class="nav-link">
                             &#128247; Galleri
                         </a>
@@ -421,30 +443,43 @@ try {
                     <div class="stat-value"><?= number_format($stats['views']) ?></div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-label">Forespørgsler i alt</div>
+                    <div class="stat-label">Forespørgsler</div>
                     <div class="stat-value"><?= number_format($stats['total_inquiries']) ?></div>
+                    <?php if ($stats['new_inquiries'] > 0): ?>
+                        <div style="font-size: 0.8rem; color: var(--color-error);"><?= $stats['new_inquiries'] ?> nye</div>
+                    <?php endif; ?>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-label">Nye forespørgsler</div>
-                    <div class="stat-value" style="color: <?= $stats['new_inquiries'] > 0 ? 'var(--color-error)' : 'inherit' ?>;">
-                        <?= number_format($stats['new_inquiries']) ?>
-                    </div>
+                    <div class="stat-label">Bookinger</div>
+                    <div class="stat-value"><?= number_format($commissionStats['completed_bookings']) ?></div>
+                    <div style="font-size: 0.8rem; color: var(--color-text-muted);"><?= $commissionStats['total_bookings'] ?> i alt</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-label">Status</div>
-                    <div>
-                        <?php
-                        $partnerBadgeMap = ['approved' => 'badge-success', 'pending' => 'badge-warning', 'rejected' => 'badge-error'];
-                        $partnerTextMap = ['approved' => 'Godkendt', 'pending' => 'Afventer', 'rejected' => 'Afvist', 'suspended' => 'Suspenderet'];
-                        $statusBadge = isset($partnerBadgeMap[$partner['status']]) ? $partnerBadgeMap[$partner['status']] : 'badge-info';
-                        $statusText = isset($partnerTextMap[$partner['status']]) ? $partnerTextMap[$partner['status']] : $partner['status'];
-                        ?>
-                        <span class="badge <?= $statusBadge ?>" style="font-size: 1rem; padding: 0.5rem 1rem;">
-                            <?= $statusText ?>
-                        </span>
-                    </div>
+                    <div class="stat-label">Omsætning</div>
+                    <div class="stat-value"><?= number_format($commissionStats['total_revenue'], 0, ',', '.') ?></div>
+                    <div style="font-size: 0.8rem; color: var(--color-text-muted);">DKK via platformen</div>
                 </div>
             </div>
+
+            <!-- Commission Summary -->
+            <?php if ($commissionStats['total_bookings'] > 0 || $commissionStats['pending_commission'] > 0): ?>
+            <div class="card" style="margin-bottom: 2rem; background: linear-gradient(135deg, var(--color-primary-soft) 0%, #fff 100%);">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                    <div>
+                        <div style="font-size: 0.875rem; color: var(--color-text-soft);">Kommission til betaling</div>
+                        <div style="font-size: 1.75rem; font-weight: 700; color: var(--color-primary-deep);">
+                            <?= formatDKK($commissionStats['pending_commission']) ?>
+                        </div>
+                        <div style="font-size: 0.8rem; color: var(--color-text-muted);">
+                            <?= $commissionStats['commission_rate'] ?>% kommission
+                        </div>
+                    </div>
+                    <a href="<?= BASE_PATH ?>/partners/dashboard/commission.php" class="btn btn-primary">
+                        Se detaljer →
+                    </a>
+                </div>
+            </div>
+            <?php endif; ?>
 
             <!-- Recent Inquiries -->
             <div class="card">

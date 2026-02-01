@@ -21,6 +21,7 @@ $error = null;
 
 // Handle login
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    requireCsrf();
     $email = trim($_POST['email'] ?? '');
     $password = $_POST['password'] ?? '';
 
@@ -31,8 +32,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($user && password_verify($password, $user['password_hash'])) {
             login($user['id'], $event['id'], $user['role']);
+            auditLoginSuccess($db, $user['id'], $event['id'], $user['role']);
             redirect(BASE_PATH . '/admin/index.php');
         } else {
+            auditLoginFailed($db, $email);
             $error = 'Forkert email eller adgangskode.';
         }
     } else {
@@ -121,6 +124,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <?php endif; ?>
 
             <form method="POST">
+                <?= csrfField() ?>
                 <div class="form-group">
                     <label class="form-label">Email</label>
                     <input type="email"

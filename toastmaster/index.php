@@ -35,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'forgo
             // Send email with code
             $to = $access['email'];
             $subject = "Din toastmaster-kode til " . $access['confirmand_name'] . "s " . $access['event_name'];
-            $link = "https://hededam.dk/sofie/toastmaster/?kode=" . $access['access_code'];
+            $link = getBaseUrl() . "/toastmaster/?kode=" . $access['access_code'];
 
             $message = "Hej " . $access['name'] . ",\n\n";
             $message .= "Du har bedt om din toastmaster-kode.\n\n";
