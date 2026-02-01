@@ -39,7 +39,10 @@
       "Bash(xargs ls:*)",
       "Bash(find:*)",
       "Bash(git reset:*)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "Bash(php database/migrate.php:*)",
+      "Bash(powershell.exe:*)",
+      "Bash(ls:*)"
     ]
   }
 }
