@@ -128,12 +128,12 @@ function updateBookingStatus(PDO $db, int $bookingId, string $status, ?string $r
         return false;
     }
 
-    $timestampField = match($status) {
+    $timestampFields = [
         'confirmed' => 'confirmed_at',
         'completed' => 'completed_at',
-        'cancelled' => 'cancelled_at',
-        default => null
-    };
+        'cancelled' => 'cancelled_at'
+    ];
+    $timestampField = $timestampFields[$status] ?? null;
 
     $sql = "UPDATE partner_bookings SET status = ?";
     $params = [$status];

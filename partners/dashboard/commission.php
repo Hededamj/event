@@ -186,6 +186,7 @@ try {
                     <li><a href="<?= BASE_PATH ?>/partners/dashboard/inquiries.php" class="nav-link">&#128172; Forespørgsler</a></li>
                     <li><a href="<?= BASE_PATH ?>/partners/dashboard/bookings.php" class="nav-link">&#128197; Bookinger</a></li>
                     <li><a href="<?= BASE_PATH ?>/partners/dashboard/commission.php" class="nav-link active">&#128176; Økonomi</a></li>
+                    <li><a href="<?= BASE_PATH ?>/partners/dashboard/verification.php" class="nav-link">&#9989; Verifikation</a></li>
                     <li><a href="<?= BASE_PATH ?>/partners/dashboard/gallery.php" class="nav-link">&#128247; Galleri</a></li>
                 </ul>
             </nav>

@@ -146,6 +146,9 @@ $flash = getFlash();
                             <?php if ($newInquiries > 0): ?><span class="nav-badge"><?= $newInquiries ?></span><?php endif; ?>
                         </a>
                     </li>
+                    <li><a href="<?= BASE_PATH ?>/partners/dashboard/bookings.php" class="nav-link">&#128197; Bookinger</a></li>
+                    <li><a href="<?= BASE_PATH ?>/partners/dashboard/commission.php" class="nav-link">&#128176; Økonomi</a></li>
+                    <li><a href="<?= BASE_PATH ?>/partners/dashboard/verification.php" class="nav-link">&#9989; Verifikation</a></li>
                     <li><a href="<?= BASE_PATH ?>/partners/dashboard/gallery.php" class="nav-link active">&#128247; Galleri</a></li>
                 </ul>
             </nav>
