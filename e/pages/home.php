@@ -23,7 +23,7 @@
     <?php if ($currentGuest['rsvp_status'] === 'pending'): ?>
         <p style="margin-bottom: 16px; color: var(--gray-600);">Du har endnu ikke svaret på invitationen.</p>
         <a href="/e/<?= $slug ?>/rsvp" class="btn btn-primary btn-full">Svar nu</a>
-    <?php elseif ($currentGuest['rsvp_status'] === 'accepted'): ?>
+    <?php elseif ($currentGuest['rsvp_status'] === 'yes'): ?>
         <div style="display: flex; align-items: center; gap: 12px; padding: 16px; background: #dcfce7; border-radius: 12px;">
             <svg width="24" height="24" fill="none" stroke="#15803d" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
             <div>

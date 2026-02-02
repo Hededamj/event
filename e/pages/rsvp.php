@@ -6,7 +6,8 @@ require_once __DIR__ . '/../../includes/gdpr.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['rsvp_action'])) {
     $action = trim($_POST['rsvp_action']);
-    $rsvpStatus = ($action === 'accept') ? 'accepted' : 'declined';
+    // ENUM values are: 'pending', 'yes', 'no'
+    $rsvpStatus = ($action === 'accept') ? 'yes' : 'no';
     $adultsCount = max(1, (int)($_POST['adults_count'] ?? 1));
     $childrenCount = max(0, (int)($_POST['children_count'] ?? 0));
     $dietaryNotes = trim($_POST['dietary_notes'] ?? '');
@@ -44,18 +45,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['rsvp_action'])) {
     ");
     $stmt->execute([
         $rsvpStatus,
-        $rsvpStatus === 'accepted' ? $adultsCount : 0,
-        $rsvpStatus === 'accepted' ? $childrenCount : 0,
+        $rsvpStatus === 'yes' ? $adultsCount : 0,
+        $rsvpStatus === 'yes' ? $childrenCount : 0,
         $guestNamesJson,
-        $rsvpStatus === 'accepted' ? ($dietaryNotes ?: null) : null,
+        $rsvpStatus === 'yes' ? ($dietaryNotes ?: null) : null,
         $currentGuest['id'],
         $eventId
     ]);
 
-    if ($stmt->rowCount() === 0) {
-        setFlash('error', "Fejl: Kunne ikke opdatere tilmelding.");
-        redirect("/e/$slug/rsvp");
-    }
 
     // Record GDPR consent
     $privacyConsent = isset($_POST['privacy_consent']);
@@ -64,7 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['rsvp_action'])) {
         recordGuestPrivacyConsent($db, $currentGuest['id'], $privacyConsent, $marketingConsent);
     }
 
-    $message = $rsvpStatus === 'accepted' ? 'Tak for din tilmelding!' : 'Vi har registreret dit afbud.';
+    $message = $rsvpStatus === 'yes' ? 'Tak for din tilmelding!' : 'Vi har registreret dit afbud.';
     setFlash('success', $message);
     redirect("/e/$slug/home");
 }
@@ -246,7 +243,7 @@ function submitRsvp(action) {
 }
 
 // If already accepted, show the form directly
-<?php if ($currentGuest['rsvp_status'] === 'accepted'): ?>
+<?php if ($currentGuest['rsvp_status'] === 'yes'): ?>
 showAcceptForm();
 <?php endif; ?>
 </script>
