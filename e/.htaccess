@@ -1,0 +1,12 @@
+RewriteEngine On
+RewriteBase /e/
+
+# If not a real file or directory, route to index.php
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# /e/{slug}/ -> index.php?slug={slug}
+RewriteRule ^([a-zA-Z0-9_-]+)/?$ index.php?slug=$1 [QSA,L]
+
+# /e/{slug}/{page}/ -> index.php?slug={slug}&page={page}
+RewriteRule ^([a-zA-Z0-9_-]+)/([a-zA-Z0-9_-]+)/?$ index.php?slug=$1&page=$2 [QSA,L]
