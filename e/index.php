@@ -68,7 +68,24 @@ if ($guestLoggedIn) {
     $currentGuest = $stmt->fetch();
 }
 
-// Handle guest login
+// Auto-login via URL code (?kode=XXXXXX)
+if (!$guestLoggedIn && isset($_GET['kode']) && !empty($_GET['kode'])) {
+    $code = strtoupper(preg_replace('/[^A-Za-z0-9]/', '', $_GET['kode']));
+
+    $stmt = $db->prepare("SELECT * FROM guests WHERE event_id = ? AND unique_code = ?");
+    $stmt->execute([$eventId, $code]);
+    $guest = $stmt->fetch();
+
+    if ($guest) {
+        loginGuest($guest['id'], $eventId);
+        auditGuestLogin($db, $guest['id'], $eventId);
+        $redirectPage = $guest['rsvp_status'] === 'pending' ? 'rsvp' : 'home';
+        redirect("/e/$slug/$redirectPage");
+    }
+    // If code invalid, just show landing page (no error, they can try manually)
+}
+
+// Handle guest login (manual form submission)
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['guest_code'])) {
     // Check rate limit first (5 attempts per 15 minutes)
     $rateLimit = checkRateLimit($db, 'guest_login_' . $eventId, 5, 900);
