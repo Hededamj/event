@@ -18,9 +18,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['photo'])) {
         $filepath = $uploadDir . $filename;
 
         if (move_uploaded_file($file['tmp_name'], $filepath)) {
-            $stmt = $db->prepare("INSERT INTO photos (event_id, uploaded_by_guest_id, filename, approved) VALUES (?, ?, ?, FALSE)");
+            $stmt = $db->prepare("INSERT INTO photos (event_id, uploaded_by_guest_id, filename, approved) VALUES (?, ?, ?, TRUE)");
             $stmt->execute([$eventId, $currentGuest['id'], $filename]);
-            setFlash('success', 'Foto uploadet! Det vises når det er godkendt.');
+            setFlash('success', 'Foto uploadet!');
         } else {
             setFlash('error', 'Kunne ikke uploade billedet. Prøv igen.');
         }
@@ -41,10 +41,6 @@ $stmt = $db->prepare("
 $stmt->execute([$eventId]);
 $photos = $stmt->fetchAll();
 
-// Get user's pending photos
-$stmt = $db->prepare("SELECT * FROM photos WHERE event_id = ? AND uploaded_by_guest_id = ? AND approved = FALSE");
-$stmt->execute([$eventId, $currentGuest['id']]);
-$pendingPhotos = $stmt->fetchAll();
 ?>
 
 <h1 class="serif" style="font-size: 24px; text-align: center; margin-bottom: 8px;">Fotogalleri</h1>
@@ -64,13 +60,6 @@ $pendingPhotos = $stmt->fetchAll();
     <p style="font-size: 13px; color: var(--gray-400); margin-top: 12px;">Max 10MB. JPEG, PNG eller WebP.</p>
 </div>
 
-<?php if (!empty($pendingPhotos)): ?>
-<div class="card" style="background: #fffbeb; border: 1px solid #fde68a;">
-    <p style="font-size: 14px; color: #b45309;">
-        <strong><?= count($pendingPhotos) ?> billede<?= count($pendingPhotos) > 1 ? 'r' : '' ?></strong> afventer godkendelse.
-    </p>
-</div>
-<?php endif; ?>
 
 <?php if (empty($photos)): ?>
 <div class="card">

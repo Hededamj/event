@@ -43,7 +43,8 @@
       "Bash(php database/migrate.php:*)",
       "Bash(powershell.exe:*)",
       "Bash(ls:*)",
-      "Bash(do)"
+      "Bash(do)",
+      "Bash(do curl -s --ftp-create-dirs -T \"$f\" -u \"hededam.dk:Plantagevej12\" \"ftp://linux291.unoeuro.com/partyparart.dk/$f\")"
     ]
   }
 }

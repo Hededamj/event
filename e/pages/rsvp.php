@@ -8,6 +8,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['rsvp_action'])) {
     $rsvpStatus = $_POST['rsvp_action'] === 'accept' ? 'accepted' : 'declined';
     $adultsCount = max(1, (int)($_POST['adults_count'] ?? 1));
     $childrenCount = max(0, (int)($_POST['children_count'] ?? 0));
+    $guestNames = trim($_POST['guest_names'] ?? '');
     $dietaryNotes = trim($_POST['dietary_notes'] ?? '');
 
     $stmt = $db->prepare("
@@ -15,6 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['rsvp_action'])) {
             rsvp_status = ?,
             adults_count = ?,
             children_count = ?,
+            guest_names = ?,
             dietary_notes = ?,
             rsvp_responded_at = NOW()
         WHERE id = ? AND event_id = ?
@@ -23,6 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['rsvp_action'])) {
         $rsvpStatus,
         $rsvpStatus === 'accepted' ? $adultsCount : 0,
         $rsvpStatus === 'accepted' ? $childrenCount : 0,
+        $rsvpStatus === 'accepted' ? ($guestNames ?: null) : null,
         $rsvpStatus === 'accepted' ? ($dietaryNotes ?: null) : null,
         $currentGuest['id'],
         $eventId
@@ -67,6 +70,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['rsvp_action'])) {
                         <option value="<?= $i ?>" <?= ($currentGuest['children_count'] ?? 0) == $i ? 'selected' : '' ?>><?= $i ?></option>
                     <?php endfor; ?>
                 </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Navne på deltagere</label>
+                <textarea name="guest_names" class="form-input" rows="2" placeholder="F.eks. Peter, Marie, Sofie (3 år)..."><?= htmlspecialchars($currentGuest['guest_names'] ?? '') ?></textarea>
+                <p style="font-size: 12px; color: var(--gray-400); margin-top: 4px;">Skriv navnene på alle der deltager</p>
             </div>
 
             <div class="form-group">
