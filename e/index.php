@@ -3,6 +3,8 @@
  * Guest Event Router
  * Handles /e/{slug}/ and /e/{slug}/{page}/ URLs
  */
+ob_start(); // Enable output buffering for redirects
+
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../includes/functions.php';
 require_once __DIR__ . '/../includes/auth.php';
