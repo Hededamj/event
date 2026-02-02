@@ -231,7 +231,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 
         // Collect guest names for seating
         $guestNames = [];
-        if ($rsvpStatus === 'accepted' && isset($_POST['guest_names']) && is_array($_POST['guest_names'])) {
+        if ($rsvpStatus === 'yes' && isset($_POST['guest_names']) && is_array($_POST['guest_names'])) {
             foreach ($_POST['guest_names'] as $guestName) {
                 $guestName = trim($guestName);
                 if (!empty($guestName)) {
@@ -246,13 +246,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             $params = [$name, $maxGuests, $email ?: null, $phone ?: null, $notes ?: null];
 
             // Only update RSVP if provided
-            if ($rsvpStatus && in_array($rsvpStatus, ['pending', 'accepted', 'declined'])) {
+            if ($rsvpStatus && in_array($rsvpStatus, ['pending', 'yes', 'no'])) {
                 $sql .= ", rsvp_status = ?, adults_count = ?, children_count = ?, guest_names = ?, dietary_notes = ?";
                 $params[] = $rsvpStatus;
-                $params[] = $rsvpStatus === 'accepted' ? $adultsCount : 0;
-                $params[] = $rsvpStatus === 'accepted' ? $childrenCount : 0;
-                $params[] = $rsvpStatus === 'accepted' ? $guestNamesJson : null;
-                $params[] = $rsvpStatus === 'accepted' ? ($dietaryNotes ?: null) : null;
+                $params[] = $rsvpStatus === 'yes' ? $adultsCount : 0;
+                $params[] = $rsvpStatus === 'yes' ? $childrenCount : 0;
+                $params[] = $rsvpStatus === 'yes' ? $guestNamesJson : null;
+                $params[] = $rsvpStatus === 'yes' ? ($dietaryNotes ?: null) : null;
 
                 // Set rsvp_date if changing to accepted/declined
                 if ($rsvpStatus !== 'pending') {
@@ -299,10 +299,10 @@ $search = $_GET['search'] ?? '';
 $whereClause = "WHERE event_id = ?";
 $params = [$eventId];
 
-if ($filter === 'accepted') {
-    $whereClause .= " AND rsvp_status = 'accepted'";
-} elseif ($filter === 'declined') {
-    $whereClause .= " AND rsvp_status = 'declined'";
+if ($filter === 'yes') {
+    $whereClause .= " AND rsvp_status = 'yes'";
+} elseif ($filter === 'no') {
+    $whereClause .= " AND rsvp_status = 'no'";
 } elseif ($filter === 'pending') {
     $whereClause .= " AND rsvp_status = 'pending'";
 } elseif ($filter === 'not_sent') {
@@ -555,10 +555,10 @@ endif;
         <a href="?id=<?= $eventId ?>&page=guests&filter=pending" class="filter-tab <?= $filter === 'pending' ? 'active' : '' ?>">
             Afventer (<?= $guestStats['pending'] ?>)
         </a>
-        <a href="?id=<?= $eventId ?>&page=guests&filter=accepted" class="filter-tab <?= $filter === 'accepted' ? 'active' : '' ?>">
+        <a href="?id=<?= $eventId ?>&page=guests&filter=yes" class="filter-tab <?= $filter === 'yes' ? 'active' : '' ?>">
             Kommer (<?= $guestStats['accepted'] ?>)
         </a>
-        <a href="?id=<?= $eventId ?>&page=guests&filter=declined" class="filter-tab <?= $filter === 'declined' ? 'active' : '' ?>">
+        <a href="?id=<?= $eventId ?>&page=guests&filter=no" class="filter-tab <?= $filter === 'no' ? 'active' : '' ?>">
             Afbud (<?= $guestStats['declined'] ?>)
         </a>
     </div>
@@ -643,19 +643,31 @@ endif;
                 <td>
                     <span class="status-badge status-<?= $guest['rsvp_status'] ?>">
                         <?php
-                        $statusLabels = ['pending' => 'Afventer', 'accepted' => 'Kommer', 'declined' => 'Kommer ikke'];
+                        $statusLabels = ['pending' => 'Afventer', 'yes' => 'Kommer', 'no' => 'Kommer ikke'];
                         echo $statusLabels[$guest['rsvp_status']] ?? $guest['rsvp_status'];
                         ?>
                     </span>
                 </td>
                 <td>
-                    <?php if ($guest['rsvp_status'] === 'accepted'): ?>
+                    <?php if ($guest['rsvp_status'] === 'yes'): ?>
                         <?= (int)$guest['adults_count'] ?>v + <?= (int)$guest['children_count'] ?>b
                         <?php if (!empty($guest['guest_names'])): ?>
-                            <?php $names = json_decode($guest['guest_names'], true); ?>
-                            <?php if ($names && count($names) > 0): ?>
-                                <br><span style="font-size: 12px; color: var(--gray-500);" title="<?= htmlspecialchars(implode(', ', $names)) ?>">
-                                    <?= htmlspecialchars(implode(', ', array_slice($names, 0, 2))) ?><?= count($names) > 2 ? '...' : '' ?>
+                            <?php
+                            $namesData = json_decode($guest['guest_names'], true);
+                            $namesList = [];
+                            if (is_array($namesData)) {
+                                foreach ($namesData as $n) {
+                                    if (is_array($n) && isset($n['name'])) {
+                                        $namesList[] = $n['name'] . (!empty($n['age']) ? " ({$n['age']})" : '');
+                                    } elseif (is_string($n)) {
+                                        $namesList[] = $n;
+                                    }
+                                }
+                            }
+                            ?>
+                            <?php if (count($namesList) > 0): ?>
+                                <br><span style="font-size: 12px; color: var(--gray-500);" title="<?= htmlspecialchars(implode(', ', $namesList)) ?>">
+                                    <?= htmlspecialchars(implode(', ', array_slice($namesList, 0, 3))) ?><?= count($namesList) > 3 ? '...' : '' ?>
                                 </span>
                             <?php endif; ?>
                         <?php endif; ?>
@@ -906,8 +918,8 @@ Marie Jensen;marie@email.dk;;1"></textarea>
                         <label class="form-label">RSVP Status</label>
                         <select name="rsvp_status" id="edit_rsvp_status" class="form-input" onchange="toggleRsvpDetails()">
                             <option value="pending">Afventer svar</option>
-                            <option value="accepted">Kommer</option>
-                            <option value="declined">Kommer ikke</option>
+                            <option value="yes">Kommer</option>
+                            <option value="no">Kommer ikke</option>
                         </select>
                     </div>
 
@@ -1390,7 +1402,7 @@ function updateEditNameFields() {
 function toggleRsvpDetails() {
     const status = document.getElementById('edit_rsvp_status').value;
     const details = document.getElementById('rsvp-details');
-    details.style.display = status === 'accepted' ? 'block' : 'none';
+    details.style.display = status === 'yes' ? 'block' : 'none';
 }
 
 function deleteGuest(id, name) {

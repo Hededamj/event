@@ -59,11 +59,11 @@ $hasToastmaster = !empty($features['toastmaster']);
 $stmt = $db->prepare("
     SELECT
         COUNT(*) as total_guests,
-        SUM(CASE WHEN rsvp_status = 'accepted' THEN 1 ELSE 0 END) as accepted,
-        SUM(CASE WHEN rsvp_status = 'declined' THEN 1 ELSE 0 END) as declined,
+        SUM(CASE WHEN rsvp_status = 'yes' THEN 1 ELSE 0 END) as accepted,
+        SUM(CASE WHEN rsvp_status = 'no' THEN 1 ELSE 0 END) as declined,
         SUM(CASE WHEN rsvp_status = 'pending' THEN 1 ELSE 0 END) as pending,
-        SUM(CASE WHEN rsvp_status = 'accepted' THEN adults_count ELSE 0 END) as total_adults,
-        SUM(CASE WHEN rsvp_status = 'accepted' THEN children_count ELSE 0 END) as total_children
+        SUM(CASE WHEN rsvp_status = 'yes' THEN adults_count ELSE 0 END) as total_adults,
+        SUM(CASE WHEN rsvp_status = 'yes' THEN children_count ELSE 0 END) as total_children
     FROM guests
     WHERE event_id = ?
 ");
