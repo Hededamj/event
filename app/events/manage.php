@@ -2,6 +2,8 @@
 /**
  * Event Management - Main event administration router
  */
+ob_start(); // Start output buffering to allow redirects from included pages
+
 require_once __DIR__ . '/../../config/saas.php';
 require_once __DIR__ . '/../../includes/functions.php';
 require_once __DIR__ . '/../../includes/auth-account.php';
@@ -413,6 +415,226 @@ $pageTitle = $event['name'] ?? 'Arrangement';
             flex-shrink: 0;
         }
 
+        /* Forms */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 0;
+        }
+
+        .form-group.full-width {
+            grid-column: span 2;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--gray-700);
+            margin-bottom: 8px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 14px;
+            font-size: 14px;
+            font-family: inherit;
+            border: 1px solid var(--gray-300);
+            border-radius: 8px;
+            background: white;
+            color: var(--gray-800);
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
+        }
+
+        .form-input::placeholder {
+            color: var(--gray-400);
+        }
+
+        select.form-input {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236b7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 16px;
+            padding-right: 40px;
+        }
+
+        textarea.form-input {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-actions {
+            padding-top: 20px;
+            border-top: 1px solid var(--gray-100);
+            margin-top: 24px;
+        }
+
+        .form-hint {
+            font-size: 13px;
+            color: var(--gray-500);
+            margin-top: 6px;
+        }
+
+        /* Filters Bar */
+        .filters-bar {
+            margin-bottom: 24px;
+        }
+
+        .filter-tabs {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .filter-tab {
+            padding: 8px 16px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--gray-600);
+            background: white;
+            border: 1px solid var(--gray-200);
+            border-radius: 8px;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .filter-tab:hover {
+            background: var(--gray-50);
+            border-color: var(--gray-300);
+        }
+
+        .filter-tab.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        /* Page Header Actions */
+        .page-header-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .section-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: 4px;
+        }
+
+        .section-subtitle {
+            font-size: 14px;
+            color: var(--gray-500);
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--gray-100);
+        }
+
+        .modal-header h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: var(--gray-400);
+            cursor: pointer;
+            padding: 4px;
+            line-height: 1;
+        }
+
+        .modal-close:hover {
+            color: var(--gray-600);
+        }
+
+        .modal-body {
+            padding: 24px;
+        }
+
+        .modal-body .form-group {
+            margin-bottom: 20px;
+        }
+
+        .modal-body .form-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            padding: 16px 24px;
+            border-top: 1px solid var(--gray-100);
+            background: var(--gray-50);
+            border-radius: 0 0 16px 16px;
+        }
+
+        /* Danger text */
+        .danger-text {
+            color: var(--danger) !important;
+        }
+
+        /* Button small */
+        .btn-sm {
+            padding: 8px 12px;
+            font-size: 13px;
+        }
+
+        @media (max-width: 640px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-group.full-width {
+                grid-column: span 1;
+            }
+        }
+
         /* Upgrade Notice */
         .upgrade-notice {
             background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
@@ -537,6 +759,18 @@ $pageTitle = $event['name'] ?? 'Arrangement';
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"></path>
                 </svg>
                 Bordplan
+            </a>
+            <a href="?id=<?= $eventId ?>&page=budget" class="tab-link <?= $page === 'budget' ? 'active' : '' ?> <?= !$hasBudget ? 'premium' : '' ?>">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                Budget
+            </a>
+            <a href="?id=<?= $eventId ?>&page=toastmaster" class="tab-link <?= $page === 'toastmaster' ? 'active' : '' ?> <?= !$hasToastmaster ? 'premium' : '' ?>">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path>
+                </svg>
+                Toastmaster
             </a>
             <a href="?id=<?= $eventId ?>&page=settings" class="tab-link <?= $page === 'settings' ? 'active' : '' ?>">
                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">

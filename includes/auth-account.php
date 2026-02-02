@@ -163,17 +163,16 @@ function registerAccount(string $email, string $password, string $name, ?string 
 
     // Create account
     $passwordHash = password_hash($password, PASSWORD_DEFAULT);
-    $verificationToken = bin2hex(random_bytes(32));
 
     try {
         $db->beginTransaction();
 
         // Insert account
         $stmt = $db->prepare("
-            INSERT INTO accounts (email, password_hash, name, phone, email_verification_token)
-            VALUES (?, ?, ?, ?, ?)
+            INSERT INTO accounts (email, password_hash, name, phone)
+            VALUES (?, ?, ?, ?)
         ");
-        $stmt->execute([$email, $passwordHash, $name, $phone, $verificationToken]);
+        $stmt->execute([$email, $passwordHash, $name, $phone]);
         $accountId = $db->lastInsertId();
 
         // Get free plan
@@ -194,8 +193,7 @@ function registerAccount(string $email, string $password, string $name, ?string 
 
         return [
             'success' => true,
-            'account_id' => $accountId,
-            'verification_token' => $verificationToken
+            'account_id' => $accountId
         ];
     } catch (Exception $e) {
         $db->rollBack();

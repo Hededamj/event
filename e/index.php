@@ -24,14 +24,26 @@ $stmt = $db->prepare("
     SELECT e.*, et.name as event_type_name
     FROM events e
     LEFT JOIN event_types et ON e.event_type_id = et.id
-    WHERE e.slug = ? AND e.status = 'active'
+    WHERE e.slug = ?
 ");
 $stmt->execute([$slug]);
 $event = $stmt->fetch();
 
 if (!$event) {
     http_response_code(404);
-    die('Arrangement ikke fundet.');
+    die('Arrangement ikke fundet. Slug: ' . htmlspecialchars($slug));
+}
+
+// Check if event is active
+if ($event['status'] !== 'active') {
+    $statusMessages = [
+        'draft' => 'Dette arrangement er ikke offentliggjort endnu.',
+        'completed' => 'Dette arrangement er afsluttet.',
+        'archived' => 'Dette arrangement er arkiveret.'
+    ];
+    $message = $statusMessages[$event['status']] ?? 'Arrangement er ikke tilgængeligt.';
+    http_response_code(403);
+    die($message);
 }
 
 $eventId = $event['id'];

@@ -2,7 +2,11 @@
 /**
  * Guests Management Page
  * Included by manage.php
+ * Full-featured guest management with bulk add, CSV import, and export
  */
+
+// Check if viewing export
+$showExport = isset($_GET['view']) && $_GET['view'] === 'export';
 
 // Handle actions
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
@@ -18,6 +22,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         $email = trim($_POST['guest_email'] ?? '');
         $phone = trim($_POST['guest_phone'] ?? '');
         $notes = trim($_POST['guest_notes'] ?? '');
+        $maxGuests = max(1, (int)($_POST['max_guests'] ?? 1));
+        $dietaryNotes = trim($_POST['dietary_notes'] ?? '');
 
         if ($name) {
             // Generate unique code
@@ -32,13 +38,174 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             }
 
             $stmt = $db->prepare("
-                INSERT INTO guests (event_id, name, email, phone, notes, unique_code, rsvp_status)
-                VALUES (?, ?, ?, ?, ?, ?, 'pending')
+                INSERT INTO guests (event_id, name, email, phone, notes, unique_code, rsvp_status, max_guests, dietary_notes)
+                VALUES (?, ?, ?, ?, ?, ?, 'pending', ?, ?)
             ");
-            $stmt->execute([$eventId, $name, $email ?: null, $phone ?: null, $notes ?: null, $code]);
+            $stmt->execute([$eventId, $name, $email ?: null, $phone ?: null, $notes ?: null, $code, $maxGuests, $dietaryNotes ?: null]);
 
-            setFlash('success', 'Gæst tilføjet.');
+            setFlash('success', "Gæst tilføjet! Kode: $code");
         }
+        redirect("?id=$eventId&page=guests");
+
+    } elseif ($action === 'bulk_add') {
+        $names = trim($_POST['names'] ?? '');
+        $defaultMaxGuests = max(1, (int)($_POST['default_max_guests'] ?? 1));
+        $lines = array_filter(array_map('trim', explode("\n", $names)));
+        $added = 0;
+
+        foreach ($lines as $line) {
+            if (empty($line)) continue;
+
+            // Parse "Name (4)" format to get max guests, otherwise use default
+            $maxGuests = $defaultMaxGuests;
+            $name = $line;
+            if (preg_match('/^(.+?)\s*\((\d+)\)\s*$/', $line, $matches)) {
+                $name = trim($matches[1]);
+                $maxGuests = max(1, (int)$matches[2]);
+            }
+
+            // Generate unique code
+            $code = generateGuestCode();
+            $stmt = $db->prepare("SELECT id FROM guests WHERE unique_code = ? AND event_id = ?");
+            $stmt->execute([$code, $eventId]);
+
+            while ($stmt->fetch()) {
+                $code = generateGuestCode();
+                $stmt->execute([$code, $eventId]);
+            }
+
+            $stmt = $db->prepare("
+                INSERT INTO guests (event_id, name, max_guests, unique_code, rsvp_status)
+                VALUES (?, ?, ?, ?, 'pending')
+            ");
+            $stmt->execute([$eventId, $name, $maxGuests, $code]);
+            $added++;
+        }
+
+        setFlash('success', "$added gæster tilføjet!");
+        redirect("?id=$eventId&page=guests");
+
+    } elseif ($action === 'csv_import') {
+        // CSV Import with column mapping
+        $csvData = $_POST['csv_data'] ?? '';
+        $mapping = $_POST['mapping'] ?? [];
+        $skipDuplicates = isset($_POST['skip_duplicates']);
+
+        if (empty($csvData) || empty($mapping)) {
+            setFlash('error', 'Ingen data at importere');
+            redirect("?id=$eventId&page=guests");
+        }
+
+        // Decode the JSON data
+        $rows = json_decode($csvData, true);
+        if (!$rows || !is_array($rows)) {
+            setFlash('error', 'Ugyldig CSV data');
+            redirect("?id=$eventId&page=guests");
+        }
+
+        // Get existing emails and names for duplicate check
+        $existingEmails = [];
+        $existingNames = [];
+        $stmt = $db->prepare("SELECT LOWER(email) as email, LOWER(name) as name FROM guests WHERE event_id = ?");
+        $stmt->execute([$eventId]);
+        while ($row = $stmt->fetch()) {
+            if ($row['email']) $existingEmails[$row['email']] = true;
+            if ($row['name']) $existingNames[$row['name']] = true;
+        }
+
+        $added = 0;
+        $skipped = 0;
+        $errors = [];
+
+        foreach ($rows as $index => $row) {
+            // Map columns to fields
+            $name = '';
+            $email = '';
+            $phone = '';
+            $maxGuests = 1;
+            $notes = '';
+
+            foreach ($mapping as $csvCol => $field) {
+                $value = trim($row[$csvCol] ?? '');
+                switch ($field) {
+                    case 'name': $name = $value; break;
+                    case 'email': $email = $value; break;
+                    case 'phone': $phone = $value; break;
+                    case 'max_guests': $maxGuests = max(1, (int)$value ?: 1); break;
+                    case 'notes': $notes = $value; break;
+                }
+            }
+
+            // Skip empty names
+            if (empty($name)) {
+                $errors[] = "Række " . ($index + 2) . ": Mangler navn";
+                continue;
+            }
+
+            // Check for duplicates
+            if ($skipDuplicates) {
+                $isDuplicate = false;
+                if ($email && isset($existingEmails[strtolower($email)])) {
+                    $isDuplicate = true;
+                }
+                if (isset($existingNames[strtolower($name)])) {
+                    $isDuplicate = true;
+                }
+                if ($isDuplicate) {
+                    $skipped++;
+                    continue;
+                }
+            }
+
+            // Validate email format if provided
+            if ($email && !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                $errors[] = "Række " . ($index + 2) . ": Ugyldig email '$email'";
+                $email = ''; // Clear invalid email but still import
+            }
+
+            // Generate unique code
+            $code = generateGuestCode();
+            $stmt = $db->prepare("SELECT id FROM guests WHERE unique_code = ? AND event_id = ?");
+            $stmt->execute([$code, $eventId]);
+            while ($stmt->fetch()) {
+                $code = generateGuestCode();
+                $stmt->execute([$code, $eventId]);
+            }
+
+            // Insert guest
+            $stmt = $db->prepare("
+                INSERT INTO guests (event_id, name, max_guests, email, phone, notes, unique_code, rsvp_status)
+                VALUES (?, ?, ?, ?, ?, ?, ?, 'pending')
+            ");
+            $stmt->execute([
+                $eventId,
+                $name,
+                $maxGuests,
+                $email ?: null,
+                $phone ?: null,
+                $notes ?: null,
+                $code
+            ]);
+
+            // Track for duplicate check
+            if ($email) $existingEmails[strtolower($email)] = true;
+            $existingNames[strtolower($name)] = true;
+
+            $added++;
+        }
+
+        // Build result message
+        $message = "$added gæster importeret!";
+        if ($skipped > 0) {
+            $message .= " ($skipped duplikater sprunget over)";
+        }
+        if (count($errors) > 0 && count($errors) <= 5) {
+            $message .= " Advarsler: " . implode('; ', $errors);
+        } elseif (count($errors) > 5) {
+            $message .= " " . count($errors) . " rækker havde problemer.";
+        }
+
+        setFlash($added > 0 ? 'success' : 'warning', $message);
         redirect("?id=$eventId&page=guests");
 
     } elseif ($action === 'delete_guest') {
@@ -56,13 +223,50 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         $email = trim($_POST['guest_email'] ?? '');
         $phone = trim($_POST['guest_phone'] ?? '');
         $notes = trim($_POST['guest_notes'] ?? '');
+        $maxGuests = max(1, (int)($_POST['max_guests'] ?? 1));
+        $rsvpStatus = $_POST['rsvp_status'] ?? null;
+        $adultsCount = (int)($_POST['adults_count'] ?? 1);
+        $childrenCount = (int)($_POST['children_count'] ?? 0);
+        $dietaryNotes = trim($_POST['dietary_notes'] ?? '');
+
+        // Collect guest names for seating
+        $guestNames = [];
+        if ($rsvpStatus === 'accepted' && isset($_POST['guest_names']) && is_array($_POST['guest_names'])) {
+            foreach ($_POST['guest_names'] as $guestName) {
+                $guestName = trim($guestName);
+                if (!empty($guestName)) {
+                    $guestNames[] = $guestName;
+                }
+            }
+        }
+        $guestNamesJson = !empty($guestNames) ? json_encode($guestNames, JSON_UNESCAPED_UNICODE) : null;
 
         if ($guestId && $name) {
-            $stmt = $db->prepare("
-                UPDATE guests SET name = ?, email = ?, phone = ?, notes = ?
-                WHERE id = ? AND event_id = ?
-            ");
-            $stmt->execute([$name, $email ?: null, $phone ?: null, $notes ?: null, $guestId, $eventId]);
+            $sql = "UPDATE guests SET name = ?, max_guests = ?, email = ?, phone = ?, notes = ?";
+            $params = [$name, $maxGuests, $email ?: null, $phone ?: null, $notes ?: null];
+
+            // Only update RSVP if provided
+            if ($rsvpStatus && in_array($rsvpStatus, ['pending', 'accepted', 'declined'])) {
+                $sql .= ", rsvp_status = ?, adults_count = ?, children_count = ?, guest_names = ?, dietary_notes = ?";
+                $params[] = $rsvpStatus;
+                $params[] = $rsvpStatus === 'accepted' ? $adultsCount : 0;
+                $params[] = $rsvpStatus === 'accepted' ? $childrenCount : 0;
+                $params[] = $rsvpStatus === 'accepted' ? $guestNamesJson : null;
+                $params[] = $rsvpStatus === 'accepted' ? ($dietaryNotes ?: null) : null;
+
+                // Set rsvp_date if changing to accepted/declined
+                if ($rsvpStatus !== 'pending') {
+                    $sql .= ", rsvp_date = NOW()";
+                }
+            }
+
+            $sql .= " WHERE id = ? AND event_id = ?";
+            $params[] = $guestId;
+            $params[] = $eventId;
+
+            $stmt = $db->prepare($sql);
+            $stmt->execute($params);
+
             setFlash('success', 'Gæst opdateret.');
         }
         redirect("?id=$eventId&page=guests");
@@ -71,14 +275,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         $guestId = (int)($_POST['guest_id'] ?? 0);
         if ($guestId) {
             $stmt = $db->prepare("
-                UPDATE guests SET invitation_sent = NOT invitation_sent, invitation_sent_at = IF(invitation_sent, NULL, NOW())
+                UPDATE guests SET invitation_sent = NOT COALESCE(invitation_sent, 0), invitation_sent_at = IF(COALESCE(invitation_sent, 0) = 0, NOW(), NULL)
                 WHERE id = ? AND event_id = ?
             ");
             $stmt->execute([$guestId, $eventId]);
         }
 
         if (isset($_SERVER['HTTP_X_REQUESTED_WITH'])) {
-            jsonResponse(['success' => true]);
+            // Get new state
+            $stmt = $db->prepare("SELECT invitation_sent FROM guests WHERE id = ? AND event_id = ?");
+            $stmt->execute([$guestId, $eventId]);
+            $newState = $stmt->fetchColumn();
+            jsonResponse(['success' => true, 'invitation_sent' => (bool)$newState]);
         }
         redirect("?id=$eventId&page=guests");
     }
@@ -98,7 +306,9 @@ if ($filter === 'accepted') {
 } elseif ($filter === 'pending') {
     $whereClause .= " AND rsvp_status = 'pending'";
 } elseif ($filter === 'not_sent') {
-    $whereClause .= " AND invitation_sent = FALSE";
+    $whereClause .= " AND (invitation_sent = 0 OR invitation_sent IS NULL)";
+} elseif ($filter === 'sent') {
+    $whereClause .= " AND invitation_sent = 1";
 }
 
 if ($search) {
@@ -112,20 +322,226 @@ $stmt = $db->prepare("
 ");
 $stmt->execute($params);
 $guests = $stmt->fetchAll();
+
+// Count invitations
+$stmt = $db->prepare("
+    SELECT
+        SUM(CASE WHEN invitation_sent = 1 THEN 1 ELSE 0 END) as sent,
+        SUM(CASE WHEN invitation_sent = 0 OR invitation_sent IS NULL THEN 1 ELSE 0 END) as not_sent
+    FROM guests
+    WHERE event_id = ?
+");
+$stmt->execute([$eventId]);
+$invitationCounts = $stmt->fetch();
+$invitationsSent = (int)($invitationCounts['sent'] ?? 0);
+$invitationsNotSent = (int)($invitationCounts['not_sent'] ?? 0);
+
+// Get base URL for links
+$baseUrl = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'];
+$eventBaseUrl = $baseUrl . '/e/' . ($event['slug'] ?? $eventId);
+
+// ==========================================
+// EXPORT VIEW
+// ==========================================
+if ($showExport):
+?>
+<div class="page-header-actions">
+    <div>
+        <h2 class="section-title">Eksportér invitationslinks</h2>
+        <p class="section-subtitle"><?= count($guests) ?> gæster</p>
+    </div>
+    <a href="?id=<?= $eventId ?>&page=guests" class="btn btn-secondary">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 18px; height: 18px;">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+        </svg>
+        Tilbage til gæsteliste
+    </a>
+</div>
+
+<div class="card">
+    <div class="export-tabs">
+        <button class="export-tab active" onclick="showExportView('list')">Liste</button>
+        <button class="export-tab" onclick="showExportView('text')">Tekst (til kopiering)</button>
+        <button class="export-tab" onclick="showExportView('csv')">CSV</button>
+    </div>
+
+    <!-- List View -->
+    <div id="export-view-list" class="export-view active">
+        <?php foreach ($guests as $guest): ?>
+        <div class="export-row">
+            <div class="export-name"><?= htmlspecialchars($guest['name']) ?></div>
+            <div class="export-link"><?= $eventBaseUrl ?>?kode=<?= htmlspecialchars($guest['unique_code']) ?></div>
+        </div>
+        <?php endforeach; ?>
+    </div>
+
+    <!-- Text View -->
+    <div id="export-view-text" class="export-view">
+        <textarea id="text-export" readonly style="width: 100%; height: 400px; font-family: monospace; font-size: 13px; padding: 16px; border: 1px solid var(--gray-200); border-radius: 8px;"><?php foreach ($guests as $guest): ?>
+<?= $guest['name'] ?>
+<?= $eventBaseUrl ?>?kode=<?= $guest['unique_code'] ?>
+
+<?php endforeach; ?></textarea>
+        <div style="margin-top: 12px;">
+            <button type="button" class="btn btn-primary" onclick="copyExportText()">Kopiér alt</button>
+        </div>
+    </div>
+
+    <!-- CSV View -->
+    <div id="export-view-csv" class="export-view">
+        <textarea id="csv-export" readonly style="width: 100%; height: 400px; font-family: monospace; font-size: 13px; padding: 16px; border: 1px solid var(--gray-200); border-radius: 8px;">Navn;Kode;Link
+<?php foreach ($guests as $guest): ?>
+<?= $guest['name'] ?>;<?= $guest['unique_code'] ?>;<?= $eventBaseUrl ?>?kode=<?= $guest['unique_code'] ?>
+<?php endforeach; ?></textarea>
+        <div style="margin-top: 12px;">
+            <button type="button" class="btn btn-primary" onclick="copyExportCSV()">Kopiér CSV</button>
+            <span style="margin-left: 12px; color: var(--gray-500); font-size: 13px;">Kan indsættes direkte i Excel</span>
+        </div>
+    </div>
+</div>
+
+<style>
+    .export-tabs {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 20px;
+        padding-bottom: 16px;
+        border-bottom: 1px solid var(--gray-200);
+    }
+    .export-tab {
+        padding: 8px 16px;
+        border: 1px solid var(--gray-200);
+        background: white;
+        border-radius: 8px;
+        font-size: 14px;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    .export-tab:hover {
+        background: var(--gray-50);
+    }
+    .export-tab.active {
+        background: var(--primary);
+        color: white;
+        border-color: var(--primary);
+    }
+    .export-view {
+        display: none;
+    }
+    .export-view.active {
+        display: block;
+    }
+    .export-row {
+        padding: 12px 0;
+        border-bottom: 1px solid var(--gray-100);
+    }
+    .export-row:last-child {
+        border-bottom: none;
+    }
+    .export-name {
+        font-weight: 500;
+        margin-bottom: 4px;
+    }
+    .export-link {
+        font-family: monospace;
+        font-size: 13px;
+        color: var(--gray-500);
+        word-break: break-all;
+    }
+</style>
+
+<script>
+function showExportView(view) {
+    document.querySelectorAll('.export-view').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.export-tab').forEach(el => el.classList.remove('active'));
+    document.getElementById('export-view-' + view).classList.add('active');
+    event.target.classList.add('active');
+}
+
+function copyExportText() {
+    const text = document.getElementById('text-export').value;
+    navigator.clipboard.writeText(text).then(() => {
+        alert('Kopieret til udklipsholder!');
+    });
+}
+
+function copyExportCSV() {
+    const text = document.getElementById('csv-export').value;
+    navigator.clipboard.writeText(text).then(() => {
+        alert('CSV kopieret til udklipsholder!');
+    });
+}
+</script>
+
+<?php
+return; // Exit early for export view
+endif;
+
+// ==========================================
+// MAIN GUEST LIST VIEW
+// ==========================================
 ?>
 
 <div class="page-header-actions">
     <div>
         <h2 class="section-title">Gæsteliste</h2>
-        <p class="section-subtitle"><?= count($guests) ?> gæster</p>
+        <p class="section-subtitle">
+            <?= count($guests) ?> gæster
+            <?php if ($guestStats['total_guests'] > 0): ?>
+                &middot; <?= $invitationsSent ?>/<?= $guestStats['total_guests'] ?> invitationer sendt
+            <?php endif; ?>
+        </p>
     </div>
-    <button type="button" class="btn btn-primary" onclick="showAddModal()">
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-        </svg>
-        Tilføj gæst
-    </button>
+    <div class="header-buttons">
+        <a href="?id=<?= $eventId ?>&page=guests&view=export" class="btn btn-secondary">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 18px; height: 18px;">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path>
+            </svg>
+            Eksportér links
+        </a>
+        <button type="button" class="btn btn-secondary" onclick="showImportModal()">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 18px; height: 18px;">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+            </svg>
+            Importér CSV
+        </button>
+        <button type="button" class="btn btn-secondary" onclick="showBulkModal()">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 18px; height: 18px;">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"></path>
+            </svg>
+            Tilføj mange
+        </button>
+        <button type="button" class="btn btn-primary" onclick="showAddModal()">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 18px; height: 18px;">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+            </svg>
+            Tilføj gæst
+        </button>
+    </div>
 </div>
+
+<!-- Invitation Progress -->
+<?php if ($guestStats['total_guests'] > 0): ?>
+<div class="card" style="margin-bottom: 20px;">
+    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+        <span style="font-size: 14px; font-weight: 500;">Invitationer sendt</span>
+        <span style="font-size: 14px; font-weight: 600;">
+            <?= $invitationsSent ?> af <?= $guestStats['total_guests'] ?>
+            (<?= $guestStats['total_guests'] > 0 ? round($invitationsSent / $guestStats['total_guests'] * 100) : 0 ?>%)
+        </span>
+    </div>
+    <div style="height: 8px; background: var(--gray-200); border-radius: 4px; overflow: hidden;">
+        <div style="height: 100%; background: #10b981; width: <?= $guestStats['total_guests'] > 0 ? ($invitationsSent / $guestStats['total_guests'] * 100) : 0 ?>%; transition: width 0.3s;"></div>
+    </div>
+    <?php if ($invitationsNotSent > 0): ?>
+    <p style="font-size: 13px; color: #f59e0b; margin-top: 8px;">
+        <a href="?id=<?= $eventId ?>&page=guests&filter=not_sent" style="color: inherit;">
+            <?= $invitationsNotSent ?> gæst<?= $invitationsNotSent !== 1 ? 'er' : '' ?> mangler invitation
+        </a>
+    </p>
+    <?php endif; ?>
+</div>
+<?php endif; ?>
 
 <!-- Filters -->
 <div class="filters-bar">
@@ -133,14 +549,17 @@ $guests = $stmt->fetchAll();
         <a href="?id=<?= $eventId ?>&page=guests&filter=all" class="filter-tab <?= $filter === 'all' ? 'active' : '' ?>">
             Alle (<?= $guestStats['total_guests'] ?>)
         </a>
+        <a href="?id=<?= $eventId ?>&page=guests&filter=not_sent" class="filter-tab <?= $filter === 'not_sent' ? 'active' : '' ?>">
+            Mangler invitation (<?= $invitationsNotSent ?>)
+        </a>
+        <a href="?id=<?= $eventId ?>&page=guests&filter=pending" class="filter-tab <?= $filter === 'pending' ? 'active' : '' ?>">
+            Afventer (<?= $guestStats['pending'] ?>)
+        </a>
         <a href="?id=<?= $eventId ?>&page=guests&filter=accepted" class="filter-tab <?= $filter === 'accepted' ? 'active' : '' ?>">
             Kommer (<?= $guestStats['accepted'] ?>)
         </a>
         <a href="?id=<?= $eventId ?>&page=guests&filter=declined" class="filter-tab <?= $filter === 'declined' ? 'active' : '' ?>">
             Afbud (<?= $guestStats['declined'] ?>)
-        </a>
-        <a href="?id=<?= $eventId ?>&page=guests&filter=pending" class="filter-tab <?= $filter === 'pending' ? 'active' : '' ?>">
-            Afventer (<?= $guestStats['pending'] ?>)
         </a>
     </div>
     <form class="search-form" method="GET">
@@ -160,7 +579,10 @@ $guests = $stmt->fetchAll();
         </svg>
         <h3>Ingen gæster endnu</h3>
         <p>Tilføj dine første gæster for at komme i gang.</p>
-        <button type="button" class="btn btn-primary" onclick="showAddModal()">Tilføj gæst</button>
+        <div style="display: flex; gap: 12px; margin-top: 16px;">
+            <button type="button" class="btn btn-secondary" onclick="showBulkModal()">Tilføj mange gæster</button>
+            <button type="button" class="btn btn-primary" onclick="showAddModal()">Tilføj gæst</button>
+        </div>
     </div>
 </div>
 <?php else: ?>
@@ -168,45 +590,18 @@ $guests = $stmt->fetchAll();
     <table class="data-table">
         <thead>
             <tr>
+                <th style="width: 50px;">Inv.</th>
                 <th>Navn</th>
-                <th>Email</th>
+                <th>Max</th>
                 <th>Kode</th>
                 <th>Status</th>
                 <th>Antal</th>
-                <th>Invitation</th>
                 <th></th>
             </tr>
         </thead>
         <tbody>
             <?php foreach ($guests as $guest): ?>
             <tr>
-                <td>
-                    <div class="guest-name">
-                        <strong><?= htmlspecialchars($guest['name']) ?></strong>
-                        <?php if ($guest['phone']): ?>
-                            <span class="guest-phone"><?= htmlspecialchars($guest['phone']) ?></span>
-                        <?php endif; ?>
-                    </div>
-                </td>
-                <td><?= htmlspecialchars($guest['email'] ?? '-') ?></td>
-                <td>
-                    <code class="guest-code"><?= htmlspecialchars($guest['unique_code']) ?></code>
-                </td>
-                <td>
-                    <span class="status-badge status-<?= $guest['rsvp_status'] ?>">
-                        <?php
-                        $statusLabels = ['pending' => 'Afventer', 'accepted' => 'Kommer', 'declined' => 'Kommer ikke'];
-                        echo $statusLabels[$guest['rsvp_status']] ?? $guest['rsvp_status'];
-                        ?>
-                    </span>
-                </td>
-                <td>
-                    <?php if ($guest['rsvp_status'] === 'accepted'): ?>
-                        <?= (int)$guest['adults_count'] ?> + <?= (int)$guest['children_count'] ?>
-                    <?php else: ?>
-                        -
-                    <?php endif; ?>
-                </td>
                 <td>
                     <button type="button" class="invitation-toggle <?= $guest['invitation_sent'] ? 'sent' : '' ?>"
                             onclick="toggleInvitation(<?= $guest['id'] ?>)" title="<?= $guest['invitation_sent'] ? 'Sendt' : 'Ikke sendt' ?>">
@@ -220,6 +615,53 @@ $guests = $stmt->fetchAll();
                             </svg>
                         <?php endif; ?>
                     </button>
+                </td>
+                <td>
+                    <div class="guest-name">
+                        <strong><?= htmlspecialchars($guest['name']) ?></strong>
+                        <?php if ($guest['email']): ?>
+                            <span class="guest-email"><?= htmlspecialchars($guest['email']) ?></span>
+                        <?php endif; ?>
+                        <?php if ($guest['phone']): ?>
+                            <span class="guest-phone"><?= htmlspecialchars($guest['phone']) ?></span>
+                        <?php endif; ?>
+                    </div>
+                </td>
+                <td>
+                    <span class="max-badge"><?= (int)($guest['max_guests'] ?? 1) ?></span>
+                </td>
+                <td>
+                    <div style="display: flex; align-items: center; gap: 4px;">
+                        <code class="guest-code"><?= htmlspecialchars($guest['unique_code']) ?></code>
+                        <button type="button" class="copy-btn" onclick="copyLink('<?= htmlspecialchars($guest['unique_code']) ?>')" title="Kopiér link">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 14px; height: 14px;">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </td>
+                <td>
+                    <span class="status-badge status-<?= $guest['rsvp_status'] ?>">
+                        <?php
+                        $statusLabels = ['pending' => 'Afventer', 'accepted' => 'Kommer', 'declined' => 'Kommer ikke'];
+                        echo $statusLabels[$guest['rsvp_status']] ?? $guest['rsvp_status'];
+                        ?>
+                    </span>
+                </td>
+                <td>
+                    <?php if ($guest['rsvp_status'] === 'accepted'): ?>
+                        <?= (int)$guest['adults_count'] ?>v + <?= (int)$guest['children_count'] ?>b
+                        <?php if (!empty($guest['guest_names'])): ?>
+                            <?php $names = json_decode($guest['guest_names'], true); ?>
+                            <?php if ($names && count($names) > 0): ?>
+                                <br><span style="font-size: 12px; color: var(--gray-500);" title="<?= htmlspecialchars(implode(', ', $names)) ?>">
+                                    <?= htmlspecialchars(implode(', ', array_slice($names, 0, 2))) ?><?= count($names) > 2 ? '...' : '' ?>
+                                </span>
+                            <?php endif; ?>
+                        <?php endif; ?>
+                    <?php else: ?>
+                        -
+                    <?php endif; ?>
                 </td>
                 <td>
                     <div class="row-actions">
@@ -240,6 +682,17 @@ $guests = $stmt->fetchAll();
         </tbody>
     </table>
 </div>
+
+<!-- Summary -->
+<div style="margin-top: 16px; padding: 12px 16px; background: var(--gray-50); border-radius: 8px;">
+    <p style="font-size: 13px; color: var(--gray-600); margin: 0;">
+        Viser <?= count($guests) ?> gæst<?= count($guests) !== 1 ? 'er' : '' ?>
+        <?php if ($guestStats['accepted'] > 0): ?>
+            &middot; <strong><?= $guestStats['total_adults'] ?? 0 ?></strong> voksne og
+            <strong><?= $guestStats['total_children'] ?? 0 ?></strong> børn bekræftet
+        <?php endif; ?>
+    </p>
+</div>
 <?php endif; ?>
 
 <!-- Add Guest Modal -->
@@ -253,21 +706,31 @@ $guests = $stmt->fetchAll();
             <?= accountCsrfField() ?>
             <input type="hidden" name="action" value="add_guest">
             <div class="modal-body">
-                <div class="form-group">
-                    <label class="form-label">Navn *</label>
-                    <input type="text" name="guest_name" class="form-input" required>
+                <div style="display: grid; grid-template-columns: 1fr 100px; gap: 16px;">
+                    <div class="form-group">
+                        <label class="form-label">Navn *</label>
+                        <input type="text" name="guest_name" class="form-input" required placeholder="F.eks. Mormor og Morfar">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Max gæster</label>
+                        <input type="number" name="max_guests" class="form-input" value="1" min="1" max="20">
+                    </div>
                 </div>
                 <div class="form-group">
                     <label class="form-label">Email</label>
-                    <input type="email" name="guest_email" class="form-input">
+                    <input type="email" name="guest_email" class="form-input" placeholder="email@example.com">
                 </div>
                 <div class="form-group">
                     <label class="form-label">Telefon</label>
-                    <input type="tel" name="guest_phone" class="form-input">
+                    <input type="tel" name="guest_phone" class="form-input" placeholder="12345678">
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Noter</label>
-                    <textarea name="guest_notes" class="form-input" rows="2"></textarea>
+                    <label class="form-label">Kostbehov/allergier</label>
+                    <input type="text" name="dietary_notes" class="form-input" placeholder="F.eks. vegetar, glutenfri...">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Noter (kun for dig)</label>
+                    <textarea name="guest_notes" class="form-input" rows="2" placeholder="Interne noter..."></textarea>
                 </div>
             </div>
             <div class="modal-footer">
@@ -275,6 +738,130 @@ $guests = $stmt->fetchAll();
                 <button type="submit" class="btn btn-primary">Tilføj</button>
             </div>
         </form>
+    </div>
+</div>
+
+<!-- Bulk Add Modal -->
+<div class="modal-overlay" id="bulkModal" style="display: none;">
+    <div class="modal" style="max-width: 500px;">
+        <div class="modal-header">
+            <h3>Tilføj mange gæster</h3>
+            <button type="button" class="modal-close" onclick="hideBulkModal()">&times;</button>
+        </div>
+        <form method="POST">
+            <?= accountCsrfField() ?>
+            <input type="hidden" name="action" value="bulk_add">
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Standard max gæster</label>
+                    <input type="number" name="default_max_guests" class="form-input" value="1" min="1" max="20" style="width: 100px;">
+                    <p style="font-size: 12px; color: var(--gray-500); margin-top: 4px;">Bruges hvis ikke angivet per linje</p>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Navne (ét navn per linje)</label>
+                    <textarea name="names" class="form-input" rows="12" required placeholder="Mormor og Morfar (2)
+Onkel Peter (4)
+Tante Lisa
+Fætter Magnus (1)
+..."></textarea>
+                    <p style="font-size: 12px; color: var(--gray-500); margin-top: 4px;">
+                        Skriv ét navn per linje. Tilføj <strong>(antal)</strong> for at angive max gæster.<br>
+                        F.eks. "Peter og familie (4)" = max 4 gæster.
+                    </p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="hideBulkModal()">Annuller</button>
+                <button type="submit" class="btn btn-primary">Tilføj alle</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- CSV Import Modal -->
+<div class="modal-overlay" id="importModal" style="display: none;">
+    <div class="modal" style="max-width: 700px;">
+        <div class="modal-header">
+            <h3>Importér gæster fra CSV</h3>
+            <button type="button" class="modal-close" onclick="hideImportModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <!-- Step 1: File Upload -->
+            <div id="import-step-1">
+                <div class="form-group">
+                    <label class="form-label">Vælg CSV-fil</label>
+                    <input type="file" id="csv-file-input" accept=".csv,.txt" class="form-input" onchange="handleFileSelect(event)">
+                    <p style="font-size: 12px; color: var(--gray-500); margin-top: 4px;">
+                        Understøtter CSV-filer med semikolon (;) eller komma (,) som separator.<br>
+                        Første række skal indeholde kolonnenavne.
+                    </p>
+                </div>
+
+                <div class="form-group" style="margin-top: 24px;">
+                    <label class="form-label">Eller indsæt fra Excel</label>
+                    <textarea id="csv-paste-area" class="form-input" rows="6" placeholder="Kopiér data fra Excel og indsæt her...
+Navn;Email;Telefon;Max gæster
+Peter Hansen;peter@email.dk;12345678;2
+Marie Jensen;marie@email.dk;;1"></textarea>
+                    <button type="button" class="btn btn-secondary" style="margin-top: 8px;" onclick="parseTextArea()">Indlæs data</button>
+                </div>
+            </div>
+
+            <!-- Step 2: Column Mapping -->
+            <div id="import-step-2" style="display: none;">
+                <div style="background: #eff6ff; border: 1px solid #bfdbfe; padding: 12px 16px; border-radius: 8px; margin-bottom: 16px;">
+                    <strong>Trin 2:</strong> Vælg hvilke kolonner der skal bruges til hvad
+                </div>
+
+                <div id="column-mapping-container"></div>
+
+                <div class="form-group" style="margin-top: 16px;">
+                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                        <input type="checkbox" id="skip-duplicates" checked>
+                        <span>Spring duplikater over (samme navn eller email)</span>
+                    </label>
+                </div>
+
+                <div style="display: flex; gap: 12px; margin-top: 16px;">
+                    <button type="button" class="btn btn-secondary" onclick="goToStep(1)">Tilbage</button>
+                    <button type="button" class="btn btn-primary" onclick="goToStep(3)">Se preview</button>
+                </div>
+            </div>
+
+            <!-- Step 3: Preview -->
+            <div id="import-step-3" style="display: none;">
+                <div style="background: #eff6ff; border: 1px solid #bfdbfe; padding: 12px 16px; border-radius: 8px; margin-bottom: 16px;">
+                    <strong>Trin 3:</strong> Bekræft import
+                </div>
+
+                <div id="preview-summary" style="margin-bottom: 16px;"></div>
+
+                <div style="max-height: 300px; overflow-y: auto; border: 1px solid var(--gray-200); border-radius: 8px;">
+                    <table class="data-table" id="preview-table">
+                        <thead></thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+
+                <div id="preview-errors" style="margin-top: 16px; display: none;">
+                    <div style="background: #fef3c7; border: 1px solid #fcd34d; padding: 12px 16px; border-radius: 8px;">
+                        <strong>Advarsler:</strong>
+                        <ul id="error-list" style="margin: 8px 0 0 20px; padding: 0;"></ul>
+                    </div>
+                </div>
+
+                <form method="POST" id="import-form">
+                    <?= accountCsrfField() ?>
+                    <input type="hidden" name="action" value="csv_import">
+                    <input type="hidden" name="csv_data" id="csv-data-input">
+
+                    <div style="display: flex; gap: 12px; margin-top: 16px;">
+                        <button type="button" class="btn btn-secondary" onclick="goToStep(2)">Tilbage</button>
+                        <button type="submit" class="btn btn-primary" id="import-submit-btn">Importér gæster</button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -290,9 +877,15 @@ $guests = $stmt->fetchAll();
             <input type="hidden" name="action" value="update_guest">
             <input type="hidden" name="guest_id" id="edit_guest_id">
             <div class="modal-body">
-                <div class="form-group">
-                    <label class="form-label">Navn *</label>
-                    <input type="text" name="guest_name" id="edit_guest_name" class="form-input" required>
+                <div style="display: grid; grid-template-columns: 1fr 100px; gap: 16px;">
+                    <div class="form-group">
+                        <label class="form-label">Navn *</label>
+                        <input type="text" name="guest_name" id="edit_guest_name" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Max gæster</label>
+                        <input type="number" name="max_guests" id="edit_max_guests" class="form-input" value="1" min="1" max="20">
+                    </div>
                 </div>
                 <div class="form-group">
                     <label class="form-label">Email</label>
@@ -303,13 +896,55 @@ $guests = $stmt->fetchAll();
                     <input type="tel" name="guest_phone" id="edit_guest_phone" class="form-input">
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Noter</label>
+                    <label class="form-label">Noter (kun for dig)</label>
                     <textarea name="guest_notes" id="edit_guest_notes" class="form-input" rows="2"></textarea>
+                </div>
+
+                <!-- RSVP Status -->
+                <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--gray-200);">
+                    <div class="form-group">
+                        <label class="form-label">RSVP Status</label>
+                        <select name="rsvp_status" id="edit_rsvp_status" class="form-input" onchange="toggleRsvpDetails()">
+                            <option value="pending">Afventer svar</option>
+                            <option value="accepted">Kommer</option>
+                            <option value="declined">Kommer ikke</option>
+                        </select>
+                    </div>
+
+                    <div id="rsvp-details" style="display: none;">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                            <div class="form-group">
+                                <label class="form-label">Antal voksne</label>
+                                <input type="number" name="adults_count" id="edit_adults" class="form-input" min="1" value="1" onchange="updateEditNameFields()">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Antal børn</label>
+                                <input type="number" name="children_count" id="edit_children" class="form-input" min="0" value="0">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Navne på deltagere (til bordplan)</label>
+                            <div id="edit-guest-names-inputs"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Kostbehov/allergier</label>
+                            <textarea name="dietary_notes" id="edit_dietary" class="form-input" rows="2" placeholder="F.eks. vegetar, glutenfri..."></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Read-only info -->
+                <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--gray-200);">
+                    <p style="font-size: 13px; color: var(--gray-500); margin: 0;">
+                        <strong>Kode:</strong> <span id="edit_code"></span>
+                    </p>
                 </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" onclick="hideEditModal()">Annuller</button>
-                <button type="submit" class="btn btn-primary">Gem</button>
+                <button type="submit" class="btn btn-primary">Gem ændringer</button>
             </div>
         </form>
     </div>
@@ -335,6 +970,14 @@ $guests = $stmt->fetchAll();
         align-items: center;
         justify-content: space-between;
         margin-bottom: 24px;
+        flex-wrap: wrap;
+        gap: 16px;
+    }
+
+    .header-buttons {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
     }
 
     .section-title {
@@ -361,6 +1004,7 @@ $guests = $stmt->fetchAll();
     .filter-tabs {
         display: flex;
         gap: 8px;
+        flex-wrap: wrap;
     }
 
     .filter-tab {
@@ -424,7 +1068,7 @@ $guests = $stmt->fetchAll();
         gap: 2px;
     }
 
-    .guest-phone {
+    .guest-email, .guest-phone {
         font-size: 13px;
         color: var(--gray-500);
     }
@@ -435,6 +1079,33 @@ $guests = $stmt->fetchAll();
         border-radius: 4px;
         font-size: 13px;
         font-family: monospace;
+    }
+
+    .copy-btn {
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--gray-400);
+        border-radius: 4px;
+    }
+
+    .copy-btn:hover {
+        background: var(--gray-100);
+        color: var(--gray-600);
+    }
+
+    .max-badge {
+        display: inline-block;
+        padding: 2px 8px;
+        background: var(--gray-100);
+        border-radius: 4px;
+        font-size: 13px;
+        font-weight: 500;
     }
 
     .status-badge {
@@ -553,6 +1224,7 @@ $guests = $stmt->fetchAll();
     .modal-header h3 {
         font-size: 18px;
         font-weight: 600;
+        margin: 0;
     }
 
     .modal-close {
@@ -619,6 +1291,9 @@ $guests = $stmt->fetchAll();
 </style>
 
 <script>
+// Store current guest data for name field generation
+let currentEditGuest = null;
+
 function showAddModal() {
     document.getElementById('addModal').style.display = 'flex';
 }
@@ -627,17 +1302,95 @@ function hideAddModal() {
     document.getElementById('addModal').style.display = 'none';
 }
 
+function showBulkModal() {
+    document.getElementById('bulkModal').style.display = 'flex';
+}
+
+function hideBulkModal() {
+    document.getElementById('bulkModal').style.display = 'none';
+}
+
+function showImportModal() {
+    document.getElementById('importModal').style.display = 'flex';
+    goToStep(1);
+}
+
+function hideImportModal() {
+    document.getElementById('importModal').style.display = 'none';
+}
+
 function editGuest(guest) {
+    currentEditGuest = guest;
+
     document.getElementById('edit_guest_id').value = guest.id;
     document.getElementById('edit_guest_name').value = guest.name || '';
+    document.getElementById('edit_max_guests').value = guest.max_guests || 1;
     document.getElementById('edit_guest_email').value = guest.email || '';
     document.getElementById('edit_guest_phone').value = guest.phone || '';
     document.getElementById('edit_guest_notes').value = guest.notes || '';
+    document.getElementById('edit_code').textContent = guest.unique_code;
+
+    // Set RSVP status
+    document.getElementById('edit_rsvp_status').value = guest.rsvp_status || 'pending';
+    document.getElementById('edit_adults').value = guest.adults_count || 1;
+    document.getElementById('edit_children').value = guest.children_count || 0;
+    document.getElementById('edit_dietary').value = guest.dietary_notes || '';
+    toggleRsvpDetails();
+
+    // Generate name input fields
+    updateEditNameFields();
+
     document.getElementById('editModal').style.display = 'flex';
 }
 
 function hideEditModal() {
     document.getElementById('editModal').style.display = 'none';
+}
+
+function updateEditNameFields() {
+    const container = document.getElementById('edit-guest-names-inputs');
+    const count = parseInt(document.getElementById('edit_adults').value) || 1;
+
+    // Get existing names
+    let existingNames = [];
+    if (currentEditGuest && currentEditGuest.guest_names) {
+        try {
+            existingNames = JSON.parse(currentEditGuest.guest_names) || [];
+        } catch (e) {}
+    }
+
+    // Also check current input values to preserve user input
+    const currentInputs = container.querySelectorAll('input[name="guest_names[]"]');
+    currentInputs.forEach((input, i) => {
+        if (input.value) {
+            existingNames[i] = input.value;
+        }
+    });
+
+    // Clear container
+    container.innerHTML = '';
+
+    // Generate input fields based on adults count
+    for (let i = 0; i < count; i++) {
+        const div = document.createElement('div');
+        div.style.marginBottom = '8px';
+
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.name = 'guest_names[]';
+        input.className = 'form-input';
+        input.placeholder = 'Navn på person ' + (i + 1);
+        input.value = existingNames[i] || '';
+
+        div.appendChild(input);
+        container.appendChild(div);
+    }
+}
+
+function toggleRsvpDetails() {
+    const status = document.getElementById('edit_rsvp_status').value;
+    const details = document.getElementById('rsvp-details');
+    details.style.display = status === 'accepted' ? 'block' : 'none';
 }
 
 function deleteGuest(id, name) {
@@ -652,6 +1405,13 @@ function toggleInvitation(id) {
     document.getElementById('toggleInvitationForm').submit();
 }
 
+function copyLink(code) {
+    const fullLink = '<?= $eventBaseUrl ?>?kode=' + code;
+    navigator.clipboard.writeText(fullLink).then(() => {
+        alert('Link kopieret til udklipsholder!');
+    });
+}
+
 // Close modal on overlay click
 document.querySelectorAll('.modal-overlay').forEach(overlay => {
     overlay.addEventListener('click', function(e) {
@@ -660,4 +1420,326 @@ document.querySelectorAll('.modal-overlay').forEach(overlay => {
         }
     });
 });
+
+// =====================
+// CSV Import Functions
+// =====================
+
+let csvHeaders = [];
+let csvRows = [];
+let columnMapping = {};
+
+function handleFileSelect(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const content = e.target.result;
+        parseCSV(content);
+    };
+    reader.readAsText(file, 'UTF-8');
+}
+
+function parseTextArea() {
+    const content = document.getElementById('csv-paste-area').value;
+    if (content.trim()) {
+        parseCSV(content);
+    }
+}
+
+function parseCSV(content) {
+    // Detect separator (semicolon or comma)
+    const firstLine = content.split('\n')[0];
+    const separator = firstLine.includes(';') ? ';' : ',';
+
+    // Parse CSV
+    const lines = content.trim().split('\n');
+    if (lines.length < 2) {
+        alert('CSV-filen skal have mindst én header-række og én data-række');
+        return;
+    }
+
+    // Parse header
+    csvHeaders = parseCSVLine(lines[0], separator);
+
+    // Parse data rows
+    csvRows = [];
+    for (let i = 1; i < lines.length; i++) {
+        const line = lines[i].trim();
+        if (!line) continue;
+
+        const values = parseCSVLine(line, separator);
+        const row = {};
+        csvHeaders.forEach((header, index) => {
+            row[index] = values[index] || '';
+        });
+        csvRows.push(row);
+    }
+
+    if (csvRows.length === 0) {
+        alert('Ingen data-rækker fundet i CSV-filen');
+        return;
+    }
+
+    // Initialize column mapping and go to step 2
+    initializeColumnMapping();
+    goToStep(2);
+}
+
+function parseCSVLine(line, separator) {
+    const values = [];
+    let current = '';
+    let inQuotes = false;
+
+    for (let i = 0; i < line.length; i++) {
+        const char = line[i];
+
+        if (char === '"') {
+            inQuotes = !inQuotes;
+        } else if (char === separator && !inQuotes) {
+            values.push(current.trim());
+            current = '';
+        } else {
+            current += char;
+        }
+    }
+    values.push(current.trim());
+
+    return values;
+}
+
+function initializeColumnMapping() {
+    const container = document.getElementById('column-mapping-container');
+    container.innerHTML = '';
+
+    // Field options
+    const fieldOptions = [
+        { value: '', label: '-- Spring over --' },
+        { value: 'name', label: 'Navn (påkrævet)' },
+        { value: 'email', label: 'Email' },
+        { value: 'phone', label: 'Telefon' },
+        { value: 'max_guests', label: 'Max gæster' },
+        { value: 'notes', label: 'Noter' }
+    ];
+
+    // Auto-detect mapping based on header names
+    const autoMapping = {};
+    csvHeaders.forEach((header, index) => {
+        const headerLower = header.toLowerCase().trim();
+        if (headerLower.includes('navn') || headerLower === 'name') {
+            autoMapping[index] = 'name';
+        } else if (headerLower.includes('email') || headerLower.includes('mail') || headerLower.includes('e-mail')) {
+            autoMapping[index] = 'email';
+        } else if (headerLower.includes('telefon') || headerLower.includes('phone') || headerLower.includes('tlf') || headerLower.includes('mobil')) {
+            autoMapping[index] = 'phone';
+        } else if (headerLower.includes('max') || headerLower.includes('antal') || headerLower.includes('gæster')) {
+            autoMapping[index] = 'max_guests';
+        } else if (headerLower.includes('note') || headerLower.includes('kommentar') || headerLower.includes('bemærk')) {
+            autoMapping[index] = 'notes';
+        }
+    });
+
+    // Create mapping UI
+    csvHeaders.forEach((header, index) => {
+        const row = document.createElement('div');
+        row.style.cssText = 'display: grid; grid-template-columns: 1fr auto 1fr; gap: 16px; align-items: center; margin-bottom: 12px;';
+
+        // Sample data from first row
+        const sampleData = csvRows[0] ? (csvRows[0][index] || '(tom)') : '(tom)';
+
+        row.innerHTML = `
+            <div>
+                <strong>${escapeHtml(header)}</strong>
+                <div style="font-size: 12px; color: var(--gray-500);">${escapeHtml(sampleData.substring(0, 30))}${sampleData.length > 30 ? '...' : ''}</div>
+            </div>
+            <div style="color: var(--gray-400);">→</div>
+            <select class="form-input column-mapping-select" data-col="${index}">
+                ${fieldOptions.map(opt =>
+                    `<option value="${opt.value}" ${autoMapping[index] === opt.value ? 'selected' : ''}>${opt.label}</option>`
+                ).join('')}
+            </select>
+        `;
+
+        container.appendChild(row);
+    });
+
+    // Check if name column is mapped
+    validateMapping();
+
+    // Add change listeners
+    container.querySelectorAll('.column-mapping-select').forEach(select => {
+        select.addEventListener('change', validateMapping);
+    });
+}
+
+function validateMapping() {
+    const selects = document.querySelectorAll('.column-mapping-select');
+    let hasName = false;
+
+    selects.forEach(select => {
+        if (select.value === 'name') hasName = true;
+    });
+
+    // Show warning if no name column
+    let warning = document.getElementById('mapping-warning');
+    if (!hasName) {
+        if (!warning) {
+            warning = document.createElement('div');
+            warning.id = 'mapping-warning';
+            warning.style.cssText = 'background: #fef3c7; border: 1px solid #fcd34d; padding: 12px 16px; border-radius: 8px; margin-top: 16px;';
+            warning.textContent = 'Du skal vælge en kolonne til "Navn"';
+            document.getElementById('column-mapping-container').appendChild(warning);
+        }
+    } else if (warning) {
+        warning.remove();
+    }
+
+    return hasName;
+}
+
+function goToStep(step) {
+    document.getElementById('import-step-1').style.display = step === 1 ? 'block' : 'none';
+    document.getElementById('import-step-2').style.display = step === 2 ? 'block' : 'none';
+    document.getElementById('import-step-3').style.display = step === 3 ? 'block' : 'none';
+
+    if (step === 3) {
+        if (!validateMapping()) {
+            alert('Du skal vælge en kolonne til "Navn"');
+            goToStep(2);
+            return;
+        }
+        buildPreview();
+    }
+}
+
+function buildPreview() {
+    // Collect mapping
+    columnMapping = {};
+    document.querySelectorAll('.column-mapping-select').forEach(select => {
+        const col = select.dataset.col;
+        const field = select.value;
+        if (field) {
+            columnMapping[col] = field;
+        }
+    });
+
+    // Build preview table
+    const thead = document.querySelector('#preview-table thead');
+    const tbody = document.querySelector('#preview-table tbody');
+
+    // Headers
+    const mappedFields = Object.values(columnMapping);
+    const fieldLabels = {
+        'name': 'Navn',
+        'email': 'Email',
+        'phone': 'Telefon',
+        'max_guests': 'Max gæster',
+        'notes': 'Noter'
+    };
+
+    thead.innerHTML = '<tr>' + mappedFields.map(f => `<th>${fieldLabels[f] || f}</th>`).join('') + '<th>Status</th></tr>';
+
+    // Rows
+    const errors = [];
+    let validCount = 0;
+
+    tbody.innerHTML = csvRows.slice(0, 20).map((row, idx) => {
+        let rowErrors = [];
+
+        // Get mapped values
+        const mappedValues = {};
+        for (const [col, field] of Object.entries(columnMapping)) {
+            mappedValues[field] = row[col] || '';
+        }
+
+        // Validate
+        if (!mappedValues.name || !mappedValues.name.trim()) {
+            rowErrors.push('Mangler navn');
+        }
+        if (mappedValues.email && !isValidEmail(mappedValues.email)) {
+            rowErrors.push('Ugyldig email');
+        }
+
+        if (rowErrors.length === 0) {
+            validCount++;
+        } else {
+            errors.push({ row: idx + 2, errors: rowErrors });
+        }
+
+        const statusHtml = rowErrors.length === 0
+            ? '<span class="status-badge status-accepted">OK</span>'
+            : `<span class="status-badge status-pending" title="${escapeHtml(rowErrors.join(', '))}">${rowErrors.length} problem${rowErrors.length > 1 ? 'er' : ''}</span>`;
+
+        return '<tr>' +
+            mappedFields.map(f => `<td>${escapeHtml((mappedValues[f] || '').substring(0, 50))}</td>`).join('') +
+            `<td>${statusHtml}</td></tr>`;
+    }).join('');
+
+    if (csvRows.length > 20) {
+        tbody.innerHTML += `<tr><td colspan="${mappedFields.length + 1}" style="color: var(--gray-500); text-align: center;">... og ${csvRows.length - 20} flere rækker</td></tr>`;
+    }
+
+    // Summary
+    document.getElementById('preview-summary').innerHTML = `
+        <div style="display: flex; gap: 24px;">
+            <div><strong>${csvRows.length}</strong> rækker fundet</div>
+            <div><strong style="color: #15803d;">${validCount}</strong> gyldige</div>
+            ${errors.length > 0 ? `<div><strong style="color: #f59e0b;">${errors.length}</strong> med problemer</div>` : ''}
+        </div>
+    `;
+
+    // Errors
+    if (errors.length > 0) {
+        document.getElementById('preview-errors').style.display = 'block';
+        document.getElementById('error-list').innerHTML = errors.slice(0, 10).map(e =>
+            `<li>Række ${e.row}: ${escapeHtml(e.errors.join(', '))}</li>`
+        ).join('') + (errors.length > 10 ? `<li>... og ${errors.length - 10} flere</li>` : '');
+    } else {
+        document.getElementById('preview-errors').style.display = 'none';
+    }
+
+    // Prepare form data
+    document.getElementById('csv-data-input').value = JSON.stringify(csvRows);
+
+    // Create mapping inputs
+    const form = document.getElementById('import-form');
+    form.querySelectorAll('.mapping-field').forEach(el => el.remove());
+    for (const [col, field] of Object.entries(columnMapping)) {
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = `mapping[${col}]`;
+        input.value = field;
+        input.className = 'mapping-field';
+        form.appendChild(input);
+    }
+
+    // Skip duplicates
+    if (document.getElementById('skip-duplicates').checked) {
+        let skipInput = form.querySelector('input[name="skip_duplicates"]');
+        if (!skipInput) {
+            skipInput = document.createElement('input');
+            skipInput.type = 'hidden';
+            skipInput.name = 'skip_duplicates';
+            skipInput.value = '1';
+            form.appendChild(skipInput);
+        }
+    } else {
+        const skipInput = form.querySelector('input[name="skip_duplicates"]');
+        if (skipInput) skipInput.remove();
+    }
+
+    // Update button text
+    document.getElementById('import-submit-btn').textContent = `Importér ${validCount} gæster`;
+}
+
+function isValidEmail(email) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
 </script>

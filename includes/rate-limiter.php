@@ -5,23 +5,25 @@
  */
 
 /**
- * Get client IP address
+ * Get client IP address (only declare if not already defined in audit.php)
  */
-function getClientIP(): string {
-    $headers = ['HTTP_CF_CONNECTING_IP', 'HTTP_X_FORWARDED_FOR', 'HTTP_X_REAL_IP', 'REMOTE_ADDR'];
-    foreach ($headers as $header) {
-        if (!empty($_SERVER[$header])) {
-            $ip = $_SERVER[$header];
-            // Handle comma-separated IPs (X-Forwarded-For)
-            if (strpos($ip, ',') !== false) {
-                $ip = trim(explode(',', $ip)[0]);
-            }
-            if (filter_var($ip, FILTER_VALIDATE_IP)) {
-                return $ip;
+if (!function_exists('getClientIP')) {
+    function getClientIP(): string {
+        $headers = ['HTTP_CF_CONNECTING_IP', 'HTTP_X_FORWARDED_FOR', 'HTTP_X_REAL_IP', 'REMOTE_ADDR'];
+        foreach ($headers as $header) {
+            if (!empty($_SERVER[$header])) {
+                $ip = $_SERVER[$header];
+                // Handle comma-separated IPs (X-Forwarded-For)
+                if (strpos($ip, ',') !== false) {
+                    $ip = trim(explode(',', $ip)[0]);
+                }
+                if (filter_var($ip, FILTER_VALIDATE_IP)) {
+                    return $ip;
+                }
             }
         }
+        return '0.0.0.0';
     }
-    return '0.0.0.0';
 }
 
 /**

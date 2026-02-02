@@ -48,11 +48,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 
 // Get photos
 $filter = $_GET['filter'] ?? 'all';
-$whereClause = "WHERE event_id = ?";
+$whereClause = "WHERE p.event_id = ?";
 if ($filter === 'approved') {
-    $whereClause .= " AND approved = TRUE";
+    $whereClause .= " AND p.approved = TRUE";
 } elseif ($filter === 'pending') {
-    $whereClause .= " AND approved = FALSE";
+    $whereClause .= " AND p.approved = FALSE";
 }
 
 $stmt = $db->prepare("
