@@ -19,7 +19,7 @@ if (!isset($_GET['run']) || $_GET['run'] !== 'yes') {
     exit;
 }
 
-require_once __DIR__ . '/../config/saas.php';
+require_once __DIR__ . '/config/saas.php';
 
 $db = getDB();
 
@@ -27,8 +27,8 @@ echo "<pre style='font-family: monospace; background: #1a1a1a; color: #fff; padd
 echo "=== Database Migration Runner ===\n\n";
 
 $migrations = [
-    'migrations/011_invitation_system.sql' => 'Invitation System Schema',
-    'seeds/invitation-templates.sql' => 'Invitation Templates Seed'
+    'database/migrations/011_invitation_system.sql' => 'Invitation System Schema',
+    'database/seeds/invitation-templates.sql' => 'Invitation Templates Seed'
 ];
 
 $success = 0;
