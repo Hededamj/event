@@ -40,7 +40,7 @@ $currentEventCount = count($userEvents);
 <?php if ($showWelcome): ?>
 <div class="welcome-banner">
     <div class="welcome-content">
-        <h2>Velkommen til EventPlatform!</h2>
+        <h2>Velkommen til PartyParart!</h2>
         <p>Din konto er oprettet og klar til brug. Kom i gang med at oprette dit første arrangement.</p>
         <a href="/app/events/create.php" class="btn btn-primary">
             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -191,16 +191,17 @@ $currentEventCount = count($userEvents);
 
 <style>
     .welcome-banner {
-        background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-        border-radius: 16px;
-        padding: 32px;
+        background: linear-gradient(135deg, var(--sage) 0%, var(--sage-dark) 100%);
+        border-radius: 20px;
+        padding: 36px;
         margin-bottom: 32px;
         color: white;
     }
 
     .welcome-content h2 {
-        font-size: 24px;
-        font-weight: 700;
+        font-family: var(--font-display);
+        font-size: 28px;
+        font-weight: 500;
         margin-bottom: 8px;
     }
 
@@ -212,80 +213,83 @@ $currentEventCount = count($userEvents);
 
     .welcome-banner .btn {
         background: white;
-        color: var(--primary);
+        color: var(--sage-dark);
     }
 
     .welcome-banner .btn:hover {
-        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+        transform: translateY(-2px);
     }
 
     .events-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
         gap: 24px;
     }
 
     .event-card {
-        background: white;
-        border-radius: 16px;
-        padding: 24px;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-        border: 1px solid var(--gray-200);
-        transition: all 0.2s;
+        background: var(--white);
+        border-radius: 20px;
+        padding: 28px;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.03), 0 4px 12px rgba(0,0,0,0.03);
+        transition: all 0.25s var(--ease-out);
     }
 
     .event-card:hover {
-        box-shadow: 0 8px 24px rgba(0,0,0,0.08);
-        transform: translateY(-2px);
+        box-shadow: 0 12px 32px rgba(0,0,0,0.08);
+        transform: translateY(-4px);
     }
 
     .event-card-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 12px;
+        margin-bottom: 16px;
     }
 
     .event-type-badge {
-        font-size: 12px;
+        font-size: 11px;
         font-weight: 600;
-        color: var(--primary);
-        background: rgba(102, 126, 234, 0.1);
-        padding: 4px 10px;
-        border-radius: 6px;
+        color: var(--sage-dark);
+        background: var(--sage-light);
+        padding: 6px 12px;
+        border-radius: 8px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
     }
 
     .event-status {
         font-size: 12px;
-        font-weight: 500;
-        padding: 4px 10px;
-        border-radius: 6px;
+        font-weight: 600;
+        padding: 6px 12px;
+        border-radius: 8px;
     }
 
     .status-active {
-        background: #dcfce7;
-        color: #15803d;
+        background: #E8F5E8;
+        color: var(--success);
     }
 
     .status-draft {
-        background: var(--gray-100);
-        color: var(--gray-600);
+        background: var(--cream-light);
+        color: var(--charcoal-light);
     }
 
     .status-completed {
-        background: #dbeafe;
-        color: #1d4ed8;
+        background: #E8F0FA;
+        color: #3D6BA8;
     }
 
     .status-archived {
-        background: var(--gray-100);
-        color: var(--gray-500);
+        background: var(--cream-light);
+        color: var(--charcoal-light);
     }
 
     .event-card-title {
-        font-size: 20px;
-        font-weight: 700;
-        color: var(--gray-900);
+        font-family: var(--font-display);
+        font-size: 24px;
+        font-weight: 500;
+        color: var(--charcoal);
         margin-bottom: 8px;
     }
 
@@ -293,26 +297,30 @@ $currentEventCount = count($userEvents);
         display: flex;
         align-items: center;
         gap: 8px;
-        color: var(--gray-500);
+        color: var(--charcoal-light);
         font-size: 14px;
-        margin-bottom: 20px;
+        margin-bottom: 24px;
     }
 
     .event-card-date svg {
-        width: 16px;
-        height: 16px;
+        width: 18px;
+        height: 18px;
+        color: var(--sage);
     }
 
     .days-until {
-        color: var(--primary);
-        font-weight: 500;
+        color: var(--sage-dark);
+        font-weight: 600;
     }
 
     .event-card-stats {
         display: grid;
         grid-template-columns: repeat(4, 1fr);
         gap: 12px;
-        margin-bottom: 16px;
+        margin-bottom: 20px;
+        padding: 20px;
+        background: var(--cream-light);
+        border-radius: 14px;
     }
 
     .stat {
@@ -321,9 +329,10 @@ $currentEventCount = count($userEvents);
 
     .stat-value {
         display: block;
-        font-size: 20px;
-        font-weight: 700;
-        color: var(--gray-900);
+        font-family: var(--font-display);
+        font-size: 24px;
+        font-weight: 500;
+        color: var(--charcoal);
     }
 
     .stat-value.stat-success {
@@ -340,17 +349,18 @@ $currentEventCount = count($userEvents);
 
     .stat-label {
         font-size: 12px;
-        color: var(--gray-500);
+        color: var(--charcoal-light);
+        margin-top: 2px;
     }
 
     .rsvp-progress {
-        margin-bottom: 20px;
+        margin-bottom: 24px;
     }
 
     .rsvp-bar {
-        height: 6px;
-        background: var(--gray-100);
-        border-radius: 3px;
+        height: 8px;
+        background: var(--cream-dark);
+        border-radius: 4px;
         overflow: hidden;
         display: flex;
     }
@@ -369,7 +379,7 @@ $currentEventCount = count($userEvents);
     }
 
     .btn-sm {
-        padding: 8px 16px;
+        padding: 12px 20px;
         font-size: 13px;
     }
 
@@ -378,39 +388,41 @@ $currentEventCount = count($userEvents);
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        min-height: 280px;
-        border: 2px dashed var(--gray-300);
+        min-height: 320px;
+        border: 2px dashed var(--cream-dark);
         background: transparent;
-        color: var(--gray-500);
+        color: var(--charcoal-light);
         text-decoration: none;
-        transition: all 0.2s;
+        transition: all 0.25s var(--ease-out);
+        border-radius: 20px;
     }
 
     .event-card-create:hover {
-        border-color: var(--primary);
-        color: var(--primary);
-        background: rgba(102, 126, 234, 0.02);
+        border-color: var(--sage);
+        color: var(--sage-dark);
+        background: rgba(143, 165, 131, 0.05);
     }
 
     .create-icon {
-        width: 48px;
-        height: 48px;
-        border-radius: 50%;
-        background: var(--gray-100);
+        width: 56px;
+        height: 56px;
+        border-radius: 16px;
+        background: var(--cream-light);
         display: flex;
         align-items: center;
         justify-content: center;
-        margin-bottom: 12px;
-        transition: all 0.2s;
+        margin-bottom: 16px;
+        transition: all 0.25s var(--ease-out);
     }
 
     .event-card-create:hover .create-icon {
-        background: rgba(102, 126, 234, 0.1);
+        background: var(--sage-light);
+        color: var(--sage-dark);
     }
 
     .create-icon svg {
-        width: 24px;
-        height: 24px;
+        width: 28px;
+        height: 28px;
     }
 
     @media (max-width: 640px) {

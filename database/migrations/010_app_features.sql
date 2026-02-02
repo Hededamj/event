@@ -53,6 +53,13 @@ CREATE TABLE IF NOT EXISTS seating_assignments (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ============================================
+-- EVENTS TABLE - TOASTMASTER REFERENCE
+-- ============================================
+
+ALTER TABLE events ADD COLUMN IF NOT EXISTS toastmaster_guest_id INT DEFAULT NULL;
+ALTER TABLE events ADD INDEX IF NOT EXISTS idx_toastmaster_guest (toastmaster_guest_id);
+
+-- ============================================
 -- TOASTMASTER TABLES
 -- ============================================
 

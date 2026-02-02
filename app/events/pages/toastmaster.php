@@ -68,6 +68,43 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SERVER['HTTP_X_REQUESTED_WI
         }
     }
 
+    if ($action === 'set_toastmaster') {
+        $guestId = (int)($_POST['guest_id'] ?? 0);
+
+        // Verify guest belongs to this event and has RSVP'd yes
+        if ($guestId > 0) {
+            $stmt = $db->prepare("SELECT id FROM guests WHERE id = ? AND event_id = ? AND rsvp_status = 'yes'");
+            $stmt->execute([$guestId, $eventId]);
+            if (!$stmt->fetch()) {
+                echo json_encode(['success' => false, 'error' => 'Invalid guest']);
+                exit;
+            }
+        }
+
+        // Update event with toastmaster
+        $stmt = $db->prepare("UPDATE events SET toastmaster_guest_id = ? WHERE id = ?");
+        $stmt->execute([$guestId ?: null, $eventId]);
+
+        // If guest selected, also generate access code for them
+        if ($guestId > 0) {
+            $stmt = $db->prepare("SELECT name, email FROM guests WHERE id = ?");
+            $stmt->execute([$guestId]);
+            $guest = $stmt->fetch();
+
+            // Check if access already exists
+            $stmt = $db->prepare("SELECT id FROM toastmaster_access WHERE event_id = ? AND guest_id = ?");
+            $stmt->execute([$eventId, $guestId]);
+            if (!$stmt->fetch()) {
+                $code = strtoupper(substr(md5(uniqid(mt_rand(), true)), 0, 8));
+                $stmt = $db->prepare("INSERT INTO toastmaster_access (event_id, guest_id, access_code, name, email, is_primary) VALUES (?, ?, ?, ?, ?, 1)");
+                $stmt->execute([$eventId, $guestId, $code, $guest['name'], $guest['email']]);
+            }
+        }
+
+        echo json_encode(['success' => true]);
+        exit;
+    }
+
     if ($action === 'generate_access') {
         $code = strtoupper(substr(md5(uniqid(mt_rand(), true)), 0, 8));
         $name = trim($_POST['name'] ?? '') ?: 'Toastmaster';
@@ -118,6 +155,14 @@ $stmt = $db->prepare("SELECT * FROM toastmaster_access WHERE event_id = ? ORDER 
 $stmt->execute([$eventId]);
 $accessCodes = $stmt->fetchAll();
 
+// Get confirmed guests (RSVP = yes) for toastmaster selection
+$stmt = $db->prepare("SELECT id, name, email FROM guests WHERE event_id = ? AND rsvp_status = 'yes' ORDER BY name");
+$stmt->execute([$eventId]);
+$confirmedGuests = $stmt->fetchAll();
+
+// Get current designated toastmaster
+$designatedToastmaster = $event['toastmaster_guest_id'] ?? null;
+
 // Stats
 $totalItems = count($items);
 $pendingItems = count(array_filter($items, function($i) { return $i['status'] === 'pending'; }));
@@ -141,8 +186,56 @@ $baseUrl = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : '
     </div>
     <div class="header-buttons">
         <button type="button" class="btn btn-secondary" onclick="showAccessModal()">Toastmaster-adgang</button>
-        <button type="button" class="btn btn-primary" onclick="showAddModal()">+ Tilfoj indslag</button>
+        <button type="button" class="btn btn-primary" onclick="showAddModal()">+ Tilføj indslag</button>
     </div>
+</div>
+
+<!-- Toastmaster Selection -->
+<div class="card" style="margin-bottom: 24px;">
+    <div class="card-header" style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+        <span style="font-size: 28px;">👑</span>
+        <div>
+            <h3 style="font-size: 18px; font-weight: 600; margin: 0;">Vælg Toastmaster</h3>
+            <p style="font-size: 13px; color: var(--charcoal-light); margin: 4px 0 0;">Vælg en af de tilmeldte gæster som toastmaster</p>
+        </div>
+    </div>
+
+    <?php if (empty($confirmedGuests)): ?>
+        <div style="padding: 24px; text-align: center; background: var(--cream); border-radius: 12px;">
+            <p style="color: var(--charcoal-light);">Ingen gæster har bekræftet deltagelse endnu.</p>
+            <p style="font-size: 13px; color: var(--charcoal-light); margin-top: 8px;">Når gæster tilmelder sig, kan du vælge en toastmaster her.</p>
+        </div>
+    <?php else: ?>
+        <div class="toastmaster-select-wrapper">
+            <select id="toastmaster-select" class="form-input" onchange="setToastmaster(this.value)" style="font-size: 16px; padding: 16px;">
+                <option value="0">-- Vælg toastmaster --</option>
+                <?php foreach ($confirmedGuests as $guest): ?>
+                    <option value="<?= $guest['id'] ?>" <?= $designatedToastmaster == $guest['id'] ? 'selected' : '' ?>>
+                        <?= htmlspecialchars($guest['name']) ?>
+                        <?php if (!empty($guest['email'])): ?>
+                            (<?= htmlspecialchars($guest['email']) ?>)
+                        <?php endif; ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+
+            <?php if ($designatedToastmaster):
+                $stmt = $db->prepare("SELECT name FROM guests WHERE id = ?");
+                $stmt->execute([$designatedToastmaster]);
+                $tmGuest = $stmt->fetch();
+            ?>
+                <div class="toastmaster-selected" style="margin-top: 16px; padding: 16px; background: linear-gradient(135deg, var(--sage-light), var(--sage)); border-radius: 12px; color: white;">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <span style="font-size: 32px;">🎤</span>
+                        <div>
+                            <strong style="font-size: 16px;"><?= htmlspecialchars($tmGuest['name'] ?? 'Ukendt') ?></strong>
+                            <p style="font-size: 13px; opacity: 0.9; margin-top: 2px;">Er valgt som toastmaster</p>
+                        </div>
+                    </div>
+                </div>
+            <?php endif; ?>
+        </div>
+    <?php endif; ?>
 </div>
 
 <!-- Stats -->
@@ -218,8 +311,17 @@ $baseUrl = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : '
         </div>
         <div class="modal-body">
             <div class="form-group">
-                <label class="form-label">Navn *</label>
-                <input type="text" id="add-guest-name" class="form-input" placeholder="Hvem star for indslaget?">
+                <label class="form-label">Deltager *</label>
+                <select id="add-guest-id" class="form-input">
+                    <option value="">-- Vælg deltager --</option>
+                    <?php foreach ($confirmedGuests as $guest): ?>
+                        <option value="<?= $guest['id'] ?>" data-name="<?= htmlspecialchars($guest['name']) ?>">
+                            <?= htmlspecialchars($guest['name']) ?>
+                        </option>
+                    <?php endforeach; ?>
+                    <option value="other">Anden (indtast navn)</option>
+                </select>
+                <input type="text" id="add-guest-name" class="form-input" placeholder="Indtast navn" style="margin-top: 8px; display: none;">
             </div>
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
                 <div class="form-group">
@@ -466,14 +568,53 @@ function hideAccessModal() {
     document.getElementById('accessModal').style.display = 'none';
 }
 
+// Toggle other name input
+document.getElementById('add-guest-id').addEventListener('change', function() {
+    const otherInput = document.getElementById('add-guest-name');
+    if (this.value === 'other') {
+        otherInput.style.display = 'block';
+        otherInput.focus();
+    } else {
+        otherInput.style.display = 'none';
+        otherInput.value = '';
+    }
+});
+
+function setToastmaster(guestId) {
+    fetch('?id=' + eventId + '&page=toastmaster', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-Requested-With': 'XMLHttpRequest',
+            'X-CSRF-Token': csrfToken
+        },
+        body: `action=set_toastmaster&guest_id=${guestId}&csrf_token=${csrfToken}`
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.success) {
+            location.reload();
+        }
+    });
+}
+
 function addItem() {
-    const guestName = document.getElementById('add-guest-name').value;
+    const guestSelect = document.getElementById('add-guest-id');
+    const guestNameInput = document.getElementById('add-guest-name');
+    let guestName = '';
+
+    if (guestSelect.value === 'other') {
+        guestName = guestNameInput.value;
+    } else if (guestSelect.value) {
+        guestName = guestSelect.options[guestSelect.selectedIndex].dataset.name;
+    }
+
     const itemType = document.getElementById('add-item-type').value;
     const title = document.getElementById('add-title').value;
     const duration = document.getElementById('add-duration').value;
 
     if (!guestName) {
-        alert('Angiv venligst et navn');
+        alert('Vælg venligst en deltager');
         return;
     }
 

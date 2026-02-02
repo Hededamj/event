@@ -1,6 +1,6 @@
 <?php
 /**
- * Guest RSVP Page
+ * Guest RSVP Page - Nordic Design
  */
 require_once __DIR__ . '/../../includes/gdpr.php';
 
@@ -14,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['rsvp_action'])) {
 
     // Collect guest names as JSON array
     $guestNamesArray = [];
-    if ($rsvpStatus === 'accepted') {
+    if ($rsvpStatus === 'yes') {
         // Collect adult names
         for ($i = 1; $i <= $adultsCount; $i++) {
             $name = trim($_POST["adult_name_$i"] ?? '');
@@ -80,18 +80,21 @@ $existingAdults = array_values($existingAdults);
 $existingChildren = array_values($existingChildren);
 ?>
 
-<h1 class="serif" style="font-size: 24px; text-align: center; margin-bottom: 24px;">Tilmelding</h1>
-
-<div class="card">
-    <p style="text-align: center; margin-bottom: 24px; color: var(--gray-600);">
+<!-- Page Header -->
+<div class="page-header" style="text-align: center;">
+    <h1 class="page-header-title">Tilmelding</h1>
+    <p class="page-header-subtitle">
         Vil du deltage i <?= htmlspecialchars($event['name'] ?? 'arrangementet') ?>?
     </p>
+</div>
 
+<div class="card">
     <form method="POST" id="rsvpForm">
         <input type="hidden" name="rsvp_action" id="rsvpActionInput" value="">
+
         <!-- Accept Form -->
         <div id="acceptForm" style="display: none;">
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px;">
                 <div class="form-group" style="margin: 0;">
                     <label class="form-label">Antal voksne</label>
                     <select name="adults_count" id="adultsCount" class="form-input" onchange="updateNameFields()">
@@ -123,25 +126,32 @@ $existingChildren = array_values($existingChildren);
             </div>
 
             <!-- GDPR Consent -->
-            <div class="form-group" style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--gray-200);">
-                <label style="display: flex; align-items: flex-start; gap: 8px; cursor: pointer; margin-bottom: 12px;">
-                    <input type="checkbox" name="privacy_consent" value="1" required style="margin-top: 3px;"
+            <div class="form-group" style="margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--cream-dark);">
+                <label style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer;">
+                    <input type="checkbox" name="privacy_consent" value="1" required style="margin-top: 4px; width: 18px; height: 18px; accent-color: var(--sage);"
                            <?= !empty($currentGuest['privacy_consent']) ? 'checked' : '' ?>>
-                    <span style="font-size: 13px; color: var(--gray-600);">
+                    <span style="font-size: 13px; color: var(--charcoal-light); line-height: 1.5;">
                         Jeg accepterer at mine oplysninger gemmes til brug for dette arrangement. *
                     </span>
                 </label>
             </div>
 
-            <button type="button" class="btn btn-primary btn-full" style="margin-bottom: 12px;" onclick="submitRsvp('accept')">
+            <button type="button" class="btn btn-sage btn-full" style="margin-bottom: 12px;" onclick="submitRsvp('accept')">
                 Bekræft tilmelding
             </button>
             <button type="button" class="btn btn-secondary btn-full" onclick="showChoices()">Tilbage</button>
         </div>
 
         <!-- Choice Buttons -->
-        <div id="choiceButtons">
-            <button type="button" class="btn btn-primary btn-full" style="margin-bottom: 12px;" onclick="showAcceptForm()">
+        <div id="choiceButtons" style="text-align: center;">
+            <div style="margin-bottom: 32px;">
+                <div style="width: 72px; height: 72px; background: var(--cream); border-radius: 20px; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; color: var(--sage-dark);">
+                    <svg width="36" height="36" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                </div>
+                <p style="font-size: 15px; color: var(--charcoal-light);">Giv os besked om du deltager</p>
+            </div>
+
+            <button type="button" class="btn btn-sage btn-full" style="margin-bottom: 12px;" onclick="showAcceptForm()">
                 Ja, jeg kommer!
             </button>
             <button type="button" class="btn btn-secondary btn-full" onclick="submitRsvp('decline')">
@@ -152,29 +162,43 @@ $existingChildren = array_values($existingChildren);
 </div>
 
 <?php if ($currentGuest['rsvp_status'] !== 'pending'): ?>
-<p style="text-align: center; color: var(--gray-400); font-size: 14px; margin-top: 16px;">
+<p style="text-align: center; color: var(--charcoal-light); font-size: 14px; margin-top: 20px;">
     Du har allerede svaret. Du kan ændre dit svar ovenfor.
 </p>
 <?php endif; ?>
 
 <style>
     .name-field-group {
-        margin-bottom: 12px;
-        padding: 12px;
-        background: var(--gray-50);
-        border-radius: 8px;
+        margin-bottom: 16px;
+        padding: 16px;
+        background: var(--cream);
+        border-radius: 14px;
     }
     .name-field-group label {
         display: block;
         font-size: 13px;
-        font-weight: 500;
-        color: var(--gray-600);
-        margin-bottom: 6px;
+        font-weight: 600;
+        color: var(--charcoal-light);
+        margin-bottom: 8px;
+    }
+    .name-section-title {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--charcoal);
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .name-section-title svg {
+        width: 18px;
+        height: 18px;
+        color: var(--sage-dark);
     }
     .child-row {
         display: grid;
         grid-template-columns: 1fr 80px;
-        gap: 8px;
+        gap: 10px;
     }
 </style>
 
@@ -190,7 +214,7 @@ function updateNameFields() {
     // Adult fields
     let adultHtml = '';
     if (adultsCount > 0) {
-        adultHtml = '<p style="font-size: 13px; font-weight: 600; color: var(--gray-700); margin-bottom: 8px;">Voksne</p>';
+        adultHtml = '<div class="name-section-title"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg> Voksne</div>';
         for (let i = 1; i <= adultsCount; i++) {
             const existing = existingAdults[i-1] || {};
             adultHtml += `
@@ -207,7 +231,7 @@ function updateNameFields() {
     // Child fields
     let childHtml = '';
     if (childrenCount > 0) {
-        childHtml = '<p style="font-size: 13px; font-weight: 600; color: var(--gray-700); margin-bottom: 8px; margin-top: 16px;">Børn</p>';
+        childHtml = '<div class="name-section-title" style="margin-top: 24px;"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> Børn</div>';
         for (let i = 1; i <= childrenCount; i++) {
             const existing = existingChildren[i-1] || {};
             childHtml += `

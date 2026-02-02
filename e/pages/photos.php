@@ -1,6 +1,6 @@
 <?php
 /**
- * Guest Photos Page
+ * Guest Photos Page - Nordic Design
  */
 
 // Handle photo upload
@@ -43,45 +43,100 @@ $photos = $stmt->fetchAll();
 
 ?>
 
-<h1 class="serif" style="font-size: 24px; text-align: center; margin-bottom: 8px;">Fotogalleri</h1>
-<p style="text-align: center; color: var(--gray-600); margin-bottom: 24px;">
-    Del dine billeder fra dagen
-</p>
+<!-- Page Header -->
+<div class="page-header" style="text-align: center;">
+    <h1 class="page-header-title">Fotogalleri</h1>
+    <p class="page-header-subtitle">Del dine billeder fra dagen</p>
+</div>
 
 <!-- Upload Section -->
 <div class="card" style="text-align: center;">
     <form method="POST" enctype="multipart/form-data" id="uploadForm">
         <input type="file" name="photo" id="photoInput" accept="image/*" style="display: none;" onchange="this.form.submit()">
-        <button type="button" class="btn btn-primary" onclick="document.getElementById('photoInput').click()">
-            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+        <div style="width: 64px; height: 64px; background: var(--cream); border-radius: 16px; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; color: var(--sage-dark);">
+            <svg width="28" height="28" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+        </div>
+        <button type="button" class="btn btn-sage" onclick="document.getElementById('photoInput').click()">
+            <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
             Upload billede
         </button>
     </form>
-    <p style="font-size: 13px; color: var(--gray-400); margin-top: 12px;">Max 10MB. JPEG, PNG eller WebP.</p>
+    <p style="font-size: 13px; color: var(--charcoal-light); margin-top: 16px;">Max 10MB. JPEG, PNG eller WebP.</p>
 </div>
 
 
 <?php if (empty($photos)): ?>
 <div class="card">
     <div class="empty-state">
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-        <p>Ingen billeder endnu. Vær den første til at dele!</p>
+        <div class="empty-state-icon">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+        </div>
+        <h3>Ingen billeder endnu</h3>
+        <p>Vær den første til at dele et billede!</p>
     </div>
 </div>
 <?php else: ?>
-<div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px;">
+<div class="photo-grid">
     <?php foreach ($photos as $photo): ?>
-    <div style="aspect-ratio: 1; border-radius: 12px; overflow: hidden; background: var(--gray-100);">
-        <img src="/uploads/photos/<?= htmlspecialchars($photo['filename']) ?>" alt="Billede" style="width: 100%; height: 100%; object-fit: cover;">
+    <div class="photo-item">
+        <img src="/uploads/photos/<?= htmlspecialchars($photo['filename']) ?>" alt="Billede" loading="lazy">
+        <?php if ($photo['uploader_name']): ?>
+        <div class="photo-overlay">
+            <span><?= htmlspecialchars($photo['uploader_name']) ?></span>
+        </div>
+        <?php endif; ?>
     </div>
     <?php endforeach; ?>
 </div>
 <?php endif; ?>
 
 <style>
+    .photo-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+
+    .photo-item {
+        position: relative;
+        aspect-ratio: 1;
+        border-radius: 16px;
+        overflow: hidden;
+        background: var(--cream);
+    }
+
+    .photo-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.4s var(--ease-out);
+    }
+
+    .photo-item:hover img {
+        transform: scale(1.05);
+    }
+
+    .photo-overlay {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        padding: 12px;
+        background: linear-gradient(transparent, rgba(0,0,0,0.5));
+        color: var(--white);
+        font-size: 12px;
+        font-weight: 500;
+        opacity: 0;
+        transition: opacity 0.3s;
+    }
+
+    .photo-item:hover .photo-overlay {
+        opacity: 1;
+    }
+
     @media (min-width: 480px) {
-        div[style*="grid-template-columns"] {
-            grid-template-columns: repeat(3, 1fr) !important;
+        .photo-grid {
+            grid-template-columns: repeat(3, 1fr);
         }
     }
 </style>

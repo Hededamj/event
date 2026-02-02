@@ -20,6 +20,15 @@ RewriteRule ^ - [L]
 RewriteRule ^e/([a-zA-Z0-9_-]+)/?$ /e/index.php?slug=$1 [QSA,L]
 RewriteRule ^e/([a-zA-Z0-9_-]+)/([a-zA-Z0-9_-]+)/?$ /e/index.php?slug=$1&page=$2 [QSA,L]
 
+# Festafholder routes (primære brugere)
+RewriteRule ^login/?$ /app/auth/login.php [L]
+RewriteRule ^register/?$ /app/auth/register.php [L]
+RewriteRule ^dashboard/?$ /app/dashboard.php [L]
+
+# Partner/leverandør routes
+RewriteRule ^partners/?$ /partners/index.php [L]
+RewriteRule ^partners/login/?$ /partners/login.php [L]
+
 # App routes (let PHP handle the routing directly)
 # Dashboard
 RewriteRule ^app/?$ /app/dashboard.php [L]

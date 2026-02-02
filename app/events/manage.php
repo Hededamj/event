@@ -1,8 +1,9 @@
 <?php
 /**
  * Event Management - Main event administration router
+ * Nordic Design
  */
-ob_start(); // Start output buffering to allow redirects from included pages
+ob_start();
 
 require_once __DIR__ . '/../../config/saas.php';
 require_once __DIR__ . '/../../includes/functions.php';
@@ -40,7 +41,7 @@ if (!$event) {
 
 // Get current page/tab
 $page = $_GET['page'] ?? 'dashboard';
-$validPages = ['dashboard', 'guests', 'wishlist', 'menu', 'schedule', 'photos', 'checklist', 'budget', 'seating', 'toastmaster', 'settings'];
+$validPages = ['dashboard', 'guests', 'wishlist', 'menu', 'schedule', 'photos', 'checklist', 'budget', 'seating', 'toastmaster', 'invitation', 'invitation-send', 'settings'];
 if (!in_array($page, $validPages)) {
     $page = 'dashboard';
 }
@@ -77,42 +78,55 @@ $pageTitle = $event['name'] ?? 'Arrangement';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= htmlspecialchars($pageTitle) ?> - EventPlatform</title>
+    <title><?= htmlspecialchars($pageTitle) ?> - PartyParart</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
         :root {
-            --primary: #667eea;
-            --primary-dark: #5a67d8;
-            --secondary: #764ba2;
-            --success: #22c55e;
-            --warning: #f59e0b;
-            --danger: #ef4444;
-            --gray-50: #f9fafb;
-            --gray-100: #f3f4f6;
-            --gray-200: #e5e7eb;
-            --gray-300: #d1d5db;
-            --gray-400: #9ca3af;
-            --gray-500: #6b7280;
-            --gray-600: #4b5563;
-            --gray-700: #374151;
-            --gray-800: #1f2937;
-            --gray-900: #111827;
+            --cream: #E8E4DE;
+            --cream-dark: #D9D4CC;
+            --sage: #8FA583;
+            --sage-light: #B8C9B0;
+            --sage-dark: #5D7255;
+            --charcoal: #1A1A1A;
+            --charcoal-light: #3D3D3D;
+            --gold: #B8923D;
+            --white: #FFFFFF;
+            --success: #4D854D;
+            --warning: #C4922D;
+            --error: #B84C4C;
+
+            --font-display: 'Cormorant Garamond', Georgia, serif;
+            --font-body: 'DM Sans', -apple-system, sans-serif;
+            --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: var(--gray-50);
-            color: var(--gray-800);
+            font-family: var(--font-body);
+            background: var(--cream);
+            color: var(--charcoal);
             min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Subtle grain texture */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+            opacity: 0.02;
+            pointer-events: none;
+            z-index: 9999;
         }
 
         /* Top Navigation */
         .top-nav {
-            background: white;
-            border-bottom: 1px solid var(--gray-200);
+            background: var(--white);
+            border-bottom: 1px solid var(--cream-dark);
             padding: 0 24px;
             position: sticky;
             top: 0;
@@ -125,30 +139,30 @@ $pageTitle = $event['name'] ?? 'Arrangement';
             display: flex;
             align-items: center;
             justify-content: space-between;
-            height: 64px;
+            height: 72px;
         }
 
         .nav-left {
             display: flex;
             align-items: center;
-            gap: 16px;
+            gap: 20px;
         }
 
         .back-link {
             display: flex;
             align-items: center;
             gap: 8px;
-            color: var(--gray-500);
+            color: var(--charcoal-light);
             text-decoration: none;
             font-size: 14px;
-            padding: 8px 12px;
-            border-radius: 8px;
-            transition: all 0.2s;
+            padding: 10px 14px;
+            border-radius: 12px;
+            transition: all 0.25s var(--ease-out);
         }
 
         .back-link:hover {
-            background: var(--gray-100);
-            color: var(--gray-700);
+            background: var(--cream);
+            color: var(--charcoal);
         }
 
         .back-link svg {
@@ -157,17 +171,18 @@ $pageTitle = $event['name'] ?? 'Arrangement';
         }
 
         .event-title {
-            font-size: 18px;
-            font-weight: 600;
-            color: var(--gray-900);
+            font-family: var(--font-display);
+            font-size: 22px;
+            font-weight: 500;
+            color: var(--charcoal);
         }
 
         .event-badge {
             font-size: 12px;
-            padding: 4px 10px;
-            border-radius: 6px;
-            background: rgba(102, 126, 234, 0.1);
-            color: var(--primary);
+            padding: 6px 12px;
+            border-radius: 8px;
+            background: var(--sage-light);
+            color: var(--sage-dark);
             font-weight: 500;
         }
 
@@ -181,36 +196,59 @@ $pageTitle = $event['name'] ?? 'Arrangement';
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            padding: 10px 16px;
+            padding: 12px 20px;
+            font-family: var(--font-body);
             font-size: 14px;
             font-weight: 500;
             border: none;
-            border-radius: 8px;
+            border-radius: 12px;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.25s var(--ease-out);
             text-decoration: none;
-            font-family: inherit;
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-            color: white;
+            background: var(--charcoal);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background: var(--charcoal-light);
+            transform: translateY(-1px);
         }
 
         .btn-secondary {
-            background: white;
-            color: var(--gray-700);
-            border: 1px solid var(--gray-200);
+            background: var(--white);
+            color: var(--charcoal);
+            border: 1px solid var(--cream-dark);
+        }
+
+        .btn-secondary:hover {
+            background: var(--cream);
+            border-color: var(--sage-light);
+        }
+
+        .btn-sage {
+            background: var(--sage);
+            color: var(--white);
+        }
+
+        .btn-sage:hover {
+            background: var(--sage-dark);
         }
 
         .btn svg { width: 16px; height: 16px; }
 
         /* Tab Navigation */
         .tabs-nav {
-            background: white;
-            border-bottom: 1px solid var(--gray-200);
+            background: var(--white);
+            border-bottom: 1px solid var(--cream-dark);
             padding: 0 24px;
             overflow-x: auto;
+        }
+
+        .tabs-nav::-webkit-scrollbar {
+            display: none;
         }
 
         .tabs-nav-inner {
@@ -224,24 +262,26 @@ $pageTitle = $event['name'] ?? 'Arrangement';
             display: flex;
             align-items: center;
             gap: 8px;
-            padding: 16px 16px;
-            color: var(--gray-500);
+            padding: 18px 18px;
+            color: var(--charcoal-light);
             text-decoration: none;
             font-size: 14px;
             font-weight: 500;
-            border-bottom: 2px solid transparent;
+            border-bottom: 3px solid transparent;
             margin-bottom: -1px;
             white-space: nowrap;
-            transition: all 0.2s;
+            transition: all 0.25s var(--ease-out);
         }
 
         .tab-link:hover {
-            color: var(--gray-700);
+            color: var(--charcoal);
+            background: var(--cream);
         }
 
         .tab-link.active {
-            color: var(--primary);
-            border-bottom-color: var(--primary);
+            color: var(--sage-dark);
+            border-bottom-color: var(--sage);
+            background: transparent;
         }
 
         .tab-link svg {
@@ -250,18 +290,18 @@ $pageTitle = $event['name'] ?? 'Arrangement';
         }
 
         .tab-link.premium {
-            color: var(--gray-400);
+            color: #B8B0A0;
         }
 
         .tab-link.premium::after {
             content: 'PRO';
             font-size: 9px;
             font-weight: 700;
-            padding: 2px 4px;
-            background: var(--warning);
-            color: white;
-            border-radius: 3px;
-            margin-left: 4px;
+            padding: 3px 5px;
+            background: var(--gold);
+            color: var(--white);
+            border-radius: 4px;
+            margin-left: 6px;
         }
 
         /* Main Content */
@@ -272,11 +312,11 @@ $pageTitle = $event['name'] ?? 'Arrangement';
         }
 
         .card {
-            background: white;
-            border-radius: 16px;
-            padding: 24px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            border: 1px solid var(--gray-200);
+            background: var(--white);
+            border-radius: 20px;
+            padding: 28px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+            border: 1px solid var(--cream-dark);
             margin-bottom: 24px;
         }
 
@@ -284,50 +324,59 @@ $pageTitle = $event['name'] ?? 'Arrangement';
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 20px;
+            margin-bottom: 24px;
         }
 
         .card-title {
-            font-size: 18px;
-            font-weight: 600;
-            color: var(--gray-900);
+            font-family: var(--font-display);
+            font-size: 20px;
+            font-weight: 500;
+            color: var(--charcoal);
         }
 
         /* Stats Grid */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
             margin-bottom: 32px;
         }
 
         .stat-card {
-            background: white;
-            border-radius: 12px;
-            padding: 20px;
-            border: 1px solid var(--gray-200);
+            background: var(--white);
+            border-radius: 16px;
+            padding: 24px;
+            border: 1px solid var(--cream-dark);
+            transition: all 0.25s var(--ease-out);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.06);
         }
 
         .stat-label {
             font-size: 13px;
-            color: var(--gray-500);
+            color: var(--charcoal-light);
             margin-bottom: 8px;
+            font-weight: 500;
         }
 
         .stat-value {
-            font-size: 32px;
-            font-weight: 700;
-            color: var(--gray-900);
+            font-family: var(--font-display);
+            font-size: 36px;
+            font-weight: 500;
+            color: var(--charcoal);
         }
 
         .stat-value.success { color: var(--success); }
-        .stat-value.danger { color: var(--danger); }
+        .stat-value.error { color: var(--error); }
         .stat-value.warning { color: var(--warning); }
 
         /* Quick Actions */
         .quick-actions {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
             gap: 16px;
         }
 
@@ -335,25 +384,25 @@ $pageTitle = $event['name'] ?? 'Arrangement';
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 24px;
-            background: var(--gray-50);
-            border-radius: 12px;
+            padding: 28px 20px;
+            background: var(--cream);
+            border-radius: 16px;
             text-decoration: none;
-            color: var(--gray-700);
-            transition: all 0.2s;
+            color: var(--charcoal);
+            transition: all 0.25s var(--ease-out);
             text-align: center;
         }
 
         .quick-action:hover {
-            background: var(--gray-100);
-            transform: translateY(-2px);
+            background: var(--cream-dark);
+            transform: translateY(-3px);
         }
 
         .quick-action svg {
             width: 32px;
             height: 32px;
-            color: var(--primary);
-            margin-bottom: 12px;
+            color: var(--sage-dark);
+            margin-bottom: 14px;
         }
 
         .quick-action span {
@@ -370,26 +419,27 @@ $pageTitle = $event['name'] ?? 'Arrangement';
         .empty-state svg {
             width: 64px;
             height: 64px;
-            color: var(--gray-300);
-            margin-bottom: 16px;
+            color: var(--sage-light);
+            margin-bottom: 20px;
         }
 
         .empty-state h3 {
-            font-size: 18px;
-            font-weight: 600;
-            color: var(--gray-700);
+            font-family: var(--font-display);
+            font-size: 20px;
+            font-weight: 500;
+            color: var(--charcoal);
             margin-bottom: 8px;
         }
 
         .empty-state p {
-            color: var(--gray-500);
+            color: var(--charcoal-light);
             margin-bottom: 24px;
         }
 
         /* Flash Messages */
         .flash-message {
             padding: 16px 20px;
-            border-radius: 10px;
+            border-radius: 14px;
             margin-bottom: 24px;
             display: flex;
             align-items: center;
@@ -398,15 +448,15 @@ $pageTitle = $event['name'] ?? 'Arrangement';
         }
 
         .flash-message.success {
-            background: #f0fdf4;
-            border: 1px solid #bbf7d0;
-            color: #15803d;
+            background: #F0F7F0;
+            border: 1px solid #C8E0C8;
+            color: var(--success);
         }
 
         .flash-message.error {
-            background: #fef2f2;
-            border: 1px solid #fecaca;
-            color: #dc2626;
+            background: #FDF2F2;
+            border: 1px solid #F5D5D5;
+            color: var(--error);
         }
 
         .flash-message svg {
@@ -433,41 +483,41 @@ $pageTitle = $event['name'] ?? 'Arrangement';
         .form-label {
             display: block;
             font-size: 14px;
-            font-weight: 500;
-            color: var(--gray-700);
-            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--charcoal);
+            margin-bottom: 10px;
         }
 
         .form-input {
             width: 100%;
-            padding: 12px 14px;
+            padding: 14px 16px;
+            font-family: var(--font-body);
             font-size: 14px;
-            font-family: inherit;
-            border: 1px solid var(--gray-300);
-            border-radius: 8px;
-            background: white;
-            color: var(--gray-800);
-            transition: border-color 0.2s, box-shadow 0.2s;
+            border: 2px solid var(--cream-dark);
+            border-radius: 12px;
+            background: var(--white);
+            color: var(--charcoal);
+            transition: all 0.25s var(--ease-out);
         }
 
         .form-input:focus {
             outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
+            border-color: var(--sage);
+            box-shadow: 0 0 0 4px rgba(168, 181, 160, 0.15);
         }
 
         .form-input::placeholder {
-            color: var(--gray-400);
+            color: #A8A39B;
         }
 
         select.form-input {
             cursor: pointer;
             appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236b7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%234A4A4A'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
             background-repeat: no-repeat;
-            background-position: right 12px center;
+            background-position: right 14px center;
             background-size: 16px;
-            padding-right: 40px;
+            padding-right: 44px;
         }
 
         textarea.form-input {
@@ -476,15 +526,15 @@ $pageTitle = $event['name'] ?? 'Arrangement';
         }
 
         .form-actions {
-            padding-top: 20px;
-            border-top: 1px solid var(--gray-100);
-            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 1px solid var(--cream-dark);
+            margin-top: 28px;
         }
 
         .form-hint {
             font-size: 13px;
-            color: var(--gray-500);
-            margin-top: 6px;
+            color: var(--charcoal-light);
+            margin-top: 8px;
         }
 
         /* Filters Bar */
@@ -499,55 +549,57 @@ $pageTitle = $event['name'] ?? 'Arrangement';
         }
 
         .filter-tab {
-            padding: 8px 16px;
+            padding: 10px 18px;
             font-size: 14px;
             font-weight: 500;
-            color: var(--gray-600);
-            background: white;
-            border: 1px solid var(--gray-200);
-            border-radius: 8px;
+            color: var(--charcoal-light);
+            background: var(--white);
+            border: 1px solid var(--cream-dark);
+            border-radius: 10px;
             text-decoration: none;
-            transition: all 0.2s;
+            transition: all 0.25s var(--ease-out);
         }
 
         .filter-tab:hover {
-            background: var(--gray-50);
-            border-color: var(--gray-300);
+            background: var(--cream);
+            border-color: var(--sage-light);
         }
 
         .filter-tab.active {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
+            background: var(--sage);
+            color: var(--white);
+            border-color: var(--sage);
         }
 
-        /* Page Header Actions */
-        .page-header-actions {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 24px;
-            flex-wrap: wrap;
-            gap: 16px;
-        }
-
+        /* Section Header */
         .section-title {
-            font-size: 24px;
-            font-weight: 600;
-            color: var(--gray-900);
-            margin-bottom: 4px;
+            font-family: var(--font-display);
+            font-size: 28px;
+            font-weight: 500;
+            color: var(--charcoal);
+            margin-bottom: 6px;
         }
 
         .section-subtitle {
             font-size: 14px;
-            color: var(--gray-500);
+            color: var(--charcoal-light);
+        }
+
+        .page-header-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 28px;
+            flex-wrap: wrap;
+            gap: 16px;
         }
 
         /* Modal */
         .modal-overlay {
             position: fixed;
             inset: 0;
-            background: rgba(0, 0, 0, 0.5);
+            background: rgba(44, 44, 44, 0.4);
+            backdrop-filter: blur(4px);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -556,44 +608,47 @@ $pageTitle = $event['name'] ?? 'Arrangement';
         }
 
         .modal {
-            background: white;
-            border-radius: 16px;
+            background: var(--white);
+            border-radius: 24px;
             width: 100%;
-            max-width: 500px;
+            max-width: 520px;
             max-height: 90vh;
             overflow-y: auto;
+            box-shadow: 0 24px 48px rgba(0,0,0,0.15);
         }
 
         .modal-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 20px 24px;
-            border-bottom: 1px solid var(--gray-100);
+            padding: 24px 28px;
+            border-bottom: 1px solid var(--cream-dark);
         }
 
         .modal-header h3 {
-            font-size: 18px;
-            font-weight: 600;
-            color: var(--gray-900);
+            font-family: var(--font-display);
+            font-size: 20px;
+            font-weight: 500;
+            color: var(--charcoal);
         }
 
         .modal-close {
             background: none;
             border: none;
             font-size: 24px;
-            color: var(--gray-400);
+            color: var(--charcoal-light);
             cursor: pointer;
             padding: 4px;
             line-height: 1;
+            transition: color 0.2s;
         }
 
         .modal-close:hover {
-            color: var(--gray-600);
+            color: var(--charcoal);
         }
 
         .modal-body {
-            padding: 24px;
+            padding: 28px;
         }
 
         .modal-body .form-group {
@@ -608,68 +663,58 @@ $pageTitle = $event['name'] ?? 'Arrangement';
             display: flex;
             justify-content: flex-end;
             gap: 12px;
-            padding: 16px 24px;
-            border-top: 1px solid var(--gray-100);
-            background: var(--gray-50);
-            border-radius: 0 0 16px 16px;
+            padding: 20px 28px;
+            border-top: 1px solid var(--cream-dark);
+            background: var(--cream);
+            border-radius: 0 0 24px 24px;
         }
 
-        /* Danger text */
-        .danger-text {
-            color: var(--danger) !important;
-        }
-
-        /* Button small */
-        .btn-sm {
-            padding: 8px 12px;
-            font-size: 13px;
-        }
-
-        @media (max-width: 640px) {
-            .form-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .form-group.full-width {
-                grid-column: span 1;
-            }
-        }
+        /* Utility */
+        .danger-text { color: var(--error) !important; }
+        .btn-sm { padding: 10px 14px; font-size: 13px; }
 
         /* Upgrade Notice */
         .upgrade-notice {
-            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
-            border-radius: 12px;
+            background: linear-gradient(135deg, #FEF8E8 0%, #FDF3D7 100%);
+            border-radius: 16px;
             padding: 24px;
             display: flex;
             align-items: center;
             justify-content: space-between;
             gap: 20px;
             margin-bottom: 24px;
+            border: 1px solid #F5E6B3;
         }
 
         .upgrade-notice-content h4 {
-            font-size: 16px;
-            font-weight: 600;
-            color: #92400e;
+            font-family: var(--font-display);
+            font-size: 17px;
+            font-weight: 500;
+            color: #8B6914;
             margin-bottom: 4px;
         }
 
         .upgrade-notice-content p {
             font-size: 14px;
-            color: #a16207;
+            color: #A17D1A;
         }
 
         .upgrade-notice .btn {
-            background: #f59e0b;
-            color: white;
+            background: var(--gold);
+            color: var(--white);
             white-space: nowrap;
+        }
+
+        .upgrade-notice .btn:hover {
+            background: #B8952F;
         }
 
         @media (max-width: 768px) {
             .top-nav-inner {
                 flex-wrap: wrap;
                 height: auto;
-                padding: 12px 0;
+                padding: 16px 0;
+                gap: 12px;
             }
 
             .tabs-nav-inner {
@@ -677,7 +722,19 @@ $pageTitle = $event['name'] ?? 'Arrangement';
             }
 
             .tab-link {
-                padding: 12px;
+                padding: 14px 12px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-group.full-width {
+                grid-column: span 1;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
             }
         }
     </style>
@@ -730,12 +787,6 @@ $pageTitle = $event['name'] ?? 'Arrangement';
                 </svg>
                 Ønskeliste
             </a>
-            <a href="?id=<?= $eventId ?>&page=menu" class="tab-link <?= $page === 'menu' ? 'active' : '' ?>">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-                </svg>
-                Menu
-            </a>
             <a href="?id=<?= $eventId ?>&page=schedule" class="tab-link <?= $page === 'schedule' ? 'active' : '' ?>">
                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
@@ -772,6 +823,12 @@ $pageTitle = $event['name'] ?? 'Arrangement';
                 </svg>
                 Toastmaster
             </a>
+            <a href="?id=<?= $eventId ?>&page=invitation" class="tab-link <?= $page === 'invitation' || $page === 'invitation-send' ? 'active' : '' ?>">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                </svg>
+                Invitation
+            </a>
             <a href="?id=<?= $eventId ?>&page=settings" class="tab-link <?= $page === 'settings' ? 'active' : '' ?>">
                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
@@ -807,7 +864,6 @@ $pageTitle = $event['name'] ?? 'Arrangement';
         if (file_exists($pageFile)) {
             include $pageFile;
         } else {
-            // Default dashboard content
             include __DIR__ . '/pages/dashboard.php';
         }
         ?>

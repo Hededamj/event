@@ -1,6 +1,6 @@
 <?php
 /**
- * Guest Schedule Page
+ * Guest Schedule Page - Nordic Design
  */
 
 $stmt = $db->prepare("SELECT * FROM schedule_items WHERE event_id = ? ORDER BY time ASC, id ASC");
@@ -8,36 +8,142 @@ $stmt->execute([$eventId]);
 $items = $stmt->fetchAll();
 ?>
 
-<h1 class="serif" style="font-size: 24px; text-align: center; margin-bottom: 8px;">Program</h1>
-<p style="text-align: center; color: var(--gray-600); margin-bottom: 24px;">
-    <?= $event['event_date'] ? htmlspecialchars(formatDate($event['event_date'], true)) : 'Dagens program' ?>
-</p>
+<!-- Page Header -->
+<div class="page-header" style="text-align: center;">
+    <h1 class="page-header-title">Program</h1>
+    <p class="page-header-subtitle">
+        <?= $event['event_date'] ? htmlspecialchars(formatDate($event['event_date'], true)) : 'Dagens program' ?>
+    </p>
+</div>
 
 <?php if (empty($items)): ?>
 <div class="card">
     <div class="empty-state">
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        <div class="empty-state-icon">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        </div>
+        <h3>Kommer snart</h3>
         <p>Programmet er ikke offentliggjort endnu</p>
     </div>
 </div>
 <?php else: ?>
-<div class="card" style="padding: 0;">
-    <div style="padding: 16px;">
-        <?php foreach ($items as $index => $item): ?>
-        <div style="display: flex; gap: 16px; <?= $index < count($items) - 1 ? 'padding-bottom: 20px; margin-bottom: 20px; border-bottom: 1px solid var(--gray-100);' : '' ?>">
-            <div style="min-width: 60px; text-align: right;">
-                <span style="font-size: 18px; font-weight: 600; color: var(--primary);">
-                    <?= $item['time'] ? htmlspecialchars(substr($item['time'], 0, 5)) : '--:--' ?>
-                </span>
-            </div>
-            <div style="flex: 1; padding-top: 2px;">
-                <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 4px;"><?= htmlspecialchars($item['title']) ?></h3>
-                <?php if ($item['description']): ?>
-                    <p style="font-size: 14px; color: var(--gray-600);"><?= htmlspecialchars($item['description']) ?></p>
-                <?php endif; ?>
-            </div>
+<div class="timeline">
+    <?php foreach ($items as $index => $item): ?>
+    <div class="timeline-item">
+        <div class="timeline-time">
+            <?= $item['time'] ? htmlspecialchars(substr($item['time'], 0, 5)) : '--:--' ?>
         </div>
-        <?php endforeach; ?>
+        <div class="timeline-dot"></div>
+        <div class="timeline-content">
+            <h3><?= htmlspecialchars($item['title']) ?></h3>
+            <?php if ($item['description']): ?>
+                <p><?= htmlspecialchars($item['description']) ?></p>
+            <?php endif; ?>
+        </div>
     </div>
+    <?php endforeach; ?>
 </div>
 <?php endif; ?>
+
+<style>
+    .timeline {
+        position: relative;
+        padding-left: 100px;
+    }
+
+    .timeline::before {
+        content: '';
+        position: absolute;
+        left: 86px;
+        top: 8px;
+        bottom: 8px;
+        width: 2px;
+        background: var(--cream-dark);
+    }
+
+    .timeline-item {
+        position: relative;
+        padding-bottom: 32px;
+        animation: fadeIn 0.6s var(--ease-out) both;
+    }
+
+    .timeline-item:nth-child(1) { animation-delay: 0.05s; }
+    .timeline-item:nth-child(2) { animation-delay: 0.1s; }
+    .timeline-item:nth-child(3) { animation-delay: 0.15s; }
+    .timeline-item:nth-child(4) { animation-delay: 0.2s; }
+    .timeline-item:nth-child(5) { animation-delay: 0.25s; }
+
+    .timeline-item:last-child {
+        padding-bottom: 0;
+    }
+
+    .timeline-time {
+        position: absolute;
+        left: -100px;
+        width: 80px;
+        text-align: right;
+        font-family: var(--font-display);
+        font-size: 18px;
+        font-weight: 500;
+        color: var(--sage-dark);
+        padding-top: 2px;
+    }
+
+    .timeline-dot {
+        position: absolute;
+        left: -14px;
+        top: 6px;
+        width: 12px;
+        height: 12px;
+        background: var(--sage);
+        border-radius: 50%;
+        border: 3px solid var(--cream);
+        box-shadow: 0 0 0 2px var(--sage-light);
+    }
+
+    .timeline-content {
+        background: var(--white);
+        border-radius: 16px;
+        padding: 20px 24px;
+        box-shadow:
+            0 1px 2px rgba(0,0,0,0.03),
+            0 4px 12px rgba(0,0,0,0.03);
+    }
+
+    .timeline-content h3 {
+        font-family: var(--font-display);
+        font-size: 18px;
+        font-weight: 500;
+        color: var(--charcoal);
+        margin-bottom: 4px;
+    }
+
+    .timeline-content p {
+        font-size: 14px;
+        color: var(--charcoal-light);
+        line-height: 1.5;
+    }
+
+    @media (max-width: 480px) {
+        .timeline {
+            padding-left: 24px;
+        }
+
+        .timeline::before {
+            left: 5px;
+        }
+
+        .timeline-time {
+            position: relative;
+            left: 0;
+            width: auto;
+            text-align: left;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .timeline-dot {
+            left: -24px;
+        }
+    }
+</style>

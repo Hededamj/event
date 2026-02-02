@@ -1,6 +1,6 @@
 <?php
 /**
- * Guest Indslag (Performance/Contribution) Page
+ * Guest Indslag (Performance/Contribution) Page - Nordic Design
  */
 
 // Ensure toastmaster tables exist
@@ -142,15 +142,15 @@ if ($activeTab === 'chat') {
     $stmt->execute([$eventId, $currentGuest['id']]);
 }
 
-// Item type labels
+// Item type labels with icons
 $typeLabels = [
-    'tale' => ['label' => 'Tale', 'icon' => '🎤'],
-    'sang' => ['label' => 'Sang', 'icon' => '🎵'],
-    'sketch' => ['label' => 'Sketch', 'icon' => '🎭'],
-    'quiz' => ['label' => 'Quiz', 'icon' => '❓'],
-    'leg' => ['label' => 'Leg', 'icon' => '🎲'],
-    'musik' => ['label' => 'Musik', 'icon' => '🎸'],
-    'andet' => ['label' => 'Andet', 'icon' => '✨']
+    'tale' => ['label' => 'Tale', 'icon' => 'microphone'],
+    'sang' => ['label' => 'Sang', 'icon' => 'music'],
+    'sketch' => ['label' => 'Sketch', 'icon' => 'theater'],
+    'quiz' => ['label' => 'Quiz', 'icon' => 'question'],
+    'leg' => ['label' => 'Leg', 'icon' => 'game'],
+    'musik' => ['label' => 'Musik', 'icon' => 'music'],
+    'andet' => ['label' => 'Andet', 'icon' => 'star']
 ];
 
 // Get main person name for display
@@ -158,45 +158,57 @@ $mainPersonName = $event['main_person_name'] ?? 'konfirmanden';
 ?>
 
 <?php if ($success && $successType === 'indslag'): ?>
-<div class="card" style="text-align: center; padding: 40px 24px;">
-    <div style="font-size: 48px; margin-bottom: 16px;">🎉</div>
-    <h2 class="serif" style="font-size: 24px; margin-bottom: 12px;">Tak for din tilmelding!</h2>
-    <p style="color: var(--gray-600); margin-bottom: 24px;">
+<!-- Success State -->
+<div class="card" style="text-align: center; padding: 48px 28px;">
+    <div style="width: 80px; height: 80px; background: var(--sage-light); border-radius: 20px; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px;">
+        <svg width="40" height="40" fill="none" stroke="var(--sage-dark)" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+    </div>
+    <h2 class="serif" style="font-size: 26px; margin-bottom: 12px; color: var(--charcoal);">Tak for din tilmelding!</h2>
+    <p style="color: var(--charcoal-light); margin-bottom: 28px; line-height: 1.6;">
         Dit indslag er registreret. Toastmasteren vil kontakte dig hvis der er spørgsmål.
     </p>
     <a href="/e/<?= $slug ?>/indslag" class="btn btn-secondary" style="margin-bottom: 12px;">Tilmeld endnu et indslag</a>
     <br>
-    <a href="/e/<?= $slug ?>/indslag?tab=chat" style="color: var(--primary); font-size: 14px;">Skriv til toastmaster</a>
+    <a href="/e/<?= $slug ?>/indslag?tab=chat" style="color: var(--sage-dark); font-size: 14px; font-weight: 500;">Skriv til toastmaster</a>
 </div>
 
 <?php else: ?>
 
-<h1 class="serif" style="font-size: 24px; text-align: center; margin-bottom: 8px;">Indslag & Beskeder</h1>
-<p style="text-align: center; color: var(--gray-600); margin-bottom: 24px;">
-    Tilmeld tale, sang eller andet - og skriv til toastmaster
-</p>
+<!-- Page Header -->
+<div class="page-header" style="text-align: center;">
+    <h1 class="page-header-title">Indslag & Beskeder</h1>
+    <p class="page-header-subtitle">Tilmeld tale, sang eller andet - og skriv til toastmaster</p>
+</div>
 
 <?php if ($error): ?>
-<div class="flash flash-error"><?= htmlspecialchars($error) ?></div>
+<div class="flash flash-error">
+    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+    <?= htmlspecialchars($error) ?>
+</div>
 <?php endif; ?>
 
 <?php if ($success && $successType === 'message'): ?>
-<div class="flash flash-success">Din besked er sendt til toastmaster!</div>
+<div class="flash flash-success">
+    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+    Din besked er sendt til toastmaster!
+</div>
 <?php endif; ?>
 
 <!-- Tab Navigation -->
-<div style="display: flex; gap: 8px; background: var(--white); border-radius: 12px; padding: 4px; margin-bottom: 20px;">
-    <a href="?tab=indslag" style="flex: 1; padding: 12px 16px; background: <?= $activeTab === 'indslag' ? 'var(--primary)' : 'transparent' ?>; color: <?= $activeTab === 'indslag' ? 'var(--white)' : 'var(--gray-600)' ?>; border-radius: 10px; text-align: center; text-decoration: none; font-size: 14px; font-weight: 500; transition: all 0.2s;">
+<div class="tab-nav">
+    <a href="?tab=indslag" class="tab-item <?= $activeTab === 'indslag' ? 'active' : '' ?>">
+        <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path></svg>
         Tilmeld indslag
     </a>
-    <a href="?tab=chat" style="flex: 1; padding: 12px 16px; background: <?= $activeTab === 'chat' ? 'var(--primary)' : 'transparent' ?>; color: <?= $activeTab === 'chat' ? 'var(--white)' : 'var(--gray-600)' ?>; border-radius: 10px; text-align: center; text-decoration: none; font-size: 14px; font-weight: 500; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 6px;">
+    <a href="?tab=chat" class="tab-item <?= $activeTab === 'chat' ? 'active' : '' ?>">
+        <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
         <?php if ($hasToastmaster): ?>
-            Skriv til <?= htmlspecialchars($primaryToastmaster['name'] ?? 'toastmaster') ?>
+            <?= htmlspecialchars($primaryToastmaster['name'] ?? 'Toastmaster') ?>
         <?php else: ?>
             Chat
         <?php endif; ?>
         <?php if ($unreadCount > 0): ?>
-            <span style="display: inline-flex; align-items: center; justify-content: center; min-width: 18px; height: 18px; padding: 0 5px; background: #dc2626; color: white; font-size: 11px; font-weight: 700; border-radius: 9px;"><?= $unreadCount ?></span>
+            <span class="badge"><?= $unreadCount ?></span>
         <?php endif; ?>
     </a>
 </div>
@@ -204,8 +216,13 @@ $mainPersonName = $event['main_person_name'] ?? 'konfirmanden';
 <?php if ($activeTab === 'indslag'): ?>
 <!-- Indslag Tab -->
 <div class="card">
-    <h3 class="card-title">Tilmeld et indslag</h3>
-    <p style="font-size: 14px; color: var(--gray-600); margin-bottom: 20px;">
+    <div class="card-header">
+        <h3 class="card-title">Tilmeld et indslag</h3>
+        <div class="card-icon">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path></svg>
+        </div>
+    </div>
+    <p style="font-size: 14px; color: var(--charcoal-light); margin-bottom: 24px;">
         Vil du holde en tale, synge en sang eller lave noget sjovt?
     </p>
 
@@ -222,13 +239,17 @@ $mainPersonName = $event['main_person_name'] ?? 'konfirmanden';
                    required>
         </div>
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
             <div class="form-group">
                 <label class="form-label">Type indslag</label>
                 <select name="item_type" class="form-input">
-                    <?php foreach ($typeLabels as $value => $type): ?>
-                        <option value="<?= $value ?>"><?= $type['icon'] ?> <?= $type['label'] ?></option>
-                    <?php endforeach; ?>
+                    <option value="tale">Tale</option>
+                    <option value="sang">Sang</option>
+                    <option value="sketch">Sketch</option>
+                    <option value="quiz">Quiz</option>
+                    <option value="leg">Leg</option>
+                    <option value="musik">Musik</option>
+                    <option value="andet">Andet</option>
                 </select>
             </div>
 
@@ -258,17 +279,17 @@ $mainPersonName = $event['main_person_name'] ?? 'konfirmanden';
                       class="form-input"
                       rows="3"
                       placeholder="Kort beskrivelse..."></textarea>
-            <p style="font-size: 12px; color: var(--gray-400); margin-top: 4px;">Kun synlig for toastmaster</p>
+            <p class="form-hint">Kun synlig for toastmaster</p>
         </div>
 
         <div class="form-group">
-            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
-                <input type="checkbox" name="is_secret" value="1" style="width: 18px; height: 18px; accent-color: var(--primary);">
+            <label class="checkbox-label">
+                <input type="checkbox" name="is_secret" value="1">
                 <span>Hemmeligt for <?= htmlspecialchars($mainPersonName) ?></span>
             </label>
         </div>
 
-        <button type="submit" class="btn btn-primary btn-full">Tilmeld indslag</button>
+        <button type="submit" class="btn btn-sage btn-full">Tilmeld indslag</button>
     </form>
 </div>
 
@@ -277,11 +298,13 @@ $mainPersonName = $event['main_person_name'] ?? 'konfirmanden';
     <h3 class="card-title">Tilmeldte indslag</h3>
     <div style="display: flex; flex-direction: column; gap: 12px;">
         <?php foreach ($publicItems as $item): ?>
-            <div style="display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--gray-100); border-radius: 12px;">
-                <span style="font-size: 24px;"><?= $typeLabels[$item['item_type']]['icon'] ?? '✨' ?></span>
+            <div class="indslag-item">
+                <div class="indslag-icon">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path></svg>
+                </div>
                 <div>
-                    <strong style="display: block;"><?= htmlspecialchars($item['title'] ?: $typeLabels[$item['item_type']]['label']) ?></strong>
-                    <span style="font-size: 13px; color: var(--gray-600);">af <?= htmlspecialchars($item['guest_name']) ?></span>
+                    <strong><?= htmlspecialchars($item['title'] ?: $typeLabels[$item['item_type']]['label']) ?></strong>
+                    <span style="font-size: 13px; color: var(--charcoal-light); display: block;">af <?= htmlspecialchars($item['guest_name']) ?></span>
                 </div>
             </div>
         <?php endforeach; ?>
@@ -292,16 +315,23 @@ $mainPersonName = $event['main_person_name'] ?? 'konfirmanden';
 <?php else: ?>
 <!-- Chat Tab -->
 <div class="card">
-    <h3 class="card-title">Skriv til toastmaster</h3>
+    <div class="card-header">
+        <h3 class="card-title">Skriv til toastmaster</h3>
+        <div class="card-icon">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
+        </div>
+    </div>
 
     <?php if (!$hasToastmaster): ?>
-        <div style="text-align: center; padding: 32px 16px;">
-            <div style="font-size: 40px; margin-bottom: 16px;">🎤</div>
-            <p style="color: var(--gray-600);">Der er ikke udpeget en toastmaster endnu.</p>
-            <p style="font-size: 13px; color: var(--gray-400); margin-top: 8px;">Når arrangøren har oprettet en toastmaster, kan du skrive beskeder her.</p>
+        <div class="empty-state">
+            <div class="empty-state-icon">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path></svg>
+            </div>
+            <h3>Ingen toastmaster endnu</h3>
+            <p>Når arrangøren har oprettet en toastmaster, kan du skrive beskeder her.</p>
         </div>
     <?php else: ?>
-        <p style="font-size: 14px; color: var(--gray-600); margin-bottom: 16px;">
+        <p style="font-size: 14px; color: var(--charcoal-light); margin-bottom: 20px;">
             Har du spørgsmål om dit indslag eller vil du koordinere noget?
             <?php if (!empty($primaryToastmaster['name']) && $primaryToastmaster['name'] !== 'Toastmaster'): ?>
                 <br>Toastmaster: <strong><?= htmlspecialchars($primaryToastmaster['name']) ?></strong>
@@ -309,19 +339,19 @@ $mainPersonName = $event['main_person_name'] ?? 'konfirmanden';
         </p>
 
         <!-- Messages -->
-        <div style="max-height: 350px; overflow-y: auto; margin-bottom: 16px; padding: 12px; background: var(--gray-100); border-radius: 12px;">
+        <div class="chat-messages">
             <?php if (empty($messages)): ?>
-                <div style="text-align: center; padding: 24px 16px;">
-                    <p style="color: var(--gray-400); font-size: 14px;">Ingen beskeder endnu. Start samtalen!</p>
+                <div style="text-align: center; padding: 32px 16px;">
+                    <p style="color: var(--charcoal-light); font-size: 14px;">Ingen beskeder endnu. Start samtalen!</p>
                 </div>
             <?php else: ?>
                 <?php foreach ($messages as $msg): ?>
-                    <div style="max-width: 85%; margin-bottom: 12px; padding: 12px 16px; border-radius: 16px; <?= $msg['is_from_toastmaster'] ? 'margin-right: auto; background: var(--white); border: 1px solid var(--gray-200); border-bottom-left-radius: 4px;' : 'margin-left: auto; background: var(--primary); color: var(--white); border-bottom-right-radius: 4px;' ?>">
-                        <div style="font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.03em; opacity: 0.7; margin-bottom: 4px;">
-                            <?= $msg['is_from_toastmaster'] ? htmlspecialchars($primaryToastmaster['name'] ?? 'Toastmaster') : htmlspecialchars($msg['guest_name']) ?>
+                    <div class="chat-bubble <?= $msg['is_from_toastmaster'] ? 'incoming' : 'outgoing' ?>">
+                        <div class="chat-sender">
+                            <?= $msg['is_from_toastmaster'] ? htmlspecialchars($primaryToastmaster['name'] ?? 'Toastmaster') : 'Dig' ?>
                         </div>
-                        <div style="font-size: 14px; line-height: 1.4;"><?= nl2br(htmlspecialchars($msg['message'])) ?></div>
-                        <div style="font-size: 11px; opacity: 0.6; margin-top: 4px; text-align: right;">
+                        <div class="chat-text"><?= nl2br(htmlspecialchars($msg['message'])) ?></div>
+                        <div class="chat-time">
                             <?= date('j/n H:i', strtotime($msg['created_at'])) ?>
                         </div>
                     </div>
@@ -330,18 +360,20 @@ $mainPersonName = $event['main_person_name'] ?? 'konfirmanden';
         </div>
 
         <!-- Send Message Form -->
-        <form method="POST">
+        <form method="POST" class="chat-form">
             <input type="hidden" name="action" value="send_message">
             <input type="hidden" name="sender_name" value="<?= htmlspecialchars($currentGuest['name'] ?? 'Gæst') ?>">
 
-            <div style="display: flex; gap: 8px; align-items: flex-end;">
+            <div style="display: flex; gap: 10px; align-items: flex-end;">
                 <textarea name="message"
                           class="form-input"
                           rows="2"
                           style="flex: 1; resize: none;"
-                          placeholder="Skriv en besked til <?= htmlspecialchars($primaryToastmaster['name'] ?? 'toastmaster') ?>..."
+                          placeholder="Skriv en besked..."
                           required></textarea>
-                <button type="submit" class="btn btn-primary" style="padding: 14px 20px;">Send</button>
+                <button type="submit" class="btn btn-sage" style="padding: 14px 20px;">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+                </button>
             </div>
         </form>
     <?php endif; ?>
@@ -349,3 +381,144 @@ $mainPersonName = $event['main_person_name'] ?? 'konfirmanden';
 <?php endif; ?>
 
 <?php endif; ?>
+
+<style>
+    .tab-nav {
+        display: flex;
+        gap: 8px;
+        background: var(--white);
+        border-radius: 16px;
+        padding: 6px;
+        margin-bottom: 24px;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+    }
+
+    .tab-item {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 14px 16px;
+        background: transparent;
+        color: var(--charcoal-light);
+        border-radius: 12px;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 500;
+        transition: all 0.25s var(--ease-out);
+    }
+
+    .tab-item:hover {
+        background: var(--cream);
+    }
+
+    .tab-item.active {
+        background: var(--sage);
+        color: var(--white);
+    }
+
+    .tab-item .badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 20px;
+        height: 20px;
+        padding: 0 6px;
+        background: var(--error);
+        color: white;
+        font-size: 11px;
+        font-weight: 700;
+        border-radius: 10px;
+    }
+
+    .checkbox-label {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        cursor: pointer;
+    }
+
+    .checkbox-label input {
+        width: 20px;
+        height: 20px;
+        accent-color: var(--sage);
+    }
+
+    .checkbox-label span {
+        font-size: 15px;
+        color: var(--charcoal);
+    }
+
+    .indslag-item {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 14px 16px;
+        background: var(--cream);
+        border-radius: 14px;
+    }
+
+    .indslag-icon {
+        width: 44px;
+        height: 44px;
+        background: var(--white);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--sage-dark);
+        flex-shrink: 0;
+    }
+
+    .chat-messages {
+        max-height: 380px;
+        overflow-y: auto;
+        margin-bottom: 20px;
+        padding: 16px;
+        background: var(--cream);
+        border-radius: 16px;
+    }
+
+    .chat-bubble {
+        max-width: 85%;
+        margin-bottom: 16px;
+        padding: 14px 18px;
+        border-radius: 18px;
+    }
+
+    .chat-bubble.incoming {
+        margin-right: auto;
+        background: var(--white);
+        border: 1px solid var(--cream-dark);
+        border-bottom-left-radius: 6px;
+    }
+
+    .chat-bubble.outgoing {
+        margin-left: auto;
+        background: var(--sage);
+        color: var(--white);
+        border-bottom-right-radius: 6px;
+    }
+
+    .chat-sender {
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+        opacity: 0.7;
+        margin-bottom: 6px;
+    }
+
+    .chat-text {
+        font-size: 14px;
+        line-height: 1.5;
+    }
+
+    .chat-time {
+        font-size: 11px;
+        opacity: 0.6;
+        margin-top: 8px;
+        text-align: right;
+    }
+</style>

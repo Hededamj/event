@@ -1,7 +1,7 @@
 <?php
 /**
  * App Header - Main application layout wrapper
- * Include this at the top of all /app/ pages
+ * Nordic Design System
  */
 
 require_once __DIR__ . '/../config/saas.php';
@@ -41,42 +41,191 @@ $pageTitle = $pageTitle ?? 'Dashboard';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= htmlspecialchars($pageTitle) ?> - EventPlatform</title>
+    <title><?= htmlspecialchars($pageTitle) ?> - PartyParart</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
         :root {
-            --primary: #667eea;
-            --primary-dark: #5a67d8;
-            --primary-light: #a3bffa;
-            --secondary: #764ba2;
-            --success: #22c55e;
-            --warning: #f59e0b;
-            --danger: #ef4444;
-            --gray-50: #f9fafb;
-            --gray-100: #f3f4f6;
-            --gray-200: #e5e7eb;
-            --gray-300: #d1d5db;
-            --gray-400: #9ca3af;
-            --gray-500: #6b7280;
-            --gray-600: #4b5563;
-            --gray-700: #374151;
-            --gray-800: #1f2937;
-            --gray-900: #111827;
-            --sidebar-width: 260px;
+            --cream: #E8E4DE;
+            --cream-dark: #D9D4CC;
+            --cream-light: #F5F3EF;
+            --sage: #8FA583;
+            --sage-light: #B8C9B0;
+            --sage-dark: #5D7255;
+            --charcoal: #1A1A1A;
+            --charcoal-light: #3D3D3D;
+            --gold: #B8923D;
+            --gold-light: #E8D5A3;
+            --white: #FFFFFF;
+            --success: #4D854D;
+            --warning: #C4922D;
+            --danger: #B84C4C;
+
+            --font-display: 'Cormorant Garamond', Georgia, serif;
+            --font-body: 'DM Sans', -apple-system, sans-serif;
+            --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+            --sidebar-width: 280px;
         }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: var(--gray-50);
-            color: var(--gray-800);
+            font-family: var(--font-body);
+            background: var(--cream);
+            color: var(--charcoal);
             min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Subtle grain texture */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+            opacity: 0.02;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        /* Sidebar */
+        .app-sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: var(--sidebar-width);
+            background: var(--white);
+            border-right: 1px solid var(--cream-dark);
+            display: flex;
+            flex-direction: column;
+            z-index: 150;
+        }
+
+        .sidebar-header {
+            padding: 28px 24px;
+            border-bottom: 1px solid var(--cream-dark);
+        }
+
+        .sidebar-logo {
+            font-family: var(--font-display);
+            font-size: 26px;
+            font-weight: 500;
+            color: var(--charcoal);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .sidebar-logo span {
+            color: var(--sage-dark);
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            padding: 20px 16px;
+            overflow-y: auto;
+        }
+
+        .nav-section {
+            margin-bottom: 28px;
+        }
+
+        .nav-section-title {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--charcoal-light);
+            padding: 0 12px;
+            margin-bottom: 12px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 14px;
+            color: var(--charcoal);
+            text-decoration: none;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.25s var(--ease-out);
+            margin-bottom: 4px;
+        }
+
+        .nav-link:hover {
+            background: var(--sage-light);
+            color: var(--charcoal);
+            transform: translateX(4px);
+        }
+
+        .nav-link.active {
+            background: var(--sage);
+            color: var(--white);
+        }
+
+        .nav-link svg {
+            width: 20px;
+            height: 20px;
+            flex-shrink: 0;
+        }
+
+        .sidebar-footer {
+            padding: 20px;
+            border-top: 1px solid var(--cream-dark);
+        }
+
+        .plan-badge {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px;
+            background: var(--cream-light);
+            border-radius: 14px;
+            margin-bottom: 12px;
+        }
+
+        .plan-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .plan-label {
+            font-size: 11px;
+            color: var(--charcoal-light);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .plan-name {
+            font-family: var(--font-display);
+            font-size: 18px;
+            font-weight: 500;
+            color: var(--charcoal);
+        }
+
+        .upgrade-btn {
+            display: block;
+            text-align: center;
+            padding: 14px 20px;
+            background: var(--sage);
+            color: white;
+            text-decoration: none;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.25s var(--ease-out);
+        }
+
+        .upgrade-btn:hover {
+            background: var(--sage-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(93, 114, 85, 0.3);
         }
 
         /* Top Header */
@@ -85,13 +234,13 @@ $pageTitle = $pageTitle ?? 'Dashboard';
             top: 0;
             left: var(--sidebar-width);
             right: 0;
-            height: 64px;
-            background: white;
-            border-bottom: 1px solid var(--gray-200);
+            height: 72px;
+            background: var(--white);
+            border-bottom: 1px solid var(--cream-dark);
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 24px;
+            padding: 0 32px;
             z-index: 100;
         }
 
@@ -102,9 +251,10 @@ $pageTitle = $pageTitle ?? 'Dashboard';
         }
 
         .header-title {
-            font-size: 18px;
-            font-weight: 600;
-            color: var(--gray-900);
+            font-family: var(--font-display);
+            font-size: 24px;
+            font-weight: 500;
+            color: var(--charcoal);
         }
 
         .header-right {
@@ -120,36 +270,37 @@ $pageTitle = $pageTitle ?? 'Dashboard';
         .user-menu-btn {
             display: flex;
             align-items: center;
-            gap: 10px;
-            padding: 8px 12px;
+            gap: 12px;
+            padding: 8px 14px;
             background: none;
             border: none;
             cursor: pointer;
-            border-radius: 8px;
-            transition: background 0.2s;
+            border-radius: 12px;
+            transition: all 0.25s var(--ease-out);
         }
 
         .user-menu-btn:hover {
-            background: var(--gray-100);
+            background: var(--cream-light);
         }
 
         .user-avatar {
-            width: 32px;
-            height: 32px;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-            border-radius: 50%;
+            width: 38px;
+            height: 38px;
+            background: var(--sage);
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
-            font-size: 14px;
+            font-family: var(--font-display);
+            font-size: 16px;
             font-weight: 600;
         }
 
         .user-name {
             font-size: 14px;
-            font-weight: 500;
-            color: var(--gray-700);
+            font-weight: 600;
+            color: var(--charcoal);
         }
 
         .user-dropdown {
@@ -157,13 +308,14 @@ $pageTitle = $pageTitle ?? 'Dashboard';
             top: 100%;
             right: 0;
             margin-top: 8px;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
-            min-width: 200px;
+            background: var(--white);
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.12);
+            min-width: 220px;
             padding: 8px;
             display: none;
             z-index: 200;
+            border: 1px solid var(--cream-dark);
         }
 
         .user-dropdown.show {
@@ -173,28 +325,29 @@ $pageTitle = $pageTitle ?? 'Dashboard';
         .dropdown-item {
             display: flex;
             align-items: center;
-            gap: 10px;
-            padding: 10px 12px;
-            color: var(--gray-700);
+            gap: 12px;
+            padding: 12px 14px;
+            color: var(--charcoal);
             text-decoration: none;
-            border-radius: 8px;
+            border-radius: 10px;
             font-size: 14px;
-            transition: background 0.2s;
+            font-weight: 500;
+            transition: all 0.2s var(--ease-out);
         }
 
         .dropdown-item:hover {
-            background: var(--gray-100);
+            background: var(--cream-light);
         }
 
         .dropdown-item svg {
             width: 18px;
             height: 18px;
-            color: var(--gray-500);
+            color: var(--charcoal-light);
         }
 
         .dropdown-divider {
             height: 1px;
-            background: var(--gray-200);
+            background: var(--cream-dark);
             margin: 8px 0;
         }
 
@@ -202,163 +355,36 @@ $pageTitle = $pageTitle ?? 'Dashboard';
             color: var(--danger);
         }
 
+        .dropdown-item.danger:hover {
+            background: #FDF2F2;
+        }
+
         .dropdown-item.danger svg {
             color: var(--danger);
-        }
-
-        /* Sidebar */
-        .app-sidebar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            bottom: 0;
-            width: var(--sidebar-width);
-            background: white;
-            border-right: 1px solid var(--gray-200);
-            display: flex;
-            flex-direction: column;
-            z-index: 150;
-        }
-
-        .sidebar-header {
-            padding: 20px 20px;
-            border-bottom: 1px solid var(--gray-200);
-        }
-
-        .sidebar-logo {
-            font-size: 22px;
-            font-weight: 700;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            text-decoration: none;
-        }
-
-        .sidebar-nav {
-            flex: 1;
-            padding: 16px 12px;
-            overflow-y: auto;
-        }
-
-        .nav-section {
-            margin-bottom: 24px;
-        }
-
-        .nav-section-title {
-            font-size: 11px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: var(--gray-400);
-            padding: 0 12px;
-            margin-bottom: 8px;
-        }
-
-        .nav-link {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 10px 12px;
-            color: var(--gray-600);
-            text-decoration: none;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 500;
-            transition: all 0.2s;
-            margin-bottom: 4px;
-        }
-
-        .nav-link:hover {
-            background: var(--gray-100);
-            color: var(--gray-900);
-        }
-
-        .nav-link.active {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-            color: white;
-        }
-
-        .nav-link svg {
-            width: 20px;
-            height: 20px;
-        }
-
-        .nav-link.active svg {
-            color: white;
-        }
-
-        .sidebar-footer {
-            padding: 16px;
-            border-top: 1px solid var(--gray-200);
-        }
-
-        .plan-badge {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 12px;
-            background: var(--gray-50);
-            border-radius: 10px;
-            margin-bottom: 12px;
-        }
-
-        .plan-info {
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-        }
-
-        .plan-label {
-            font-size: 11px;
-            color: var(--gray-500);
-        }
-
-        .plan-name {
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--gray-800);
-        }
-
-        .upgrade-btn {
-            display: block;
-            text-align: center;
-            padding: 10px 16px;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-            color: white;
-            text-decoration: none;
-            border-radius: 8px;
-            font-size: 13px;
-            font-weight: 600;
-            transition: all 0.2s;
-        }
-
-        .upgrade-btn:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
         }
 
         /* Main Content */
         .app-main {
             margin-left: var(--sidebar-width);
-            padding-top: 64px;
+            padding-top: 72px;
             min-height: 100vh;
         }
 
         .app-content {
-            padding: 32px;
+            padding: 40px;
             max-width: 1400px;
         }
 
         /* Flash Messages */
         .flash-message {
             padding: 16px 20px;
-            border-radius: 10px;
+            border-radius: 14px;
             margin-bottom: 24px;
             display: flex;
             align-items: center;
             gap: 12px;
             font-size: 14px;
+            font-weight: 500;
         }
 
         .flash-message svg {
@@ -368,30 +394,24 @@ $pageTitle = $pageTitle ?? 'Dashboard';
         }
 
         .flash-message.success {
-            background: #f0fdf4;
-            border: 1px solid #bbf7d0;
-            color: #15803d;
+            background: #E8F5E8;
+            border: 1px solid #C8E6C8;
+            color: var(--success);
         }
 
         .flash-message.error {
-            background: #fef2f2;
-            border: 1px solid #fecaca;
-            color: #dc2626;
+            background: #FDF2F2;
+            border: 1px solid #F5D5D5;
+            color: var(--danger);
         }
 
         .flash-message.warning {
-            background: #fffbeb;
-            border: 1px solid #fde68a;
-            color: #b45309;
+            background: #FFF8E8;
+            border: 1px solid #F5E6C8;
+            color: var(--warning);
         }
 
-        .flash-message.info {
-            background: #eff6ff;
-            border: 1px solid #bfdbfe;
-            color: #1d4ed8;
-        }
-
-        /* Responsive */
+        /* Mobile responsive */
         @media (max-width: 1024px) {
             :root {
                 --sidebar-width: 0px;
@@ -399,7 +419,8 @@ $pageTitle = $pageTitle ?? 'Dashboard';
 
             .app-sidebar {
                 transform: translateX(-100%);
-                transition: transform 0.3s;
+                transition: transform 0.3s var(--ease-out);
+                width: 280px;
             }
 
             .app-sidebar.open {
@@ -419,22 +440,22 @@ $pageTitle = $pageTitle ?? 'Dashboard';
             display: none;
             align-items: center;
             justify-content: center;
-            width: 40px;
-            height: 40px;
+            width: 44px;
+            height: 44px;
             background: none;
             border: none;
             cursor: pointer;
-            border-radius: 8px;
+            border-radius: 12px;
         }
 
         .menu-toggle:hover {
-            background: var(--gray-100);
+            background: var(--cream-light);
         }
 
         .menu-toggle svg {
             width: 24px;
             height: 24px;
-            color: var(--gray-600);
+            color: var(--charcoal);
         }
 
         /* Common Components */
@@ -446,13 +467,14 @@ $pageTitle = $pageTitle ?? 'Dashboard';
         }
 
         .page-title {
-            font-size: 28px;
-            font-weight: 700;
-            color: var(--gray-900);
+            font-family: var(--font-display);
+            font-size: 36px;
+            font-weight: 400;
+            color: var(--charcoal);
         }
 
         .page-subtitle {
-            color: var(--gray-500);
+            color: var(--charcoal-light);
             margin-top: 4px;
             font-size: 15px;
         }
@@ -460,37 +482,38 @@ $pageTitle = $pageTitle ?? 'Dashboard';
         .btn {
             display: inline-flex;
             align-items: center;
-            gap: 8px;
-            padding: 10px 20px;
+            gap: 10px;
+            padding: 14px 24px;
+            font-family: var(--font-body);
             font-size: 14px;
             font-weight: 600;
             border: none;
-            border-radius: 10px;
+            border-radius: 12px;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.25s var(--ease-out);
             text-decoration: none;
-            font-family: inherit;
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            background: var(--charcoal);
             color: white;
         }
 
         .btn-primary:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+            background: var(--charcoal-light);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(26, 26, 26, 0.2);
         }
 
         .btn-secondary {
-            background: white;
-            color: var(--gray-700);
-            border: 2px solid var(--gray-200);
+            background: var(--white);
+            color: var(--charcoal);
+            border: 2px solid var(--cream-dark);
         }
 
         .btn-secondary:hover {
-            border-color: var(--gray-300);
-            background: var(--gray-50);
+            border-color: var(--sage);
+            background: var(--cream-light);
         }
 
         .btn svg {
@@ -499,11 +522,10 @@ $pageTitle = $pageTitle ?? 'Dashboard';
         }
 
         .card {
-            background: white;
-            border-radius: 16px;
-            padding: 24px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            border: 1px solid var(--gray-200);
+            background: var(--white);
+            border-radius: 20px;
+            padding: 28px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.03), 0 4px 12px rgba(0,0,0,0.03);
         }
 
         .card-header {
@@ -514,9 +536,10 @@ $pageTitle = $pageTitle ?? 'Dashboard';
         }
 
         .card-title {
-            font-size: 18px;
-            font-weight: 600;
-            color: var(--gray-900);
+            font-family: var(--font-display);
+            font-size: 22px;
+            font-weight: 500;
+            color: var(--charcoal);
         }
 
         .empty-state {
@@ -527,55 +550,56 @@ $pageTitle = $pageTitle ?? 'Dashboard';
         .empty-state svg {
             width: 64px;
             height: 64px;
-            color: var(--gray-300);
+            color: var(--cream-dark);
             margin-bottom: 16px;
         }
 
         .empty-state h3 {
-            font-size: 18px;
-            font-weight: 600;
-            color: var(--gray-700);
+            font-family: var(--font-display);
+            font-size: 22px;
+            font-weight: 500;
+            color: var(--charcoal);
             margin-bottom: 8px;
         }
 
         .empty-state p {
-            color: var(--gray-500);
+            color: var(--charcoal-light);
             margin-bottom: 24px;
         }
 
         /* Forms */
         .form-group {
-            margin-bottom: 16px;
+            margin-bottom: 20px;
         }
 
         .form-label {
             display: block;
             font-size: 14px;
-            font-weight: 500;
-            color: var(--gray-700);
-            margin-bottom: 6px;
+            font-weight: 600;
+            color: var(--charcoal);
+            margin-bottom: 8px;
         }
 
         .form-input {
             width: 100%;
-            padding: 10px 14px;
-            font-size: 14px;
-            border: 1px solid var(--gray-300);
-            border-radius: 8px;
-            background: white;
-            color: var(--gray-900);
-            transition: border-color 0.2s, box-shadow 0.2s;
-            font-family: inherit;
+            padding: 14px 16px;
+            font-family: var(--font-body);
+            font-size: 15px;
+            border: 2px solid var(--cream-dark);
+            border-radius: 12px;
+            background: var(--white);
+            color: var(--charcoal);
+            transition: all 0.25s var(--ease-out);
         }
 
         .form-input:focus {
             outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
+            border-color: var(--sage);
+            box-shadow: 0 0 0 4px rgba(143, 165, 131, 0.15);
         }
 
         .form-input::placeholder {
-            color: var(--gray-400);
+            color: #A8A39B;
         }
 
         select.form-input {
@@ -584,7 +608,7 @@ $pageTitle = $pageTitle ?? 'Dashboard';
 
         textarea.form-input {
             resize: vertical;
-            min-height: 80px;
+            min-height: 100px;
         }
     </style>
 </head>
@@ -592,7 +616,7 @@ $pageTitle = $pageTitle ?? 'Dashboard';
     <!-- Sidebar -->
     <aside class="app-sidebar" id="sidebar">
         <div class="sidebar-header">
-            <a href="/app/dashboard.php" class="sidebar-logo">EventPlatform</a>
+            <a href="/app/dashboard.php" class="sidebar-logo">Party<span>Parart</span></a>
         </div>
 
         <nav class="sidebar-nav">

@@ -21,7 +21,7 @@ if (!defined('DB_CHARSET')) define('DB_CHARSET', 'utf8mb4');
 /**
  * Base URL path - change this if site is in a subdirectory
  */
-if (!defined('BASE_PATH')) define('BASE_PATH', env('BASE_PATH', '/sofie'));
+if (!defined('BASE_PATH')) define('BASE_PATH', env('BASE_PATH', ''));
 
 /**
  * Get full application URL

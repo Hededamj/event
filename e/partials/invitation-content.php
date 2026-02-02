@@ -1,0 +1,141 @@
+<?php
+/**
+ * Invitation Content Partial
+ * Reusable content sections for invitation layouts
+ *
+ * Expected variables:
+ * - $greeting: Personalized greeting text
+ * - $config: Invitation configuration array
+ * - $event: Event data array
+ * - $eventDate: Formatted event date array (day, month, year, weekday, time)
+ * - $galleryImages: Array of gallery images
+ * - $layoutStyle: Current layout style
+ */
+
+$showGreeting = $layoutStyle !== 'fullscreen'; // Greeting shown in hero for fullscreen
+?>
+
+<?php if ($showGreeting): ?>
+<p class="greeting"><?= htmlspecialchars($greeting) ?></p>
+<?php endif; ?>
+
+<?php if (!empty($config['headline_text']) && $layoutStyle !== 'fullscreen'): ?>
+<h1 class="headline"><?= htmlspecialchars($config['headline_text']) ?></h1>
+<?php endif; ?>
+
+<?php if (!empty($config['invitation_message'])): ?>
+<div class="message"><?= nl2br(htmlspecialchars($config['invitation_message'])) ?></div>
+<?php endif; ?>
+
+<?php if ($eventDate): ?>
+<div class="event-details">
+    <div class="detail-item">
+        <div class="detail-icon">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+            </svg>
+        </div>
+        <div class="detail-content">
+            <h4>Dato</h4>
+            <p><?= ucfirst($eventDate['weekday']) ?> d. <?= $eventDate['day'] ?>. <?= $eventDate['month'] ?> <?= $eventDate['year'] ?></p>
+        </div>
+    </div>
+
+    <?php if ($eventDate['time']): ?>
+    <div class="detail-item">
+        <div class="detail-icon">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+        </div>
+        <div class="detail-content">
+            <h4>Tidspunkt</h4>
+            <p>Kl. <?= $eventDate['time'] ?></p>
+        </div>
+    </div>
+    <?php endif; ?>
+
+    <?php if (!empty($event['location'])): ?>
+    <div class="detail-item">
+        <div class="detail-icon">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+            </svg>
+        </div>
+        <div class="detail-content">
+            <h4>Sted</h4>
+            <p><?= htmlspecialchars($event['location']) ?></p>
+        </div>
+    </div>
+    <?php endif; ?>
+</div>
+<?php endif; ?>
+
+<?php if (!empty($config['show_countdown']) && $eventDate): ?>
+<div class="countdown" id="countdown">
+    <div class="countdown-item">
+        <div class="countdown-value" id="countdown-days">--</div>
+        <div class="countdown-label">Dage</div>
+    </div>
+    <div class="countdown-item">
+        <div class="countdown-value" id="countdown-hours">--</div>
+        <div class="countdown-label">Timer</div>
+    </div>
+    <div class="countdown-item">
+        <div class="countdown-value" id="countdown-minutes">--</div>
+        <div class="countdown-label">Min</div>
+    </div>
+</div>
+<script>
+(function() {
+    const eventDate = new Date('<?= $event['event_date'] ?><?= $event['event_time'] ? 'T' . $event['event_time'] : 'T12:00:00' ?>');
+
+    function updateCountdown() {
+        const now = new Date();
+        const diff = eventDate - now;
+
+        if (diff <= 0) {
+            document.getElementById('countdown').style.display = 'none';
+            return;
+        }
+
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+
+        document.getElementById('countdown-days').textContent = days;
+        document.getElementById('countdown-hours').textContent = hours;
+        document.getElementById('countdown-minutes').textContent = minutes;
+    }
+
+    updateCountdown();
+    setInterval(updateCountdown, 60000);
+})();
+</script>
+<?php endif; ?>
+
+<?php if (!empty($galleryImages)): ?>
+<div class="gallery">
+    <?php foreach (array_slice($galleryImages, 0, 6) as $image): ?>
+    <div class="gallery-item" style="background-image: url(<?= htmlspecialchars($image['url']) ?>)"></div>
+    <?php endforeach; ?>
+</div>
+<?php endif; ?>
+
+<?php if (!empty($config['show_rsvp'])): ?>
+<div class="rsvp-section">
+    <h3>Svar på invitationen</h3>
+    <p>Vi vil elske at høre om du kan deltage</p>
+    <a href="#" class="rsvp-btn">
+        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        Giv dit svar
+    </a>
+</div>
+<?php endif; ?>
+
+<?php if (!empty($config['closing_text'])): ?>
+<p class="closing"><?= htmlspecialchars($config['closing_text']) ?></p>
+<?php endif; ?>

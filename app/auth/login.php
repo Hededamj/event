@@ -1,6 +1,6 @@
 <?php
 /**
- * Account Login Page
+ * Account Login Page - Nordic Design
  */
 require_once __DIR__ . '/../../config/saas.php';
 require_once __DIR__ . '/../../includes/functions.php';
@@ -52,144 +52,293 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Log ind - EventPlatform</title>
+    <title>Log ind - PartyParart</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
-        * {
+        *, *::before, *::after {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
+        :root {
+            --cream: #FAF9F7;
+            --cream-dark: #F5F3EF;
+            --sage: #A8B5A0;
+            --sage-light: #C8D4C2;
+            --sage-dark: #7A8B72;
+            --charcoal: #2C2C2C;
+            --charcoal-light: #4A4A4A;
+            --gold: #C9A962;
+            --white: #FFFFFF;
+            --error: #C75D5D;
+
+            --font-display: 'Cormorant Garamond', Georgia, serif;
+            --font-body: 'DM Sans', -apple-system, sans-serif;
+            --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: var(--font-body);
+            background: var(--cream);
             min-height: 100vh;
+            display: flex;
+            color: var(--charcoal);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Subtle grain texture */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+            opacity: 0.025;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        .login-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            width: 100%;
+            min-height: 100vh;
+        }
+
+        @media (max-width: 900px) {
+            .login-layout {
+                grid-template-columns: 1fr;
+            }
+            .login-visual {
+                display: none;
+            }
+        }
+
+        /* Left side - Visual */
+        .login-visual {
+            background: linear-gradient(160deg, var(--sage) 0%, var(--sage-dark) 100%);
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 20px;
+            padding: 48px;
+            position: relative;
+            overflow: hidden;
         }
 
-        .auth-container {
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-            width: 100%;
-            max-width: 420px;
-            padding: 48px 40px;
+        .login-visual::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(circle at 20% 80%, rgba(255,255,255,0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255,255,255,0.08) 0%, transparent 40%);
         }
 
-        .auth-header {
+        .visual-content {
             text-align: center;
+            color: var(--white);
+            position: relative;
+            z-index: 1;
+        }
+
+        .visual-icon {
+            width: 80px;
+            height: 80px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 32px;
+        }
+
+        .visual-icon svg {
+            width: 40px;
+            height: 40px;
+        }
+
+        .visual-title {
+            font-family: var(--font-display);
+            font-size: 32px;
+            font-weight: 400;
+            margin-bottom: 16px;
+            line-height: 1.2;
+        }
+
+        .visual-text {
+            font-size: 16px;
+            opacity: 0.9;
+            max-width: 320px;
+            line-height: 1.6;
+        }
+
+        /* Right side - Form */
+        .login-form-section {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: clamp(32px, 8vw, 80px);
+            background: var(--cream);
+        }
+
+        .login-header {
+            margin-bottom: 40px;
+        }
+
+        .login-logo {
+            font-family: var(--font-display);
+            font-size: 28px;
+            font-weight: 500;
+            color: var(--charcoal);
+            text-decoration: none;
+            display: inline-block;
             margin-bottom: 32px;
         }
 
-        .auth-logo {
-            font-size: 28px;
-            font-weight: 700;
-            color: #667eea;
+        .login-logo span {
+            color: var(--sage-dark);
+        }
+
+        .login-title {
+            font-family: var(--font-display);
+            font-size: clamp(28px, 4vw, 36px);
+            font-weight: 400;
+            color: var(--charcoal);
             margin-bottom: 8px;
         }
 
-        .auth-title {
-            font-size: 24px;
-            font-weight: 600;
-            color: #1a1a2e;
-            margin-bottom: 8px;
+        .login-subtitle {
+            font-size: 15px;
+            color: var(--charcoal-light);
         }
 
-        .auth-subtitle {
-            color: #6b7280;
+        .login-card {
+            background: var(--white);
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow:
+                0 1px 2px rgba(0,0,0,0.04),
+                0 4px 16px rgba(0,0,0,0.04);
+            max-width: 440px;
+        }
+
+        .error-message {
+            background: #FDF2F2;
+            border: 1px solid #F5D5D5;
+            color: var(--error);
+            padding: 14px 18px;
+            border-radius: 14px;
             font-size: 14px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 24px;
         }
 
         .form-label {
             display: block;
             font-size: 14px;
-            font-weight: 500;
-            color: #374151;
-            margin-bottom: 6px;
+            font-weight: 600;
+            color: var(--charcoal);
+            margin-bottom: 10px;
         }
 
         .form-input {
             width: 100%;
-            padding: 12px 16px;
+            padding: 16px 18px;
+            font-family: var(--font-body);
             font-size: 15px;
-            border: 2px solid #e5e7eb;
-            border-radius: 10px;
-            transition: all 0.2s;
-            font-family: inherit;
+            border: 2px solid var(--cream-dark);
+            border-radius: 14px;
+            background: var(--white);
+            color: var(--charcoal);
+            transition: all 0.3s var(--ease-out);
         }
 
         .form-input:focus {
             outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            border-color: var(--sage);
+            box-shadow: 0 0 0 4px rgba(168, 181, 160, 0.15);
         }
 
         .form-input::placeholder {
-            color: #9ca3af;
+            color: #A8A39B;
         }
 
-        .error-message {
-            background: #fef2f2;
-            border: 1px solid #fecaca;
-            color: #dc2626;
-            padding: 12px 16px;
-            border-radius: 10px;
+        .remember-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 28px;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
             font-size: 14px;
-            margin-bottom: 20px;
-        }
-
-        .btn {
-            width: 100%;
-            padding: 14px 24px;
-            font-size: 15px;
-            font-weight: 600;
-            border: none;
-            border-radius: 10px;
+            color: var(--charcoal-light);
             cursor: pointer;
-            transition: all 0.2s;
-            font-family: inherit;
         }
 
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
-        }
-
-        .form-footer {
-            margin-top: 24px;
-            text-align: center;
+        .checkbox-label input {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--sage);
         }
 
         .form-link {
-            color: #667eea;
+            color: var(--sage-dark);
             text-decoration: none;
             font-size: 14px;
             font-weight: 500;
+            transition: color 0.2s;
         }
 
         .form-link:hover {
-            text-decoration: underline;
+            color: var(--charcoal);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 16px 32px;
+            font-family: var(--font-body);
+            font-size: 15px;
+            font-weight: 600;
+            border: none;
+            border-radius: 14px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s var(--ease-out);
+            width: 100%;
+        }
+
+        .btn-primary {
+            background: var(--charcoal);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background: var(--charcoal-light);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(44,44,44,0.2);
         }
 
         .divider {
             display: flex;
             align-items: center;
-            margin: 24px 0;
-            color: #9ca3af;
+            margin: 28px 0;
+            color: var(--charcoal-light);
             font-size: 13px;
         }
 
@@ -198,7 +347,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             content: '';
             flex: 1;
             height: 1px;
-            background: #e5e7eb;
+            background: var(--cream-dark);
         }
 
         .divider span {
@@ -208,102 +357,118 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         .register-link {
             display: block;
             text-align: center;
-            padding: 14px 24px;
-            border: 2px solid #e5e7eb;
-            border-radius: 10px;
-            color: #374151;
+            padding: 16px 24px;
+            border: 2px solid var(--cream-dark);
+            border-radius: 14px;
+            color: var(--charcoal);
             text-decoration: none;
             font-weight: 500;
             font-size: 15px;
-            transition: all 0.2s;
+            transition: all 0.3s var(--ease-out);
         }
 
         .register-link:hover {
-            border-color: #667eea;
-            color: #667eea;
+            border-color: var(--sage);
+            background: var(--cream);
         }
 
-        .remember-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 24px;
+        .form-footer {
+            margin-top: 28px;
+            text-align: center;
         }
 
-        .checkbox-label {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 14px;
-            color: #6b7280;
-            cursor: pointer;
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        .checkbox-label input {
-            width: 16px;
-            height: 16px;
-            accent-color: #667eea;
+        .login-card {
+            animation: fadeIn 0.6s var(--ease-out);
         }
     </style>
 </head>
 <body>
-    <div class="auth-container">
-        <div class="auth-header">
-            <div class="auth-logo">EventPlatform</div>
-            <h1 class="auth-title">Velkommen tilbage</h1>
-            <p class="auth-subtitle">Log ind for at administrere dine arrangementer</p>
+    <div class="login-layout">
+        <div class="login-visual">
+            <div class="visual-content">
+                <div class="visual-icon">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 15.546c-.523 0-1.046.151-1.5.454a2.704 2.704 0 01-3 0 2.704 2.704 0 00-3 0 2.704 2.704 0 01-3 0 2.704 2.704 0 00-3 0 2.704 2.704 0 01-3 0 2.701 2.701 0 00-1.5-.454M9 6v2m3-2v2m3-2v2M9 3h.01M12 3h.01M15 3h.01M21 21v-7a2 2 0 00-2-2H5a2 2 0 00-2 2v7h18zm-3-9v-2a2 2 0 00-2-2H8a2 2 0 00-2 2v2h12z"></path>
+                    </svg>
+                </div>
+                <h2 class="visual-title">Skab uforglemmelige øjeblikke</h2>
+                <p class="visual-text">
+                    Planlæg din fest med stil. Gæsteliste, ønskeliste, program og billeder - alt samlet ét sted.
+                </p>
+            </div>
         </div>
 
-        <?php if ($error): ?>
-            <div class="error-message"><?= htmlspecialchars($error) ?></div>
-        <?php endif; ?>
-
-        <form method="POST" action="">
-            <?= accountCsrfField() ?>
-
-            <div class="form-group">
-                <label class="form-label" for="email">Email</label>
-                <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    class="form-input"
-                    placeholder="din@email.dk"
-                    value="<?= htmlspecialchars($email) ?>"
-                    required
-                    autofocus
-                >
+        <div class="login-form-section">
+            <div class="login-header">
+                <a href="/" class="login-logo">Party<span>Parart</span></a>
+                <h1 class="login-title">Velkommen tilbage</h1>
+                <p class="login-subtitle">Log ind for at administrere dine arrangementer</p>
             </div>
 
-            <div class="form-group">
-                <label class="form-label" for="password">Adgangskode</label>
-                <input
-                    type="password"
-                    id="password"
-                    name="password"
-                    class="form-input"
-                    placeholder="Din adgangskode"
-                    required
-                >
+            <div class="login-card">
+                <?php if ($error): ?>
+                    <div class="error-message">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        <?= htmlspecialchars($error) ?>
+                    </div>
+                <?php endif; ?>
+
+                <form method="POST" action="">
+                    <?= accountCsrfField() ?>
+
+                    <div class="form-group">
+                        <label class="form-label" for="email">Email</label>
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            class="form-input"
+                            placeholder="din@email.dk"
+                            value="<?= htmlspecialchars($email) ?>"
+                            required
+                            autofocus
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="password">Adgangskode</label>
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            class="form-input"
+                            placeholder="Din adgangskode"
+                            required
+                        >
+                    </div>
+
+                    <div class="remember-row">
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="remember" value="1">
+                            Husk mig
+                        </label>
+                        <a href="/app/auth/forgot-password.php" class="form-link">Glemt adgangskode?</a>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">
+                        Log ind
+                        <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                    </button>
+                </form>
+
+                <div class="divider"><span>eller</span></div>
+
+                <a href="/register" class="register-link">Opret ny konto</a>
+
+                <div class="form-footer">
+                    <a href="/" class="form-link">Tilbage til forsiden</a>
+                </div>
             </div>
-
-            <div class="remember-row">
-                <label class="checkbox-label">
-                    <input type="checkbox" name="remember" value="1">
-                    Husk mig
-                </label>
-                <a href="/app/auth/forgot-password.php" class="form-link">Glemt adgangskode?</a>
-            </div>
-
-            <button type="submit" class="btn btn-primary">Log ind</button>
-        </form>
-
-        <div class="divider"><span>eller</span></div>
-
-        <a href="/app/auth/register.php" class="register-link">Opret ny konto</a>
-
-        <div class="form-footer">
-            <a href="/" class="form-link">Tilbage til forsiden</a>
         </div>
     </div>
 </body>
