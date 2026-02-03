@@ -33,7 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             setFlash('error', 'Kunne ikke anvende skabelon.');
         }
-        redirect("/app/events/manage.php?id=$eventId&page=invitation");
+        redirect("/app/events/manage.php?id=$eventId&page=invitation&step=2");
     }
 
     if ($action === 'save-config') {
@@ -60,7 +60,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             setFlash('error', 'Kunne ikke gemme invitation.');
         }
-        redirect("/app/events/manage.php?id=$eventId&page=invitation");
+
+        // Redirect to next step if specified
+        $nextStep = isset($_POST['redirect_step']) ? (int)$_POST['redirect_step'] : null;
+        if ($nextStep) {
+            redirect("/app/events/manage.php?id=$eventId&page=invitation&step=$nextStep");
+        } else {
+            redirect("/app/events/manage.php?id=$eventId&page=invitation");
+        }
     }
 
     if ($action === 'publish') {
@@ -68,7 +75,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (setInvitationPublished($db, $eventId, $publish)) {
             setFlash('success', $publish ? 'Invitation offentliggjort!' : 'Invitation skjult.');
         }
-        redirect("/app/events/manage.php?id=$eventId&page=invitation");
+        redirect("/app/events/manage.php?id=$eventId&page=invitation&step=6");
     }
 }
 
@@ -983,6 +990,7 @@ $readiness = isInvitationReadyToPublish($db, $eventId);
             <div class="layout-options">
                 <?php
                 $layouts = [
+                    'slideshow' => ['name' => 'Slideshow', 'icon' => 'M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z'],
                     'split' => ['name' => 'Delt', 'icon' => 'M4 5a1 1 0 011-1h6v16H5a1 1 0 01-1-1V5zm10-1h5a1 1 0 011 1v14a1 1 0 01-1 1h-5V4z'],
                     'centered' => ['name' => 'Centreret', 'icon' => 'M4 6a2 2 0 012-2h12a2 2 0 012 2v12a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm3 2h10v3H7V8zm0 5h10v3H7v-3z'],
                     'fullscreen' => ['name' => 'Fullscreen', 'icon' => 'M4 3a1 1 0 00-1 1v16a1 1 0 001 1h16a1 1 0 001-1V4a1 1 0 00-1-1H4zm8 7a2 2 0 100-4 2 2 0 000 4zm0 2a4 4 0 110 8 4 4 0 010-8z'],
@@ -1009,20 +1017,21 @@ $readiness = isInvitationReadyToPublish($db, $eventId);
                 <h3 class="card-title">Skrifttype</h3>
             </div>
 
-            <div class="layout-options">
+            <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500&family=Inter:wght@500&family=Quicksand:wght@500&family=Playfair+Display:wght@500&family=DM+Sans:wght@500&display=swap" rel="stylesheet">
+            <div class="layout-options font-options">
                 <?php
-                $fonts = [
-                    'elegant' => 'Elegant',
-                    'modern' => 'Moderne',
-                    'playful' => 'Legende',
-                    'traditional' => 'Traditionel',
-                    'minimal' => 'Minimalistisk'
+                $fontStyles = [
+                    'elegant' => ['name' => 'Elegant', 'font' => "'Cormorant Garamond', serif"],
+                    'modern' => ['name' => 'Moderne', 'font' => "'Inter', sans-serif"],
+                    'playful' => ['name' => 'Legende', 'font' => "'Quicksand', sans-serif"],
+                    'traditional' => ['name' => 'Traditionel', 'font' => "'Playfair Display', serif"],
+                    'minimal' => ['name' => 'Minimalistisk', 'font' => "'DM Sans', sans-serif"]
                 ];
-                foreach ($fonts as $key => $name):
+                foreach ($fontStyles as $key => $fontData):
                 ?>
                 <label class="layout-option <?= $invitationConfig['font_style'] === $key ? 'selected' : '' ?>">
                     <input type="radio" name="font_style" value="<?= $key ?>" <?= $invitationConfig['font_style'] === $key ? 'checked' : '' ?>>
-                    <span style="font-size: 16px;"><?= $name ?></span>
+                    <span class="font-preview" style="font-family: <?= $fontData['font'] ?>; font-size: 20px;"><?= $fontData['name'] ?></span>
                 </label>
                 <?php endforeach; ?>
             </div>

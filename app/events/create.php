@@ -140,16 +140,6 @@ $error = $error ?? '';
             <div class="step-number">3</div>
             <span class="step-label">Detaljer</span>
         </div>
-        <div class="progress-line"></div>
-        <div class="progress-step" data-step="4">
-            <div class="step-number">4</div>
-            <span class="step-label">Tema</span>
-        </div>
-        <div class="progress-line"></div>
-        <div class="progress-step" data-step="5">
-            <div class="step-number">5</div>
-            <span class="step-label">Færdig</span>
-        </div>
     </div>
 
     <?php if ($error): ?>
@@ -316,158 +306,6 @@ $error = $error ?? '';
                     >
                 </div>
 
-                <div class="form-group">
-                    <label class="form-label" for="welcome_text">Velkomsttekst (valgfrit)</label>
-                    <textarea
-                        id="welcome_text"
-                        name="welcome_text"
-                        class="form-input"
-                        rows="3"
-                        placeholder="En personlig besked til dine gæster..."
-                    ></textarea>
-                </div>
-            </div>
-
-            <div class="wizard-actions">
-                <button type="button" class="btn btn-secondary prev-step">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-                    </svg>
-                    Tilbage
-                </button>
-                <button type="button" class="btn btn-primary next-step">
-                    Næste
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                    </svg>
-                </button>
-            </div>
-        </div>
-
-        <!-- Step 4: Theme -->
-        <div class="wizard-step" data-step="4">
-            <h2>Vælg et tema</h2>
-            <p class="step-description">Vælg farvetemaet for din invitation og gæstesider</p>
-
-            <div class="themes-grid">
-                <label class="theme-card">
-                    <input type="radio" name="theme" value="elegant" checked>
-                    <div class="theme-preview elegant">
-                        <div class="theme-colors">
-                            <span style="background: #667eea"></span>
-                            <span style="background: #764ba2"></span>
-                            <span style="background: #f8fafc"></span>
-                        </div>
-                        <h4>Elegant</h4>
-                        <p>Klassisk og tidløst</p>
-                    </div>
-                </label>
-
-                <label class="theme-card">
-                    <input type="radio" name="theme" value="romantic">
-                    <div class="theme-preview romantic">
-                        <div class="theme-colors">
-                            <span style="background: #D4A5A5"></span>
-                            <span style="background: #FFF9F7"></span>
-                            <span style="background: #2A2222"></span>
-                        </div>
-                        <h4>Romantisk</h4>
-                        <p>Blød og indbydende</p>
-                    </div>
-                </label>
-
-                <label class="theme-card">
-                    <input type="radio" name="theme" value="modern">
-                    <div class="theme-preview modern">
-                        <div class="theme-colors">
-                            <span style="background: #0ea5e9"></span>
-                            <span style="background: #f0f9ff"></span>
-                            <span style="background: #0c4a6e"></span>
-                        </div>
-                        <h4>Moderne</h4>
-                        <p>Frisk og nutidig</p>
-                    </div>
-                </label>
-
-                <label class="theme-card">
-                    <input type="radio" name="theme" value="nature">
-                    <div class="theme-preview nature">
-                        <div class="theme-colors">
-                            <span style="background: #22c55e"></span>
-                            <span style="background: #f0fdf4"></span>
-                            <span style="background: #166534"></span>
-                        </div>
-                        <h4>Natur</h4>
-                        <p>Frisk og naturlig</p>
-                    </div>
-                </label>
-
-                <label class="theme-card">
-                    <input type="radio" name="theme" value="golden">
-                    <div class="theme-preview golden">
-                        <div class="theme-colors">
-                            <span style="background: #f59e0b"></span>
-                            <span style="background: #fffbeb"></span>
-                            <span style="background: #78350f"></span>
-                        </div>
-                        <h4>Guld</h4>
-                        <p>Luksuriøst og festligt</p>
-                    </div>
-                </label>
-
-                <label class="theme-card">
-                    <input type="radio" name="theme" value="minimal">
-                    <div class="theme-preview minimal">
-                        <div class="theme-colors">
-                            <span style="background: #1f2937"></span>
-                            <span style="background: #ffffff"></span>
-                            <span style="background: #6b7280"></span>
-                        </div>
-                        <h4>Minimalistisk</h4>
-                        <p>Rent og simpelt</p>
-                    </div>
-                </label>
-            </div>
-
-            <div class="wizard-actions">
-                <button type="button" class="btn btn-secondary prev-step">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-                    </svg>
-                    Tilbage
-                </button>
-                <button type="button" class="btn btn-primary next-step">
-                    Næste
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                    </svg>
-                </button>
-            </div>
-        </div>
-
-        <!-- Step 5: Summary & Create -->
-        <div class="wizard-step" data-step="5">
-            <h2>Opsummering</h2>
-            <p class="step-description">Gennemgå dine valg og opret arrangementet</p>
-
-            <div class="summary-card">
-                <div class="summary-section">
-                    <h4>Arrangementtype</h4>
-                    <p id="summary-type">-</p>
-                </div>
-                <div class="summary-section">
-                    <h4>Hovedperson</h4>
-                    <p id="summary-person">-</p>
-                </div>
-                <div class="summary-section">
-                    <h4>Dato & Sted</h4>
-                    <p id="summary-datetime">-</p>
-                    <p id="summary-location">-</p>
-                </div>
-                <div class="summary-section">
-                    <h4>Tema</h4>
-                    <p id="summary-theme">-</p>
-                </div>
             </div>
 
             <div class="info-box">
@@ -475,10 +313,12 @@ $error = $error ?? '';
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                 </svg>
                 <div>
-                    <strong>Hvad sker der nu?</strong>
-                    <p>Efter oprettelse kan du tilføje gæster, opsætte ønskeliste, menu, program og meget mere.</p>
+                    <strong>Næste skridt</strong>
+                    <p>Efter oprettelse kan du designe din invitation, tilføje gæster, ønskeliste og meget mere.</p>
                 </div>
             </div>
+
+            <input type="hidden" name="theme" value="elegant">
 
             <div class="wizard-actions">
                 <button type="button" class="btn btn-secondary prev-step">
@@ -499,6 +339,18 @@ $error = $error ?? '';
 </div>
 
 <style>
+    /* Map to Nordic palette */
+    :root {
+        --primary: var(--sage);
+        --secondary: var(--sage-dark);
+        --gray-100: var(--cream-light);
+        --gray-200: var(--cream-dark);
+        --gray-300: var(--cream-dark);
+        --gray-400: var(--charcoal-light);
+        --gray-500: var(--charcoal-light);
+        --gray-900: var(--charcoal);
+    }
+
     .wizard-container {
         max-width: 800px;
         margin: 0 auto;
@@ -632,7 +484,7 @@ $error = $error ?? '';
 
     .event-type-card input:checked + .event-type-content {
         border-color: var(--primary);
-        background: rgba(102, 126, 234, 0.05);
+        background: rgba(143, 165, 131, 0.08);
     }
 
     .event-type-icon {
@@ -873,7 +725,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let currentStep = 1;
 
     // Event type data for secondary person display
-    const eventTypesWithSecondary = <?= json_encode(array_filter($eventTypes, fn($t) => $t['has_secondary_person'])) ?>;
+    const eventTypesWithSecondary = <?= json_encode(array_filter($eventTypes, function($t) { return $t['has_secondary_person']; })) ?>;
     const eventTypeIds = eventTypesWithSecondary.map(t => t.id);
 
     // Navigation
@@ -910,11 +762,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
         currentStep = step;
 
-        // Update summary on last step
-        if (step === 5) {
-            updateSummary();
-        }
-
         // Scroll to top
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
@@ -940,54 +787,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
         return true;
-    }
-
-    function updateSummary() {
-        // Event type
-        const typeInput = form.querySelector('input[name="event_type_id"]:checked');
-        if (typeInput) {
-            const typeCard = typeInput.closest('.event-type-card');
-            document.getElementById('summary-type').textContent =
-                typeCard.querySelector('h3').textContent;
-        }
-
-        // Person
-        const mainPerson = form.querySelector('#main_person_name').value || '-';
-        const secondaryPerson = form.querySelector('#secondary_person_name').value;
-        document.getElementById('summary-person').textContent =
-            secondaryPerson ? `${mainPerson} & ${secondaryPerson}` : mainPerson;
-
-        // Date/time
-        const date = form.querySelector('#event_date').value;
-        const time = form.querySelector('#event_time').value;
-        let datetime = '-';
-        if (date) {
-            const dateObj = new Date(date);
-            datetime = dateObj.toLocaleDateString('da-DK', {
-                weekday: 'long',
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-            });
-            if (time) {
-                datetime += ' kl. ' + time;
-            }
-        }
-        document.getElementById('summary-datetime').textContent = datetime;
-
-        // Location
-        const location = form.querySelector('#location').value || '';
-        const address = form.querySelector('#address').value || '';
-        document.getElementById('summary-location').textContent =
-            location || address ? `${location}${location && address ? ', ' : ''}${address}` : 'Ikke angivet';
-
-        // Theme
-        const themeInput = form.querySelector('input[name="theme"]:checked');
-        if (themeInput) {
-            const themeCard = themeInput.closest('.theme-card');
-            document.getElementById('summary-theme').textContent =
-                themeCard.querySelector('h4').textContent;
-        }
     }
 
     // Show/hide secondary person field based on event type
