@@ -97,7 +97,7 @@ if (isset($_GET['logout'])) {
     redirect("/e/$slug/");
 }
 
-$validPages = ['landing', 'home', 'rsvp', 'wishlist', 'menu', 'schedule', 'photos', 'indslag'];
+$validPages = ['landing', 'home', 'rsvp', 'wishlist', 'menu', 'schedule', 'photos', 'memories', 'indslag'];
 if (!in_array($page, $validPages)) $page = 'landing';
 
 if ($guestLoggedIn && $page === 'landing') redirect("/e/$slug/home");
@@ -111,6 +111,7 @@ $navItems = [
     ['slug' => 'rsvp', 'label' => 'Tilmelding', 'icon' => 'check-circle'],
     ['slug' => 'schedule', 'label' => 'Program', 'icon' => 'calendar'],
     ['slug' => 'wishlist', 'label' => 'Ønsker', 'icon' => 'gift'],
+    ['slug' => 'memories', 'label' => 'Minder', 'icon' => 'clock'],
     ['slug' => 'photos', 'label' => 'Galleri', 'icon' => 'camera'],
     ['slug' => 'indslag', 'label' => 'Indslag', 'icon' => 'microphone'],
 ];
@@ -499,6 +500,7 @@ if ($useInvitationLayout) {
 
         .app-nav:hover {
             width: var(--nav-width-expanded);
+            box-shadow: -8px 0 32px rgba(0,0,0,0.08);
         }
 
         .nav-brand {
@@ -684,12 +686,6 @@ if ($useInvitationLayout) {
         .app-main {
             flex: 1;
             margin-right: var(--nav-width);
-            transition: margin-right 0.4s var(--ease-out);
-        }
-
-        .app-nav:hover ~ .app-main,
-        .app-main:has(~ .app-nav:hover) {
-            margin-right: var(--nav-width-expanded);
         }
 
         .page-container {
@@ -1104,10 +1100,6 @@ if ($useInvitationLayout) {
             .app-main {
                 margin-right: 0;
                 padding-bottom: 90px;
-            }
-
-            .app-nav:hover ~ .app-main {
-                margin-right: 0;
             }
 
             .page-container {

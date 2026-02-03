@@ -41,7 +41,7 @@ if (!$event) {
 
 // Get current page/tab
 $page = $_GET['page'] ?? 'dashboard';
-$validPages = ['dashboard', 'guests', 'wishlist', 'menu', 'schedule', 'photos', 'checklist', 'budget', 'seating', 'toastmaster', 'invitation', 'invitation-send', 'settings'];
+$validPages = ['dashboard', 'guests', 'wishlist', 'menu', 'schedule', 'photos', 'memories-admin', 'qr-bordkort', 'checklist', 'budget', 'seating', 'toastmaster', 'invitation', 'invitation-send', 'settings'];
 if (!in_array($page, $validPages)) {
     $page = 'dashboard';
 }
@@ -59,7 +59,8 @@ $hasToastmaster = !empty($features['toastmaster']);
 // Get event statistics
 $stmt = $db->prepare("
     SELECT
-        COUNT(*) as total_guests,
+        COUNT(*) as total_invitations,
+        COALESCE(SUM(max_guests), 0) as total_guests,
         SUM(CASE WHEN rsvp_status = 'yes' THEN 1 ELSE 0 END) as accepted,
         SUM(CASE WHEN rsvp_status = 'no' THEN 1 ELSE 0 END) as declined,
         SUM(CASE WHEN rsvp_status = 'pending' THEN 1 ELSE 0 END) as pending,
@@ -804,6 +805,18 @@ $pageTitle = $event['name'] ?? 'Arrangement';
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                 </svg>
                 Fotos
+            </a>
+            <a href="?id=<?= $eventId ?>&page=memories-admin" class="tab-link <?= $page === 'memories-admin' ? 'active' : '' ?>">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                Minder
+            </a>
+            <a href="?id=<?= $eventId ?>&page=qr-bordkort" class="tab-link <?= $page === 'qr-bordkort' ? 'active' : '' ?>">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"></path>
+                </svg>
+                QR-Bordkort
             </a>
             <a href="?id=<?= $eventId ?>&page=checklist" class="tab-link <?= $page === 'checklist' ? 'active' : '' ?> <?= !$hasChecklist ? 'premium' : '' ?>">
                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">

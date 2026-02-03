@@ -1,0 +1,482 @@
+<?php
+/**
+ * QR Bordkort Generator Page
+ * Generate printable A4 table cards with QR code matching invitation theme
+ */
+
+require_once __DIR__ . '/../../../includes/qr-functions.php';
+require_once __DIR__ . '/../../../includes/invitation-functions.php';
+
+// Get invitation config for theme colors
+$invitationConfig = getInvitationConfig($db, $eventId);
+$fonts = getBordkortFonts($invitationConfig['font_style'] ?? 'elegant');
+
+// Get QR destinations
+$qrDestinations = getQRDestinations();
+
+// Default settings
+$destination = $_GET['destination'] ?? 'photos';
+$headline = $_GET['headline'] ?? '';
+$subtitle = $_GET['subtitle'] ?? '';
+$showEventName = isset($_GET['show_name']) ? $_GET['show_name'] === '1' : true;
+$printMode = isset($_GET['print']) && $_GET['print'] === '1';
+
+// Get default text if not customized
+if (empty($headline) || empty($subtitle)) {
+    $defaultText = getBordkortDefaultText($destination);
+    if (empty($headline)) $headline = $defaultText['headline'];
+    if (empty($subtitle)) $subtitle = $defaultText['subtitle'];
+}
+
+// Generate QR code URL
+$destinationPage = $qrDestinations[$destination]['page'] ?? 'photos';
+$eventUrl = getEventGuestUrl($event['slug'], $destinationPage);
+$qrCodeUrl = generateQRCodeUrl($eventUrl, 400);
+
+// Colors from invitation config
+$colorPrimary = $invitationConfig['color_primary'] ?? '#1A1A1A';
+$colorSecondary = $invitationConfig['color_secondary'] ?? '#8FA583';
+$colorAccent = $invitationConfig['color_accent'] ?? '#B8923D';
+$colorBackground = $invitationConfig['color_background'] ?? '#FAF9F7';
+$colorText = $invitationConfig['color_text'] ?? '#1A1A1A';
+
+// If print mode, output minimal page
+if ($printMode):
+?>
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <title>QR Bordkort - <?= htmlspecialchars($event['name']) ?></title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=<?= $fonts['google'] ?>&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        @page {
+            size: A4;
+            margin: 0;
+        }
+
+        body {
+            font-family: <?= $fonts['body'] ?>;
+            background: <?= $colorBackground ?>;
+            color: <?= $colorText ?>;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        .bordkort-page {
+            width: 210mm;
+            height: 297mm;
+            padding: 30mm;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .event-name {
+            font-family: <?= $fonts['display'] ?>;
+            font-size: 32px;
+            font-weight: 500;
+            color: <?= $colorPrimary ?>;
+            margin-bottom: 40px;
+            letter-spacing: 0.02em;
+        }
+
+        .qr-container {
+            background: white;
+            padding: 24px;
+            border-radius: 20px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+            margin-bottom: 40px;
+        }
+
+        .qr-code {
+            width: 180px;
+            height: 180px;
+        }
+
+        .headline {
+            font-family: <?= $fonts['display'] ?>;
+            font-size: 36px;
+            font-weight: 500;
+            color: <?= $colorPrimary ?>;
+            margin-bottom: 12px;
+        }
+
+        .subtitle {
+            font-size: 18px;
+            color: <?= $colorText ?>;
+            opacity: 0.7;
+            margin-bottom: 50px;
+        }
+
+        .divider {
+            width: 60px;
+            height: 2px;
+            background: <?= $colorSecondary ?>;
+            margin-bottom: 20px;
+        }
+
+        .footer {
+            font-size: 14px;
+            color: <?= $colorText ?>;
+            opacity: 0.5;
+            letter-spacing: 0.05em;
+        }
+
+        @media print {
+            .bordkort-page {
+                page-break-after: always;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bordkort-page">
+        <?php if ($showEventName): ?>
+        <h1 class="event-name"><?= htmlspecialchars($event['name']) ?></h1>
+        <?php endif; ?>
+
+        <div class="qr-container">
+            <img src="<?= htmlspecialchars($qrCodeUrl) ?>" alt="QR Code" class="qr-code">
+        </div>
+
+        <h2 class="headline"><?= htmlspecialchars($headline) ?></h2>
+        <p class="subtitle"><?= htmlspecialchars($subtitle) ?></p>
+
+        <div class="divider"></div>
+        <p class="footer">partyparart.dk</p>
+    </div>
+
+    <script>
+        window.onload = function() {
+            window.print();
+        };
+    </script>
+</body>
+</html>
+<?php
+exit;
+endif;
+?>
+
+<div class="page-header-actions">
+    <div>
+        <h1 class="section-title">QR-Bordkort</h1>
+        <p class="section-subtitle">Generer et printbart bordkort med QR-kode</p>
+    </div>
+</div>
+
+<div class="bordkort-layout">
+    <!-- Settings Panel -->
+    <div class="card settings-panel">
+        <div class="card-header">
+            <h2 class="card-title">Indstillinger</h2>
+        </div>
+
+        <form method="GET" id="bordkortForm">
+            <input type="hidden" name="id" value="<?= $eventId ?>">
+            <input type="hidden" name="page" value="qr-bordkort">
+
+            <div class="form-group">
+                <label class="form-label">QR-kode destination</label>
+                <select name="destination" class="form-input" onchange="this.form.submit()">
+                    <?php foreach ($qrDestinations as $key => $dest): ?>
+                    <option value="<?= $key ?>" <?= $destination === $key ? 'selected' : '' ?>>
+                        <?= htmlspecialchars($dest['label']) ?>
+                    </option>
+                    <?php endforeach; ?>
+                </select>
+                <p class="form-hint"><?= htmlspecialchars($qrDestinations[$destination]['description'] ?? '') ?></p>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Overskrift</label>
+                <input type="text" name="headline" class="form-input" value="<?= htmlspecialchars($headline) ?>" placeholder="Del dine billeder!">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Undertekst</label>
+                <input type="text" name="subtitle" class="form-input" value="<?= htmlspecialchars($subtitle) ?>" placeholder="Scan QR-koden med din mobil">
+            </div>
+
+            <div class="form-group">
+                <label class="toggle-label">
+                    <input type="hidden" name="show_name" value="0">
+                    <input type="checkbox" name="show_name" value="1" <?= $showEventName ? 'checked' : '' ?>>
+                    <span class="toggle-switch"></span>
+                    <span>Vis arrangementsnavn</span>
+                </label>
+            </div>
+
+            <div class="form-actions" style="border: none; padding-top: 0; margin-top: 16px;">
+                <button type="submit" class="btn btn-secondary">Opdater preview</button>
+            </div>
+        </form>
+
+        <div class="divider-line"></div>
+
+        <div class="color-preview">
+            <h4>Tema farver fra invitation</h4>
+            <div class="color-swatches">
+                <div class="color-swatch" style="background: <?= $colorPrimary ?>;" title="Primær"></div>
+                <div class="color-swatch" style="background: <?= $colorSecondary ?>;" title="Sekundær"></div>
+                <div class="color-swatch" style="background: <?= $colorAccent ?>;" title="Accent"></div>
+                <div class="color-swatch" style="background: <?= $colorBackground ?>; border: 1px solid #ddd;" title="Baggrund"></div>
+            </div>
+            <p class="form-hint">Farverne hentes automatisk fra din invitation</p>
+        </div>
+
+        <div class="print-actions">
+            <a href="?id=<?= $eventId ?>&page=qr-bordkort&destination=<?= $destination ?>&headline=<?= urlencode($headline) ?>&subtitle=<?= urlencode($subtitle) ?>&show_name=<?= $showEventName ? '1' : '0' ?>&print=1"
+               class="btn btn-primary btn-full" target="_blank">
+                <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path>
+                </svg>
+                Print bordkort
+            </a>
+        </div>
+    </div>
+
+    <!-- Preview Panel -->
+    <div class="preview-panel">
+        <div class="preview-header">
+            <span class="preview-label">Preview (A4)</span>
+        </div>
+        <div class="preview-frame">
+            <div class="bordkort-preview" style="background: <?= $colorBackground ?>; color: <?= $colorText ?>;">
+                <?php if ($showEventName): ?>
+                <h1 class="preview-event-name" style="color: <?= $colorPrimary ?>; font-family: <?= $fonts['display'] ?>;">
+                    <?= htmlspecialchars($event['name']) ?>
+                </h1>
+                <?php endif; ?>
+
+                <div class="preview-qr-container">
+                    <img src="<?= htmlspecialchars($qrCodeUrl) ?>" alt="QR Code" class="preview-qr">
+                </div>
+
+                <h2 class="preview-headline" style="color: <?= $colorPrimary ?>; font-family: <?= $fonts['display'] ?>;">
+                    <?= htmlspecialchars($headline) ?>
+                </h2>
+                <p class="preview-subtitle" style="color: <?= $colorText ?>;">
+                    <?= htmlspecialchars($subtitle) ?>
+                </p>
+
+                <div class="preview-divider" style="background: <?= $colorSecondary ?>;"></div>
+                <p class="preview-footer" style="color: <?= $colorText ?>;">partyparart.dk</p>
+            </div>
+        </div>
+
+        <div class="qr-info">
+            <p><strong>QR-koden linker til:</strong></p>
+            <code><?= htmlspecialchars($eventUrl) ?></code>
+        </div>
+    </div>
+</div>
+
+<style>
+.bordkort-layout {
+    display: grid;
+    grid-template-columns: 340px 1fr;
+    gap: 24px;
+    align-items: start;
+}
+
+.settings-panel {
+    position: sticky;
+    top: 100px;
+}
+
+.settings-panel .card-header {
+    margin-bottom: 20px;
+}
+
+.divider-line {
+    height: 1px;
+    background: var(--cream-dark);
+    margin: 24px 0;
+}
+
+.color-preview h4 {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+
+.color-swatches {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.color-swatch {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+}
+
+.print-actions {
+    margin-top: 24px;
+}
+
+.toggle-label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.toggle-label input[type="checkbox"] {
+    display: none;
+}
+
+.toggle-switch {
+    width: 44px;
+    height: 24px;
+    background: var(--cream-dark);
+    border-radius: 12px;
+    position: relative;
+    transition: background 0.3s;
+}
+
+.toggle-switch::after {
+    content: '';
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    background: white;
+    border-radius: 50%;
+    top: 3px;
+    left: 3px;
+    transition: transform 0.3s;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.toggle-label input:checked + .toggle-switch {
+    background: var(--sage);
+}
+
+.toggle-label input:checked + .toggle-switch::after {
+    transform: translateX(20px);
+}
+
+/* Preview Panel */
+.preview-panel {
+    background: var(--white);
+    border-radius: 20px;
+    border: 1px solid var(--cream-dark);
+    overflow: hidden;
+}
+
+.preview-header {
+    padding: 16px 20px;
+    background: var(--cream);
+    border-bottom: 1px solid var(--cream-dark);
+}
+
+.preview-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--charcoal-light);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.preview-frame {
+    padding: 24px;
+    background: #E0E0E0;
+}
+
+.bordkort-preview {
+    aspect-ratio: 210 / 297;
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 40px 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    border-radius: 4px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+}
+
+.preview-event-name {
+    font-size: 18px;
+    font-weight: 500;
+    margin-bottom: 24px;
+    letter-spacing: 0.02em;
+}
+
+.preview-qr-container {
+    background: white;
+    padding: 16px;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    margin-bottom: 24px;
+}
+
+.preview-qr {
+    width: 100px;
+    height: 100px;
+    display: block;
+}
+
+.preview-headline {
+    font-size: 22px;
+    font-weight: 500;
+    margin-bottom: 8px;
+}
+
+.preview-subtitle {
+    font-size: 12px;
+    opacity: 0.7;
+    margin-bottom: 30px;
+}
+
+.preview-divider {
+    width: 40px;
+    height: 2px;
+    margin-bottom: 12px;
+}
+
+.preview-footer {
+    font-size: 10px;
+    opacity: 0.5;
+    letter-spacing: 0.05em;
+}
+
+.qr-info {
+    padding: 16px 20px;
+    border-top: 1px solid var(--cream-dark);
+    background: var(--cream);
+}
+
+.qr-info p {
+    font-size: 13px;
+    color: var(--charcoal-light);
+    margin-bottom: 6px;
+}
+
+.qr-info code {
+    font-size: 12px;
+    color: var(--charcoal);
+    word-break: break-all;
+}
+
+@media (max-width: 900px) {
+    .bordkort-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .settings-panel {
+        position: static;
+    }
+}
+</style>

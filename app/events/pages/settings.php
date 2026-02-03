@@ -3,6 +3,8 @@
  * Event Settings Page
  */
 
+require_once __DIR__ . '/../../../includes/qr-functions.php';
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     if (!verifyAccountCsrfToken($_POST['csrf_token'] ?? '')) {
         setFlash('error', 'Ugyldig anmodning.');
@@ -11,7 +13,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 
     $action = $_POST['action'];
 
-    if ($action === 'update_settings') {
+    if ($action === 'update_timeline') {
+        $timelineEnabled = isset($_POST['timeline_enabled']) ? 1 : 0;
+        $timelineStartDate = $_POST['timeline_start_date'] ?? null;
+        $timelineLabel = trim($_POST['timeline_label'] ?? '');
+
+        $stmt = $db->prepare("
+            UPDATE events SET
+                timeline_enabled = ?,
+                timeline_start_date = ?,
+                timeline_label = ?
+            WHERE id = ? AND account_id = ?
+        ");
+        $stmt->execute([
+            $timelineEnabled,
+            $timelineStartDate ?: null,
+            $timelineLabel ?: null,
+            $eventId, $accountId
+        ]);
+
+        setFlash('success', 'Tidslinje-indstillinger gemt.');
+        redirect("?id=$eventId&page=settings");
+
+    } elseif ($action === 'update_settings') {
         $name = trim($_POST['name'] ?? '');
         $mainPersonName = trim($_POST['main_person_name'] ?? '');
         $secondaryPersonName = trim($_POST['secondary_person_name'] ?? '');
@@ -145,6 +169,64 @@ $eventTypes = getAllEventTypes();
         </form>
     </div>
 
+    <!-- Timeline Settings -->
+    <div class="card">
+        <div class="card-header">
+            <h2 class="card-title">Minde-tidslinje</h2>
+        </div>
+        <form method="POST">
+            <?= accountCsrfField() ?>
+            <input type="hidden" name="action" value="update_timeline">
+
+            <div class="timeline-settings">
+                <div class="form-group">
+                    <label class="toggle-label">
+                        <input type="checkbox" name="timeline_enabled" value="1" <?= !empty($event['timeline_enabled']) ? 'checked' : '' ?>>
+                        <span class="toggle-switch"></span>
+                        <span>Aktiver minde-tidslinje</span>
+                    </label>
+                    <p class="form-hint">Gæster kan uploade billeder med årstal til en tidslinje</p>
+                </div>
+
+                <div class="form-grid" style="margin-top: 20px;">
+                    <div class="form-group">
+                        <label class="form-label">Tidslinje starter fra</label>
+                        <input type="date" name="timeline_start_date" class="form-input"
+                               value="<?= htmlspecialchars($event['timeline_start_date'] ?? '') ?>">
+                        <p class="form-hint">F.eks. fødselsdato eller bryllupsdato</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Tidslinje-titel</label>
+                        <input type="text" name="timeline_label" class="form-input"
+                               value="<?= htmlspecialchars($event['timeline_label'] ?? '') ?>"
+                               placeholder="F.eks. &quot;Mit liv i billeder&quot;">
+                    </div>
+                </div>
+
+                <?php
+                // Show suggested settings based on event type
+                $suggestedTimeline = getSuggestedTimelineStart(
+                    $event['event_type_name'] ?? '',
+                    $event['event_date'] ?? null
+                );
+                ?>
+                <div class="suggestion-box">
+                    <p><strong>Forslag baseret på arrangementtype:</strong></p>
+                    <p>Startdato: <?= htmlspecialchars(date('d/m/Y', strtotime($suggestedTimeline['date']))) ?></p>
+                    <p>Titel: "<?= htmlspecialchars($suggestedTimeline['label']) ?>"</p>
+                    <button type="button" class="btn btn-sm btn-secondary" onclick="applySuggestedTimeline('<?= $suggestedTimeline['date'] ?>', '<?= htmlspecialchars($suggestedTimeline['label'], ENT_QUOTES) ?>')">
+                        Anvend forslag
+                    </button>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Gem tidslinje-indstillinger</button>
+            </div>
+        </form>
+    </div>
+
     <!-- Share Link -->
     <div class="card">
         <div class="card-header">
@@ -221,6 +303,21 @@ $eventTypes = getAllEventTypes();
     .danger-item p { font-size: 14px; color: var(--gray-600); }
     .btn-danger { background: var(--danger); color: white; }
     .delete-warning { background: #fef2f2; border: 1px solid #fecaca; padding: 12px; border-radius: 8px; margin-bottom: 20px; color: #dc2626; font-size: 14px; }
+
+    /* Toggle switch */
+    .toggle-label { display: flex; align-items: center; gap: 12px; cursor: pointer; font-size: 14px; font-weight: 500; }
+    .toggle-label input[type="checkbox"] { display: none; }
+    .toggle-switch { width: 44px; height: 24px; background: var(--cream-dark); border-radius: 12px; position: relative; transition: background 0.3s; flex-shrink: 0; }
+    .toggle-switch::after { content: ''; position: absolute; width: 18px; height: 18px; background: white; border-radius: 50%; top: 3px; left: 3px; transition: transform 0.3s; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+    .toggle-label input:checked + .toggle-switch { background: var(--sage); }
+    .toggle-label input:checked + .toggle-switch::after { transform: translateX(20px); }
+
+    /* Suggestion box */
+    .suggestion-box { background: var(--cream); border-radius: 12px; padding: 16px; margin-top: 20px; }
+    .suggestion-box p { font-size: 13px; color: var(--charcoal-light); margin-bottom: 6px; }
+    .suggestion-box p strong { color: var(--charcoal); }
+    .suggestion-box .btn { margin-top: 12px; }
+
     @media (max-width: 640px) { .form-grid { grid-template-columns: 1fr; } .form-group.full-width { grid-column: span 1; } .danger-item { flex-direction: column; align-items: flex-start; } }
 </style>
 
@@ -236,4 +333,9 @@ function hideDeleteModal() { document.getElementById('deleteModal').style.displa
 document.querySelectorAll('.modal-overlay').forEach(o => {
     o.addEventListener('click', function(e) { if (e.target === this) this.style.display = 'none'; });
 });
+function applySuggestedTimeline(date, label) {
+    document.querySelector('input[name="timeline_start_date"]').value = date;
+    document.querySelector('input[name="timeline_label"]').value = label;
+    document.querySelector('input[name="timeline_enabled"]').checked = true;
+}
 </script>
