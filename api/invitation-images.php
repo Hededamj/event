@@ -12,7 +12,7 @@ require_once __DIR__ . '/../includes/auth-account.php';
 require_once __DIR__ . '/../includes/invitation-functions.php';
 
 // Require authentication
-if (!isLoggedIn()) {
+if (!isAccountLoggedIn()) {
     http_response_code(401);
     echo json_encode(['success' => false, 'error' => 'Ikke logget ind']);
     exit;

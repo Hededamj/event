@@ -277,13 +277,14 @@ class EmailService {
                 continue;
             }
 
-            $status = match($eventType) {
+            $statusMap = array(
                 'delivered' => 'delivered',
                 'open' => 'opened',
                 'click' => 'clicked',
-                'bounce', 'dropped' => 'bounced',
-                default => null
-            };
+                'bounce' => 'bounced',
+                'dropped' => 'bounced'
+            );
+            $status = isset($statusMap[$eventType]) ? $statusMap[$eventType] : null;
 
             if ($status) {
                 updateEmailStatus($this->db, $email['id'], $status);

@@ -206,13 +206,107 @@ $readiness = isInvitationReadyToPublish($db, $eventId);
 
     .template-preview {
         aspect-ratio: 4/3;
-        background: linear-gradient(135deg, var(--sage-light) 0%, var(--sage) 100%);
         display: flex;
         align-items: center;
         justify-content: center;
-        color: var(--white);
-        font-family: var(--font-display);
-        font-size: 24px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .template-preview-mock {
+        width: 90%;
+        height: 85%;
+        border-radius: 6px;
+        display: flex;
+        flex-direction: column;
+        padding: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        position: relative;
+    }
+
+    .template-preview-mock.layout-split {
+        flex-direction: row;
+    }
+
+    .template-preview-mock.layout-split .mock-image {
+        width: 45%;
+        height: 100%;
+        border-radius: 4px;
+    }
+
+    .template-preview-mock.layout-split .mock-content {
+        flex: 1;
+        padding-left: 10px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 6px;
+    }
+
+    .template-preview-mock.layout-centered {
+        align-items: center;
+        text-align: center;
+    }
+
+    .template-preview-mock.layout-centered .mock-image {
+        width: 60%;
+        height: 40%;
+        border-radius: 4px;
+        margin-bottom: 8px;
+    }
+
+    .template-preview-mock.layout-fullscreen .mock-image {
+        position: absolute;
+        inset: 0;
+        border-radius: 6px;
+    }
+
+    .template-preview-mock.layout-fullscreen .mock-content {
+        position: relative;
+        z-index: 1;
+        text-align: center;
+        padding-top: 30px;
+    }
+
+    .template-preview-mock.layout-minimal {
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+    }
+
+    .template-preview-mock.layout-minimal .mock-image {
+        display: none;
+    }
+
+    .template-preview-mock.layout-classic {
+        border: 3px double currentColor;
+        align-items: center;
+        text-align: center;
+        padding: 16px;
+    }
+
+    .template-preview-mock.layout-classic .mock-image {
+        width: 50%;
+        height: 35%;
+        border-radius: 4px;
+        margin-bottom: 8px;
+    }
+
+    .mock-title {
+        height: 8px;
+        border-radius: 2px;
+        width: 70%;
+    }
+
+    .mock-text {
+        height: 4px;
+        border-radius: 1px;
+        width: 90%;
+        opacity: 0.5;
+    }
+
+    .mock-text.short {
+        width: 50%;
     }
 
     .template-info {
@@ -697,10 +791,24 @@ $readiness = isInvitationReadyToPublish($db, $eventId);
             <form method="POST" style="display: contents;">
                 <input type="hidden" name="action" value="apply-template">
                 <input type="hidden" name="template_id" value="<?= $template['id'] ?>">
+                <?php
+                $colors = json_decode($template['color_scheme'], true);
+                $bgColor = $colors['background'] ?? '#FAF9F7';
+                $primaryColor = $colors['primary'] ?? '#1A1A1A';
+                $secondaryColor = $colors['secondary'] ?? '#8FA583';
+                $accentColor = $colors['accent'] ?? '#B8923D';
+                ?>
                 <div class="template-card <?= $invitationConfig['template_id'] == $template['id'] ? 'selected' : '' ?> <?= $template['is_recommended'] ? 'recommended' : '' ?>"
                      onclick="this.closest('form').submit()">
-                    <div class="template-preview">
-                        <?= substr($template['name'], 0, 1) ?>
+                    <div class="template-preview" style="background: <?= htmlspecialchars($bgColor) ?>;">
+                        <div class="template-preview-mock layout-<?= htmlspecialchars($template['layout_style']) ?>" style="background: <?= htmlspecialchars($bgColor) ?>; color: <?= htmlspecialchars($primaryColor) ?>;">
+                            <div class="mock-image" style="background: linear-gradient(135deg, <?= htmlspecialchars($secondaryColor) ?> 0%, <?= htmlspecialchars($accentColor) ?> 100%);"></div>
+                            <div class="mock-content">
+                                <div class="mock-title" style="background: <?= htmlspecialchars($primaryColor) ?>;"></div>
+                                <div class="mock-text" style="background: <?= htmlspecialchars($primaryColor) ?>;"></div>
+                                <div class="mock-text short" style="background: <?= htmlspecialchars($accentColor) ?>;"></div>
+                            </div>
+                        </div>
                     </div>
                     <div class="template-info">
                         <div class="template-name"><?= htmlspecialchars($template['name']) ?></div>

@@ -112,7 +112,7 @@ function hasRole(string $role): bool {
  * @param string|array $roles Single role or array of allowed roles
  * @param string|null $redirectUrl Where to redirect if role not met
  */
-function requireRole(string|array $roles, ?string $redirectUrl = null): void {
+function requireRole($roles, $redirectUrl = null) {
     if (!isLoggedIn()) {
         redirect(BASE_PATH . '/index.php?error=login_required');
     }

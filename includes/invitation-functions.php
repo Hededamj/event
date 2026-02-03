@@ -487,8 +487,12 @@ function getOrderedSections(array $config): array {
     $sections = $config['sections_order'] ?? $defaultSections;
 
     // Filter enabled sections and sort by position
-    $enabled = array_filter($sections, fn($s) => $s['enabled'] ?? true);
-    uasort($enabled, fn($a, $b) => ($a['position'] ?? 99) - ($b['position'] ?? 99));
+    $enabled = array_filter($sections, function($s) { return isset($s['enabled']) ? $s['enabled'] : true; });
+    uasort($enabled, function($a, $b) {
+        $posA = isset($a['position']) ? $a['position'] : 99;
+        $posB = isset($b['position']) ? $b['position'] : 99;
+        return $posA - $posB;
+    });
 
     return array_keys($enabled);
 }
@@ -503,7 +507,7 @@ function isInvitationReadyToPublish(PDO $db, int $eventId): array {
     $issues = [];
 
     // Check for hero image
-    $hasHero = array_filter($images, fn($i) => $i['image_role'] === 'hero');
+    $hasHero = array_filter($images, function($i) { return $i['image_role'] === 'hero'; });
     if (empty($hasHero)) {
         $issues[] = 'Ingen hovedbillede valgt';
     }
@@ -573,14 +577,14 @@ function logInvitationEmail(PDO $db, int $eventId, int $guestId, string $email, 
 /**
  * Update email status
  */
-function updateEmailStatus(PDO $db, int $emailId, string $status, ?string $externalId = null, ?string $error = null): bool {
-    $timestampField = match($status) {
+function updateEmailStatus(PDO $db, int $emailId, string $status, $externalId = null, $error = null) {
+    $timestampFields = array(
         'sent' => 'sent_at',
         'delivered' => 'delivered_at',
         'opened' => 'opened_at',
-        'clicked' => 'clicked_at',
-        default => null
-    };
+        'clicked' => 'clicked_at'
+    );
+    $timestampField = isset($timestampFields[$status]) ? $timestampFields[$status] : null;
 
     $sql = "UPDATE invitation_emails SET status = ?";
     $params = [$status];
