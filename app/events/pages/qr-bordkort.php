@@ -40,6 +40,20 @@ $colorAccent = $invitationConfig['color_accent'] ?? '#B8923D';
 $colorBackground = $invitationConfig['color_background'] ?? '#FAF9F7';
 $colorText = $invitationConfig['color_text'] ?? '#1A1A1A';
 
+// Format event date in Danish
+$eventDateFormatted = null;
+$eventDateParts = null;
+if ($event['event_date']) {
+    $months = ['', 'januar', 'februar', 'marts', 'april', 'maj', 'juni', 'juli', 'august', 'september', 'oktober', 'november', 'december'];
+    $date = new DateTime($event['event_date']);
+    $eventDateParts = [
+        'day' => $date->format('j'),
+        'month' => $months[(int)$date->format('n')],
+        'year' => $date->format('Y')
+    ];
+    $eventDateFormatted = $eventDateParts['day'] . '. ' . $eventDateParts['month'] . ' ' . $eventDateParts['year'];
+}
+
 // If print mode, output minimal page
 if ($printMode):
 ?>
@@ -59,6 +73,11 @@ if ($printMode):
             margin: 0;
         }
 
+        html, body {
+            width: 210mm;
+            height: 297mm;
+        }
+
         body {
             font-family: <?= $fonts['body'] ?>;
             background: <?= $colorBackground ?>;
@@ -70,63 +89,157 @@ if ($printMode):
         .bordkort-page {
             width: 210mm;
             height: 297mm;
-            padding: 30mm;
+            padding: 25mm 30mm;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
+            justify-content: space-between;
             text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Decorative corners */
+        .corner {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            border-color: <?= $colorSecondary ?>;
+            border-style: solid;
+            border-width: 0;
+            opacity: 0.4;
+        }
+        .corner-tl { top: 20mm; left: 20mm; border-top-width: 2px; border-left-width: 2px; }
+        .corner-tr { top: 20mm; right: 20mm; border-top-width: 2px; border-right-width: 2px; }
+        .corner-bl { bottom: 20mm; left: 20mm; border-bottom-width: 2px; border-left-width: 2px; }
+        .corner-br { bottom: 20mm; right: 20mm; border-bottom-width: 2px; border-right-width: 2px; }
+
+        /* Header section */
+        .header-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .event-type {
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: <?= $colorSecondary ?>;
         }
 
         .event-name {
             font-family: <?= $fonts['display'] ?>;
-            font-size: 32px;
-            font-weight: 500;
+            font-size: 42px;
+            font-weight: 400;
             color: <?= $colorPrimary ?>;
-            margin-bottom: 40px;
-            letter-spacing: 0.02em;
+            letter-spacing: 0.01em;
+            line-height: 1.2;
+        }
+
+        .event-date {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-top: 8px;
+        }
+
+        .event-date-line {
+            width: 40px;
+            height: 1px;
+            background: <?= $colorAccent ?>;
+        }
+
+        .event-date-text {
+            font-family: <?= $fonts['display'] ?>;
+            font-size: 18px;
+            font-weight: 400;
+            color: <?= $colorPrimary ?>;
+            letter-spacing: 0.05em;
+        }
+
+        /* Main content */
+        .main-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         .qr-container {
             background: white;
-            padding: 24px;
+            padding: 20px;
+            border-radius: 16px;
+            box-shadow: 0 8px 40px rgba(0,0,0,0.08);
+            margin-bottom: 32px;
+            position: relative;
+        }
+
+        .qr-container::before {
+            content: '';
+            position: absolute;
+            inset: -4px;
+            border: 2px solid <?= $colorAccent ?>;
             border-radius: 20px;
-            box-shadow: 0 4px 24px rgba(0,0,0,0.08);
-            margin-bottom: 40px;
+            opacity: 0.3;
         }
 
         .qr-code {
-            width: 180px;
-            height: 180px;
+            width: 160px;
+            height: 160px;
+            display: block;
         }
 
         .headline {
             font-family: <?= $fonts['display'] ?>;
-            font-size: 36px;
-            font-weight: 500;
+            font-size: 32px;
+            font-weight: 400;
             color: <?= $colorPrimary ?>;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
+            letter-spacing: 0.01em;
         }
 
         .subtitle {
-            font-size: 18px;
+            font-size: 16px;
             color: <?= $colorText ?>;
-            opacity: 0.7;
-            margin-bottom: 50px;
+            opacity: 0.6;
+            font-weight: 400;
         }
 
-        .divider {
-            width: 60px;
-            height: 2px;
+        /* Footer section */
+        .footer-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .decorative-element {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .decorative-dot {
+            width: 6px;
+            height: 6px;
+            background: <?= $colorAccent ?>;
+            border-radius: 50%;
+        }
+
+        .decorative-line {
+            width: 50px;
+            height: 1px;
             background: <?= $colorSecondary ?>;
-            margin-bottom: 20px;
         }
 
         .footer {
-            font-size: 14px;
+            font-size: 12px;
             color: <?= $colorText ?>;
-            opacity: 0.5;
-            letter-spacing: 0.05em;
+            opacity: 0.4;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
         }
 
         @media print {
@@ -138,19 +251,50 @@ if ($printMode):
 </head>
 <body>
     <div class="bordkort-page">
-        <?php if ($showEventName): ?>
-        <h1 class="event-name"><?= htmlspecialchars($event['name']) ?></h1>
-        <?php endif; ?>
+        <!-- Decorative corners -->
+        <div class="corner corner-tl"></div>
+        <div class="corner corner-tr"></div>
+        <div class="corner corner-bl"></div>
+        <div class="corner corner-br"></div>
 
-        <div class="qr-container">
-            <img src="<?= htmlspecialchars($qrCodeUrl) ?>" alt="QR Code" class="qr-code">
+        <!-- Header -->
+        <div class="header-section">
+            <?php if ($event['event_type_name']): ?>
+            <span class="event-type"><?= htmlspecialchars($event['event_type_name']) ?></span>
+            <?php endif; ?>
+
+            <?php if ($showEventName): ?>
+            <h1 class="event-name"><?= htmlspecialchars($event['name']) ?></h1>
+            <?php endif; ?>
+
+            <?php if ($eventDateFormatted): ?>
+            <div class="event-date">
+                <span class="event-date-line"></span>
+                <span class="event-date-text"><?= htmlspecialchars($eventDateFormatted) ?></span>
+                <span class="event-date-line"></span>
+            </div>
+            <?php endif; ?>
         </div>
 
-        <h2 class="headline"><?= htmlspecialchars($headline) ?></h2>
-        <p class="subtitle"><?= htmlspecialchars($subtitle) ?></p>
+        <!-- Main QR Section -->
+        <div class="main-section">
+            <div class="qr-container">
+                <img src="<?= htmlspecialchars($qrCodeUrl) ?>" alt="QR Code" class="qr-code">
+            </div>
 
-        <div class="divider"></div>
-        <p class="footer">partyparart.dk</p>
+            <h2 class="headline"><?= htmlspecialchars($headline) ?></h2>
+            <p class="subtitle"><?= htmlspecialchars($subtitle) ?></p>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer-section">
+            <div class="decorative-element">
+                <span class="decorative-line"></span>
+                <span class="decorative-dot"></span>
+                <span class="decorative-line"></span>
+            </div>
+            <p class="footer">partyparart.dk</p>
+        </div>
     </div>
 
     <script>
