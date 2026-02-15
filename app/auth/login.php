@@ -25,23 +25,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (empty($email) || empty($password)) {
             $error = 'Udfyld venligst email og adgangskode.';
         } else {
-            $result = verifyAccountPassword($email, $password);
-
-            if ($result === null) {
-                $error = 'Forkert email eller adgangskode.';
-            } elseif (isset($result['error']) && $result['error'] === 'account_inactive') {
-                $error = 'Din konto er deaktiveret. Kontakt support.';
+            // Check rate limiting before attempting login
+            $lockoutMinutes = isLoginRateLimited($email);
+            if ($lockoutMinutes > 0) {
+                $error = "For mange loginforsøg. Prøv igen om $lockoutMinutes minut" . ($lockoutMinutes > 1 ? 'ter' : '') . '.';
             } else {
-                // Successful login
-                accountLogin($result['id'], $result['email'], $result['name']);
+                $result = verifyAccountPassword($email, $password);
 
-                // Redirect to return URL or dashboard
-                $returnUrl = $_GET['return'] ?? '/app/dashboard.php';
-                // Validate return URL is local
-                if (strpos($returnUrl, '/') !== 0) {
-                    $returnUrl = '/app/dashboard.php';
+                if ($result === null) {
+                    recordLoginAttempt($email);
+                    $error = 'Forkert email eller adgangskode.';
+                } elseif (isset($result['error']) && $result['error'] === 'account_inactive') {
+                    $error = 'Din konto er deaktiveret. Kontakt support.';
+                } else {
+                    // Successful login - clear failed attempts
+                    clearLoginAttempts($email);
+                    accountLogin($result['id'], $result['email'], $result['name']);
+
+                    // Redirect to return URL or dashboard
+                    $returnUrl = $_GET['return'] ?? '/app/dashboard.php';
+                    // Validate return URL is local
+                    if (strpos($returnUrl, '/') !== 0) {
+                        $returnUrl = '/app/dashboard.php';
+                    }
+                    redirect($returnUrl);
                 }
-                redirect($returnUrl);
             }
         }
     }

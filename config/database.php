@@ -12,10 +12,10 @@
 require_once __DIR__ . '/../includes/env.php';
 
 // Database credentials - prefer environment variables
-if (!defined('DB_HOST')) define('DB_HOST', env('DB_HOST', 'mysql71.unoeuro.com'));
-if (!defined('DB_NAME')) define('DB_NAME', env('DB_NAME', 'hededam_dk_db_event'));
-if (!defined('DB_USER')) define('DB_USER', env('DB_USER', 'hededam_dk'));
-if (!defined('DB_PASS')) define('DB_PASS', env('DB_PASS', 'Plantagevej12'));
+if (!defined('DB_HOST')) define('DB_HOST', env('DB_HOST', 'localhost'));
+if (!defined('DB_NAME')) define('DB_NAME', env('DB_NAME', ''));
+if (!defined('DB_USER')) define('DB_USER', env('DB_USER', ''));
+if (!defined('DB_PASS')) define('DB_PASS', env('DB_PASS', ''));
 if (!defined('DB_CHARSET')) define('DB_CHARSET', 'utf8mb4');
 
 /**

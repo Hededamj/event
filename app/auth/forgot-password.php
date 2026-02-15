@@ -32,11 +32,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Always show success message (don't reveal if email exists)
             $success = 'Hvis der findes en konto med denne email, har vi sendt instruktioner til at nulstille din adgangskode.';
 
-            // In production, send email here
             if ($token) {
                 // TODO: Send email with reset link
                 // sendPasswordResetEmail($email, $token);
-                error_log("Password reset token for $email: $token");
             }
         }
     }

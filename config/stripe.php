@@ -2,26 +2,24 @@
 /**
  * Stripe Configuration
  *
- * Set these environment variables in production:
- * - STRIPE_SECRET_KEY
- * - STRIPE_PUBLISHABLE_KEY
- * - STRIPE_WEBHOOK_SECRET
+ * Credentials loaded from .env file via env() helper.
  */
 
+require_once __DIR__ . '/../includes/env.php';
+
 // Stripe API Keys
-define('STRIPE_SECRET_KEY', getenv('STRIPE_SECRET_KEY') ?: 'sk_test_XXXXXXXX');
-define('STRIPE_PUBLISHABLE_KEY', getenv('STRIPE_PUBLISHABLE_KEY') ?: 'pk_test_XXXXXXXX');
-define('STRIPE_WEBHOOK_SECRET', getenv('STRIPE_WEBHOOK_SECRET') ?: 'whsec_XXXXXXXX');
+define('STRIPE_SECRET_KEY', env('STRIPE_SECRET_KEY', ''));
+define('STRIPE_PUBLISHABLE_KEY', env('STRIPE_PUBLISHABLE_KEY', ''));
+define('STRIPE_WEBHOOK_SECRET', env('STRIPE_WEBHOOK_SECRET', ''));
 
 // Currency
 define('STRIPE_CURRENCY', 'dkk');
 
-// Stripe Price IDs for each plan (set these after creating products in Stripe Dashboard)
-// Format: 'plan_slug' => 'price_id'
+// Stripe Price IDs for each plan
 define('STRIPE_PRICE_IDS', [
-    'basis' => getenv('STRIPE_PRICE_BASIS') ?: 'price_basis_monthly',
-    'premium' => getenv('STRIPE_PRICE_PREMIUM') ?: 'price_premium_monthly',
-    'pro' => getenv('STRIPE_PRICE_PRO') ?: 'price_pro_monthly'
+    'basis' => env('STRIPE_PRICE_BASIS', 'price_basis_monthly'),
+    'premium' => env('STRIPE_PRICE_PREMIUM', 'price_premium_monthly'),
+    'pro' => env('STRIPE_PRICE_PRO', 'price_pro_monthly')
 ]);
 
 // Plan prices in DKK (for display, should match Stripe prices)
