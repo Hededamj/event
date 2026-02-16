@@ -641,3 +641,330 @@ function markMessagesRead(int $bookingId, string $readerType): void {
         error_log("markMessagesRead failed: " . $e->getMessage());
     }
 }
+
+// ============================================================
+// 14. syncBookingToBudget
+// ============================================================
+
+/**
+ * Map a vendor category slug to a budget_items category key.
+ * Budget categories: lokale, mad, pynt, toj, gaver, underholdning, foto, andet
+ *
+ * @param string $vendorCategorySlug Vendor category slug
+ * @return string Budget category key
+ */
+function mapVendorCategoryToBudget(string $vendorCategorySlug): string {
+    $map = [
+        'teltudlejning' => 'lokale',
+        'catering'      => 'mad',
+        'festlokaler'   => 'lokale',
+        'dj-musik'      => 'underholdning',
+        'fotograf'      => 'foto',
+        'blomster'      => 'pynt',
+        'kage-dessert'  => 'mad',
+        'underholdning' => 'underholdning',
+        'transport'     => 'andet',
+        'andet'         => 'andet',
+    ];
+    return $map[$vendorCategorySlug] ?? 'andet';
+}
+
+/**
+ * Sync a marketplace booking to the budget_items table.
+ * Called when a booking transitions to 'deposited' or 'confirmed'.
+ *
+ * Looks up (or creates) a budget_item whose title starts with
+ * "Leverandor: {vendor_company_name}" for the same event.
+ *
+ * @param int $bookingId Booking to sync
+ * @return void
+ */
+function syncBookingToBudget(int $bookingId): void {
+    try {
+        $db = getDB();
+
+        // Fetch booking with vendor info and category
+        $stmt = $db->prepare("
+            SELECT
+                b.event_id,
+                b.quoted_price,
+                b.depositum_amount,
+                b.status,
+                v.company_name AS vendor_company_name,
+                vs.title AS service_title,
+                (
+                    SELECT vc.slug
+                    FROM vendor_category_links vcl
+                    JOIN vendor_categories vc ON vc.id = vcl.category_id
+                    WHERE vcl.vendor_id = b.vendor_id
+                    LIMIT 1
+                ) AS vendor_category_slug
+            FROM bookings b
+            JOIN vendors v ON v.id = b.vendor_id
+            LEFT JOIN vendor_services vs ON vs.id = b.vendor_service_id
+            WHERE b.id = ?
+            LIMIT 1
+        ");
+        $stmt->execute([$bookingId]);
+        $booking = $stmt->fetch();
+
+        if (!$booking) {
+            return;
+        }
+
+        $companyName = $booking['vendor_company_name'];
+        $serviceTitle = $booking['service_title'] ?? '';
+        $titlePrefix = "Leverandor: " . $companyName;
+        $fullTitle = $serviceTitle
+            ? "Leverandor: {$companyName} - {$serviceTitle}"
+            : "Leverandor: {$companyName}";
+
+        $budgetCategory = mapVendorCategoryToBudget($booking['vendor_category_slug'] ?? '');
+
+        $estimatedAmount = (float)($booking['quoted_price'] ?? 0);
+        $actualAmount = (float)($booking['depositum_amount'] ?? 0);
+        $isPaid = in_array($booking['status'], ['deposited', 'confirmed', 'completed', 'reviewed'], true) ? 1 : 0;
+
+        // Check if a budget_item already exists for this booking (match by title prefix + event)
+        $stmt = $db->prepare("
+            SELECT id FROM budget_items
+            WHERE event_id = ? AND title LIKE CONCAT(?, '%')
+            LIMIT 1
+        ");
+        $stmt->execute([$booking['event_id'], $titlePrefix]);
+        $existing = $stmt->fetch();
+
+        if ($existing) {
+            // Update existing budget item
+            $stmt = $db->prepare("
+                UPDATE budget_items
+                SET title = ?,
+                    category = ?,
+                    estimated_cost = ?,
+                    actual_cost = ?,
+                    is_paid = ?
+                WHERE id = ?
+            ");
+            $stmt->execute([
+                $fullTitle,
+                $budgetCategory,
+                $estimatedAmount,
+                $actualAmount,
+                $isPaid,
+                $existing['id']
+            ]);
+        } else {
+            // Insert new budget item
+            $stmt = $db->prepare("
+                INSERT INTO budget_items (event_id, title, category, estimated_cost, actual_cost, is_paid)
+                VALUES (?, ?, ?, ?, ?, ?)
+            ");
+            $stmt->execute([
+                $booking['event_id'],
+                $fullTitle,
+                $budgetCategory,
+                $estimatedAmount,
+                $actualAmount,
+                $isPaid
+            ]);
+        }
+    } catch (Exception $e) {
+        error_log("syncBookingToBudget failed: " . $e->getMessage());
+    }
+}
+
+// ============================================================
+// 15. syncManualVendorToBudget
+// ============================================================
+
+/**
+ * Map a manual vendor's free-text category to a budget_items category key.
+ *
+ * @param string $manualCategory Free-text category from manual_vendor
+ * @return string Budget category key
+ */
+function mapManualCategoryToBudget(string $manualCategory): string {
+    $lower = mb_strtolower(trim($manualCategory));
+
+    // Map common Danish terms to budget categories
+    $keywords = [
+        'lokale'          => 'lokale',
+        'venue'           => 'lokale',
+        'sal'             => 'lokale',
+        'telt'            => 'lokale',
+        'catering'        => 'mad',
+        'mad'             => 'mad',
+        'kage'            => 'mad',
+        'dessert'         => 'mad',
+        'drikke'          => 'mad',
+        'bar'             => 'mad',
+        'kok'             => 'mad',
+        'pynt'            => 'pynt',
+        'dekoration'      => 'pynt',
+        'blomst'          => 'pynt',
+        'toj'             => 'toj',
+        'kjole'           => 'toj',
+        'gave'            => 'gaver',
+        'dj'              => 'underholdning',
+        'musik'           => 'underholdning',
+        'band'            => 'underholdning',
+        'underholdning'   => 'underholdning',
+        'show'            => 'underholdning',
+        'fotograf'        => 'foto',
+        'foto'            => 'foto',
+        'video'           => 'foto',
+    ];
+
+    foreach ($keywords as $keyword => $budgetCat) {
+        if (str_contains($lower, $keyword)) {
+            return $budgetCat;
+        }
+    }
+
+    return 'andet';
+}
+
+/**
+ * Sync a manual vendor entry to the budget_items table.
+ * Called when a manual vendor is added or updated.
+ *
+ * @param int $manualVendorId Manual vendor ID to sync
+ * @return void
+ */
+function syncManualVendorToBudget(int $manualVendorId): void {
+    try {
+        $db = getDB();
+
+        // Fetch manual vendor data
+        $stmt = $db->prepare("
+            SELECT * FROM manual_vendors
+            WHERE id = ?
+            LIMIT 1
+        ");
+        $stmt->execute([$manualVendorId]);
+        $vendor = $stmt->fetch();
+
+        if (!$vendor) {
+            return;
+        }
+
+        $companyName = $vendor['company_name'];
+        $titlePrefix = "Leverandor: " . $companyName;
+        $fullTitle = $titlePrefix;
+
+        $budgetCategory = mapManualCategoryToBudget($vendor['category'] ?? '');
+
+        $agreedPrice = (float)($vendor['agreed_price'] ?? 0);
+        $isPaid = (int)($vendor['is_paid'] ?? 0);
+        $actualAmount = $isPaid ? $agreedPrice : null;
+
+        // Check if a budget_item already exists for this manual vendor
+        $stmt = $db->prepare("
+            SELECT id FROM budget_items
+            WHERE event_id = ? AND title = ?
+            LIMIT 1
+        ");
+        $stmt->execute([$vendor['event_id'], $fullTitle]);
+        $existing = $stmt->fetch();
+
+        if ($existing) {
+            // Update existing budget item
+            $stmt = $db->prepare("
+                UPDATE budget_items
+                SET category = ?,
+                    estimated_cost = ?,
+                    actual_cost = ?,
+                    is_paid = ?
+                WHERE id = ?
+            ");
+            $stmt->execute([
+                $budgetCategory,
+                $agreedPrice,
+                $actualAmount,
+                $isPaid,
+                $existing['id']
+            ]);
+        } else {
+            // Insert new budget item
+            $stmt = $db->prepare("
+                INSERT INTO budget_items (event_id, title, category, estimated_cost, actual_cost, is_paid)
+                VALUES (?, ?, ?, ?, ?, ?)
+            ");
+            $stmt->execute([
+                $vendor['event_id'],
+                $fullTitle,
+                $budgetCategory,
+                $agreedPrice,
+                $actualAmount,
+                $isPaid
+            ]);
+        }
+    } catch (Exception $e) {
+        error_log("syncManualVendorToBudget failed: " . $e->getMessage());
+    }
+}
+
+// ============================================================
+// 16. updateBudgetPaymentStatus
+// ============================================================
+
+/**
+ * Update the payment status of a budget_item linked to a booking.
+ * Called when a booking's payment status changes.
+ *
+ * @param int $bookingId Booking whose budget item should be updated
+ * @return void
+ */
+function updateBudgetPaymentStatus(int $bookingId): void {
+    try {
+        $db = getDB();
+
+        // Fetch booking with vendor name
+        $stmt = $db->prepare("
+            SELECT
+                b.event_id,
+                b.status,
+                b.depositum_amount,
+                v.company_name AS vendor_company_name
+            FROM bookings b
+            JOIN vendors v ON v.id = b.vendor_id
+            WHERE b.id = ?
+            LIMIT 1
+        ");
+        $stmt->execute([$bookingId]);
+        $booking = $stmt->fetch();
+
+        if (!$booking) {
+            return;
+        }
+
+        $titlePrefix = "Leverandor: " . $booking['vendor_company_name'];
+
+        // Find the linked budget item
+        $stmt = $db->prepare("
+            SELECT id FROM budget_items
+            WHERE event_id = ? AND title LIKE CONCAT(?, '%')
+            LIMIT 1
+        ");
+        $stmt->execute([$booking['event_id'], $titlePrefix]);
+        $budgetItem = $stmt->fetch();
+
+        if (!$budgetItem) {
+            return; // No budget item to update
+        }
+
+        // Determine payment status from booking status
+        $isPaid = in_array($booking['status'], ['deposited', 'confirmed', 'completed', 'reviewed'], true) ? 1 : 0;
+        $actualAmount = $isPaid ? (float)($booking['depositum_amount'] ?? 0) : null;
+
+        $stmt = $db->prepare("
+            UPDATE budget_items
+            SET is_paid = ?,
+                actual_cost = ?
+            WHERE id = ?
+        ");
+        $stmt->execute([$isPaid, $actualAmount, $budgetItem['id']]);
+    } catch (Exception $e) {
+        error_log("updateBudgetPaymentStatus failed: " . $e->getMessage());
+    }
+}
