@@ -11,6 +11,7 @@ require_once __DIR__ . '/../includes/env.php';
 define('STRIPE_SECRET_KEY', env('STRIPE_SECRET_KEY', ''));
 define('STRIPE_PUBLISHABLE_KEY', env('STRIPE_PUBLISHABLE_KEY', ''));
 define('STRIPE_WEBHOOK_SECRET', env('STRIPE_WEBHOOK_SECRET', ''));
+define('STRIPE_CONNECT_WEBHOOK_SECRET', env('STRIPE_CONNECT_WEBHOOK_SECRET', ''));
 
 // Currency
 define('STRIPE_CURRENCY', 'dkk');
