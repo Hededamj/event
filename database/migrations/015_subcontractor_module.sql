@@ -214,9 +214,9 @@ CREATE TABLE IF NOT EXISTS bookings (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
     FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE CASCADE,
-    FOREIGN KEY (vendor_id) REFERENCES vendors(id),
+    FOREIGN KEY (vendor_id) REFERENCES vendors(id) ON DELETE RESTRICT,
     FOREIGN KEY (vendor_service_id) REFERENCES vendor_services(id) ON DELETE SET NULL,
-    FOREIGN KEY (account_id) REFERENCES accounts(id),
+    FOREIGN KEY (account_id) REFERENCES accounts(id) ON DELETE RESTRICT,
     INDEX idx_booking_event (event_id),
     INDEX idx_booking_vendor (vendor_id),
     INDEX idx_booking_status (status),
