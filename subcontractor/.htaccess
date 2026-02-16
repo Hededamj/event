@@ -1,0 +1,12 @@
+RewriteEngine On
+RewriteBase /subcontractor/
+
+# Category pages: /subcontractor/kategori/fotograf → category.php?slug=fotograf
+RewriteRule ^kategori/([a-z0-9-]+)/?$ category.php?slug=$1 [L,QSA]
+
+# Vendor profiles: /subcontractor/leverandor/123 → profile.php?id=123
+RewriteRule ^leverandor/([0-9]+)/?$ profile.php?id=$1 [L,QSA]
+
+# Don't rewrite existing files/dirs
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
