@@ -76,6 +76,8 @@ function createBookingRequest(
             }
         }
 
+        $db->beginTransaction();
+
         // Insert booking
         $stmt = $db->prepare("
             INSERT INTO bookings (event_id, vendor_id, vendor_service_id, account_id, status, organizer_message, event_date, guest_count)
@@ -101,8 +103,10 @@ function createBookingRequest(
             $msgStmt->execute([$bookingId, $message]);
         }
 
+        $db->commit();
         return ['success' => true, 'booking_id' => $bookingId];
     } catch (Exception $e) {
+        if ($db->inTransaction()) $db->rollBack();
         error_log("createBookingRequest failed: " . $e->getMessage());
         return ['success' => false, 'error' => 'Failed to create booking request'];
     }
@@ -151,6 +155,8 @@ function submitQuote(int $bookingId, int $vendorId, float $price, string $messag
         $commission = round($depositum * COMMISSION_RATE, 2);
         $vendorPayout = round($depositum - $commission, 2);
 
+        $db->beginTransaction();
+
         // Update booking with quote
         $stmt = $db->prepare("
             UPDATE bookings SET
@@ -181,6 +187,7 @@ function submitQuote(int $bookingId, int $vendorId, float $price, string $messag
             $msgStmt->execute([$bookingId, $message]);
         }
 
+        $db->commit();
         return [
             'success' => true,
             'quoted_price' => $price,
@@ -189,6 +196,7 @@ function submitQuote(int $bookingId, int $vendorId, float $price, string $messag
             'vendor_payout' => $vendorPayout
         ];
     } catch (Exception $e) {
+        if ($db->inTransaction()) $db->rollBack();
         error_log("submitQuote failed: " . $e->getMessage());
         return ['success' => false, 'error' => 'Failed to submit quote'];
     }
@@ -264,9 +272,10 @@ function confirmBooking(int $bookingId): bool {
     try {
         $db = getDB();
 
+        // Only transition from 'accepted' to prevent webhook replays moving booking backward
         $stmt = $db->prepare("
             UPDATE bookings SET status = 'deposited', paid_at = NOW()
-            WHERE id = ?
+            WHERE id = ? AND status = 'accepted'
         ");
         $stmt->execute([$bookingId]);
 
