@@ -3,6 +3,9 @@ uploads/photos/*
 !uploads/photos/.gitkeep
 uploads/vendors/*
 !uploads/vendors/.gitkeep
+!uploads/vendors/gallery/
+uploads/vendors/gallery/*
+!uploads/vendors/gallery/.gitkeep
 *.log
 .DS_Store
 Thumbs.db
