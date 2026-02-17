@@ -13,10 +13,73 @@ require_once __DIR__ . '/../includes/commission-service.php';
 $db = getDB();
 
 // ── Fetch vendor's Stripe onboarding status ──────────────────────
-$stmt = $db->prepare("SELECT stripe_onboarding_complete FROM vendors WHERE id = ? LIMIT 1");
+$stmt = $db->prepare("SELECT stripe_account_id, stripe_onboarding_complete, email, company_name FROM vendors WHERE id = ? LIMIT 1");
 $stmt->execute([$vendorId]);
 $vendorRow = $stmt->fetch();
 $stripeOnboardingComplete = !empty($vendorRow['stripe_onboarding_complete']);
+$stripeAccountId = $vendorRow['stripe_account_id'] ?? null;
+
+// ── Build base URL for redirects ─────────────────────────────────
+$baseUrl = (isset($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'];
+
+// ── Handle GET: onboard_refresh (session expired) ────────────────
+if (isset($_GET['onboard_refresh']) && $_GET['onboard_refresh'] === '1') {
+    setFlash('info', 'Sessionen er udløbet. Prøv igen.');
+    redirect('/subcontractor/dashboard/earnings.php');
+}
+
+// ── Handle GET: onboard_return (back from Stripe) ────────────────
+if (isset($_GET['onboard_return']) && $_GET['onboard_return'] === '1') {
+    if (!empty($stripeAccountId)) {
+        require_once __DIR__ . '/../includes/payment-service.php';
+        if (isOnboardingComplete($stripeAccountId)) {
+            $stmtUpdate = $db->prepare("UPDATE vendors SET stripe_onboarding_complete = 1 WHERE id = ?");
+            $stmtUpdate->execute([$vendorId]);
+            $stripeOnboardingComplete = true;
+            setFlash('success', 'Din Stripe-konto er forbundet! Du kan nu modtage udbetalinger.');
+        } else {
+            setFlash('info', 'Opsætningen er ikke fuldført endnu. Prøv igen.');
+        }
+    }
+    redirect('/subcontractor/dashboard/earnings.php');
+}
+
+// ── Handle POST: setup_stripe (initiate onboarding) ──────────────
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'setup_stripe') {
+    if (!verifyVendorCsrfToken($_POST['csrf_token'] ?? '')) {
+        setFlash('error', 'Ugyldig anmodning. Prøv igen.');
+        redirect('/subcontractor/dashboard/earnings.php');
+    }
+
+    require_once __DIR__ . '/../includes/payment-service.php';
+
+    // Create Connect account if vendor doesn't have one yet
+    if (empty($stripeAccountId)) {
+        $stripeAccountId = createConnectAccount(
+            $vendorRow['email'],
+            $vendorRow['company_name']
+        );
+        if (!$stripeAccountId) {
+            setFlash('error', 'Kunne ikke oprette Stripe-konto. Prøv igen senere.');
+            redirect('/subcontractor/dashboard/earnings.php');
+        }
+        $stmtSave = $db->prepare("UPDATE vendors SET stripe_account_id = ? WHERE id = ?");
+        $stmtSave->execute([$stripeAccountId, $vendorId]);
+    }
+
+    // Create onboarding link and redirect to Stripe
+    $returnUrl  = $baseUrl . '/subcontractor/dashboard/earnings.php?onboard_return=1';
+    $refreshUrl = $baseUrl . '/subcontractor/dashboard/earnings.php?onboard_refresh=1';
+
+    $onboardingUrl = createOnboardingLink($stripeAccountId, $returnUrl, $refreshUrl);
+    if (!$onboardingUrl) {
+        setFlash('error', 'Kunne ikke oprette onboarding-link. Prøv igen senere.');
+        redirect('/subcontractor/dashboard/earnings.php');
+    }
+
+    header("Location: $onboardingUrl");
+    exit;
+}
 
 // ── All-time earnings ────────────────────────────────────────────
 $allTimeEarnings = getVendorEarnings($vendorId);
@@ -246,15 +309,23 @@ if (!function_exists('formatDanishDateEarnings')) {
         </svg>
     </div>
     <div class="stripe-banner-content">
-        <h3>Opsaet udbetaling for at modtage betalinger</h3>
-        <p>Du skal forbinde din bankkonto via Stripe for at modtage udbetalinger.</p>
+        <?php if (!empty($stripeAccountId)): ?>
+            <h3>Fortsæt opsætning af udbetaling</h3>
+            <p>Du har påbegyndt opsætningen, men den er ikke fuldført endnu. Fortsæt for at modtage udbetalinger.</p>
+        <?php else: ?>
+            <h3>Opsæt udbetaling</h3>
+            <p>For at modtage udbetalinger skal du forbinde din bankkonto via Stripe. Det tager kun et par minutter.</p>
+        <?php endif; ?>
     </div>
-    <a href="/subcontractor/dashboard/earnings.php?action=onboard" class="btn-stripe">
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
-        </svg>
-        Opsaet udbetaling
-    </a>
+    <form method="POST" style="flex-shrink: 0;">
+        <?= vendorCsrfField() ?>
+        <button type="submit" name="action" value="setup_stripe" class="btn-stripe">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+            </svg>
+            <?= !empty($stripeAccountId) ? 'Fortsæt opsætning' : 'Opsæt udbetaling' ?>
+        </button>
+    </form>
 </div>
 <?php endif; ?>
 
