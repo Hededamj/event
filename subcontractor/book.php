@@ -69,7 +69,8 @@ if ($serviceId !== null && $serviceId > 0) {
 // ============================================================
 
 $stmt = $db->prepare("
-    SELECT e.id, e.name, e.event_date, e.guest_count
+    SELECT e.id, e.name, e.event_date,
+           (SELECT SUM(g.adults_count + g.children_count) FROM guests g WHERE g.event_id = e.id) AS guest_count
     FROM event_owners eo
     JOIN events e ON e.id = eo.event_id
     WHERE eo.account_id = ? AND eo.role = 'owner'
