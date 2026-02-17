@@ -49,7 +49,7 @@ function createBookingRequest(
         ");
         $stmt->execute([$eventId, $accountId]);
         if (!$stmt->fetch()) {
-            return ['success' => false, 'error' => 'Event not found or you are not the owner'];
+            return ['success' => false, 'error' => 'Arrangement ikke fundet eller du er ikke ejeren'];
         }
 
         // Validate vendor exists and is approved
@@ -60,7 +60,7 @@ function createBookingRequest(
         ");
         $stmt->execute([$vendorId]);
         if (!$stmt->fetch()) {
-            return ['success' => false, 'error' => 'Vendor not found or not approved'];
+            return ['success' => false, 'error' => 'Leverandør ikke fundet eller ikke godkendt'];
         }
 
         // Validate service belongs to vendor (if provided)
@@ -72,7 +72,7 @@ function createBookingRequest(
             ");
             $stmt->execute([$serviceId, $vendorId]);
             if (!$stmt->fetch()) {
-                return ['success' => false, 'error' => 'Service not found or does not belong to vendor'];
+                return ['success' => false, 'error' => 'Ydelse ikke fundet eller tilhører ikke leverandøren'];
             }
         }
 
@@ -108,7 +108,7 @@ function createBookingRequest(
     } catch (Exception $e) {
         if ($db->inTransaction()) $db->rollBack();
         error_log("createBookingRequest failed: " . $e->getMessage());
-        return ['success' => false, 'error' => 'Failed to create booking request'];
+        return ['success' => false, 'error' => 'Kunne ikke oprette bookingforespørgsel'];
     }
 }
 
@@ -139,15 +139,15 @@ function submitQuote(int $bookingId, int $vendorId, float $price, string $messag
         $booking = $stmt->fetch();
 
         if (!$booking) {
-            return ['success' => false, 'error' => 'Booking not found or does not belong to this vendor'];
+            return ['success' => false, 'error' => 'Booking ikke fundet eller tilhører ikke denne leverandør'];
         }
 
         if ($booking['status'] !== 'requested') {
-            return ['success' => false, 'error' => 'Booking is not in requested status'];
+            return ['success' => false, 'error' => 'Booking er ikke i forespurt status'];
         }
 
         if ($price <= 0) {
-            return ['success' => false, 'error' => 'Price must be greater than zero'];
+            return ['success' => false, 'error' => 'Prisen skal være større end nul'];
         }
 
         // Calculate financial breakdown
@@ -198,7 +198,7 @@ function submitQuote(int $bookingId, int $vendorId, float $price, string $messag
     } catch (Exception $e) {
         if ($db->inTransaction()) $db->rollBack();
         error_log("submitQuote failed: " . $e->getMessage());
-        return ['success' => false, 'error' => 'Failed to submit quote'];
+        return ['success' => false, 'error' => 'Kunne ikke indsende tilbud'];
     }
 }
 
@@ -233,11 +233,11 @@ function acceptQuote(int $bookingId, int $accountId): array {
         $booking = $stmt->fetch();
 
         if (!$booking) {
-            return ['success' => false, 'error' => 'Booking not found or you are not the event owner'];
+            return ['success' => false, 'error' => 'Booking ikke fundet eller du er ikke arrangøren'];
         }
 
         if ($booking['status'] !== 'quoted') {
-            return ['success' => false, 'error' => 'Booking is not in quoted status'];
+            return ['success' => false, 'error' => 'Booking er ikke i tilbudt status'];
         }
 
         // Set status to accepted
@@ -253,7 +253,7 @@ function acceptQuote(int $bookingId, int $accountId): array {
         ];
     } catch (Exception $e) {
         error_log("acceptQuote failed: " . $e->getMessage());
-        return ['success' => false, 'error' => 'Failed to accept quote'];
+        return ['success' => false, 'error' => 'Kunne ikke acceptere tilbud'];
     }
 }
 
@@ -816,7 +816,7 @@ function mapManualCategoryToBudget(string $manualCategory): string {
     ];
 
     foreach ($keywords as $keyword => $budgetCat) {
-        if (str_contains($lower, $keyword)) {
+        if (strpos($lower, $keyword) !== false) {
             return $budgetCat;
         }
     }

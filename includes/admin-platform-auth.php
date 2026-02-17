@@ -125,8 +125,6 @@ function getPlatformStats(): array {
         'active_subscriptions' => 0,
         'mrr' => 0,
         'revenue_month' => 0,
-        'pending_partners' => 0,
-        'approved_partners' => 0,
         'pending_vendors' => 0,
         'approved_vendors' => 0,
     ];
@@ -175,16 +173,6 @@ function getPlatformStats(): array {
             AND created_at >= DATE_FORMAT(NOW(), '%Y-%m-01')
         ");
         $stats['revenue_month'] = $stmt->fetchColumn();
-    } catch (Exception $e) {}
-
-    try {
-        // Pending partners
-        $stmt = $db->query("SELECT COUNT(*) FROM partners WHERE status = 'pending'");
-        $stats['pending_partners'] = $stmt->fetchColumn();
-
-        // Approved partners
-        $stmt = $db->query("SELECT COUNT(*) FROM partners WHERE status = 'approved'");
-        $stats['approved_partners'] = $stmt->fetchColumn();
     } catch (Exception $e) {}
 
     try {

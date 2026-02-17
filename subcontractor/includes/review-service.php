@@ -32,7 +32,7 @@ function createReview(
     try {
         // Validate rating range
         if ($rating < 1 || $rating > 5) {
-            return ['success' => false, 'error' => 'Rating must be between 1 and 5'];
+            return ['success' => false, 'error' => 'Bedømmelse skal være mellem 1 og 5'];
         }
 
         $db = getDB();
@@ -48,19 +48,19 @@ function createReview(
         $booking = $stmt->fetch();
 
         if (!$booking) {
-            return ['success' => false, 'error' => 'Booking not found'];
+            return ['success' => false, 'error' => 'Booking ikke fundet'];
         }
 
         if ((int)$booking['vendor_id'] !== $vendorId) {
-            return ['success' => false, 'error' => 'Booking does not belong to this vendor'];
+            return ['success' => false, 'error' => 'Booking tilhører ikke denne leverandør'];
         }
 
         if ((int)$booking['account_id'] !== $accountId) {
-            return ['success' => false, 'error' => 'Booking does not belong to this account'];
+            return ['success' => false, 'error' => 'Booking tilhører ikke denne konto'];
         }
 
         if ($booking['status'] !== 'completed') {
-            return ['success' => false, 'error' => 'Booking must be completed before it can be reviewed'];
+            return ['success' => false, 'error' => 'Booking skal være afsluttet før den kan anmeldes'];
         }
 
         // Check no existing review for this booking
@@ -71,7 +71,7 @@ function createReview(
         ");
         $stmt->execute([$bookingId]);
         if ($stmt->fetch()) {
-            return ['success' => false, 'error' => 'A review already exists for this booking'];
+            return ['success' => false, 'error' => 'Der findes allerede en anmeldelse for denne booking'];
         }
 
         $db->beginTransaction();
@@ -108,7 +108,7 @@ function createReview(
             $db->rollBack();
         }
         error_log("createReview failed: " . $e->getMessage());
-        return ['success' => false, 'error' => 'Failed to create review'];
+        return ['success' => false, 'error' => 'Kunne ikke oprette anmeldelse'];
     }
 }
 

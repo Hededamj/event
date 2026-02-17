@@ -124,7 +124,7 @@ function notifyVendorQuoteAccepted(array $booking, array $vendor): bool {
         $dashboardUrl = getAppBaseUrl() . '/subcontractor/dashboard.php';
 
         ob_start();
-        include __DIR__ . '/email-templates/booking-request.php';
+        include __DIR__ . '/email-templates/quote-accepted.php';
         $htmlBody = ob_get_clean();
 
         $emailService = new EmailService();

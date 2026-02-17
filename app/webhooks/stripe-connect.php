@@ -124,7 +124,7 @@ try {
             if ($booking) {
                 $stmt = $db->prepare("
                     UPDATE bookings
-                    SET status = 'refunded', refunded_at = NOW()
+                    SET status = 'refunded', cancelled_at = NOW()
                     WHERE id = ?
                 ");
                 $stmt->execute([$booking['id']]);

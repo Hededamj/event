@@ -254,13 +254,13 @@ try {
         <?php endif; ?>
     </div>
 
-    <!-- Pending Partners Alert -->
-    <?php if ($platformStats['pending_partners'] > 0): ?>
+    <!-- Pending Vendors Alert -->
+    <?php if ($platformStats['pending_vendors'] > 0): ?>
         <div class="alert alert-warning mt-md flex justify-between items-center">
             <span>
-                <strong><?= $platformStats['pending_partners'] ?></strong> partner<?= $platformStats['pending_partners'] > 1 ? 'e' : '' ?> afventer godkendelse
+                <strong><?= $platformStats['pending_vendors'] ?></strong> leverandør<?= $platformStats['pending_vendors'] > 1 ? 'er' : '' ?> afventer godkendelse
             </span>
-            <a href="<?= BASE_PATH ?>/admin-platform/partners.php" class="btn btn-sm btn-secondary">Se partnere</a>
+            <a href="<?= BASE_PATH ?>/admin-platform/vendors.php" class="btn btn-sm btn-secondary">Se leverandører</a>
         </div>
     <?php endif; ?>
 </div>

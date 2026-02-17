@@ -415,12 +415,12 @@ if ($eventDateTs) {
                     <?php
                         $senderType = $msg['sender_type'] ?? 'organizer';
                         $bubbleClass = 'message-bubble-' . htmlspecialchars($senderType);
-                        $senderLabel = match ($senderType) {
+                        $senderLabels = [
                             'vendor'    => 'Dig',
                             'organizer' => 'Arrangør',
                             'platform'  => 'PartyParart',
-                            default     => ucfirst($senderType),
-                        };
+                        ];
+                        $senderLabel = isset($senderLabels[$senderType]) ? $senderLabels[$senderType] : ucfirst($senderType);
                         $msgTime = !empty($msg['created_at']) ? date('d/m/Y H:i', strtotime($msg['created_at'])) : '';
                     ?>
                     <div class="message-bubble <?= $bubbleClass ?>">

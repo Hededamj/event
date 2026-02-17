@@ -1,30 +1,18 @@
 <?php
 /**
- * Booking Cancelled Email Template
- * Sent to both vendor and organizer when a booking is cancelled.
+ * Quote Accepted Email Template
+ * Sent to the vendor when the organizer accepts their quote.
  *
  * Variables available:
  * - $booking: Booking data array from getBooking()
  * - $vendor: Vendor data array
- * - $organizer: Organizer data array
- * - $cancelledBy: Who cancelled: 'organizer', 'vendor', or 'platform'
- * - $recipientType: 'vendor' or 'organizer'
+ * - $dashboardUrl: Base URL for dashboard links
  */
 
 $sageGreen = '#A8B5A0';
 $cream = '#FAF9F7';
 $charcoal = '#2C2C2C';
-$cancelRed = '#C0392B';
-
-$isVendor = ($recipientType ?? 'organizer') === 'vendor';
-
-$cancelledByLabels = [
-    'organizer' => 'arrangøren',
-    'vendor' => 'leverandøren',
-    'platform' => 'platformen',
-];
-$cancelledByKey = $cancelledBy ?? 'platform';
-$cancelledByLabel = isset($cancelledByLabels[$cancelledByKey]) ? $cancelledByLabels[$cancelledByKey] : 'en part';
+$successGreen = '#4CAF50';
 
 $eventDate = null;
 $months = ['', 'januar', 'februar', 'marts', 'april', 'maj', 'juni', 'juli', 'august', 'september', 'oktober', 'november', 'december'];
@@ -43,7 +31,7 @@ if (!empty($booking['event_date'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Booking annulleret</title>
+    <title>Tilbud accepteret</title>
 </head>
 <body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: <?= $cream ?>;">
     <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: <?= $cream ?>;">
@@ -61,9 +49,9 @@ if (!empty($booking['event_date'])) {
                     <!-- Badge -->
                     <tr>
                         <td style="text-align: center; padding-bottom: 24px;">
-                            <div style="display: inline-block; padding: 10px 20px; background-color: <?= $cancelRed ?>; border-radius: 8px;">
+                            <div style="display: inline-block; padding: 10px 20px; background-color: <?= $successGreen ?>; border-radius: 8px;">
                                 <span style="color: #ffffff; font-size: 13px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase;">
-                                    Booking annulleret
+                                    Tilbud accepteret
                                 </span>
                             </div>
                         </td>
@@ -77,15 +65,12 @@ if (!empty($booking['event_date'])) {
                                     <td style="padding: 44px 40px;">
 
                                         <h1 style="margin: 0 0 16px; font-size: 26px; font-weight: 600; color: <?= $charcoal ?>; line-height: 1.3;">
-                                            En booking er blevet annulleret
+                                            Dit tilbud er accepteret!
                                         </h1>
 
                                         <p style="margin: 0 0 28px; font-size: 16px; line-height: 1.7; color: #555555;">
-                                            <?php if ($isVendor): ?>
-                                                Bookingen med <strong><?= htmlspecialchars($booking['account_name'] ?? 'arrangøren') ?></strong><?php if (!empty($booking['event_title'])): ?> til <strong><?= htmlspecialchars($booking['event_title']) ?></strong><?php endif; ?> er blevet annulleret af <?= $cancelledByLabel ?>.
-                                            <?php else: ?>
-                                                Bookingen med <strong><?= htmlspecialchars($booking['vendor_company_name'] ?? 'leverandøren') ?></strong><?php if (!empty($booking['event_title'])): ?> til <strong><?= htmlspecialchars($booking['event_title']) ?></strong><?php endif; ?> er blevet annulleret af <?= $cancelledByLabel ?>.
-                                            <?php endif; ?>
+                                            <strong><?= htmlspecialchars($booking['account_name'] ?? 'Arrangøren') ?></strong> har accepteret dit tilbud.
+                                            Arrangøren vil nu betale depositum, hvorefter bookingen bekræftes.
                                         </p>
 
                                         <!-- Booking Summary -->
@@ -113,31 +98,18 @@ if (!empty($booking['event_date'])) {
                                                         <?php endif; ?>
                                                         <tr>
                                                             <td style="padding-bottom: 14px;">
-                                                                <strong style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: <?= $sageGreen ?>;">
-                                                                    <?= $isVendor ? 'Arrangør' : 'Leverandør' ?>
-                                                                </strong><br>
+                                                                <strong style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: <?= $sageGreen ?>;">Arrangør</strong><br>
                                                                 <span style="font-size: 15px; color: <?= $charcoal ?>;">
-                                                                    <?= $isVendor
-                                                                        ? htmlspecialchars($booking['account_name'] ?? 'Ikke angivet')
-                                                                        : htmlspecialchars($booking['vendor_company_name'] ?? 'Ikke angivet')
-                                                                    ?>
+                                                                    <?= htmlspecialchars($booking['account_name'] ?? 'Ikke angivet') ?>
                                                                 </span>
                                                             </td>
                                                         </tr>
+                                                        <?php if (!empty($booking['quoted_price'])): ?>
                                                         <tr>
                                                             <td>
-                                                                <strong style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: <?= $sageGreen ?>;">Annulleret af</strong><br>
-                                                                <span style="font-size: 15px; color: <?= $cancelRed ?>; font-weight: 600;">
-                                                                    <?= ucfirst($cancelledByLabel) ?>
-                                                                </span>
-                                                            </td>
-                                                        </tr>
-                                                        <?php if (!empty($booking['cancel_reason'])): ?>
-                                                        <tr>
-                                                            <td style="padding-top: 14px;">
-                                                                <strong style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: <?= $sageGreen ?>;">Årsag</strong><br>
-                                                                <span style="font-size: 15px; color: <?= $charcoal ?>;">
-                                                                    <?= htmlspecialchars($booking['cancel_reason']) ?>
+                                                                <strong style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: <?= $sageGreen ?>;">Dit tilbud</strong><br>
+                                                                <span style="font-size: 18px; color: <?= $successGreen ?>; font-weight: 700;">
+                                                                    <?= number_format((float)$booking['quoted_price'], 2, ',', '.') ?> DKK
                                                                 </span>
                                                             </td>
                                                         </tr>
@@ -147,17 +119,13 @@ if (!empty($booking['event_date'])) {
                                             </tr>
                                         </table>
 
-                                        <p style="margin: 0 0 28px; font-size: 15px; line-height: 1.7; color: #555555;">
-                                            Hvis du har spørgsmål vedrørende denne annullering, er du velkommen til at kontakte os via platformen.
-                                        </p>
-
                                         <!-- CTA Button -->
                                         <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
                                             <tr>
                                                 <td style="text-align: center;">
-                                                    <a href="<?= htmlspecialchars(getAppBaseUrl() . ($isVendor ? '/subcontractor/dashboard.php' : '/dashboard.php')) ?>"
+                                                    <a href="<?= htmlspecialchars($dashboardUrl ?? '') ?>"
                                                        style="display: inline-block; padding: 16px 44px; background-color: <?= $sageGreen ?>; color: #ffffff; text-decoration: none; font-size: 15px; font-weight: 600; border-radius: 12px;">
-                                                        Gå til dashboard
+                                                        Se bookingdetaljer
                                                     </a>
                                                 </td>
                                             </tr>
