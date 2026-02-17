@@ -607,18 +607,18 @@ $platformName = getPlatformSetting('platform_name', 'EventPlatform');
                     <div class="nav-section-title">Markedsplads</div>
                     <ul class="nav-menu">
                         <li>
-                            <a href="<?= BASE_PATH ?>/admin-platform/partners.php" class="nav-link <?= $currentPage === 'partners' ? 'active' : '' ?>">
+                            <a href="<?= BASE_PATH ?>/admin-platform/vendors.php" class="nav-link <?= in_array($currentPage, ['vendors', 'vendor-detail']) ? 'active' : '' ?>">
                                 <span class="nav-link-icon">&#127970;</span>
-                                Partnere
-                                <?php if ($platformStats['pending_partners'] > 0): ?>
-                                    <span class="nav-badge"><?= $platformStats['pending_partners'] ?></span>
+                                Leverand&oslash;rer
+                                <?php if (($platformStats['pending_vendors'] ?? 0) > 0): ?>
+                                    <span class="nav-badge"><?= $platformStats['pending_vendors'] ?></span>
                                 <?php endif; ?>
                             </a>
                         </li>
                         <li>
-                            <a href="<?= BASE_PATH ?>/admin-platform/commissions.php" class="nav-link <?= $currentPage === 'commissions' ? 'active' : '' ?>">
+                            <a href="<?= BASE_PATH ?>/admin-platform/vendor-payouts.php" class="nav-link <?= $currentPage === 'vendor-payouts' ? 'active' : '' ?>">
                                 <span class="nav-link-icon">&#128176;</span>
-                                Kommission
+                                Udbetalinger
                             </a>
                         </li>
                     </ul>

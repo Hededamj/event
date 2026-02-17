@@ -127,6 +127,8 @@ function getPlatformStats(): array {
         'revenue_month' => 0,
         'pending_partners' => 0,
         'approved_partners' => 0,
+        'pending_vendors' => 0,
+        'approved_vendors' => 0,
     ];
 
     try {
@@ -183,6 +185,16 @@ function getPlatformStats(): array {
         // Approved partners
         $stmt = $db->query("SELECT COUNT(*) FROM partners WHERE status = 'approved'");
         $stats['approved_partners'] = $stmt->fetchColumn();
+    } catch (Exception $e) {}
+
+    try {
+        // Pending vendors (subcontractor module)
+        $stmt = $db->query("SELECT COUNT(*) FROM vendors WHERE status = 'pending'");
+        $stats['pending_vendors'] = $stmt->fetchColumn();
+
+        // Approved vendors
+        $stmt = $db->query("SELECT COUNT(*) FROM vendors WHERE status = 'approved'");
+        $stats['approved_vendors'] = $stmt->fetchColumn();
     } catch (Exception $e) {}
 
     return $stats;
