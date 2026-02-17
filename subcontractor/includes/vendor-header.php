@@ -5,6 +5,9 @@
  * Nordic Design System — adapted from app-header.php for the vendor portal.
  */
 
+// Start output buffering so POST handlers can redirect after this include
+ob_start();
+
 require_once __DIR__ . '/vendor-auth.php';
 require_once __DIR__ . '/../../includes/functions.php';
 
