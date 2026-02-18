@@ -422,22 +422,22 @@ document.querySelectorAll('.modal-overlay').forEach(o => {
 <style>
     /* Schedule styles */
     .timeline { padding: 24px; }
-    .timeline-item { display: flex; gap: 20px; padding: 16px 0; border-bottom: 1px solid var(--cream-dark); align-items: flex-start; }
+    .timeline-item { display: flex; gap: 20px; padding: 16px 0; border-bottom: 1px solid var(--border); align-items: flex-start; }
     .timeline-item:last-child { border-bottom: none; }
-    .timeline-time { font-size: 18px; font-weight: 600; color: var(--sage); min-width: 60px; }
+    .timeline-time { font-size: 18px; font-weight: 600; color: var(--accent); min-width: 60px; }
     .timeline-content { flex: 1; }
-    .timeline-content h4 { font-size: 16px; font-weight: 600; color: var(--charcoal); margin-bottom: 4px; }
-    .timeline-content p { font-size: 14px; color: var(--charcoal-light); }
+    .timeline-content h4 { font-size: 16px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+    .timeline-content p { font-size: 14px; color: var(--text-secondary); }
     .timeline-actions { display: flex; gap: 4px; }
 
     /* Menu styles */
     .menu-courses { display: flex; flex-direction: column; gap: 24px; }
     .menu-course { padding: 20px; }
-    .empty-course { color: var(--charcoal-light); font-size: 14px; font-style: italic; }
+    .empty-course { color: var(--text-secondary); font-size: 14px; font-style: italic; }
     .menu-items { display: flex; flex-direction: column; gap: 12px; }
-    .menu-item { display: flex; justify-content: space-between; align-items: flex-start; padding: 12px; background: var(--cream-light); border-radius: 8px; }
-    .menu-item h4 { font-size: 15px; font-weight: 600; color: var(--charcoal); margin-bottom: 4px; }
-    .menu-item p { font-size: 14px; color: var(--charcoal-light); }
+    .menu-item { display: flex; justify-content: space-between; align-items: flex-start; padding: 12px; background: var(--surface); border-radius: var(--radius-sm); }
+    .menu-item h4 { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+    .menu-item p { font-size: 14px; color: var(--text-secondary); }
     .menu-item-actions { display: flex; gap: 4px; }
 
     /* Row action buttons */
@@ -450,12 +450,12 @@ document.querySelectorAll('.modal-overlay').forEach(o => {
         border: none;
         background: none;
         cursor: pointer;
-        color: var(--charcoal-light);
-        border-radius: 8px;
+        color: var(--text-secondary);
+        border-radius: var(--radius-sm);
         transition: all 0.2s;
     }
-    .row-action:hover { background: var(--cream); color: var(--charcoal); }
-    .row-action.danger:hover { background: #FEE; color: var(--error, #B84C4C); }
+    .row-action:hover { background: var(--surface); color: var(--text); }
+    .row-action.danger:hover { background: var(--error-light); color: var(--error); }
     .row-action svg { width: 16px; height: 16px; }
 
     /* Section tabs */
@@ -463,25 +463,25 @@ document.querySelectorAll('.modal-overlay').forEach(o => {
         display: flex;
         gap: 4px;
         margin-bottom: 24px;
-        background: var(--cream-light, #F5F3EF);
-        border-radius: 12px;
+        background: var(--border-light);
+        border-radius: var(--radius-md);
         padding: 4px;
     }
     .section-tab {
         flex: 1;
         text-align: center;
         padding: 10px 16px;
-        border-radius: 10px;
+        border-radius: var(--radius-md);
         font-size: 14px;
         font-weight: 500;
-        color: var(--charcoal-light, #3D3D3D);
+        color: var(--text-secondary);
         text-decoration: none;
         transition: all 0.2s;
     }
     .section-tab.active {
-        background: var(--white, #fff);
-        color: var(--charcoal, #1A1A1A);
+        background: var(--surface-card);
+        color: var(--text);
         box-shadow: 0 1px 3px rgba(0,0,0,0.08);
     }
-    .section-tab:hover:not(.active) { color: var(--charcoal, #1A1A1A); }
+    .section-tab:hover:not(.active) { color: var(--text); }
 </style>

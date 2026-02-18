@@ -81,7 +81,7 @@ $guestStats = $stmt->fetch();
 $pageTitle = $event['name'] ?? 'Arrangement';
 ?>
 <!DOCTYPE html>
-<html lang="da">
+<html lang="da" data-area="event">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -89,38 +89,9 @@ $pageTitle = $event['name'] ?? 'Arrangement';
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/css/design-system.css">
     <style>
-        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-
-        :root {
-            --cream: #E8E4DE;
-            --cream-light: #F5F3F0;
-            --cream-dark: #D9D4CC;
-            --sage: #8FA583;
-            --sage-light: #B8C9B0;
-            --sage-dark: #5D7255;
-            --charcoal: #1A1A1A;
-            --charcoal-light: #3D3D3D;
-            --gold: #B8923D;
-            --white: #FFFFFF;
-            --success: #4D854D;
-            --warning: #C4922D;
-            --error: #B84C4C;
-
-            --font-display: 'Cormorant Garamond', Georgia, serif;
-            --font-body: 'DM Sans', -apple-system, sans-serif;
-            --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        body {
-            font-family: var(--font-body);
-            background: var(--cream);
-            color: var(--charcoal);
-            min-height: 100vh;
-            -webkit-font-smoothing: antialiased;
-        }
-
-        /* Subtle grain texture */
+        /* Subtle grain texture overlay */
         body::before {
             content: '';
             position: fixed;
@@ -131,14 +102,15 @@ $pageTitle = $event['name'] ?? 'Arrangement';
             z-index: 9999;
         }
 
-        /* Top Navigation */
+        /* ===== Top Navigation ===== */
         .top-nav {
-            background: var(--white);
-            border-bottom: 1px solid var(--cream-dark);
+            background: var(--surface-card);
+            border-bottom: 1px solid var(--border);
             padding: 0 24px;
             position: sticky;
             top: 0;
             z-index: 100;
+            margin-left: var(--sidebar-width);
         }
 
         .top-nav-inner {
@@ -160,17 +132,17 @@ $pageTitle = $event['name'] ?? 'Arrangement';
             display: flex;
             align-items: center;
             gap: 8px;
-            color: var(--charcoal-light);
+            color: var(--text-secondary);
             text-decoration: none;
             font-size: 14px;
             padding: 10px 14px;
-            border-radius: 12px;
+            border-radius: var(--radius-md);
             transition: all 0.25s var(--ease-out);
         }
 
         .back-link:hover {
-            background: var(--cream);
-            color: var(--charcoal);
+            background: var(--surface);
+            color: var(--text);
         }
 
         .back-link svg {
@@ -182,15 +154,15 @@ $pageTitle = $event['name'] ?? 'Arrangement';
             font-family: var(--font-display);
             font-size: 22px;
             font-weight: 500;
-            color: var(--charcoal);
+            color: var(--text);
         }
 
         .event-badge {
             font-size: 12px;
             padding: 6px 12px;
-            border-radius: 8px;
-            background: var(--sage-light);
-            color: var(--sage-dark);
+            border-radius: var(--radius-sm);
+            background: var(--accent-light);
+            color: var(--accent-dark);
             font-weight: 500;
         }
 
@@ -200,71 +172,44 @@ $pageTitle = $event['name'] ?? 'Arrangement';
             gap: 12px;
         }
 
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 12px 20px;
-            font-family: var(--font-body);
-            font-size: 14px;
-            font-weight: 500;
-            border: none;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.25s var(--ease-out);
-            text-decoration: none;
-        }
-
-        .btn-primary {
-            background: var(--charcoal);
-            color: var(--white);
-        }
-
-        .btn-primary:hover {
-            background: var(--charcoal-light);
-            transform: translateY(-1px);
-        }
-
-        .btn-secondary {
-            background: var(--white);
-            color: var(--charcoal);
-            border: 1px solid var(--cream-dark);
-        }
-
-        .btn-secondary:hover {
-            background: var(--cream);
-            border-color: var(--sage-light);
-        }
-
         .btn-sage {
-            background: var(--sage);
-            color: var(--white);
+            background: var(--accent);
+            color: var(--text-on-dark);
         }
 
         .btn-sage:hover {
-            background: var(--sage-dark);
+            background: var(--accent-dark);
         }
 
-        .btn svg { width: 16px; height: 16px; }
-
-        /* Event Sidebar */
+        /* ===== Event Sidebar — Dark Theme ===== */
         .event-sidebar {
             position: fixed;
             top: 0;
             left: 0;
             bottom: 0;
-            width: 280px;
-            background: var(--white);
-            border-right: 1px solid var(--cream-dark);
+            width: var(--sidebar-width);
+            background: var(--surface-sidebar);
             display: flex;
             flex-direction: column;
             z-index: 150;
             overflow: hidden;
         }
 
+        /* 3px accent stripe */
+        .event-sidebar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: 3px;
+            background: var(--accent);
+            z-index: 1;
+        }
+
         .sidebar-header {
             padding: 24px 20px;
-            border-bottom: 1px solid var(--cream-dark);
+            border-bottom: 1px solid rgba(255,255,255,0.08);
         }
 
         .sidebar-logo {
@@ -274,17 +219,17 @@ $pageTitle = $event['name'] ?? 'Arrangement';
             font-family: var(--font-display);
             font-size: 20px;
             font-weight: 600;
-            color: var(--charcoal);
+            color: var(--text-on-dark);
             text-decoration: none;
         }
 
         .sidebar-logo svg {
             width: 22px;
             height: 22px;
-            color: var(--sage);
+            color: var(--accent);
         }
 
-        .sidebar-logo span { color: var(--sage-dark); }
+        .sidebar-logo span { color: var(--accent); }
 
         .sidebar-nav {
             flex: 1;
@@ -293,13 +238,13 @@ $pageTitle = $event['name'] ?? 'Arrangement';
         }
 
         .sidebar-nav::-webkit-scrollbar { width: 4px; }
-        .sidebar-nav::-webkit-scrollbar-thumb { background: var(--cream-dark); border-radius: 2px; }
+        .sidebar-nav::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 2px; }
 
         .sidebar-app-nav { margin-bottom: 4px; }
 
         .sidebar-divider {
             height: 1px;
-            background: var(--cream-dark);
+            background: rgba(255,255,255,0.08);
             margin: 8px 0;
         }
 
@@ -308,41 +253,41 @@ $pageTitle = $event['name'] ?? 'Arrangement';
             align-items: center;
             gap: 10px;
             padding: 10px 12px;
-            color: var(--charcoal-light);
+            color: var(--text-sidebar);
             text-decoration: none;
             font-size: 14px;
             font-weight: 400;
-            border-radius: 10px;
-            transition: all 0.2s var(--ease-out);
+            border-radius: var(--radius-sm);
+            transition: all 0.2s ease;
         }
 
         .sidebar-link svg { width: 18px; height: 18px; flex-shrink: 0; }
 
         .sidebar-link:hover {
-            background: var(--cream-light);
-            color: var(--charcoal);
+            background: rgba(255,255,255,0.06);
+            color: var(--text-sidebar-hover);
         }
 
         .sidebar-link.active {
-            background: var(--sage);
-            color: var(--white);
+            background: var(--accent);
+            color: var(--text-on-dark);
             font-weight: 500;
         }
 
-        .sidebar-link.premium { color: #B8B0A0; }
+        .sidebar-link.premium { color: rgba(168,164,158,0.5); }
 
         .sidebar-link.premium::after {
             content: 'PRO';
             font-size: 9px;
             font-weight: 700;
             padding: 2px 5px;
-            background: var(--gold);
-            color: var(--white);
+            background: var(--warning);
+            color: var(--text-on-dark);
             border-radius: 4px;
             margin-left: auto;
         }
 
-        .sidebar-link.premium.active { color: var(--white); }
+        .sidebar-link.premium.active { color: var(--text-on-dark); }
         .sidebar-link.premium.active::after { background: rgba(255,255,255,0.3); }
 
         /* Sidebar Groups */
@@ -362,10 +307,10 @@ $pageTitle = $event['name'] ?? 'Arrangement';
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.05em;
-            color: var(--charcoal-light);
+            color: var(--text-sidebar);
         }
 
-        .sidebar-group-header:hover { color: var(--charcoal); }
+        .sidebar-group-header:hover { color: var(--text-sidebar-hover); }
 
         .sidebar-group-icon svg { width: 16px; height: 16px; }
         .sidebar-group-label { flex: 1; text-align: left; }
@@ -373,7 +318,8 @@ $pageTitle = $event['name'] ?? 'Arrangement';
         .sidebar-group-chevron {
             width: 14px;
             height: 14px;
-            transition: transform 0.2s var(--ease-out);
+            transition: transform 0.2s ease;
+            color: var(--text-sidebar);
         }
 
         .sidebar-group-header[aria-expanded="false"] .sidebar-group-chevron {
@@ -382,7 +328,7 @@ $pageTitle = $event['name'] ?? 'Arrangement';
 
         .sidebar-group-items {
             overflow: hidden;
-            transition: max-height 0.25s var(--ease-out);
+            transition: max-height 0.25s ease;
         }
 
         .sidebar-group-header[aria-expanded="false"] + .sidebar-group-items {
@@ -396,7 +342,7 @@ $pageTitle = $event['name'] ?? 'Arrangement';
         /* Sidebar Footer */
         .sidebar-footer {
             padding: 16px;
-            border-top: 1px solid var(--cream-dark);
+            border-top: 1px solid rgba(255,255,255,0.08);
         }
 
         .sidebar-plan-badge {
@@ -404,11 +350,11 @@ $pageTitle = $event['name'] ?? 'Arrangement';
             align-items: center;
             justify-content: center;
             padding: 10px;
-            background: var(--cream-light);
-            border-radius: 10px;
+            background: rgba(255,255,255,0.06);
+            border-radius: var(--radius-sm);
             font-size: 13px;
             font-weight: 600;
-            color: var(--charcoal);
+            color: var(--text-sidebar-hover);
             margin-bottom: 8px;
         }
 
@@ -418,22 +364,19 @@ $pageTitle = $event['name'] ?? 'Arrangement';
             justify-content: center;
             gap: 6px;
             padding: 10px;
-            background: var(--sage);
-            color: var(--white);
+            background: var(--accent);
+            color: var(--text-on-dark);
             text-decoration: none;
-            border-radius: 10px;
+            border-radius: var(--radius-sm);
             font-size: 13px;
             font-weight: 500;
             transition: background 0.2s;
         }
 
-        .sidebar-upgrade-btn:hover { background: var(--sage-dark); }
+        .sidebar-upgrade-btn:hover { background: var(--accent-dark); }
         .sidebar-upgrade-btn svg { width: 14px; height: 14px; }
 
-        /* Desktop layout offset */
-        .top-nav { margin-left: 280px; }
-
-        /* Mobile hamburger */
+        /* ===== Mobile Hamburger ===== */
         .event-menu-toggle {
             display: none;
             align-items: center;
@@ -443,23 +386,23 @@ $pageTitle = $event['name'] ?? 'Arrangement';
             border: none;
             background: none;
             cursor: pointer;
-            color: var(--charcoal);
-            border-radius: 10px;
+            color: var(--text);
+            border-radius: var(--radius-md);
             -webkit-tap-highlight-color: transparent;
         }
 
-        .event-menu-toggle:hover { background: var(--cream); }
+        .event-menu-toggle:hover { background: var(--surface); }
         .event-menu-toggle svg { width: 22px; height: 22px; }
 
-        /* Mobile Bottom Bar */
+        /* ===== Mobile Bottom Bar ===== */
         .mobile-bottom-bar {
             display: none;
             position: fixed;
             bottom: 0;
             left: 0;
             right: 0;
-            background: var(--white);
-            border-top: 1px solid var(--cream-dark);
+            background: var(--surface-card);
+            border-top: 1px solid var(--border);
             z-index: 200;
             justify-content: space-around;
             padding: 6px 0 env(safe-area-inset-bottom, 6px);
@@ -474,11 +417,11 @@ $pageTitle = $event['name'] ?? 'Arrangement';
             border: none;
             background: none;
             cursor: pointer;
-            color: var(--charcoal-light);
+            color: var(--text-secondary);
             -webkit-tap-highlight-color: transparent;
         }
 
-        .bottom-bar-item.active { color: var(--sage-dark); }
+        .bottom-bar-item.active { color: var(--accent-dark); }
         .bottom-bar-item svg { width: 22px; height: 22px; }
         .bottom-bar-item span {
             font-family: var(--font-body);
@@ -486,7 +429,7 @@ $pageTitle = $event['name'] ?? 'Arrangement';
             font-weight: 500;
         }
 
-        /* Bottom Sheet */
+        /* ===== Bottom Sheet ===== */
         .bottom-sheet {
             display: none;
             position: fixed;
@@ -512,7 +455,7 @@ $pageTitle = $event['name'] ?? 'Arrangement';
             bottom: 0;
             left: 0;
             right: 0;
-            background: var(--white);
+            background: var(--surface-card);
             border-radius: 20px 20px 0 0;
             padding: 0 20px 20px;
             padding-bottom: calc(20px + env(safe-area-inset-bottom, 0px));
@@ -527,7 +470,7 @@ $pageTitle = $event['name'] ?? 'Arrangement';
         .bottom-sheet-handle {
             width: 36px;
             height: 4px;
-            background: var(--cream-dark);
+            background: var(--border);
             border-radius: 2px;
             margin: 12px auto 16px;
         }
@@ -538,7 +481,7 @@ $pageTitle = $event['name'] ?? 'Arrangement';
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.05em;
-            color: var(--charcoal-light);
+            color: var(--text-secondary);
             padding: 4px 0 8px;
         }
 
@@ -547,105 +490,55 @@ $pageTitle = $event['name'] ?? 'Arrangement';
             align-items: center;
             justify-content: space-between;
             padding: 14px 12px;
-            color: var(--charcoal);
+            color: var(--text);
             text-decoration: none;
             font-size: 16px;
-            border-radius: 12px;
+            border-radius: var(--radius-md);
             min-height: 48px;
         }
 
-        .bottom-sheet-link:active { background: var(--cream-light); }
+        .bottom-sheet-link:active { background: var(--surface); }
 
         .bottom-sheet-link.active {
-            background: var(--sage);
-            color: var(--white);
+            background: var(--accent);
+            color: var(--text-on-dark);
             font-weight: 500;
         }
 
         .bottom-sheet-link.premium { color: #B8B0A0; }
-        .bottom-sheet-link.premium.active { color: var(--white); }
+        .bottom-sheet-link.premium.active { color: var(--text-on-dark); }
 
         .pro-badge {
             font-size: 9px;
             font-weight: 700;
             padding: 2px 6px;
-            background: var(--gold);
-            color: var(--white);
+            background: var(--warning);
+            color: var(--text-on-dark);
             border-radius: 4px;
         }
 
         .bottom-sheet-link.active .pro-badge { background: rgba(255,255,255,0.3); }
 
-        /* Main Content */
+        /* ===== Main Content ===== */
         .main-content {
             max-width: 1400px;
-            margin: 0 auto 0 280px;
+            margin: 0 auto 0 var(--sidebar-width);
             padding: 32px 24px;
         }
 
-        .card {
-            background: var(--white);
-            border-radius: 20px;
-            padding: 28px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-            border: 1px solid var(--cream-dark);
-            margin-bottom: 24px;
-        }
+        /* manage.php card override — slightly larger padding + margin */
+        .card { margin-bottom: 24px; }
 
-        .card-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 24px;
-        }
-
-        .card-title {
-            font-family: var(--font-display);
-            font-size: 20px;
-            font-weight: 500;
-            color: var(--charcoal);
-        }
-
-        /* Stats Grid */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 16px;
-            margin-bottom: 32px;
-        }
-
+        /* manage.php stat-card hover effect */
         .stat-card {
-            background: var(--white);
-            border-radius: 16px;
-            padding: 24px;
-            border: 1px solid var(--cream-dark);
             transition: all 0.25s var(--ease-out);
         }
-
         .stat-card:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 24px rgba(0,0,0,0.06);
         }
 
-        .stat-label {
-            font-size: 13px;
-            color: var(--charcoal-light);
-            margin-bottom: 8px;
-            font-weight: 500;
-        }
-
-        .stat-value {
-            font-family: var(--font-display);
-            font-size: 36px;
-            font-weight: 500;
-            color: var(--charcoal);
-        }
-
-        .stat-value.success { color: var(--success); }
-        .stat-value.error { color: var(--error); }
-        .stat-value.warning { color: var(--warning); }
-
-        /* Quick Actions */
+        /* ===== Quick Actions ===== */
         .quick-actions {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
@@ -657,23 +550,23 @@ $pageTitle = $event['name'] ?? 'Arrangement';
             flex-direction: column;
             align-items: center;
             padding: 28px 20px;
-            background: var(--cream);
-            border-radius: 16px;
+            background: var(--surface);
+            border-radius: var(--radius-lg);
             text-decoration: none;
-            color: var(--charcoal);
+            color: var(--text);
             transition: all 0.25s var(--ease-out);
             text-align: center;
         }
 
         .quick-action:hover {
-            background: var(--cream-dark);
+            background: var(--border);
             transform: translateY(-3px);
         }
 
         .quick-action svg {
             width: 32px;
             height: 32px;
-            color: var(--sage-dark);
+            color: var(--accent-dark);
             margin-bottom: 14px;
         }
 
@@ -682,134 +575,7 @@ $pageTitle = $event['name'] ?? 'Arrangement';
             font-weight: 500;
         }
 
-        /* Empty State */
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-        }
-
-        .empty-state svg {
-            width: 64px;
-            height: 64px;
-            color: var(--sage-light);
-            margin-bottom: 20px;
-        }
-
-        .empty-state h3 {
-            font-family: var(--font-display);
-            font-size: 20px;
-            font-weight: 500;
-            color: var(--charcoal);
-            margin-bottom: 8px;
-        }
-
-        .empty-state p {
-            color: var(--charcoal-light);
-            margin-bottom: 24px;
-        }
-
-        /* Flash Messages */
-        .flash-message {
-            padding: 16px 20px;
-            border-radius: 14px;
-            margin-bottom: 24px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-size: 14px;
-        }
-
-        .flash-message.success {
-            background: #F0F7F0;
-            border: 1px solid #C8E0C8;
-            color: var(--success);
-        }
-
-        .flash-message.error {
-            background: #FDF2F2;
-            border: 1px solid #F5D5D5;
-            color: var(--error);
-        }
-
-        .flash-message svg {
-            width: 20px;
-            height: 20px;
-            flex-shrink: 0;
-        }
-
-        /* Forms */
-        .form-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
-        }
-
-        .form-group {
-            margin-bottom: 0;
-        }
-
-        .form-group.full-width {
-            grid-column: span 2;
-        }
-
-        .form-label {
-            display: block;
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--charcoal);
-            margin-bottom: 10px;
-        }
-
-        .form-input {
-            width: 100%;
-            padding: 14px 16px;
-            font-family: var(--font-body);
-            font-size: 14px;
-            border: 2px solid var(--cream-dark);
-            border-radius: 12px;
-            background: var(--white);
-            color: var(--charcoal);
-            transition: all 0.25s var(--ease-out);
-        }
-
-        .form-input:focus {
-            outline: none;
-            border-color: var(--sage);
-            box-shadow: 0 0 0 4px rgba(168, 181, 160, 0.15);
-        }
-
-        .form-input::placeholder {
-            color: #A8A39B;
-        }
-
-        select.form-input {
-            cursor: pointer;
-            appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%234A4A4A'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 14px center;
-            background-size: 16px;
-            padding-right: 44px;
-        }
-
-        textarea.form-input {
-            resize: vertical;
-            min-height: 100px;
-        }
-
-        .form-actions {
-            padding-top: 24px;
-            border-top: 1px solid var(--cream-dark);
-            margin-top: 28px;
-        }
-
-        .form-hint {
-            font-size: 13px;
-            color: var(--charcoal-light);
-            margin-top: 8px;
-        }
-
-        /* Filters Bar */
+        /* ===== Filters Bar ===== */
         .filters-bar {
             margin-bottom: 24px;
         }
@@ -824,37 +590,37 @@ $pageTitle = $event['name'] ?? 'Arrangement';
             padding: 10px 18px;
             font-size: 14px;
             font-weight: 500;
-            color: var(--charcoal-light);
-            background: var(--white);
-            border: 1px solid var(--cream-dark);
-            border-radius: 10px;
+            color: var(--text-secondary);
+            background: var(--surface-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
             text-decoration: none;
             transition: all 0.25s var(--ease-out);
         }
 
         .filter-tab:hover {
-            background: var(--cream);
-            border-color: var(--sage-light);
+            background: var(--surface);
+            border-color: var(--accent-light);
         }
 
         .filter-tab.active {
-            background: var(--sage);
-            color: var(--white);
-            border-color: var(--sage);
+            background: var(--accent);
+            color: var(--text-on-dark);
+            border-color: var(--accent);
         }
 
-        /* Section Header */
+        /* ===== Section Header ===== */
         .section-title {
             font-family: var(--font-display);
             font-size: 28px;
             font-weight: 500;
-            color: var(--charcoal);
+            color: var(--text);
             margin-bottom: 6px;
         }
 
         .section-subtitle {
             font-size: 14px;
-            color: var(--charcoal-light);
+            color: var(--text-secondary);
         }
 
         .page-header-actions {
@@ -866,89 +632,13 @@ $pageTitle = $event['name'] ?? 'Arrangement';
             gap: 16px;
         }
 
-        /* Modal */
-        .modal-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(44, 44, 44, 0.4);
-            backdrop-filter: blur(4px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            padding: 20px;
-        }
-
-        .modal {
-            background: var(--white);
-            border-radius: 24px;
-            width: 100%;
-            max-width: 520px;
-            max-height: 90vh;
-            overflow-y: auto;
-            box-shadow: 0 24px 48px rgba(0,0,0,0.15);
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 24px 28px;
-            border-bottom: 1px solid var(--cream-dark);
-        }
-
-        .modal-header h3 {
-            font-family: var(--font-display);
-            font-size: 20px;
-            font-weight: 500;
-            color: var(--charcoal);
-        }
-
-        .modal-close {
-            background: none;
-            border: none;
-            font-size: 24px;
-            color: var(--charcoal-light);
-            cursor: pointer;
-            padding: 4px;
-            line-height: 1;
-            transition: color 0.2s;
-        }
-
-        .modal-close:hover {
-            color: var(--charcoal);
-        }
-
-        .modal-body {
-            padding: 28px;
-        }
-
-        .modal-body .form-group {
-            margin-bottom: 20px;
-        }
-
-        .modal-body .form-group:last-child {
-            margin-bottom: 0;
-        }
-
-        .modal-footer {
-            display: flex;
-            justify-content: flex-end;
-            gap: 12px;
-            padding: 20px 28px;
-            border-top: 1px solid var(--cream-dark);
-            background: var(--cream);
-            border-radius: 0 0 24px 24px;
-        }
-
-        /* Utility */
+        /* ===== Utility ===== */
         .danger-text { color: var(--error) !important; }
-        .btn-sm { padding: 10px 14px; font-size: 13px; }
 
-        /* Upgrade Notice */
+        /* ===== Upgrade Notice ===== */
         .upgrade-notice {
             background: linear-gradient(135deg, #FEF8E8 0%, #FDF3D7 100%);
-            border-radius: 16px;
+            border-radius: var(--radius-lg);
             padding: 24px;
             display: flex;
             align-items: center;
@@ -972,8 +662,8 @@ $pageTitle = $event['name'] ?? 'Arrangement';
         }
 
         .upgrade-notice .btn {
-            background: var(--gold);
-            color: var(--white);
+            background: var(--warning);
+            color: var(--text-on-dark);
             white-space: nowrap;
         }
 
@@ -981,6 +671,7 @@ $pageTitle = $event['name'] ?? 'Arrangement';
             background: #B8952F;
         }
 
+        /* ===== Responsive ===== */
         @media (max-width: 1024px) {
             .event-sidebar {
                 transform: translateX(-100%);
@@ -995,7 +686,7 @@ $pageTitle = $event['name'] ?? 'Arrangement';
                 display: none;
                 position: fixed;
                 inset: 0;
-                background: rgba(0,0,0,0.3);
+                background: rgba(0,0,0,0.4);
                 z-index: 149;
             }
             .sidebar-overlay.visible {
@@ -1025,10 +716,6 @@ $pageTitle = $event['name'] ?? 'Arrangement';
 
             .form-group.full-width {
                 grid-column: span 1;
-            }
-
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
             }
         }
     </style>

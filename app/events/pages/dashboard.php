@@ -75,7 +75,7 @@ $daysUntil = $eventDate ? (int)ceil((strtotime($eventDate) - time()) / 86400) : 
             <span class="detail-label">Gæstelink</span>
             <span class="detail-value">
                 <?php if ($event['slug']): ?>
-                    <code style="background: var(--gray-100); padding: 4px 8px; border-radius: 4px; font-size: 13px;">
+                    <code style="background: var(--border-light); padding: 4px 8px; border-radius: 4px; font-size: 13px;">
                         /e/<?= htmlspecialchars($event['slug']) ?>/
                     </code>
                 <?php else: ?>
@@ -180,13 +180,13 @@ if (!empty($recentRsvps)):
         font-size: 12px;
         text-transform: uppercase;
         letter-spacing: 0.5px;
-        color: var(--gray-500);
+        color: var(--text-secondary);
         font-weight: 500;
     }
 
     .detail-value {
         font-size: 15px;
-        color: var(--gray-900);
+        color: var(--text);
     }
 
     .rsvp-list {
@@ -199,7 +199,7 @@ if (!empty($recentRsvps)):
         align-items: center;
         justify-content: space-between;
         padding: 12px 0;
-        border-bottom: 1px solid var(--gray-100);
+        border-bottom: 1px solid var(--border-light);
     }
 
     .rsvp-item:last-child {
@@ -214,12 +214,12 @@ if (!empty($recentRsvps)):
 
     .rsvp-name {
         font-weight: 500;
-        color: var(--gray-900);
+        color: var(--text);
     }
 
     .rsvp-time {
         font-size: 13px;
-        color: var(--gray-500);
+        color: var(--text-secondary);
     }
 
     .rsvp-status {
