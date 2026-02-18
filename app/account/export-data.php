@@ -359,8 +359,8 @@ $consentHistory = getConsentHistory($db, $accountId);
         align-items: center;
         gap: 16px;
         padding: 16px;
-        background: var(--gray-50);
-        border-radius: 8px;
+        background: var(--surface);
+        border-radius: var(--radius-sm);
     }
 
     .data-icon {
@@ -369,7 +369,7 @@ $consentHistory = getConsentHistory($db, $accountId);
 
     .data-item strong {
         display: block;
-        color: var(--gray-900);
+        color: var(--text);
     }
 
     .format-options {
@@ -389,15 +389,15 @@ $consentHistory = getConsentHistory($db, $accountId);
         flex-direction: column;
         align-items: center;
         padding: 20px;
-        border: 2px solid var(--gray-200);
-        border-radius: 12px;
+        border: 2px solid var(--border);
+        border-radius: var(--radius-md);
         cursor: pointer;
         transition: all 0.2s;
     }
 
     .format-option input:checked + .format-card {
-        border-color: var(--primary);
-        background: rgba(102, 126, 234, 0.05);
+        border-color: var(--accent);
+        background: var(--accent-light);
     }
 
     .format-icon {
@@ -407,12 +407,12 @@ $consentHistory = getConsentHistory($db, $accountId);
 
     .format-name {
         font-weight: 600;
-        color: var(--gray-900);
+        color: var(--text);
     }
 
     .format-desc {
         font-size: 12px;
-        color: var(--gray-500);
+        color: var(--text-secondary);
     }
 
     .consent-list {
@@ -426,13 +426,13 @@ $consentHistory = getConsentHistory($db, $accountId);
         justify-content: space-between;
         align-items: center;
         padding: 12px 16px;
-        background: var(--gray-50);
-        border-radius: 8px;
+        background: var(--surface);
+        border-radius: var(--radius-sm);
     }
 
     .consent-type {
         font-weight: 500;
-        color: var(--gray-900);
+        color: var(--text);
     }
 
     .consent-details {
@@ -445,26 +445,26 @@ $consentHistory = getConsentHistory($db, $accountId);
         padding: 4px 8px;
         font-size: 12px;
         font-weight: 500;
-        border-radius: 4px;
+        border-radius: var(--radius-xs);
     }
 
     .consent-status.active {
-        background: #dcfce7;
-        color: #15803d;
+        background: var(--success-light);
+        color: var(--success);
     }
 
     .consent-status.withdrawn {
-        background: #fee2e2;
-        color: #dc2626;
+        background: var(--error-light);
+        color: var(--error);
     }
 
     .consent-date {
         font-size: 13px;
-        color: var(--gray-500);
+        color: var(--text-secondary);
     }
 
     .text-muted {
-        color: var(--gray-500);
+        color: var(--text-secondary);
     }
 
     .small {
@@ -473,6 +473,10 @@ $consentHistory = getConsentHistory($db, $accountId);
 
     .mb-md {
         margin-bottom: 20px;
+    }
+
+    .btn-full {
+        width: 100%;
     }
 
     @media (max-width: 640px) {

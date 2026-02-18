@@ -132,7 +132,7 @@ require_once __DIR__ . '/../../includes/app-header.php';
                 <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 20px;">
                     <div>
                         <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
-                            <span style="font-size: 28px; font-weight: 700; color: var(--primary);">
+                            <span style="font-size: 28px; font-weight: 700; color: var(--accent);">
                                 <?= htmlspecialchars($subscriptionRecord['plan_name']) ?>
                             </span>
                             <?php if ($subscriptionRecord['status'] === 'active'): ?>
@@ -145,7 +145,7 @@ require_once __DIR__ . '/../../includes/app-header.php';
                                 <span class="badge badge-danger">Betaling mangler</span>
                             <?php endif; ?>
                         </div>
-                        <p style="color: var(--gray-600);">
+                        <p style="color: var(--text-secondary);">
                             <?php if ($subscriptionRecord['cancel_at_period_end']): ?>
                                 Udløber: <?= date('j. F Y', strtotime($subscriptionRecord['current_period_end'])) ?>
                             <?php else: ?>
@@ -168,14 +168,14 @@ require_once __DIR__ . '/../../includes/app-header.php';
                             <form method="POST" style="display: inline;" onsubmit="return confirm('Er du sikker på at du vil annullere dit abonnement?');">
                                 <input type="hidden" name="action" value="cancel">
                                 <input type="hidden" name="subscription_id" value="<?= $subscriptionRecord['id'] ?>">
-                                <button type="submit" class="btn btn-ghost" style="color: var(--danger);">Annuller</button>
+                                <button type="submit" class="btn btn-ghost" style="color: var(--error);">Annuller</button>
                             </form>
                         <?php endif; ?>
                     </div>
                 </div>
 
                 <?php if ($subscriptionRecord['status'] === 'past_due'): ?>
-                <div style="margin-top: 20px; padding: 16px; background: #fef2f2; border-radius: 12px; border-left: 4px solid var(--danger);">
+                <div style="margin-top: 20px; padding: 16px; background: #fef2f2; border-radius: 12px; border-left: 4px solid var(--error);">
                     <p style="color: #991b1b; font-weight: 600;">Din betaling kunne ikke gennemføres</p>
                     <p style="color: #7f1d1d; font-size: 14px; margin-top: 4px;">
                         Opdater dine betalingsoplysninger for at undgå at miste adgang til premium-funktioner.
@@ -189,11 +189,11 @@ require_once __DIR__ . '/../../includes/app-header.php';
 
             <?php else: ?>
                 <div style="text-align: center; padding: 32px 16px;">
-                    <div style="width: 64px; height: 64px; margin: 0 auto 16px; background: var(--gray-100); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
-                        <svg width="32" height="32" fill="none" stroke="var(--gray-400)" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
+                    <div style="width: 64px; height: 64px; margin: 0 auto 16px; background: var(--border-light); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                        <svg width="32" height="32" fill="none" stroke="var(--text-secondary)" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
                     </div>
                     <h3 style="font-size: 18px; margin-bottom: 8px;">Gratis plan</h3>
-                    <p style="color: var(--gray-600); margin-bottom: 20px;">Du bruger den gratis plan med begrænsede funktioner.</p>
+                    <p style="color: var(--text-secondary); margin-bottom: 20px;">Du bruger den gratis plan med begrænsede funktioner.</p>
                     <a href="/app/account/subscription.php" class="btn btn-primary">Opgrader nu</a>
                 </div>
             <?php endif; ?>
@@ -233,28 +233,28 @@ require_once __DIR__ . '/../../includes/app-header.php';
                         <td>Bordplan</td>
                         <?php foreach ($plans as $plan): ?>
                         <?php $features = json_decode($plan['features'], true); ?>
-                        <td style="text-align: center;"><?= !empty($features['seating']) ? '<span style="color: var(--success);">&#10003;</span>' : '<span style="color: var(--gray-400);">&#10007;</span>' ?></td>
+                        <td style="text-align: center;"><?= !empty($features['seating']) ? '<span style="color: var(--success);">&#10003;</span>' : '<span style="color: var(--text-secondary);">&#10007;</span>' ?></td>
                         <?php endforeach; ?>
                     </tr>
                     <tr>
                         <td>Tjekliste</td>
                         <?php foreach ($plans as $plan): ?>
                         <?php $features = json_decode($plan['features'], true); ?>
-                        <td style="text-align: center;"><?= !empty($features['checklist']) ? '<span style="color: var(--success);">&#10003;</span>' : '<span style="color: var(--gray-400);">&#10007;</span>' ?></td>
+                        <td style="text-align: center;"><?= !empty($features['checklist']) ? '<span style="color: var(--success);">&#10003;</span>' : '<span style="color: var(--text-secondary);">&#10007;</span>' ?></td>
                         <?php endforeach; ?>
                     </tr>
                     <tr>
                         <td>Toastmaster</td>
                         <?php foreach ($plans as $plan): ?>
                         <?php $features = json_decode($plan['features'], true); ?>
-                        <td style="text-align: center;"><?= !empty($features['toastmaster']) ? '<span style="color: var(--success);">&#10003;</span>' : '<span style="color: var(--gray-400);">&#10007;</span>' ?></td>
+                        <td style="text-align: center;"><?= !empty($features['toastmaster']) ? '<span style="color: var(--success);">&#10003;</span>' : '<span style="color: var(--text-secondary);">&#10007;</span>' ?></td>
                         <?php endforeach; ?>
                     </tr>
                     <tr>
                         <td>Budget</td>
                         <?php foreach ($plans as $plan): ?>
                         <?php $features = json_decode($plan['features'], true); ?>
-                        <td style="text-align: center;"><?= !empty($features['budget']) ? '<span style="color: var(--success);">&#10003;</span>' : '<span style="color: var(--gray-400);">&#10007;</span>' ?></td>
+                        <td style="text-align: center;"><?= !empty($features['budget']) ? '<span style="color: var(--success);">&#10003;</span>' : '<span style="color: var(--text-secondary);">&#10007;</span>' ?></td>
                         <?php endforeach; ?>
                     </tr>
                     <tr>
@@ -331,9 +331,9 @@ require_once __DIR__ . '/../../includes/app-header.php';
                                 </td>
                                 <td>
                                     <?php if ($payment['receipt_url']): ?>
-                                        <a href="<?= htmlspecialchars($payment['receipt_url']) ?>" target="_blank" style="color: var(--primary); font-size: 14px;">Kvittering</a>
+                                        <a href="<?= htmlspecialchars($payment['receipt_url']) ?>" target="_blank" style="color: var(--accent); font-size: 14px;">Kvittering</a>
                                     <?php elseif ($payment['invoice_url']): ?>
-                                        <a href="<?= htmlspecialchars($payment['invoice_url']) ?>" target="_blank" style="color: var(--primary); font-size: 14px;">Faktura</a>
+                                        <a href="<?= htmlspecialchars($payment['invoice_url']) ?>" target="_blank" style="color: var(--accent); font-size: 14px;">Faktura</a>
                                     <?php endif; ?>
                                 </td>
                             </tr>
@@ -354,19 +354,19 @@ require_once __DIR__ . '/../../includes/app-header.php';
             <div style="display: flex; flex-direction: column; gap: 20px;">
                 <div>
                     <h4 style="font-weight: 600; margin-bottom: 6px;">Hvordan annullerer jeg mit abonnement?</h4>
-                    <p style="color: var(--gray-600); font-size: 14px;">
+                    <p style="color: var(--text-secondary); font-size: 14px;">
                         Du kan annullere dit abonnement når som helst ved at klikke på "Annuller" ovenfor. Du beholder adgang til betalte funktioner indtil periodens udløb.
                     </p>
                 </div>
                 <div>
                     <h4 style="font-weight: 600; margin-bottom: 6px;">Kan jeg skifte plan?</h4>
-                    <p style="color: var(--gray-600); font-size: 14px;">
+                    <p style="color: var(--text-secondary); font-size: 14px;">
                         Ja, du kan opgradere eller nedgradere din plan når som helst via "Administrer betaling". Ændringer træder i kraft ved næste faktureringsperiode.
                     </p>
                 </div>
                 <div>
                     <h4 style="font-weight: 600; margin-bottom: 6px;">Hvad sker der med mine data hvis jeg annullerer?</h4>
-                    <p style="color: var(--gray-600); font-size: 14px;">
+                    <p style="color: var(--text-secondary); font-size: 14px;">
                         Dine data bevares i 30 dage efter annullering. Du kan genaktivere dit abonnement og få fuld adgang igen.
                     </p>
                 </div>

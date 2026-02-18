@@ -268,7 +268,7 @@ $currentPlanSlug = $currentPlan['plan_slug'] ?? 'free';
 
 <style>
     .current-plan-card {
-        background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+        background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
         color: white;
         margin-bottom: 40px;
     }
@@ -337,12 +337,12 @@ $currentPlanSlug = $currentPlan['plan_slug'] ?? 'free';
     .section-title {
         font-size: 24px;
         font-weight: 700;
-        color: var(--gray-900);
+        color: var(--text);
         margin-bottom: 8px;
     }
 
     .section-subtitle {
-        color: var(--gray-500);
+        color: var(--text-secondary);
         margin-bottom: 24px;
     }
 
@@ -354,10 +354,10 @@ $currentPlanSlug = $currentPlan['plan_slug'] ?? 'free';
     }
 
     .plan-card {
-        background: white;
-        border-radius: 16px;
+        background: var(--surface-card);
+        border-radius: var(--radius-lg);
         padding: 24px;
-        border: 2px solid var(--gray-200);
+        border: 2px solid var(--border);
         display: flex;
         flex-direction: column;
         position: relative;
@@ -365,17 +365,17 @@ $currentPlanSlug = $currentPlan['plan_slug'] ?? 'free';
     }
 
     .plan-card:hover {
-        border-color: var(--gray-300);
+        border-color: var(--text-secondary);
         box-shadow: 0 8px 24px rgba(0,0,0,0.08);
     }
 
     .plan-card.current {
-        border-color: var(--primary);
-        background: linear-gradient(to bottom, rgba(102, 126, 234, 0.05), transparent);
+        border-color: var(--accent);
+        background: linear-gradient(to bottom, var(--accent-light), transparent);
     }
 
     .plan-card.popular {
-        border-color: var(--primary);
+        border-color: var(--accent);
     }
 
     .popular-badge {
@@ -383,7 +383,7 @@ $currentPlanSlug = $currentPlan['plan_slug'] ?? 'free';
         top: -12px;
         left: 50%;
         transform: translateX(-50%);
-        background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+        background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
         color: white;
         padding: 4px 16px;
         border-radius: 20px;
@@ -394,14 +394,14 @@ $currentPlanSlug = $currentPlan['plan_slug'] ?? 'free';
     .plan-card-header {
         text-align: center;
         padding-bottom: 20px;
-        border-bottom: 1px solid var(--gray-100);
+        border-bottom: 1px solid var(--border-light);
         margin-bottom: 20px;
     }
 
     .plan-card .plan-name {
         font-size: 20px;
         font-weight: 700;
-        color: var(--gray-900);
+        color: var(--text);
         margin-bottom: 12px;
     }
 
@@ -415,11 +415,11 @@ $currentPlanSlug = $currentPlan['plan_slug'] ?? 'free';
     .plan-card .plan-price {
         font-size: 36px;
         font-weight: 700;
-        color: var(--gray-900);
+        color: var(--text);
     }
 
     .plan-card .plan-period {
-        color: var(--gray-500);
+        color: var(--text-secondary);
         font-size: 14px;
     }
 
@@ -440,7 +440,7 @@ $currentPlanSlug = $currentPlan['plan_slug'] ?? 'free';
         gap: 10px;
         padding: 8px 0;
         font-size: 14px;
-        color: var(--gray-700);
+        color: var(--text);
     }
 
     .feature svg {
@@ -460,7 +460,7 @@ $currentPlanSlug = $currentPlan['plan_slug'] ?? 'free';
 
     .faq-item {
         padding: 20px 0;
-        border-bottom: 1px solid var(--gray-100);
+        border-bottom: 1px solid var(--border-light);
     }
 
     .faq-item:last-child {
@@ -471,13 +471,13 @@ $currentPlanSlug = $currentPlan['plan_slug'] ?? 'free';
     .faq-item h4 {
         font-size: 16px;
         font-weight: 600;
-        color: var(--gray-900);
+        color: var(--text);
         margin-bottom: 8px;
     }
 
     .faq-item p {
         font-size: 14px;
-        color: var(--gray-600);
+        color: var(--text-secondary);
         line-height: 1.6;
     }
 

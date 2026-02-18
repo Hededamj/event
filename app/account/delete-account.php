@@ -220,7 +220,7 @@ $guestCount = $stmt->fetchColumn();
     }
 
     .warning-card {
-        background: #fef2f2;
+        background: var(--error-light);
         border: 2px solid #fecaca;
     }
 
@@ -231,21 +231,21 @@ $guestCount = $stmt->fetchColumn();
     }
 
     .warning-card h2 {
-        color: #dc2626;
+        color: var(--error);
         text-align: center;
         margin-bottom: 16px;
     }
 
     .deletion-summary {
-        background: white;
+        background: var(--surface-card);
         padding: 20px;
-        border-radius: 8px;
+        border-radius: var(--radius-sm);
         margin-top: 20px;
     }
 
     .deletion-summary h3 {
         font-size: 14px;
-        color: var(--gray-700);
+        color: var(--text);
         margin-bottom: 12px;
     }
 
@@ -257,8 +257,8 @@ $guestCount = $stmt->fetchColumn();
 
     .deletion-summary li {
         padding: 8px 0;
-        border-bottom: 1px solid var(--gray-100);
-        color: var(--gray-600);
+        border-bottom: 1px solid var(--border-light);
+        color: var(--text-secondary);
         font-size: 14px;
     }
 
@@ -267,8 +267,8 @@ $guestCount = $stmt->fetchColumn();
     }
 
     .deletion-summary li::before {
-        content: "×";
-        color: #dc2626;
+        content: "\00d7";
+        color: var(--error);
         font-weight: bold;
         margin-right: 8px;
     }
@@ -279,8 +279,8 @@ $guestCount = $stmt->fetchColumn();
         margin: 0 auto;
         text-align: center;
         padding: 40px;
-        background: white;
-        border-radius: 16px;
+        background: var(--surface-card);
+        border-radius: var(--radius-lg);
         box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
     }
 
@@ -290,19 +290,19 @@ $guestCount = $stmt->fetchColumn();
     }
 
     .deletion-pending h2 {
-        color: #d97706;
+        color: var(--warning);
         margin-bottom: 16px;
     }
 
     .pending-date {
         font-size: 16px;
-        color: var(--gray-700);
+        color: var(--text);
         margin-bottom: 12px;
     }
 
     .pending-info {
         font-size: 14px;
-        color: var(--gray-500);
+        color: var(--text-secondary);
         margin-bottom: 24px;
     }
 
@@ -310,16 +310,16 @@ $guestCount = $stmt->fetchColumn();
         display: inline-flex;
         flex-direction: column;
         align-items: center;
-        background: #fef3c7;
+        background: var(--warning-light);
         padding: 20px 40px;
-        border-radius: 12px;
+        border-radius: var(--radius-md);
         margin-bottom: 24px;
     }
 
     .countdown-number {
         font-size: 48px;
         font-weight: 700;
-        color: #d97706;
+        color: var(--warning);
         line-height: 1;
     }
 
@@ -332,57 +332,25 @@ $guestCount = $stmt->fetchColumn();
         margin-top: 20px;
     }
 
-    /* Form styles */
-    .form-group {
-        margin-bottom: 20px;
-    }
-
-    .form-label {
-        display: block;
-        font-size: 14px;
-        font-weight: 500;
-        color: var(--gray-700);
-        margin-bottom: 6px;
-    }
-
-    .form-input {
-        width: 100%;
-        padding: 10px 14px;
-        font-size: 14px;
-        border: 2px solid var(--gray-200);
-        border-radius: 8px;
-        font-family: inherit;
-    }
-
-    .form-input:focus {
-        outline: none;
-        border-color: var(--primary);
-    }
-
     .checkbox-label {
         display: flex;
         align-items: flex-start;
         gap: 10px;
         cursor: pointer;
         font-size: 13px;
-        color: var(--gray-600);
+        color: var(--text-secondary);
     }
 
     .checkbox-label input {
         margin-top: 2px;
     }
 
-    .btn-danger {
-        background: #dc2626;
-        color: white;
-    }
-
-    .btn-danger:hover {
-        background: #b91c1c;
+    .btn-full {
+        width: 100%;
     }
 
     .text-muted {
-        color: var(--gray-500);
+        color: var(--text-secondary);
     }
 
     .mb-md {
@@ -393,11 +361,11 @@ $guestCount = $stmt->fetchColumn();
         text-align: center;
         margin-top: 20px;
         font-size: 14px;
-        color: var(--gray-500);
+        color: var(--text-secondary);
     }
 
     .alternative-link a {
-        color: var(--primary);
+        color: var(--accent);
     }
 
     @media (max-width: 768px) {

@@ -278,7 +278,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="card-header">
             <h2 class="card-title">Privatliv og data (GDPR)</h2>
         </div>
-        <p style="color: var(--gray-500); font-size: 14px; margin-bottom: 20px;">
+        <p style="color: var(--text-secondary); font-size: 14px; margin-bottom: 20px;">
             Du har ret til at se, eksportere og slette dine personlige data.
         </p>
         <div class="gdpr-actions">
@@ -305,9 +305,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </span>
             </a>
         </div>
-        <p style="color: var(--gray-400); font-size: 12px; margin-top: 16px;">
-            Læs vores <a href="/legal/privacy.php" target="_blank" style="color: var(--primary);">Privatlivspolitik</a>
-            og <a href="/legal/terms.php" target="_blank" style="color: var(--primary);">Vilkår og betingelser</a>
+        <p style="color: var(--text-secondary); font-size: 12px; margin-top: 16px;">
+            Læs vores <a href="/legal/privacy.php" target="_blank" style="color: var(--accent);">Privatlivspolitik</a>
+            og <a href="/legal/terms.php" target="_blank" style="color: var(--accent);">Vilkår og betingelser</a>
         </p>
     </div>
 </div>
@@ -319,44 +319,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         gap: 24px;
     }
 
-    .form-group {
-        margin-bottom: 20px;
-    }
-
-    .form-label {
-        display: block;
-        font-size: 14px;
-        font-weight: 500;
-        color: var(--gray-700);
-        margin-bottom: 6px;
-    }
-
-    .form-input {
-        width: 100%;
-        padding: 10px 14px;
-        font-size: 14px;
-        border: 2px solid var(--gray-200);
-        border-radius: 8px;
-        transition: all 0.2s;
-        font-family: inherit;
-    }
-
-    .form-input:focus {
-        outline: none;
-        border-color: var(--primary);
-        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-    }
-
     .form-input:disabled {
-        background: var(--gray-50);
-        color: var(--gray-500);
+        background: var(--surface);
+        color: var(--text-secondary);
         cursor: not-allowed;
-    }
-
-    .form-hint {
-        font-size: 12px;
-        color: var(--gray-500);
-        margin-top: 4px;
     }
 
     .info-list {
@@ -370,7 +336,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         justify-content: space-between;
         align-items: center;
         padding-bottom: 16px;
-        border-bottom: 1px solid var(--gray-100);
+        border-bottom: 1px solid var(--border-light);
     }
 
     .info-item:last-child {
@@ -380,32 +346,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     .info-label {
         font-size: 14px;
-        color: var(--gray-500);
+        color: var(--text-secondary);
     }
 
     .info-value {
         font-size: 14px;
         font-weight: 500;
-        color: var(--gray-900);
-    }
-
-    .badge {
-        display: inline-flex;
-        align-items: center;
-        padding: 4px 10px;
-        font-size: 12px;
-        font-weight: 500;
-        border-radius: 6px;
-    }
-
-    .badge-success {
-        background: #dcfce7;
-        color: #15803d;
-    }
-
-    .badge-warning {
-        background: #fef3c7;
-        color: #b45309;
+        color: var(--text);
     }
 
     @media (max-width: 640px) {
@@ -425,14 +372,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         align-items: center;
         gap: 16px;
         padding: 16px;
-        background: var(--gray-50);
-        border-radius: 8px;
+        background: var(--surface);
+        border-radius: var(--radius-sm);
         text-decoration: none;
         transition: all 0.2s;
     }
 
     .gdpr-action-link:hover {
-        background: var(--gray-100);
+        background: var(--border-light);
     }
 
     .gdpr-action-link span {
@@ -441,12 +388,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     .gdpr-action-link strong {
-        color: var(--gray-900);
+        color: var(--text);
         font-size: 14px;
     }
 
     .gdpr-action-link small {
-        color: var(--gray-500);
+        color: var(--text-secondary);
         font-size: 12px;
         margin-top: 2px;
     }
@@ -457,27 +404,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         display: flex;
         align-items: center;
         justify-content: center;
-        background: white;
-        border-radius: 8px;
+        background: var(--surface-card);
+        border-radius: var(--radius-sm);
         flex-shrink: 0;
     }
 
     .gdpr-action-icon svg {
         width: 20px;
         height: 20px;
-        color: var(--primary);
+        color: var(--accent);
     }
 
     .gdpr-action-danger .gdpr-action-icon {
-        background: #fef2f2;
+        background: var(--error-light);
     }
 
     .gdpr-action-danger .gdpr-action-icon svg {
-        color: #dc2626;
+        color: var(--error);
     }
 
     .gdpr-action-danger:hover {
-        background: #fef2f2;
+        background: var(--error-light);
     }
 </style>
 

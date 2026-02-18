@@ -191,7 +191,7 @@ $currentEventCount = count($userEvents);
 
 <style>
     .welcome-banner {
-        background: linear-gradient(135deg, var(--sage) 0%, var(--sage-dark) 100%);
+        background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
         border-radius: 20px;
         padding: 36px;
         margin-bottom: 32px;
@@ -213,7 +213,7 @@ $currentEventCount = count($userEvents);
 
     .welcome-banner .btn {
         background: white;
-        color: var(--sage-dark);
+        color: var(--accent-dark);
     }
 
     .welcome-banner .btn:hover {
@@ -228,10 +228,11 @@ $currentEventCount = count($userEvents);
     }
 
     .event-card {
-        background: var(--white);
-        border-radius: 20px;
+        background: var(--surface-card);
+        border-radius: var(--radius-lg);
         padding: 28px;
-        box-shadow: 0 1px 2px rgba(0,0,0,0.03), 0 4px 12px rgba(0,0,0,0.03);
+        box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+        border: 1px solid var(--border-light);
         transition: all 0.25s var(--ease-out);
     }
 
@@ -250,10 +251,10 @@ $currentEventCount = count($userEvents);
     .event-type-badge {
         font-size: 11px;
         font-weight: 600;
-        color: var(--sage-dark);
-        background: var(--sage-light);
+        color: var(--accent-dark);
+        background: var(--accent-light);
         padding: 6px 12px;
-        border-radius: 8px;
+        border-radius: var(--radius-sm);
         text-transform: uppercase;
         letter-spacing: 0.05em;
     }
@@ -262,17 +263,17 @@ $currentEventCount = count($userEvents);
         font-size: 12px;
         font-weight: 600;
         padding: 6px 12px;
-        border-radius: 8px;
+        border-radius: var(--radius-sm);
     }
 
     .status-active {
-        background: #E8F5E8;
+        background: var(--success-light);
         color: var(--success);
     }
 
     .status-draft {
-        background: var(--cream-light);
-        color: var(--charcoal-light);
+        background: var(--border-light);
+        color: var(--text-secondary);
     }
 
     .status-completed {
@@ -281,15 +282,15 @@ $currentEventCount = count($userEvents);
     }
 
     .status-archived {
-        background: var(--cream-light);
-        color: var(--charcoal-light);
+        background: var(--border-light);
+        color: var(--text-secondary);
     }
 
     .event-card-title {
         font-family: var(--font-display);
         font-size: 24px;
         font-weight: 500;
-        color: var(--charcoal);
+        color: var(--text);
         margin-bottom: 8px;
     }
 
@@ -297,7 +298,7 @@ $currentEventCount = count($userEvents);
         display: flex;
         align-items: center;
         gap: 8px;
-        color: var(--charcoal-light);
+        color: var(--text-secondary);
         font-size: 14px;
         margin-bottom: 24px;
     }
@@ -305,11 +306,11 @@ $currentEventCount = count($userEvents);
     .event-card-date svg {
         width: 18px;
         height: 18px;
-        color: var(--sage);
+        color: var(--accent);
     }
 
     .days-until {
-        color: var(--sage-dark);
+        color: var(--accent-dark);
         font-weight: 600;
     }
 
@@ -319,8 +320,8 @@ $currentEventCount = count($userEvents);
         gap: 12px;
         margin-bottom: 20px;
         padding: 20px;
-        background: var(--cream-light);
-        border-radius: 14px;
+        background: var(--surface);
+        border-radius: var(--radius-md);
     }
 
     .stat {
@@ -332,7 +333,7 @@ $currentEventCount = count($userEvents);
         font-family: var(--font-display);
         font-size: 24px;
         font-weight: 500;
-        color: var(--charcoal);
+        color: var(--text);
     }
 
     .stat-value.stat-success {
@@ -340,7 +341,7 @@ $currentEventCount = count($userEvents);
     }
 
     .stat-value.stat-danger {
-        color: var(--danger);
+        color: var(--error);
     }
 
     .stat-value.stat-warning {
@@ -349,7 +350,7 @@ $currentEventCount = count($userEvents);
 
     .stat-label {
         font-size: 12px;
-        color: var(--charcoal-light);
+        color: var(--text-secondary);
         margin-top: 2px;
     }
 
@@ -359,7 +360,7 @@ $currentEventCount = count($userEvents);
 
     .rsvp-bar {
         height: 8px;
-        background: var(--cream-dark);
+        background: var(--border);
         border-radius: 4px;
         overflow: hidden;
         display: flex;
@@ -370,17 +371,12 @@ $currentEventCount = count($userEvents);
     }
 
     .rsvp-bar-declined {
-        background: var(--danger);
+        background: var(--error);
     }
 
     .event-card-actions {
         display: flex;
         gap: 12px;
-    }
-
-    .btn-sm {
-        padding: 12px 20px;
-        font-size: 13px;
     }
 
     .event-card-create {
@@ -389,25 +385,25 @@ $currentEventCount = count($userEvents);
         align-items: center;
         justify-content: center;
         min-height: 320px;
-        border: 2px dashed var(--cream-dark);
+        border: 2px dashed var(--border);
         background: transparent;
-        color: var(--charcoal-light);
+        color: var(--text-secondary);
         text-decoration: none;
         transition: all 0.25s var(--ease-out);
-        border-radius: 20px;
+        border-radius: var(--radius-lg);
     }
 
     .event-card-create:hover {
-        border-color: var(--sage);
-        color: var(--sage-dark);
-        background: rgba(143, 165, 131, 0.05);
+        border-color: var(--accent);
+        color: var(--accent-dark);
+        background: var(--accent-light);
     }
 
     .create-icon {
         width: 56px;
         height: 56px;
-        border-radius: 16px;
-        background: var(--cream-light);
+        border-radius: var(--radius-lg);
+        background: var(--surface);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -416,8 +412,8 @@ $currentEventCount = count($userEvents);
     }
 
     .event-card-create:hover .create-icon {
-        background: var(--sage-light);
-        color: var(--sage-dark);
+        background: var(--accent-light);
+        color: var(--accent-dark);
     }
 
     .create-icon svg {

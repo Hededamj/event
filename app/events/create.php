@@ -339,18 +339,6 @@ $error = $error ?? '';
 </div>
 
 <style>
-    /* Map to Nordic palette */
-    :root {
-        --primary: var(--sage);
-        --secondary: var(--sage-dark);
-        --gray-100: var(--cream-light);
-        --gray-200: var(--cream-dark);
-        --gray-300: var(--cream-dark);
-        --gray-400: var(--charcoal-light);
-        --gray-500: var(--charcoal-light);
-        --gray-900: var(--charcoal);
-    }
-
     .wizard-container {
         max-width: 800px;
         margin: 0 auto;
@@ -364,12 +352,12 @@ $error = $error ?? '';
     .wizard-header h1 {
         font-size: 32px;
         font-weight: 700;
-        color: var(--gray-900);
+        color: var(--text);
         margin-bottom: 8px;
     }
 
     .wizard-header p {
-        color: var(--gray-500);
+        color: var(--text-secondary);
         font-size: 16px;
     }
 
@@ -392,8 +380,8 @@ $error = $error ?? '';
         width: 40px;
         height: 40px;
         border-radius: 50%;
-        background: var(--gray-200);
-        color: var(--gray-500);
+        background: var(--border);
+        color: var(--text-secondary);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -404,39 +392,39 @@ $error = $error ?? '';
 
     .progress-step.active .step-number,
     .progress-step.completed .step-number {
-        background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+        background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
         color: white;
     }
 
     .progress-step.completed .step-number::after {
-        content: '✓';
+        content: '\2713';
     }
 
     .step-label {
         font-size: 12px;
-        color: var(--gray-500);
+        color: var(--text-secondary);
         font-weight: 500;
     }
 
     .progress-step.active .step-label {
-        color: var(--primary);
+        color: var(--accent);
     }
 
     .progress-line {
         width: 60px;
         height: 2px;
-        background: var(--gray-200);
+        background: var(--border);
         margin: 0 8px;
         margin-bottom: 24px;
     }
 
     .wizard-step {
         display: none;
-        background: white;
-        border-radius: 16px;
+        background: var(--surface-card);
+        border-radius: var(--radius-lg);
         padding: 40px;
         box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-        border: 1px solid var(--gray-200);
+        border: 1px solid var(--border);
     }
 
     .wizard-step.active {
@@ -446,12 +434,12 @@ $error = $error ?? '';
     .wizard-step h2 {
         font-size: 24px;
         font-weight: 700;
-        color: var(--gray-900);
+        color: var(--text);
         margin-bottom: 8px;
     }
 
     .step-description {
-        color: var(--gray-500);
+        color: var(--text-secondary);
         margin-bottom: 32px;
     }
 
@@ -472,30 +460,30 @@ $error = $error ?? '';
 
     .event-type-content {
         padding: 24px;
-        border: 2px solid var(--gray-200);
-        border-radius: 12px;
+        border: 2px solid var(--border);
+        border-radius: var(--radius-md);
         text-align: center;
         transition: all 0.2s;
     }
 
     .event-type-card:hover .event-type-content {
-        border-color: var(--gray-300);
+        border-color: var(--text-secondary);
     }
 
     .event-type-card input:checked + .event-type-content {
-        border-color: var(--primary);
-        background: rgba(143, 165, 131, 0.08);
+        border-color: var(--accent);
+        background: var(--accent-light);
     }
 
     .event-type-icon {
         width: 48px;
         height: 48px;
         margin: 0 auto 12px;
-        color: var(--gray-400);
+        color: var(--text-secondary);
     }
 
     .event-type-card input:checked + .event-type-content .event-type-icon {
-        color: var(--primary);
+        color: var(--accent);
     }
 
     .event-type-icon svg {
@@ -506,57 +494,17 @@ $error = $error ?? '';
     .event-type-content h3 {
         font-size: 16px;
         font-weight: 600;
-        color: var(--gray-900);
+        color: var(--text);
         margin-bottom: 4px;
     }
 
     .event-type-content p {
         font-size: 13px;
-        color: var(--gray-500);
+        color: var(--text-secondary);
     }
 
     .form-section {
         margin-bottom: 32px;
-    }
-
-    .form-group {
-        margin-bottom: 20px;
-    }
-
-    .form-row {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 16px;
-    }
-
-    .form-label {
-        display: block;
-        font-size: 14px;
-        font-weight: 500;
-        color: var(--gray-700);
-        margin-bottom: 6px;
-    }
-
-    .form-input {
-        width: 100%;
-        padding: 12px 16px;
-        font-size: 15px;
-        border: 2px solid var(--gray-200);
-        border-radius: 10px;
-        transition: all 0.2s;
-        font-family: inherit;
-    }
-
-    .form-input:focus {
-        outline: none;
-        border-color: var(--primary);
-        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-    }
-
-    .form-hint {
-        font-size: 12px;
-        color: var(--gray-500);
-        margin-top: 4px;
     }
 
     .themes-grid {
@@ -576,19 +524,19 @@ $error = $error ?? '';
 
     .theme-preview {
         padding: 20px;
-        border: 2px solid var(--gray-200);
-        border-radius: 12px;
+        border: 2px solid var(--border);
+        border-radius: var(--radius-md);
         text-align: center;
         transition: all 0.2s;
     }
 
     .theme-card:hover .theme-preview {
-        border-color: var(--gray-300);
+        border-color: var(--text-secondary);
     }
 
     .theme-card input:checked + .theme-preview {
-        border-color: var(--primary);
-        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px var(--accent-light);
     }
 
     .theme-colors {
@@ -608,25 +556,25 @@ $error = $error ?? '';
     .theme-preview h4 {
         font-size: 15px;
         font-weight: 600;
-        color: var(--gray-900);
+        color: var(--text);
         margin-bottom: 2px;
     }
 
     .theme-preview p {
         font-size: 12px;
-        color: var(--gray-500);
+        color: var(--text-secondary);
     }
 
     .summary-card {
-        background: var(--gray-50);
-        border-radius: 12px;
+        background: var(--surface);
+        border-radius: var(--radius-md);
         padding: 24px;
         margin-bottom: 24px;
     }
 
     .summary-section {
         padding: 16px 0;
-        border-bottom: 1px solid var(--gray-200);
+        border-bottom: 1px solid var(--border);
     }
 
     .summary-section:last-child {
@@ -643,13 +591,13 @@ $error = $error ?? '';
         font-weight: 600;
         text-transform: uppercase;
         letter-spacing: 0.5px;
-        color: var(--gray-500);
+        color: var(--text-secondary);
         margin-bottom: 4px;
     }
 
     .summary-section p {
         font-size: 15px;
-        color: var(--gray-900);
+        color: var(--text);
     }
 
     .info-box {
@@ -657,7 +605,7 @@ $error = $error ?? '';
         gap: 16px;
         background: #eff6ff;
         border: 1px solid #bfdbfe;
-        border-radius: 12px;
+        border-radius: var(--radius-md);
         padding: 16px;
         margin-bottom: 32px;
     }
@@ -685,7 +633,7 @@ $error = $error ?? '';
         display: flex;
         justify-content: space-between;
         padding-top: 24px;
-        border-top: 1px solid var(--gray-100);
+        border-top: 1px solid var(--border-light);
     }
 
     .btn-create {
@@ -695,10 +643,6 @@ $error = $error ?? '';
     @media (max-width: 640px) {
         .wizard-step {
             padding: 24px;
-        }
-
-        .form-row {
-            grid-template-columns: 1fr;
         }
 
         .event-types-grid,
