@@ -98,7 +98,7 @@ html[data-area="admin"] {
    -------------------------------------------------------------------------- */
 body {
   font-family: var(--font-body);
-  font-size: 15px;
+  font-size: 14px;
   line-height: 1.6;
   color: var(--text);
   background-color: var(--surface);
@@ -113,13 +113,13 @@ h1, h2, h3, h4, h5, h6 {
 h1 {
   font-family: var(--font-display);
   font-size: 28px;
-  font-weight: 600;
+  font-weight: 500;
 }
 
 h2 {
   font-family: var(--font-display);
   font-size: 22px;
-  font-weight: 600;
+  font-weight: 500;
 }
 
 h3 {
@@ -157,7 +157,7 @@ img {
   background: var(--surface-sidebar);
   display: flex;
   flex-direction: column;
-  z-index: 100;
+  z-index: 150;
   transition: transform 0.3s var(--ease-out);
 }
 
@@ -267,8 +267,8 @@ img {
 }
 
 .ds-nav-link-icon {
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   flex-shrink: 0;
   display: flex;
   align-items: center;
@@ -475,7 +475,7 @@ img {
 }
 
 .btn-secondary:hover:not(:disabled) {
-  background: var(--surface);
+  background: var(--accent-light);
   border-color: var(--accent);
   color: var(--accent-dark);
 }
@@ -493,12 +493,12 @@ img {
 
 .btn-ghost {
   background: transparent;
-  color: var(--text-secondary);
+  color: var(--accent);
   border-color: transparent;
 }
 
 .btn-ghost:hover:not(:disabled) {
-  background: var(--surface);
+  background: var(--accent-light);
   color: var(--text);
 }
 
@@ -576,7 +576,7 @@ img {
 .form-textarea {
   display: block;
   width: 100%;
-  padding: 10px 14px;
+  padding: 12px 14px;
   font-family: var(--font-body);
   font-size: 14px;
   color: var(--text);
@@ -675,12 +675,13 @@ th {
   letter-spacing: 0.05em;
   color: var(--text-secondary);
   text-align: left;
-  padding: var(--space-sm) var(--space-md);
+  padding: 12px 16px;
+  background: var(--surface);
   border-bottom: 1.5px solid var(--border);
 }
 
 td {
-  padding: var(--space-sm) var(--space-md);
+  padding: 14px 16px;
   border-bottom: 1px solid var(--border-light);
   font-size: 14px;
   color: var(--text);
@@ -688,7 +689,7 @@ td {
 }
 
 tr:hover td {
-  background: var(--surface);
+  background: var(--accent-light);
 }
 
 /* --------------------------------------------------------------------------
@@ -721,13 +722,13 @@ tr:hover td {
 }
 
 .badge-neutral {
-  background: var(--surface);
+  background: var(--border-light);
   color: var(--text-secondary);
 }
 
 .badge-pro {
-  background: var(--accent-light);
-  color: var(--accent-dark);
+  background: var(--warning);
+  color: var(--text-on-dark);
 }
 
 /* --------------------------------------------------------------------------
@@ -737,6 +738,7 @@ tr:hover td {
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -753,9 +755,9 @@ tr:hover td {
 
 .modal-content {
   background: var(--surface-card);
-  border-radius: var(--radius-lg);
+  border-radius: 20px;
   width: 90%;
-  max-width: 560px;
+  max-width: 520px;
   max-height: 85vh;
   overflow-y: auto;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
@@ -812,6 +814,7 @@ tr:hover td {
   gap: var(--space-sm);
   padding: var(--space-md) var(--space-lg);
   border-top: 1px solid var(--border-light);
+  background: var(--surface);
 }
 
 /* --------------------------------------------------------------------------
