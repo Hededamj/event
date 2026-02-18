@@ -432,7 +432,6 @@ $pageTitle = $event['name'] ?? 'Arrangement';
 
         /* Desktop layout offset */
         .top-nav { margin-left: 280px; }
-        .main-content { margin-left: 280px; }
 
         /* Mobile hamburger */
         .event-menu-toggle {
@@ -580,7 +579,7 @@ $pageTitle = $event['name'] ?? 'Arrangement';
         /* Main Content */
         .main-content {
             max-width: 1400px;
-            margin: 0 auto;
+            margin: 0 auto 0 280px;
             padding: 32px 24px;
         }
 

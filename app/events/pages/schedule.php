@@ -7,7 +7,9 @@
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     if (!verifyAccountCsrfToken($_POST['csrf_token'] ?? '')) {
         setFlash('error', 'Ugyldig anmodning.');
-        redirect("?id=$eventId&page=schedule");
+        $action = $_POST['action'] ?? '';
+        $isMenuAction = in_array($action, ['add_menu_item', 'delete_menu_item', 'update_menu_item']);
+        redirect("?id=$eventId&page=schedule" . ($isMenuAction ? '&section=menu' : ''));
     }
 
     $action = $_POST['action'];
@@ -103,7 +105,7 @@ foreach ($courses as $key => $label) {
     $menuItems[$key] = $stmt->fetchAll();
 }
 $menuCount = array_sum(array_map('count', $menuItems));
-$section = $_GET['section'] ?? 'schedule';
+$section = in_array($_GET['section'] ?? '', ['schedule', 'menu']) ? $_GET['section'] : 'schedule';
 ?>
 
 <div class="page-header-actions">
@@ -420,23 +422,41 @@ document.querySelectorAll('.modal-overlay').forEach(o => {
 <style>
     /* Schedule styles */
     .timeline { padding: 24px; }
-    .timeline-item { display: flex; gap: 20px; padding: 16px 0; border-bottom: 1px solid var(--gray-100); align-items: flex-start; }
+    .timeline-item { display: flex; gap: 20px; padding: 16px 0; border-bottom: 1px solid var(--cream-dark); align-items: flex-start; }
     .timeline-item:last-child { border-bottom: none; }
-    .timeline-time { font-size: 18px; font-weight: 600; color: var(--primary); min-width: 60px; }
+    .timeline-time { font-size: 18px; font-weight: 600; color: var(--sage); min-width: 60px; }
     .timeline-content { flex: 1; }
-    .timeline-content h4 { font-size: 16px; font-weight: 600; color: var(--gray-900); margin-bottom: 4px; }
-    .timeline-content p { font-size: 14px; color: var(--gray-600); }
+    .timeline-content h4 { font-size: 16px; font-weight: 600; color: var(--charcoal); margin-bottom: 4px; }
+    .timeline-content p { font-size: 14px; color: var(--charcoal-light); }
     .timeline-actions { display: flex; gap: 4px; }
 
     /* Menu styles */
     .menu-courses { display: flex; flex-direction: column; gap: 24px; }
     .menu-course { padding: 20px; }
-    .empty-course { color: var(--gray-400); font-size: 14px; font-style: italic; }
+    .empty-course { color: var(--charcoal-light); font-size: 14px; font-style: italic; }
     .menu-items { display: flex; flex-direction: column; gap: 12px; }
-    .menu-item { display: flex; justify-content: space-between; align-items: flex-start; padding: 12px; background: var(--gray-50); border-radius: 8px; }
-    .menu-item h4 { font-size: 15px; font-weight: 600; color: var(--gray-900); margin-bottom: 4px; }
-    .menu-item p { font-size: 14px; color: var(--gray-600); }
+    .menu-item { display: flex; justify-content: space-between; align-items: flex-start; padding: 12px; background: var(--cream-light); border-radius: 8px; }
+    .menu-item h4 { font-size: 15px; font-weight: 600; color: var(--charcoal); margin-bottom: 4px; }
+    .menu-item p { font-size: 14px; color: var(--charcoal-light); }
     .menu-item-actions { display: flex; gap: 4px; }
+
+    /* Row action buttons */
+    .row-action {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        border: none;
+        background: none;
+        cursor: pointer;
+        color: var(--charcoal-light);
+        border-radius: 8px;
+        transition: all 0.2s;
+    }
+    .row-action:hover { background: var(--cream); color: var(--charcoal); }
+    .row-action.danger:hover { background: #FEE; color: var(--error, #B84C4C); }
+    .row-action svg { width: 16px; height: 16px; }
 
     /* Section tabs */
     .section-tabs {
