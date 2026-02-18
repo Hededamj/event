@@ -992,6 +992,16 @@ $pageTitle = $event['name'] ?? 'Arrangement';
                 transform: translateX(0);
                 box-shadow: 4px 0 24px rgba(0,0,0,0.1);
             }
+            .sidebar-overlay {
+                display: none;
+                position: fixed;
+                inset: 0;
+                background: rgba(0,0,0,0.3);
+                z-index: 149;
+            }
+            .sidebar-overlay.visible {
+                display: block;
+            }
             .top-nav { margin-left: 0; }
             .main-content {
                 margin-left: 0;
@@ -1026,12 +1036,13 @@ $pageTitle = $event['name'] ?? 'Arrangement';
 </head>
 <body>
     <?php include __DIR__ . '/../../includes/event-sidebar.php'; ?>
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="document.getElementById('eventSidebar').classList.remove('open');this.classList.remove('visible')"></div>
 
     <!-- Top Navigation -->
     <nav class="top-nav">
         <div class="top-nav-inner">
             <div class="nav-left">
-                <button type="button" class="event-menu-toggle" onclick="document.getElementById('eventSidebar').classList.toggle('open')">
+                <button type="button" class="event-menu-toggle" onclick="toggleMobileSidebar()">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
                     </svg>
@@ -1169,6 +1180,14 @@ $pageTitle = $event['name'] ?? 'Arrangement';
         }
     }
 
+    /* Mobile sidebar toggle with overlay */
+    function toggleMobileSidebar() {
+        var sidebar = document.getElementById('eventSidebar');
+        var overlay = document.getElementById('sidebarOverlay');
+        sidebar.classList.toggle('open');
+        overlay.classList.toggle('visible');
+    }
+
     /* Close mobile sidebar on outside click */
     document.addEventListener('click', function(e) {
         var sidebar = document.getElementById('eventSidebar');
@@ -1176,6 +1195,7 @@ $pageTitle = $event['name'] ?? 'Arrangement';
             var toggle = document.querySelector('.event-menu-toggle');
             if (!sidebar.contains(e.target) && (!toggle || !toggle.contains(e.target))) {
                 sidebar.classList.remove('open');
+                document.getElementById('sidebarOverlay').classList.remove('visible');
             }
         }
     });
