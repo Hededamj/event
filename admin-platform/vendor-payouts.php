@@ -179,7 +179,7 @@ $bookingTextMap = [
         </div>
         <div class="stat-card">
             <div class="stat-label">Total kommission</div>
-            <div class="stat-value" style="color: var(--color-primary);">
+            <div class="stat-value" style="color: var(--accent);">
                 <?= number_format($revenue['total_commission'], 2, ',', '.') ?> kr.
             </div>
         </div>
@@ -246,7 +246,7 @@ $bookingTextMap = [
                                 </td>
                                 <td class="text-sm">
                                     <a href="<?= BASE_PATH ?>/admin-platform/vendor-detail.php?id=<?= $booking['vendor_id'] ?>"
-                                       style="color: var(--color-primary); text-decoration: none;">
+                                       style="color: var(--accent); text-decoration: none;">
                                         <?= escape($booking['vendor_name']) ?>
                                     </a>
                                 </td>
@@ -257,7 +257,7 @@ $bookingTextMap = [
                                 <td class="text-sm font-medium">
                                     <?= $booking['depositum_amount'] ? number_format($booking['depositum_amount'], 2, ',', '.') . ' kr.' : '-' ?>
                                 </td>
-                                <td class="text-sm" style="color: var(--color-primary);">
+                                <td class="text-sm" style="color: var(--accent);">
                                     <?= $booking['commission_amount'] ? number_format($booking['commission_amount'], 2, ',', '.') . ' kr.' : '-' ?>
                                 </td>
                                 <td class="text-sm text-success font-medium">
@@ -272,11 +272,11 @@ $bookingTextMap = [
                         <?php endforeach; ?>
                     </tbody>
                     <tfoot>
-                        <tr style="background: var(--color-bg-subtle); font-weight: 600;">
+                        <tr style="background: var(--surface); font-weight: 600;">
                             <td colspan="4" class="text-sm">Total (alle filterede)</td>
                             <td class="text-sm"><?= number_format($summary['total_quoted'], 2, ',', '.') ?> kr.</td>
                             <td class="text-sm"><?= number_format($summary['total_depositum'], 2, ',', '.') ?> kr.</td>
-                            <td class="text-sm" style="color: var(--color-primary);"><?= number_format($summary['total_commission'], 2, ',', '.') ?> kr.</td>
+                            <td class="text-sm" style="color: var(--accent);"><?= number_format($summary['total_commission'], 2, ',', '.') ?> kr.</td>
                             <td class="text-sm text-success"><?= number_format($summary['total_vendor_payout'], 2, ',', '.') ?> kr.</td>
                             <td></td>
                         </tr>

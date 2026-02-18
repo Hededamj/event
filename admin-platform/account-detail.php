@@ -110,7 +110,7 @@ $sessions = $stmt->fetchAll();
 
 <header class="platform-header">
     <h1 class="page-title">
-        <a href="<?= BASE_PATH ?>/admin-platform/accounts.php" style="color: var(--color-text-muted); text-decoration: none;">Konti</a>
+        <a href="<?= BASE_PATH ?>/admin-platform/accounts.php" style="color: var(--text-secondary); text-decoration: none;">Konti</a>
         &rsaquo; <?= escape($account['name']) ?>
     </h1>
     <div class="header-actions">
@@ -171,7 +171,7 @@ $sessions = $stmt->fetchAll();
                 </div>
             </form>
 
-            <hr style="margin: var(--space-lg) 0; border: none; border-top: 1px solid var(--color-border);">
+            <hr style="margin: var(--space-lg) 0; border: none; border-top: 1px solid var(--border);">
 
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-md);">
                 <div>
@@ -256,7 +256,7 @@ $sessions = $stmt->fetchAll();
                 <?php if ($subscription['stripe_customer_id']): ?>
                     <div style="margin-top: var(--space-md);">
                         <div class="text-sm text-muted">Stripe Customer ID</div>
-                        <code style="font-size: var(--text-xs);"><?= escape($subscription['stripe_customer_id']) ?></code>
+                        <code style="font-size: 11px;"><?= escape($subscription['stripe_customer_id']) ?></code>
                     </div>
                 <?php endif; ?>
             <?php else: ?>

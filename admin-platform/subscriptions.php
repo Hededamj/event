@@ -112,7 +112,7 @@ $planMRR = $stmt->fetchAll();
         </div>
         <div class="stat-card">
             <div class="stat-label">Forfaldne</div>
-            <div class="stat-value" style="color: var(--color-warning);"><?= number_format($stats['past_due']) ?></div>
+            <div class="stat-value" style="color: var(--warning);"><?= number_format($stats['past_due']) ?></div>
         </div>
         <div class="stat-card">
             <div class="stat-label">Opsagte</div>
@@ -252,7 +252,7 @@ $planMRR = $stmt->fetchAll();
                 ?>
                 <div style="margin-bottom: var(--space-lg);">
                     <div class="text-sm text-muted">Total MRR</div>
-                    <div style="font-size: var(--text-2xl); font-weight: 700;">
+                    <div style="font-size: 28px; font-weight: 700;">
                         <?= number_format($totalMRR, 0, ',', '.') ?> kr
                     </div>
                 </div>
@@ -263,9 +263,9 @@ $planMRR = $stmt->fetchAll();
                             <span class="font-medium"><?= escape($plan['name']) ?></span>
                             <span class="text-sm"><?= $plan['count'] ?> subs</span>
                         </div>
-                        <div style="background: var(--color-bg-subtle); border-radius: 4px; height: 8px; overflow: hidden;">
+                        <div style="background: var(--surface); border-radius: 4px; height: 8px; overflow: hidden;">
                             <?php $percentage = $totalMRR > 0 ? ($plan['mrr'] / $totalMRR) * 100 : 0; ?>
-                            <div style="background: var(--color-primary); width: <?= $percentage ?>%; height: 100%;"></div>
+                            <div style="background: var(--accent); width: <?= $percentage ?>%; height: 100%;"></div>
                         </div>
                         <div class="text-sm text-muted mt-xs">
                             <?= number_format($plan['mrr'], 0, ',', '.') ?> kr/md

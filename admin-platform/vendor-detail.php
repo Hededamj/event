@@ -146,7 +146,7 @@ $bookingTextMap = [
 
 <header class="platform-header">
     <h1 class="page-title">
-        <a href="<?= BASE_PATH ?>/admin-platform/vendors.php" style="color: var(--color-text-muted); text-decoration: none;">Leverandorer</a>
+        <a href="<?= BASE_PATH ?>/admin-platform/vendors.php" style="color: var(--text-secondary); text-decoration: none;">Leverandorer</a>
         &rsaquo; <?= escape($vendor['company_name']) ?>
     </h1>
     <div class="header-actions">
@@ -209,7 +209,7 @@ $bookingTextMap = [
                     <div class="text-sm text-muted">Website</div>
                     <div class="font-medium">
                         <?php if ($vendor['website']): ?>
-                            <a href="<?= escape($vendor['website']) ?>" target="_blank" style="color: var(--color-primary);">
+                            <a href="<?= escape($vendor['website']) ?>" target="_blank" style="color: var(--accent);">
                                 <?= escape($vendor['website']) ?>
                             </a>
                         <?php else: ?>
@@ -267,7 +267,7 @@ $bookingTextMap = [
 
             <!-- Categories -->
             <?php if (!empty($vendorCategories)): ?>
-                <hr style="margin: var(--space-lg) 0; border: none; border-top: 1px solid var(--color-border);">
+                <hr style="margin: var(--space-lg) 0; border: none; border-top: 1px solid var(--border);">
                 <div class="text-sm text-muted mb-md">Kategorier</div>
                 <div class="flex gap-sm" style="flex-wrap: wrap;">
                     <?php foreach ($vendorCategories as $cat): ?>
@@ -278,7 +278,7 @@ $bookingTextMap = [
 
             <!-- Description -->
             <?php if ($vendor['description']): ?>
-                <hr style="margin: var(--space-lg) 0; border: none; border-top: 1px solid var(--color-border);">
+                <hr style="margin: var(--space-lg) 0; border: none; border-top: 1px solid var(--border);">
                 <div class="text-sm text-muted mb-md">Beskrivelse</div>
                 <div class="text-sm"><?= nl2br(escape($vendor['description'])) ?></div>
             <?php endif; ?>
@@ -321,7 +321,7 @@ $bookingTextMap = [
                         <div class="text-sm text-muted">Account ID</div>
                         <div class="font-medium">
                             <?php if ($vendor['stripe_account_id']): ?>
-                                <code style="font-size: var(--text-xs);"><?= escape($vendor['stripe_account_id']) ?></code>
+                                <code style="font-size: 11px;"><?= escape($vendor['stripe_account_id']) ?></code>
                             <?php else: ?>
                                 <span class="text-muted">Ikke oprettet</span>
                             <?php endif; ?>
@@ -469,7 +469,7 @@ $bookingTextMap = [
             </div>
         <?php else: ?>
             <?php foreach ($reviews as $review): ?>
-                <div style="border-bottom: 1px solid var(--color-border); padding: var(--space-md) 0; <?= $review === end($reviews) ? 'border-bottom: none;' : '' ?>">
+                <div style="border-bottom: 1px solid var(--border); padding: var(--space-md) 0; <?= $review === end($reviews) ? 'border-bottom: none;' : '' ?>">
                     <div class="flex justify-between items-center mb-md">
                         <div>
                             <span class="font-medium"><?= escape($review['reviewer_name']) ?></span>
@@ -490,7 +490,7 @@ $bookingTextMap = [
                         <div class="text-sm"><?= nl2br(escape($review['review_text'])) ?></div>
                     <?php endif; ?>
                     <?php if ($review['vendor_response']): ?>
-                        <div style="margin-top: var(--space-sm); padding: var(--space-sm); background: var(--color-bg-subtle); border-radius: var(--radius-md);">
+                        <div style="margin-top: var(--space-sm); padding: var(--space-sm); background: var(--surface); border-radius: var(--radius-md);">
                             <div class="text-xs text-muted">Svar fra leverandor:</div>
                             <div class="text-sm"><?= nl2br(escape($review['vendor_response'])) ?></div>
                         </div>

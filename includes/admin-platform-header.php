@@ -32,7 +32,7 @@ $currentPage = basename($_SERVER['PHP_SELF'], '.php');
 $platformName = getPlatformSetting('platform_name', 'EventPlatform');
 ?>
 <!DOCTYPE html>
-<html lang="da">
+<html lang="da" data-area="admin">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -41,618 +41,251 @@ $platformName = getPlatformSetting('platform_name', 'EventPlatform');
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Design System -->
+    <link rel="stylesheet" href="/assets/css/design-system.css">
 
     <style>
-        :root {
-            --color-bg: #f8fafc;
-            --color-bg-subtle: #f1f5f9;
-            --color-surface: #ffffff;
-            --color-primary: #3b82f6;
-            --color-primary-deep: #2563eb;
-            --color-primary-soft: #dbeafe;
-            --color-accent: #8b5cf6;
-            --color-text: #1e293b;
-            --color-text-soft: #475569;
-            --color-text-muted: #94a3b8;
-            --color-border: #e2e8f0;
-            --color-border-soft: #f1f5f9;
-            --color-success: #22c55e;
-            --color-success-soft: #dcfce7;
-            --color-warning: #f59e0b;
-            --color-warning-soft: #fef3c7;
-            --color-error: #ef4444;
-            --color-error-soft: #fee2e2;
-
-            --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
-            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1);
-            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1);
-
-            --radius-sm: 6px;
-            --radius-md: 8px;
-            --radius-lg: 12px;
-
-            --space-xs: 0.5rem;
-            --space-sm: 0.75rem;
-            --space-md: 1rem;
-            --space-lg: 1.5rem;
-            --space-xl: 2rem;
-
-            --text-xs: 0.75rem;
-            --text-sm: 0.875rem;
-            --text-base: 1rem;
-            --text-lg: 1.125rem;
-            --text-xl: 1.25rem;
-            --text-2xl: 1.5rem;
+        /* Admin-specific overrides */
+        .search-box { position: relative; }
+        .search-box input { padding-left: 40px; }
+        .search-box-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: var(--color-bg);
-            color: var(--color-text);
-            line-height: 1.6;
-        }
-
-        .platform-layout {
-            display: flex;
-            min-height: 100vh;
-        }
-
-        /* Sidebar */
-        .platform-sidebar {
-            width: 260px;
-            background: var(--color-surface);
-            border-right: 1px solid var(--color-border);
-            position: fixed;
-            top: 0;
-            left: 0;
-            bottom: 0;
-            display: flex;
-            flex-direction: column;
-            z-index: 100;
-        }
-
-        .sidebar-brand {
-            padding: var(--space-lg);
-            border-bottom: 1px solid var(--color-border);
-        }
-
-        .sidebar-brand-name {
-            font-size: var(--text-lg);
-            font-weight: 700;
-            color: var(--color-primary);
-        }
-
-        .sidebar-brand-label {
-            font-size: var(--text-xs);
-            color: var(--color-text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-
-        .sidebar-nav {
-            flex: 1;
-            padding: var(--space-md);
-            overflow-y: auto;
-        }
-
-        .nav-section {
-            margin-bottom: var(--space-lg);
-        }
-
-        .nav-section-title {
-            font-size: var(--text-xs);
-            font-weight: 600;
-            color: var(--color-text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            padding: var(--space-xs) var(--space-sm);
-            margin-bottom: var(--space-xs);
-        }
-
-        .nav-menu {
-            list-style: none;
-        }
-
-        .nav-link {
-            display: flex;
-            align-items: center;
-            gap: var(--space-sm);
-            padding: var(--space-sm) var(--space-md);
-            color: var(--color-text-soft);
-            text-decoration: none;
-            border-radius: var(--radius-md);
-            transition: all 0.15s ease;
-            font-size: var(--text-sm);
-        }
-
-        .nav-link:hover {
-            background: var(--color-bg-subtle);
-            color: var(--color-text);
-        }
-
-        .nav-link.active {
-            background: var(--color-primary-soft);
-            color: var(--color-primary-deep);
-            font-weight: 500;
-        }
-
-        .nav-link-icon {
-            width: 20px;
-            text-align: center;
-        }
-
-        .nav-badge {
-            margin-left: auto;
-            background: var(--color-error);
-            color: white;
-            font-size: 0.7rem;
-            font-weight: 600;
-            padding: 2px 6px;
-            border-radius: 10px;
-        }
-
-        .sidebar-footer {
-            padding: var(--space-md);
-            border-top: 1px solid var(--color-border);
-        }
-
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: var(--space-sm);
-        }
-
-        .user-avatar {
-            width: 36px;
-            height: 36px;
-            background: var(--color-primary-soft);
-            color: var(--color-primary-deep);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
-            font-size: var(--text-sm);
-        }
-
-        .user-name {
-            font-weight: 500;
-            font-size: var(--text-sm);
-        }
-
-        .user-role {
-            font-size: var(--text-xs);
-            color: var(--color-text-muted);
-        }
-
-        /* Main content */
-        .platform-main {
-            flex: 1;
-            margin-left: 260px;
-        }
-
+        /* Legacy class support for admin pages */
         .platform-header {
-            background: var(--color-surface);
-            border-bottom: 1px solid var(--color-border);
-            padding: var(--space-md) var(--space-xl);
             display: flex;
             align-items: center;
             justify-content: space-between;
-            position: sticky;
-            top: 0;
-            z-index: 50;
+            padding: var(--space-md) 0;
+            margin-bottom: var(--space-lg);
+            border-bottom: 1px solid var(--border-light);
         }
-
+        .platform-content {
+            /* no special styling needed, ds-content handles padding */
+        }
         .page-title {
-            font-size: var(--text-xl);
+            font-family: var(--font-display);
+            font-size: 28px;
             font-weight: 600;
+            color: var(--text);
         }
-
         .header-actions {
             display: flex;
             align-items: center;
             gap: var(--space-md);
         }
 
-        .platform-content {
-            padding: var(--space-xl);
-        }
-
-        /* Cards */
-        .card {
-            background: var(--color-surface);
-            border: 1px solid var(--color-border);
-            border-radius: var(--radius-lg);
-            padding: var(--space-lg);
-        }
-
-        .card-title {
-            font-size: var(--text-lg);
-            font-weight: 600;
-            margin-bottom: var(--space-md);
-        }
-
-        /* Stats */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: var(--space-md);
-        }
-
+        /* Stat cards */
         .stat-card {
-            background: var(--color-surface);
-            border: 1px solid var(--color-border);
+            background: var(--surface-card);
+            border: 1px solid var(--border-light);
             border-radius: var(--radius-lg);
             padding: var(--space-lg);
         }
-
         .stat-label {
-            font-size: var(--text-sm);
-            color: var(--color-text-muted);
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
             margin-bottom: var(--space-xs);
         }
-
         .stat-value {
-            font-size: var(--text-2xl);
-            font-weight: 700;
-            color: var(--color-text);
+            font-family: var(--font-display);
+            font-size: 28px;
+            font-weight: 600;
+            color: var(--text);
+            line-height: 1.2;
         }
-
         .stat-change {
-            font-size: var(--text-xs);
+            font-size: 12px;
+            font-weight: 500;
             margin-top: var(--space-xs);
         }
-
-        .stat-change.positive { color: var(--color-success); }
-        .stat-change.negative { color: var(--color-error); }
+        .stat-change.positive { color: var(--success); }
+        .stat-change.negative { color: var(--error); }
 
         /* Tables */
-        .table-container {
-            overflow-x: auto;
-        }
+        .table-container { overflow-x: auto; }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        th, td {
-            padding: var(--space-sm) var(--space-md);
-            text-align: left;
-            border-bottom: 1px solid var(--color-border);
-        }
-
-        th {
-            font-size: var(--text-xs);
-            font-weight: 600;
-            color: var(--color-text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            background: var(--color-bg-subtle);
-        }
-
-        td {
-            font-size: var(--text-sm);
-        }
-
-        tr:hover td {
-            background: var(--color-bg-subtle);
-        }
-
-        /* Buttons */
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            gap: var(--space-xs);
-            padding: var(--space-sm) var(--space-md);
-            border: none;
-            border-radius: var(--radius-md);
-            font-size: var(--text-sm);
-            font-weight: 500;
-            cursor: pointer;
-            text-decoration: none;
-            transition: all 0.15s ease;
-        }
-
-        .btn-primary {
-            background: var(--color-primary);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: var(--color-primary-deep);
-        }
-
-        .btn-secondary {
-            background: var(--color-bg-subtle);
-            color: var(--color-text);
-        }
-
-        .btn-secondary:hover {
-            background: var(--color-border);
-        }
-
-        .btn-success {
-            background: var(--color-success);
-            color: white;
-        }
-
-        .btn-danger {
-            background: var(--color-error);
-            color: white;
-        }
-
-        .btn-sm {
-            padding: var(--space-xs) var(--space-sm);
-            font-size: var(--text-xs);
-        }
-
-        /* Badges */
-        .badge {
-            display: inline-block;
-            padding: 2px 8px;
-            border-radius: 10px;
-            font-size: var(--text-xs);
-            font-weight: 500;
-        }
-
-        .badge-success {
-            background: var(--color-success-soft);
-            color: var(--color-success);
-        }
-
-        .badge-warning {
-            background: var(--color-warning-soft);
-            color: var(--color-warning);
-        }
-
-        .badge-error {
-            background: var(--color-error-soft);
-            color: var(--color-error);
-        }
-
-        .badge-info {
-            background: var(--color-primary-soft);
-            color: var(--color-primary);
-        }
-
-        /* Forms */
-        .form-group {
-            margin-bottom: var(--space-md);
-        }
-
-        .form-label {
-            display: block;
-            font-size: var(--text-sm);
-            font-weight: 500;
-            margin-bottom: var(--space-xs);
-        }
-
-        .form-input {
-            width: 100%;
-            padding: var(--space-sm) var(--space-md);
-            border: 1px solid var(--color-border);
-            border-radius: var(--radius-md);
-            font-size: var(--text-sm);
-            transition: border-color 0.15s ease;
-        }
-
-        .form-input:focus {
-            outline: none;
-            border-color: var(--color-primary);
-            box-shadow: 0 0 0 3px var(--color-primary-soft);
-        }
-
+        /* Form select arrow */
         .form-select {
             appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2364748b' d='M2 4l4 4 4-4'/%3E%3C/svg%3E");
+            background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%236B6560' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
             background-repeat: no-repeat;
-            background-position: right 12px center;
-            padding-right: 36px;
+            background-position: right 14px center;
+            padding-right: 40px;
         }
 
-        /* Alerts */
-        .alert {
-            padding: var(--space-md);
-            border-radius: var(--radius-md);
-            margin-bottom: var(--space-md);
+        /* Badge info (uses accent for admin) */
+        .badge-info {
+            background: var(--accent-light);
+            color: var(--accent-dark);
         }
 
-        .alert-success {
-            background: var(--color-success-soft);
-            color: #166534;
+        /* Sidebar nav SVG icons */
+        .ds-nav-link svg {
+            width: 18px;
+            height: 18px;
+            flex-shrink: 0;
         }
 
-        .alert-error {
-            background: var(--color-error-soft);
-            color: #991b1b;
+        /* Button success */
+        .btn-success {
+            background: var(--success);
+            color: var(--text-on-dark);
+            border-color: var(--success);
+        }
+        .btn-success:hover:not(:disabled) {
+            background: #2E7A2E;
+            border-color: #2E7A2E;
         }
 
-        .alert-warning {
-            background: var(--color-warning-soft);
-            color: #92400e;
-        }
-
-        /* Search */
-        .search-box {
-            position: relative;
-        }
-
-        .search-box input {
-            padding-left: 40px;
-        }
-
-        .search-box-icon {
-            position: absolute;
-            left: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--color-text-muted);
-        }
-
-        /* Pagination */
+        /* Pagination centering */
         .pagination {
-            display: flex;
-            align-items: center;
             justify-content: center;
-            gap: var(--space-xs);
             margin-top: var(--space-lg);
         }
 
-        .pagination a, .pagination span {
-            padding: var(--space-xs) var(--space-sm);
-            border: 1px solid var(--color-border);
-            border-radius: var(--radius-sm);
-            font-size: var(--text-sm);
-            text-decoration: none;
-            color: var(--color-text-soft);
-        }
+        /* Text utilities */
+        .text-muted { color: var(--text-secondary); }
+        .text-success { color: var(--success); }
+        .text-error { color: var(--error); }
+        .text-sm { font-size: 13px; }
+        .text-xs { font-size: 11px; }
+        .font-medium { font-weight: 500; }
+        .font-bold { font-weight: 700; }
 
-        .pagination a:hover {
-            background: var(--color-bg-subtle);
-        }
-
-        .pagination .active {
-            background: var(--color-primary);
-            color: white;
-            border-color: var(--color-primary);
-        }
-
-        /* Empty state */
-        .empty-state {
-            text-align: center;
-            padding: var(--space-xl);
-            color: var(--color-text-muted);
-        }
-
+        /* Empty state icon */
         .empty-state-icon {
             font-size: 3rem;
             margin-bottom: var(--space-md);
         }
 
-        /* Utilities */
-        .text-muted { color: var(--color-text-muted); }
-        .text-success { color: var(--color-success); }
-        .text-error { color: var(--color-error); }
-        .text-sm { font-size: var(--text-sm); }
-        .text-xs { font-size: var(--text-xs); }
-        .font-medium { font-weight: 500; }
-        .font-bold { font-weight: 700; }
-        .mb-md { margin-bottom: var(--space-md); }
-        .mb-lg { margin-bottom: var(--space-lg); }
-        .mt-md { margin-top: var(--space-md); }
-        .flex { display: flex; }
-        .items-center { align-items: center; }
-        .justify-between { justify-content: space-between; }
-        .gap-sm { gap: var(--space-sm); }
-        .gap-md { gap: var(--space-md); }
+        /* Card title */
+        .card-title {
+            font-family: var(--font-body);
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: var(--space-md);
+        }
     </style>
 </head>
 <body>
-    <div class="platform-layout">
-        <!-- Sidebar -->
-        <aside class="platform-sidebar">
-            <div class="sidebar-brand">
-                <div class="sidebar-brand-name"><?= escape($platformName) ?></div>
-                <div class="sidebar-brand-label">Platform Admin</div>
+    <!-- Mobile sidebar overlay -->
+    <div class="ds-sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Mobile hamburger toggle -->
+    <button class="ds-mobile-toggle" id="menuToggle" aria-label="Toggle navigation">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+    </button>
+
+    <!-- Sidebar -->
+    <aside class="ds-sidebar" id="adminSidebar">
+        <div class="ds-sidebar-header">
+            <a href="<?= BASE_PATH ?>/admin-platform/index.php" class="ds-sidebar-logo">
+                <span class="ds-sidebar-logo-text"><?= escape($platformName) ?></span>
+            </a>
+            <div class="ds-sidebar-subtitle">Platform Admin</div>
+        </div>
+
+        <nav class="ds-sidebar-nav">
+            <div class="ds-nav-section-title">Oversigt</div>
+            <a href="<?= BASE_PATH ?>/admin-platform/index.php" class="ds-nav-link <?= $currentPage === 'index' ? 'active' : '' ?>">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="14" width="7" height="7"></rect>
+                    <rect x="3" y="14" width="7" height="7"></rect>
+                </svg>
+                Dashboard
+            </a>
+
+            <div class="ds-nav-section-title">Brugere</div>
+            <a href="<?= BASE_PATH ?>/admin-platform/accounts.php" class="ds-nav-link <?= $currentPage === 'accounts' ? 'active' : '' ?>">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+                Konti
+            </a>
+            <a href="<?= BASE_PATH ?>/admin-platform/subscriptions.php" class="ds-nav-link <?= $currentPage === 'subscriptions' ? 'active' : '' ?>">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                    <line x1="1" y1="10" x2="23" y2="10"></line>
+                </svg>
+                Abonnementer
+            </a>
+
+            <div class="ds-nav-section-title">Finans</div>
+            <a href="<?= BASE_PATH ?>/admin-platform/revenue.php" class="ds-nav-link <?= $currentPage === 'revenue' ? 'active' : '' ?>">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="1" x2="12" y2="23"></line>
+                    <path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"></path>
+                </svg>
+                Omsaetning
+            </a>
+
+            <div class="ds-nav-section-title">Markedsplads</div>
+            <a href="<?= BASE_PATH ?>/admin-platform/vendors.php" class="ds-nav-link <?= in_array($currentPage, ['vendors', 'vendor-detail']) ? 'active' : '' ?>">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"></path>
+                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                </svg>
+                Leverandorer
+                <?php if (($platformStats['pending_vendors'] ?? 0) > 0): ?>
+                    <span class="ds-nav-badge"><?= $platformStats['pending_vendors'] ?></span>
+                <?php endif; ?>
+            </a>
+            <a href="<?= BASE_PATH ?>/admin-platform/vendor-payouts.php" class="ds-nav-link <?= $currentPage === 'vendor-payouts' ? 'active' : '' ?>">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="1" x2="12" y2="23"></line>
+                    <path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"></path>
+                </svg>
+                Udbetalinger
+            </a>
+
+            <div class="ds-nav-section-title">System</div>
+            <a href="<?= BASE_PATH ?>/admin-platform/settings.php" class="ds-nav-link <?= $currentPage === 'settings' ? 'active' : '' ?>">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001.08 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9c.26.604.852.997 1.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1.08z"></path>
+                </svg>
+                Indstillinger
+            </a>
+        </nav>
+
+        <div class="ds-sidebar-footer">
+            <div class="ds-sidebar-user">
+                <div class="ds-sidebar-user-avatar">
+                    <?= strtoupper(substr($currentAdmin['name'] ?? 'A', 0, 1)) ?>
+                </div>
+                <div>
+                    <div class="ds-sidebar-user-name"><?= escape($currentAdmin['name'] ?? 'Admin') ?></div>
+                    <div class="ds-sidebar-user-email">Platform Admin</div>
+                </div>
             </div>
+            <a href="<?= BASE_PATH ?>/admin-platform/logout.php" class="ds-nav-link ds-nav-link-logout" style="margin-top: var(--space-sm);">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"></path>
+                    <polyline points="16 17 21 12 16 7"></polyline>
+                    <line x1="21" y1="12" x2="9" y2="12"></line>
+                </svg>
+                Log ud
+            </a>
+        </div>
+    </aside>
 
-            <nav class="sidebar-nav">
-                <div class="nav-section">
-                    <div class="nav-section-title">Oversigt</div>
-                    <ul class="nav-menu">
-                        <li>
-                            <a href="<?= BASE_PATH ?>/admin-platform/index.php" class="nav-link <?= $currentPage === 'index' ? 'active' : '' ?>">
-                                <span class="nav-link-icon">&#128200;</span>
-                                Dashboard
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-
-                <div class="nav-section">
-                    <div class="nav-section-title">Brugere</div>
-                    <ul class="nav-menu">
-                        <li>
-                            <a href="<?= BASE_PATH ?>/admin-platform/accounts.php" class="nav-link <?= $currentPage === 'accounts' ? 'active' : '' ?>">
-                                <span class="nav-link-icon">&#128100;</span>
-                                Konti
-                            </a>
-                        </li>
-                        <li>
-                            <a href="<?= BASE_PATH ?>/admin-platform/subscriptions.php" class="nav-link <?= $currentPage === 'subscriptions' ? 'active' : '' ?>">
-                                <span class="nav-link-icon">&#128179;</span>
-                                Abonnementer
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-
-                <div class="nav-section">
-                    <div class="nav-section-title">Finans</div>
-                    <ul class="nav-menu">
-                        <li>
-                            <a href="<?= BASE_PATH ?>/admin-platform/revenue.php" class="nav-link <?= $currentPage === 'revenue' ? 'active' : '' ?>">
-                                <span class="nav-link-icon">&#128176;</span>
-                                Omsætning
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-
-                <div class="nav-section">
-                    <div class="nav-section-title">Markedsplads</div>
-                    <ul class="nav-menu">
-                        <li>
-                            <a href="<?= BASE_PATH ?>/admin-platform/vendors.php" class="nav-link <?= in_array($currentPage, ['vendors', 'vendor-detail']) ? 'active' : '' ?>">
-                                <span class="nav-link-icon">&#127970;</span>
-                                Leverand&oslash;rer
-                                <?php if (($platformStats['pending_vendors'] ?? 0) > 0): ?>
-                                    <span class="nav-badge"><?= $platformStats['pending_vendors'] ?></span>
-                                <?php endif; ?>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="<?= BASE_PATH ?>/admin-platform/vendor-payouts.php" class="nav-link <?= $currentPage === 'vendor-payouts' ? 'active' : '' ?>">
-                                <span class="nav-link-icon">&#128176;</span>
-                                Udbetalinger
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-
-                <div class="nav-section">
-                    <div class="nav-section-title">System</div>
-                    <ul class="nav-menu">
-                        <li>
-                            <a href="<?= BASE_PATH ?>/admin-platform/settings.php" class="nav-link <?= $currentPage === 'settings' ? 'active' : '' ?>">
-                                <span class="nav-link-icon">&#9881;</span>
-                                Indstillinger
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </nav>
-
-            <div class="sidebar-footer">
-                <div class="user-info">
-                    <div class="user-avatar">
-                        <?= strtoupper(substr($currentAdmin['name'] ?? 'A', 0, 1)) ?>
-                    </div>
-                    <div>
-                        <div class="user-name"><?= escape($currentAdmin['name'] ?? 'Admin') ?></div>
-                        <div class="user-role">Platform Admin</div>
-                    </div>
-                </div>
-                <a href="<?= BASE_PATH ?>/admin-platform/logout.php" class="nav-link" style="margin-top: var(--space-sm);">
-                    <span class="nav-link-icon">&#128682;</span>
-                    Log ud
-                </a>
-            </div>
-        </aside>
-
-        <!-- Main content -->
-        <main class="platform-main">
+    <!-- Main content -->
+    <main class="ds-main">
+        <div class="ds-content">

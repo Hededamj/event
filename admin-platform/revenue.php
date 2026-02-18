@@ -116,7 +116,7 @@ $maxRevenue = max(array_column($monthlyRevenue, 'revenue')) ?: 1;
             <?php foreach ($monthlyRevenue as $month): ?>
                 <?php $height = $maxRevenue > 0 ? ($month['revenue'] / $maxRevenue) * 100 : 0; ?>
                 <div style="flex: 1; display: flex; flex-direction: column; align-items: center;">
-                    <div style="width: 100%; background: var(--color-primary); border-radius: 4px 4px 0 0; height: <?= max(2, $height) ?>%;"
+                    <div style="width: 100%; background: var(--accent); border-radius: 4px 4px 0 0; height: <?= max(2, $height) ?>%;"
                          title="<?= number_format($month['revenue'], 0, ',', '.') ?> kr"></div>
                     <div class="text-xs text-muted" style="margin-top: 4px; white-space: nowrap;">
                         <?= substr($month['month'], 0, 3) ?>

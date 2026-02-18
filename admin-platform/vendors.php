@@ -164,7 +164,7 @@ $totalCommission = $db->query("
         </div>
         <div class="stat-card">
             <div class="stat-label">Afventer godkendelse</div>
-            <div class="stat-value" style="color: var(--color-warning);">
+            <div class="stat-value" style="color: var(--warning);">
                 <?= number_format($statusCounts['pending'] ?? 0) ?>
             </div>
         </div>
