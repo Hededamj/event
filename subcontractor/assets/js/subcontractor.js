@@ -29,13 +29,13 @@ function initSidebarToggle() {
 
     function openSidebar() {
         sidebar.classList.add('open');
-        overlay.classList.add('open');
+        overlay.classList.add('active');
         document.body.classList.add('sidebar-open');
     }
 
     function closeSidebar() {
         sidebar.classList.remove('open');
-        overlay.classList.remove('open');
+        overlay.classList.remove('active');
         document.body.classList.remove('sidebar-open');
     }
 

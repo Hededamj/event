@@ -1,7 +1,7 @@
         </div>
     </main>
 
-    <footer class="vendor-footer">
+    <footer class="ds-footer">
         <p>PartyParart Leverandorportal</p>
     </footer>
 
