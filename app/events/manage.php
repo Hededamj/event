@@ -46,6 +46,12 @@ if (!in_array($page, $validPages)) {
     $page = 'dashboard';
 }
 
+// Redirect deprecated menu page to schedule
+if ($page === 'menu') {
+    header("Location: ?id=$eventId&page=schedule&section=menu");
+    exit;
+}
+
 // Get subscription for feature checks
 $subscription = getAccountSubscription($accountId);
 $features = $subscription['features'] ?? [];
@@ -88,6 +94,7 @@ $pageTitle = $event['name'] ?? 'Arrangement';
 
         :root {
             --cream: #E8E4DE;
+            --cream-light: #F5F3F0;
             --cream-dark: #D9D4CC;
             --sage: #8FA583;
             --sage-light: #B8C9B0;
@@ -240,75 +247,339 @@ $pageTitle = $event['name'] ?? 'Arrangement';
 
         .btn svg { width: 16px; height: 16px; }
 
-        /* Tab Navigation */
-        .tabs-nav {
+        /* Event Sidebar */
+        .event-sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: 280px;
             background: var(--white);
-            border-bottom: 1px solid var(--cream-dark);
-            padding: 0 24px;
-            overflow-x: auto;
-        }
-
-        .tabs-nav::-webkit-scrollbar {
-            display: none;
-        }
-
-        .tabs-nav-inner {
-            max-width: 1400px;
-            margin: 0 auto;
+            border-right: 1px solid var(--cream-dark);
             display: flex;
-            gap: 4px;
+            flex-direction: column;
+            z-index: 150;
+            overflow: hidden;
         }
 
-        .tab-link {
+        .sidebar-header {
+            padding: 24px 20px;
+            border-bottom: 1px solid var(--cream-dark);
+        }
+
+        .sidebar-logo {
             display: flex;
             align-items: center;
-            gap: 8px;
-            padding: 18px 18px;
+            gap: 10px;
+            font-family: var(--font-display);
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--charcoal);
+            text-decoration: none;
+        }
+
+        .sidebar-logo svg {
+            width: 22px;
+            height: 22px;
+            color: var(--sage);
+        }
+
+        .sidebar-logo span { color: var(--sage-dark); }
+
+        .sidebar-nav {
+            flex: 1;
+            overflow-y: auto;
+            padding: 12px;
+        }
+
+        .sidebar-nav::-webkit-scrollbar { width: 4px; }
+        .sidebar-nav::-webkit-scrollbar-thumb { background: var(--cream-dark); border-radius: 2px; }
+
+        .sidebar-app-nav { margin-bottom: 4px; }
+
+        .sidebar-divider {
+            height: 1px;
+            background: var(--cream-dark);
+            margin: 8px 0;
+        }
+
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
             color: var(--charcoal-light);
             text-decoration: none;
             font-size: 14px;
-            font-weight: 500;
-            border-bottom: 3px solid transparent;
-            margin-bottom: -1px;
-            white-space: nowrap;
-            transition: all 0.25s var(--ease-out);
+            font-weight: 400;
+            border-radius: 10px;
+            transition: all 0.2s var(--ease-out);
         }
 
-        .tab-link:hover {
+        .sidebar-link svg { width: 18px; height: 18px; flex-shrink: 0; }
+
+        .sidebar-link:hover {
+            background: var(--cream-light);
             color: var(--charcoal);
-            background: var(--cream);
         }
 
-        .tab-link.active {
-            color: var(--sage-dark);
-            border-bottom-color: var(--sage);
-            background: transparent;
+        .sidebar-link.active {
+            background: var(--sage);
+            color: var(--white);
+            font-weight: 500;
         }
 
-        .tab-link svg {
-            width: 18px;
-            height: 18px;
-        }
+        .sidebar-link.premium { color: #B8B0A0; }
 
-        .tab-link.premium {
-            color: #B8B0A0;
-        }
-
-        .tab-link.premium::after {
+        .sidebar-link.premium::after {
             content: 'PRO';
             font-size: 9px;
             font-weight: 700;
-            padding: 3px 5px;
+            padding: 2px 5px;
             background: var(--gold);
             color: var(--white);
             border-radius: 4px;
-            margin-left: 6px;
+            margin-left: auto;
         }
+
+        .sidebar-link.premium.active { color: var(--white); }
+        .sidebar-link.premium.active::after { background: rgba(255,255,255,0.3); }
+
+        /* Sidebar Groups */
+        .sidebar-group { margin-bottom: 2px; }
+
+        .sidebar-group-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
+            padding: 8px 12px 4px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-family: var(--font-body);
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--charcoal-light);
+        }
+
+        .sidebar-group-header:hover { color: var(--charcoal); }
+
+        .sidebar-group-icon svg { width: 16px; height: 16px; }
+        .sidebar-group-label { flex: 1; text-align: left; }
+
+        .sidebar-group-chevron {
+            width: 14px;
+            height: 14px;
+            transition: transform 0.2s var(--ease-out);
+        }
+
+        .sidebar-group-header[aria-expanded="false"] .sidebar-group-chevron {
+            transform: rotate(-90deg);
+        }
+
+        .sidebar-group-items {
+            overflow: hidden;
+            transition: max-height 0.25s var(--ease-out);
+        }
+
+        .sidebar-group-header[aria-expanded="false"] + .sidebar-group-items {
+            max-height: 0 !important;
+        }
+
+        .sidebar-group-items .sidebar-link { padding-left: 40px; }
+
+        .sidebar-settings-link { margin-top: 4px; }
+
+        /* Sidebar Footer */
+        .sidebar-footer {
+            padding: 16px;
+            border-top: 1px solid var(--cream-dark);
+        }
+
+        .sidebar-plan-badge {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+            background: var(--cream-light);
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--charcoal);
+            margin-bottom: 8px;
+        }
+
+        .sidebar-upgrade-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 10px;
+            background: var(--sage);
+            color: var(--white);
+            text-decoration: none;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 500;
+            transition: background 0.2s;
+        }
+
+        .sidebar-upgrade-btn:hover { background: var(--sage-dark); }
+        .sidebar-upgrade-btn svg { width: 14px; height: 14px; }
+
+        /* Desktop layout offset */
+        .top-nav { margin-left: 280px; }
+
+        /* Mobile hamburger */
+        .event-menu-toggle {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            color: var(--charcoal);
+            border-radius: 10px;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .event-menu-toggle:hover { background: var(--cream); }
+        .event-menu-toggle svg { width: 22px; height: 22px; }
+
+        /* Mobile Bottom Bar */
+        .mobile-bottom-bar {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--white);
+            border-top: 1px solid var(--cream-dark);
+            z-index: 200;
+            justify-content: space-around;
+            padding: 6px 0 env(safe-area-inset-bottom, 6px);
+        }
+
+        .bottom-bar-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            padding: 8px 4px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            color: var(--charcoal-light);
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .bottom-bar-item.active { color: var(--sage-dark); }
+        .bottom-bar-item svg { width: 22px; height: 22px; }
+        .bottom-bar-item span {
+            font-family: var(--font-body);
+            font-size: 10px;
+            font-weight: 500;
+        }
+
+        /* Bottom Sheet */
+        .bottom-sheet {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 250;
+            pointer-events: none;
+        }
+
+        .bottom-sheet.open { pointer-events: auto; }
+
+        .bottom-sheet-backdrop {
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,0.3);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .bottom-sheet.open .bottom-sheet-backdrop { opacity: 1; }
+
+        .bottom-sheet-content {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--white);
+            border-radius: 20px 20px 0 0;
+            padding: 0 20px 20px;
+            padding-bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+            transform: translateY(100%);
+            transition: transform 0.3s var(--ease-out);
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+
+        .bottom-sheet.open .bottom-sheet-content { transform: translateY(0); }
+
+        .bottom-sheet-handle {
+            width: 36px;
+            height: 4px;
+            background: var(--cream-dark);
+            border-radius: 2px;
+            margin: 12px auto 16px;
+        }
+
+        .bottom-sheet-title {
+            font-family: var(--font-body);
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--charcoal-light);
+            padding: 4px 0 8px;
+        }
+
+        .bottom-sheet-link {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 12px;
+            color: var(--charcoal);
+            text-decoration: none;
+            font-size: 16px;
+            border-radius: 12px;
+            min-height: 48px;
+        }
+
+        .bottom-sheet-link:active { background: var(--cream-light); }
+
+        .bottom-sheet-link.active {
+            background: var(--sage);
+            color: var(--white);
+            font-weight: 500;
+        }
+
+        .bottom-sheet-link.premium { color: #B8B0A0; }
+        .bottom-sheet-link.premium.active { color: var(--white); }
+
+        .pro-badge {
+            font-size: 9px;
+            font-weight: 700;
+            padding: 2px 6px;
+            background: var(--gold);
+            color: var(--white);
+            border-radius: 4px;
+        }
+
+        .bottom-sheet-link.active .pro-badge { background: rgba(255,255,255,0.3); }
 
         /* Main Content */
         .main-content {
             max-width: 1400px;
-            margin: 0 auto;
+            margin: 0 auto 0 280px;
             padding: 32px 24px;
         }
 
@@ -710,20 +981,42 @@ $pageTitle = $event['name'] ?? 'Arrangement';
             background: #B8952F;
         }
 
+        @media (max-width: 1024px) {
+            .event-sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s var(--ease-out);
+                box-shadow: none;
+            }
+            .event-sidebar.open {
+                transform: translateX(0);
+                box-shadow: 4px 0 24px rgba(0,0,0,0.1);
+            }
+            .sidebar-overlay {
+                display: none;
+                position: fixed;
+                inset: 0;
+                background: rgba(0,0,0,0.3);
+                z-index: 149;
+            }
+            .sidebar-overlay.visible {
+                display: block;
+            }
+            .top-nav { margin-left: 0; }
+            .main-content {
+                margin-left: 0;
+                padding-bottom: 80px;
+            }
+            .event-menu-toggle { display: flex; }
+            .mobile-bottom-bar { display: flex; }
+            .bottom-sheet { display: block; }
+        }
+
         @media (max-width: 768px) {
             .top-nav-inner {
                 flex-wrap: wrap;
                 height: auto;
                 padding: 16px 0;
                 gap: 12px;
-            }
-
-            .tabs-nav-inner {
-                gap: 0;
-            }
-
-            .tab-link {
-                padding: 14px 12px;
             }
 
             .form-grid {
@@ -741,10 +1034,18 @@ $pageTitle = $event['name'] ?? 'Arrangement';
     </style>
 </head>
 <body>
+    <?php include __DIR__ . '/../../includes/event-sidebar.php'; ?>
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="document.getElementById('eventSidebar').classList.remove('open');this.classList.remove('visible')"></div>
+
     <!-- Top Navigation -->
     <nav class="top-nav">
         <div class="top-nav-inner">
             <div class="nav-left">
+                <button type="button" class="event-menu-toggle" onclick="toggleMobileSidebar()">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
                 <a href="/app/dashboard.php" class="back-link">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
@@ -764,97 +1065,6 @@ $pageTitle = $event['name'] ?? 'Arrangement';
                 </a>
                 <?php endif; ?>
             </div>
-        </div>
-    </nav>
-
-    <!-- Tab Navigation -->
-    <nav class="tabs-nav">
-        <div class="tabs-nav-inner">
-            <a href="?id=<?= $eventId ?>&page=dashboard" class="tab-link <?= $page === 'dashboard' ? 'active' : '' ?>">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
-                </svg>
-                Oversigt
-            </a>
-            <a href="?id=<?= $eventId ?>&page=invitation" class="tab-link <?= $page === 'invitation' || $page === 'invitation-send' ? 'active' : '' ?>">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
-                </svg>
-                Invitation
-            </a>
-            <a href="?id=<?= $eventId ?>&page=guests" class="tab-link <?= $page === 'guests' ? 'active' : '' ?>">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                </svg>
-                Gæster
-            </a>
-            <a href="?id=<?= $eventId ?>&page=wishlist" class="tab-link <?= $page === 'wishlist' ? 'active' : '' ?>">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"></path>
-                </svg>
-                Ønskeliste
-            </a>
-            <a href="?id=<?= $eventId ?>&page=schedule" class="tab-link <?= $page === 'schedule' ? 'active' : '' ?>">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                </svg>
-                Program
-            </a>
-            <a href="?id=<?= $eventId ?>&page=photos" class="tab-link <?= $page === 'photos' ? 'active' : '' ?>">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                </svg>
-                Fotos
-            </a>
-            <a href="?id=<?= $eventId ?>&page=memories-admin" class="tab-link <?= $page === 'memories-admin' ? 'active' : '' ?>">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                </svg>
-                Minder
-            </a>
-            <a href="?id=<?= $eventId ?>&page=qr-bordkort" class="tab-link <?= $page === 'qr-bordkort' ? 'active' : '' ?>">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"></path>
-                </svg>
-                QR-Bordkort
-            </a>
-            <a href="?id=<?= $eventId ?>&page=checklist" class="tab-link <?= $page === 'checklist' ? 'active' : '' ?> <?= !$hasChecklist ? 'premium' : '' ?>">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
-                </svg>
-                Tjekliste
-            </a>
-            <a href="?id=<?= $eventId ?>&page=seating" class="tab-link <?= $page === 'seating' ? 'active' : '' ?> <?= !$hasSeating ? 'premium' : '' ?>">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"></path>
-                </svg>
-                Bordplan
-            </a>
-            <a href="?id=<?= $eventId ?>&page=budget" class="tab-link <?= $page === 'budget' ? 'active' : '' ?> <?= !$hasBudget ? 'premium' : '' ?>">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                </svg>
-                Budget
-            </a>
-            <a href="?id=<?= $eventId ?>&page=vendors" class="tab-link <?= $page === 'vendors' || $page === 'vendor-booking' ? 'active' : '' ?>">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"></path>
-                </svg>
-                Leverandorer
-            </a>
-            <a href="?id=<?= $eventId ?>&page=toastmaster" class="tab-link <?= $page === 'toastmaster' ? 'active' : '' ?> <?= !$hasToastmaster ? 'premium' : '' ?>">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path>
-                </svg>
-                Toastmaster
-            </a>
-            <a href="?id=<?= $eventId ?>&page=settings" class="tab-link <?= $page === 'settings' ? 'active' : '' ?>">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                </svg>
-                Indstillinger
-            </a>
         </div>
     </nav>
 
@@ -887,5 +1097,107 @@ $pageTitle = $event['name'] ?? 'Arrangement';
         }
         ?>
     </main>
+
+    <script>
+    /* Sidebar group collapse/expand */
+    function toggleSidebarGroup(btn) {
+        var expanded = btn.getAttribute('aria-expanded') === 'true';
+        btn.setAttribute('aria-expanded', expanded ? 'false' : 'true');
+        var items = btn.nextElementSibling;
+        if (expanded) {
+            items.style.maxHeight = '0';
+        } else {
+            items.style.maxHeight = items.scrollHeight + 'px';
+        }
+    }
+
+    /* Initialize group item heights and drag handler */
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.sidebar-group-items').forEach(function(el) {
+            el.style.maxHeight = el.scrollHeight + 'px';
+        });
+
+        var handle = document.querySelector('.bottom-sheet-handle');
+        if (handle) handle.addEventListener('touchstart', initSheetDrag, { passive: true });
+    });
+
+    /* Bottom sheet */
+    var activeSheet = null;
+
+    function toggleBottomSheet(groupKey) {
+        var sheet = document.getElementById('bottomSheet');
+        if (activeSheet === groupKey) {
+            closeBottomSheet();
+            return;
+        }
+        sheet.querySelectorAll('.bottom-sheet-group').forEach(function(el) {
+            el.style.display = 'none';
+        });
+        var target = sheet.querySelector('[data-sheet-group="' + groupKey + '"]');
+        if (target) target.style.display = 'block';
+        sheet.style.display = 'block';
+        requestAnimationFrame(function() {
+            sheet.classList.add('open');
+        });
+        activeSheet = groupKey;
+    }
+
+    function closeBottomSheet() {
+        var sheet = document.getElementById('bottomSheet');
+        sheet.classList.remove('open');
+        setTimeout(function() {
+            sheet.style.display = 'none';
+        }, 300);
+        activeSheet = null;
+    }
+
+    /* Swipe-down to close */
+    var sheetStartY = 0;
+    function initSheetDrag(e) {
+        sheetStartY = e.touches[0].clientY;
+        var content = document.querySelector('.bottom-sheet-content');
+        content.addEventListener('touchmove', onSheetDrag, { passive: false });
+        content.addEventListener('touchend', onSheetDragEnd);
+    }
+
+    function onSheetDrag(e) {
+        var deltaY = e.touches[0].clientY - sheetStartY;
+        if (deltaY > 0) {
+            e.preventDefault();
+            document.querySelector('.bottom-sheet-content').style.transform = 'translateY(' + deltaY + 'px)';
+        }
+    }
+
+    function onSheetDragEnd(e) {
+        var content = document.querySelector('.bottom-sheet-content');
+        var deltaY = e.changedTouches[0].clientY - sheetStartY;
+        content.removeEventListener('touchmove', onSheetDrag);
+        content.removeEventListener('touchend', onSheetDragEnd);
+        content.style.transform = '';
+        if (deltaY > 80) {
+            closeBottomSheet();
+        }
+    }
+
+    /* Mobile sidebar toggle with overlay */
+    function toggleMobileSidebar() {
+        var sidebar = document.getElementById('eventSidebar');
+        var overlay = document.getElementById('sidebarOverlay');
+        sidebar.classList.toggle('open');
+        overlay.classList.toggle('visible');
+    }
+
+    /* Close mobile sidebar on outside click */
+    document.addEventListener('click', function(e) {
+        var sidebar = document.getElementById('eventSidebar');
+        if (sidebar && sidebar.classList.contains('open')) {
+            var toggle = document.querySelector('.event-menu-toggle');
+            if (!sidebar.contains(e.target) && (!toggle || !toggle.contains(e.target))) {
+                sidebar.classList.remove('open');
+                document.getElementById('sidebarOverlay').classList.remove('visible');
+            }
+        }
+    });
+    </script>
 </body>
 </html>
