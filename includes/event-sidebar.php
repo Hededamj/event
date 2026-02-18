@@ -16,6 +16,9 @@
  * @var bool   $hasToastmaster Feature flag
  */
 
+// Ensure $eventId is an integer for safe output
+$eventId = (int)$eventId;
+
 // Define navigation groups with their items
 $sidebarGroups = [
     'planning' => [
@@ -189,7 +192,7 @@ $isFreePlan = ($planSlug === 'free' || empty($subscription));
         <div class="bottom-sheet-handle"></div>
 
         <?php foreach ($sidebarGroups as $groupKey => $group): ?>
-        <div class="bottom-sheet-group" data-group="<?= $groupKey ?>" style="display:none">
+        <div class="bottom-sheet-group" data-sheet-group="<?= $groupKey ?>" style="display:none">
             <h3 class="bottom-sheet-title"><?= $group['label'] ?></h3>
             <?php foreach ($group['items'] as $item):
                 $isActive = ($page === $item['page'] || in_array($page, $item['also_active']));
