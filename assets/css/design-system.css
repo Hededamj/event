@@ -984,10 +984,16 @@ tr:hover td {
   padding: var(--space-2xl) var(--space-lg);
 }
 
+.empty-state svg,
+.empty-state-icon {
+  width: 48px;
+  height: 48px;
+  color: var(--border);
+  margin: 0 auto var(--space-md);
+}
+
 .empty-state-icon {
   font-size: 48px;
-  color: var(--border);
-  margin-bottom: var(--space-md);
 }
 
 .empty-state h3 {
