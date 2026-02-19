@@ -197,7 +197,7 @@ $planMRR = $stmt->fetchAll();
                                         <?php if ($sub['current_period_end']): ?>
                                             <div>Til: <?= date('d/m/Y', strtotime($sub['current_period_end'])) ?></div>
                                         <?php endif; ?>
-                                        <?php if ($sub['trial_ends_at'] && strtotime($sub['trial_ends_at']) > time()): ?>
+                                        <?php if (!empty($sub['trial_ends_at']) && strtotime($sub['trial_ends_at']) > time()): ?>
                                             <div class="text-xs text-muted">Prøve til: <?= date('d/m/Y', strtotime($sub['trial_ends_at'])) ?></div>
                                         <?php endif; ?>
                                     </td>
