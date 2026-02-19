@@ -208,7 +208,7 @@ $bookingTextMap = [
                 <div>
                     <div class="text-sm text-muted">Website</div>
                     <div class="font-medium">
-                        <?php if ($vendor['website']): ?>
+                        <?php if (!empty($vendor['website'])): ?>
                             <a href="<?= escape($vendor['website']) ?>" target="_blank" style="color: var(--accent);">
                                 <?= escape($vendor['website']) ?>
                             </a>
@@ -231,7 +231,7 @@ $bookingTextMap = [
                 </div>
                 <div>
                     <div class="text-sm text-muted">Landsdaekkende</div>
-                    <div class="font-medium"><?= $vendor['nationwide'] ? 'Ja' : 'Nej' ?></div>
+                    <div class="font-medium"><?= ($vendor['nationwide'] ?? false) ? 'Ja' : 'Nej' ?></div>
                 </div>
                 <div>
                     <div class="text-sm text-muted">Rating</div>
@@ -257,7 +257,7 @@ $bookingTextMap = [
                         <?= $vendor['last_login_at'] ? date('d/m/Y H:i', strtotime($vendor['last_login_at'])) : 'Aldrig' ?>
                     </div>
                 </div>
-                <?php if ($vendor['approved_at']): ?>
+                <?php if (!empty($vendor['approved_at'])): ?>
                 <div>
                     <div class="text-sm text-muted">Godkendt</div>
                     <div class="font-medium"><?= date('d/m/Y H:i', strtotime($vendor['approved_at'])) ?></div>
@@ -277,7 +277,7 @@ $bookingTextMap = [
             <?php endif; ?>
 
             <!-- Description -->
-            <?php if ($vendor['description']): ?>
+            <?php if (!empty($vendor['description'])): ?>
                 <hr style="margin: var(--space-lg) 0; border: none; border-top: 1px solid var(--border);">
                 <div class="text-sm text-muted mb-md">Beskrivelse</div>
                 <div class="text-sm"><?= nl2br(escape($vendor['description'])) ?></div>
@@ -320,7 +320,7 @@ $bookingTextMap = [
                     <div>
                         <div class="text-sm text-muted">Account ID</div>
                         <div class="font-medium">
-                            <?php if ($vendor['stripe_account_id']): ?>
+                            <?php if (!empty($vendor['stripe_account_id'])): ?>
                                 <code style="font-size: 11px;"><?= escape($vendor['stripe_account_id']) ?></code>
                             <?php else: ?>
                                 <span class="text-muted">Ikke oprettet</span>
@@ -330,7 +330,7 @@ $bookingTextMap = [
                     <div>
                         <div class="text-sm text-muted">Onboarding</div>
                         <div class="font-medium">
-                            <?php if ($vendor['stripe_onboarding_complete']): ?>
+                            <?php if (!empty($vendor['stripe_onboarding_complete'])): ?>
                                 <span class="badge badge-success">Komplet</span>
                             <?php else: ?>
                                 <span class="badge badge-warning">Ufuldstaendig</span>
@@ -382,7 +382,7 @@ $bookingTextMap = [
                             <tr>
                                 <td>
                                     <div class="font-medium"><?= escape($service['title']) ?></div>
-                                    <?php if ($service['description']): ?>
+                                    <?php if (!empty($service['description'])): ?>
                                         <div class="text-xs text-muted"><?= escape(mb_substr($service['description'], 0, 80)) ?>...</div>
                                     <?php endif; ?>
                                 </td>
@@ -435,7 +435,7 @@ $bookingTextMap = [
                     <tbody>
                         <?php foreach ($bookings as $booking): ?>
                             <tr>
-                                <td class="text-sm"><?= date('d/m/Y', strtotime($booking['event_date'])) ?></td>
+                                <td class="text-sm"><?= $booking['event_date'] ? date('d/m/Y', strtotime($booking['event_date'])) : '-' ?></td>
                                 <td class="text-sm font-medium"><?= escape($booking['event_name']) ?></td>
                                 <td class="text-sm">
                                     <div><?= escape($booking['organizer_name']) ?></div>
@@ -483,19 +483,19 @@ $bookingTextMap = [
                             <?php endfor; ?>
                         </div>
                     </div>
-                    <?php if ($review['title']): ?>
+                    <?php if (!empty($review['title'])): ?>
                         <div class="font-medium text-sm mb-md"><?= escape($review['title']) ?></div>
                     <?php endif; ?>
-                    <?php if ($review['review_text']): ?>
+                    <?php if (!empty($review['review_text'])): ?>
                         <div class="text-sm"><?= nl2br(escape($review['review_text'])) ?></div>
                     <?php endif; ?>
-                    <?php if ($review['vendor_response']): ?>
+                    <?php if (!empty($review['vendor_response'])): ?>
                         <div style="margin-top: var(--space-sm); padding: var(--space-sm); background: var(--surface); border-radius: var(--radius-md);">
                             <div class="text-xs text-muted">Svar fra leverandor:</div>
                             <div class="text-sm"><?= nl2br(escape($review['vendor_response'])) ?></div>
                         </div>
                     <?php endif; ?>
-                    <?php if (!$review['is_visible']): ?>
+                    <?php if (!($review['is_visible'] ?? true)): ?>
                         <span class="badge badge-error mt-md">Skjult</span>
                     <?php endif; ?>
                 </div>

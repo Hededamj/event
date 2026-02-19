@@ -174,7 +174,7 @@ $maxRevenue = max(array_column($monthlyRevenue, 'revenue')) ?: 1;
                                 </td>
                                 <td class="text-sm"><?= escape($payment['description'] ?? '-') ?></td>
                                 <td class="font-medium">
-                                    <?= number_format($payment['amount'], 2, ',', '.') ?> <?= $payment['currency'] ?>
+                                    <?= number_format($payment['amount'], 2, ',', '.') ?> <?= $payment['currency'] ?? 'DKK' ?>
                                 </td>
                                 <td>
                                     <?php
@@ -186,10 +186,10 @@ $maxRevenue = max(array_column($monthlyRevenue, 'revenue')) ?: 1;
                                     <span class="badge <?= $statusBadge ?>"><?= $statusText ?></span>
                                 </td>
                                 <td class="text-sm">
-                                    <?php if ($payment['invoice_url']): ?>
+                                    <?php if (!empty($payment['invoice_url'])): ?>
                                         <a href="<?= escape($payment['invoice_url']) ?>" target="_blank">Faktura</a>
                                     <?php endif; ?>
-                                    <?php if ($payment['receipt_url']): ?>
+                                    <?php if (!empty($payment['receipt_url'])): ?>
                                         <a href="<?= escape($payment['receipt_url']) ?>" target="_blank">Kvittering</a>
                                     <?php endif; ?>
                                 </td>

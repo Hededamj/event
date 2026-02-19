@@ -174,7 +174,7 @@ $plans = $db->query("SELECT slug, name FROM plans ORDER BY sort_order")->fetchAl
                                        style="text-decoration: none; color: inherit;">
                                         <div class="font-medium"><?= escape($account['name']) ?></div>
                                         <div class="text-xs text-muted"><?= escape($account['email']) ?></div>
-                                        <?php if ($account['company']): ?>
+                                        <?php if (!empty($account['company'])): ?>
                                             <div class="text-xs text-muted"><?= escape($account['company']) ?></div>
                                         <?php endif; ?>
                                     </a>

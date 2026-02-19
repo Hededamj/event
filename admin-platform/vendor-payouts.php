@@ -239,7 +239,7 @@ $bookingTextMap = [
                     <tbody>
                         <?php foreach ($bookings as $booking): ?>
                             <tr>
-                                <td class="text-sm"><?= date('d/m/Y', strtotime($booking['event_date'])) ?></td>
+                                <td class="text-sm"><?= $booking['event_date'] ? date('d/m/Y', strtotime($booking['event_date'])) : '-' ?></td>
                                 <td class="text-sm">
                                     <div class="font-medium"><?= escape($booking['organizer_name']) ?></div>
                                     <div class="text-xs text-muted"><?= escape($booking['organizer_email']) ?></div>

@@ -233,7 +233,7 @@ try {
                                     <div class="font-medium"><?= escape($payment['account_name']) ?></div>
                                     <div class="text-xs text-muted"><?= escape($payment['account_email']) ?></div>
                                 </td>
-                                <td class="font-medium"><?= number_format($payment['amount'], 0, ',', '.') ?> <?= $payment['currency'] ?></td>
+                                <td class="font-medium"><?= number_format($payment['amount'], 0, ',', '.') ?> <?= $payment['currency'] ?? 'DKK' ?></td>
                                 <td>
                                     <?php
                                     $badgeMap = ['succeeded' => 'badge-success', 'pending' => 'badge-warning', 'failed' => 'badge-error', 'refunded' => 'badge-info'];

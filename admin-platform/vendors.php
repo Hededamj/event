@@ -246,10 +246,10 @@ $totalCommission = $db->query("
                             <tr>
                                 <td>
                                     <div class="font-medium"><?= escape($vendor['company_name']) ?></div>
-                                    <?php if ($vendor['contact_name']): ?>
+                                    <?php if (!empty($vendor['contact_name'])): ?>
                                         <div class="text-xs text-muted"><?= escape($vendor['contact_name']) ?></div>
                                     <?php endif; ?>
-                                    <?php if ($vendor['city']): ?>
+                                    <?php if (!empty($vendor['city'])): ?>
                                         <div class="text-xs text-muted"><?= escape($vendor['city']) ?></div>
                                     <?php endif; ?>
                                 </td>

@@ -187,7 +187,7 @@ $sessions = $stmt->fetchAll();
                 <div>
                     <div class="text-sm text-muted">Email verificeret</div>
                     <div class="font-medium">
-                        <?php if ($account['email_verified_at']): ?>
+                        <?php if (!empty($account['email_verified_at'])): ?>
                             <span class="badge badge-success">Ja</span>
                         <?php else: ?>
                             <span class="badge badge-warning">Nej</span>
@@ -206,7 +206,7 @@ $sessions = $stmt->fetchAll();
                 </div>
                 <div>
                     <div class="text-sm text-muted">Antal logins</div>
-                    <div class="font-medium"><?= $account['login_count'] ?></div>
+                    <div class="font-medium"><?= $account['login_count'] ?? 0 ?></div>
                 </div>
             </div>
         </div>
@@ -253,7 +253,7 @@ $sessions = $stmt->fetchAll();
                     </div>
                 </div>
 
-                <?php if ($subscription['stripe_customer_id']): ?>
+                <?php if (!empty($subscription['stripe_customer_id'])): ?>
                     <div style="margin-top: var(--space-md);">
                         <div class="text-sm text-muted">Stripe Customer ID</div>
                         <code style="font-size: 11px;"><?= escape($subscription['stripe_customer_id']) ?></code>

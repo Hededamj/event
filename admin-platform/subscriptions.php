@@ -189,7 +189,7 @@ $planMRR = $stmt->fetchAll();
                                         $statusText = isset($subTextMap[$sub['status']]) ? $subTextMap[$sub['status']] : $sub['status'];
                                         ?>
                                         <span class="badge <?= $statusBadge ?>"><?= $statusText ?></span>
-                                        <?php if ($sub['cancel_at_period_end']): ?>
+                                        <?php if (!empty($sub['cancel_at_period_end'])): ?>
                                             <div class="text-xs text-error">Udløber ved periodens slut</div>
                                         <?php endif; ?>
                                     </td>
