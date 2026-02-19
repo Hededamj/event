@@ -107,7 +107,7 @@ $guestCount = $stmt->fetchColumn();
         <div class="pending-icon">⏳</div>
         <h2>Sletning afventer</h2>
         <p class="pending-date">
-            Din konto vil blive slettet den <strong><?= htmlspecialchars(date('d. F Y', strtotime($pendingRequest['scheduled_deletion_date']))) ?></strong>
+            Din konto vil blive slettet den <strong><?= htmlspecialchars($pendingRequest['scheduled_deletion_date'] ? date('d. F Y', strtotime($pendingRequest['scheduled_deletion_date'])) : '-') ?></strong>
         </p>
         <p class="pending-info">
             Du har indtil da til at fortryde og beholde din konto. Alle dine data vil blive permanent slettet efter denne dato.

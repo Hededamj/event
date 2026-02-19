@@ -331,7 +331,7 @@ $consentHistory = getConsentHistory($db, $accountId);
                         <?= $consent['withdrawn_at'] ? 'Trukket tilbage' : 'Aktivt' ?>
                     </span>
                     <span class="consent-date">
-                        <?= htmlspecialchars(date('d. M Y', strtotime($consent['granted_at']))) ?>
+                        <?= htmlspecialchars($consent['granted_at'] ? date('d. M Y', strtotime($consent['granted_at'])) : '-') ?>
                     </span>
                 </div>
             </div>

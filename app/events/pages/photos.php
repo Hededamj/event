@@ -108,7 +108,7 @@ $photoStats = $stmt->fetch();
         </div>
         <div class="photo-info">
             <span class="photo-uploader"><?= htmlspecialchars($photo['guest_name'] ?? 'Admin') ?></span>
-            <span class="photo-date"><?= date('d/m H:i', strtotime($photo['created_at'])) ?></span>
+            <span class="photo-date"><?= $photo['created_at'] ? date('d/m H:i', strtotime($photo['created_at'])) : '' ?></span>
         </div>
         <div class="photo-actions">
             <form method="POST" style="display: inline;">

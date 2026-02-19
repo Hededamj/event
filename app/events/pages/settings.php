@@ -213,7 +213,7 @@ $eventTypes = getAllEventTypes();
                 ?>
                 <div class="suggestion-box">
                     <p><strong>Forslag baseret på arrangementtype:</strong></p>
-                    <p>Startdato: <?= htmlspecialchars(date('d/m/Y', strtotime($suggestedTimeline['date']))) ?></p>
+                    <p>Startdato: <?= htmlspecialchars($suggestedTimeline['date'] ? date('d/m/Y', strtotime($suggestedTimeline['date'])) : '-') ?></p>
                     <p>Titel: "<?= htmlspecialchars($suggestedTimeline['label']) ?>"</p>
                     <button type="button" class="btn btn-sm btn-secondary" onclick="applySuggestedTimeline('<?= $suggestedTimeline['date'] ?>', '<?= htmlspecialchars($suggestedTimeline['label'], ENT_QUOTES) ?>')">
                         Anvend forslag

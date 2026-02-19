@@ -147,9 +147,9 @@ require_once __DIR__ . '/../../includes/app-header.php';
                         </div>
                         <p style="color: var(--text-secondary);">
                             <?php if ($subscriptionRecord['cancel_at_period_end']): ?>
-                                Udløber: <?= date('j. F Y', strtotime($subscriptionRecord['current_period_end'])) ?>
+                                Udløber: <?= $subscriptionRecord['current_period_end'] ? date('j. F Y', strtotime($subscriptionRecord['current_period_end'])) : '-' ?>
                             <?php else: ?>
-                                Næste fornyelse: <?= date('j. F Y', strtotime($subscriptionRecord['current_period_end'])) ?>
+                                Næste fornyelse: <?= $subscriptionRecord['current_period_end'] ? date('j. F Y', strtotime($subscriptionRecord['current_period_end'])) : '-' ?>
                             <?php endif; ?>
                         </p>
                     </div>
@@ -315,7 +315,7 @@ require_once __DIR__ . '/../../includes/app-header.php';
                         <tbody>
                             <?php foreach ($payments as $payment): ?>
                             <tr>
-                                <td><?= date('j. M Y', strtotime($payment['created_at'])) ?></td>
+                                <td><?= $payment['created_at'] ? date('j. M Y', strtotime($payment['created_at'])) : '-' ?></td>
                                 <td><?= htmlspecialchars($payment['description'] ?? 'Abonnement') ?></td>
                                 <td style="text-align: right;"><?= number_format($payment['amount'], 2, ',', '.') ?> <?= strtoupper($payment['currency']) ?></td>
                                 <td style="text-align: center;">

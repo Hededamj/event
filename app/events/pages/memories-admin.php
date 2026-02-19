@@ -209,7 +209,7 @@ $maxYear = !empty($timelineYears) ? max($timelineYears) : null;
                 <?php if ($memory['uploader_name']): ?>
                 <span class="uploader"><?= htmlspecialchars($memory['uploader_name']) ?></span>
                 <?php endif; ?>
-                <span class="date"><?= date('d/m/Y H:i', strtotime($memory['created_at'])) ?></span>
+                <span class="date"><?= $memory['created_at'] ? date('d/m/Y H:i', strtotime($memory['created_at'])) : '' ?></span>
             </div>
         </div>
 

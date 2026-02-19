@@ -454,7 +454,7 @@ if (!empty($booking['event_date'])) {
             <div class="info-row">
                 <span class="info-label">Oprettet</span>
                 <span class="info-value" style="color: var(--text-secondary); font-weight: 400;">
-                    <?= date('d. M Y, H:i', strtotime($booking['created_at'])) ?>
+                    <?= $booking['created_at'] ? date('d. M Y, H:i', strtotime($booking['created_at'])) : '-' ?>
                 </span>
             </div>
         </div>
@@ -626,7 +626,7 @@ if (!empty($booking['event_date'])) {
                         </div>
                     <?php endif; ?>
                     <div style="font-size: 12px; color: var(--text-secondary); margin-top: 12px;">
-                        Oprettet <?= date('d. M Y', strtotime($existingReview['created_at'])) ?>
+                        Oprettet <?= $existingReview['created_at'] ? date('d. M Y', strtotime($existingReview['created_at'])) : '-' ?>
                     </div>
 
                     <?php if (!empty($existingReview['vendor_response'])): ?>
@@ -732,7 +732,7 @@ if (!empty($booking['event_date'])) {
                         <div class="msg-bubble <?= htmlspecialchars($msg['sender_type']) ?>">
                             <div><?= nl2br(htmlspecialchars($msg['message'])) ?></div>
                             <div class="msg-meta">
-                                <?= date('d. M, H:i', strtotime($msg['created_at'])) ?>
+                                <?= $msg['created_at'] ? date('d. M, H:i', strtotime($msg['created_at'])) : '' ?>
                             </div>
                         </div>
                     <?php endforeach; ?>
