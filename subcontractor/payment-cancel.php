@@ -59,7 +59,7 @@ require_once __DIR__ . '/includes/marketplace-header.php';
 }
 
 .cancel-card {
-    background: var(--white);
+    background: var(--surface-card);
     border-radius: 16px;
     padding: 40px 32px;
     box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 6px 24px rgba(0,0,0,0.06);
@@ -114,7 +114,7 @@ require_once __DIR__ . '/includes/marketplace-header.php';
     font-family: var(--font-body);
     font-size: 15px;
     font-weight: 600;
-    color: var(--white);
+    color: var(--surface-card);
     background: var(--accent);
     border: none;
     border-radius: 10px;
@@ -145,7 +145,7 @@ require_once __DIR__ . '/includes/marketplace-header.php';
     font-size: 15px;
     font-weight: 600;
     color: var(--text);
-    background: var(--white);
+    background: var(--surface-card);
     border: 2px solid var(--border);
     border-radius: 10px;
     text-decoration: none;

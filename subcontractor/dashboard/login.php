@@ -167,7 +167,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         .visual-content {
             text-align: center;
-            color: var(--white);
+            color: var(--surface-card);
             position: relative;
             z-index: 1;
         }
@@ -244,7 +244,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         .login-card {
-            background: var(--white);
+            background: var(--surface-card);
             border-radius: 24px;
             padding: 40px;
             box-shadow:
@@ -308,7 +308,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             font-size: 15px;
             border: 2px solid var(--border);
             border-radius: 14px;
-            background: var(--white);
+            background: var(--surface-card);
             color: var(--text);
             transition: all 0.3s var(--ease-out);
         }
@@ -376,7 +376,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         .btn-primary {
             background: var(--text);
-            color: var(--white);
+            color: var(--surface-card);
         }
 
         .btn-primary:hover {

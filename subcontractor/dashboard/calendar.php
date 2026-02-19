@@ -107,7 +107,7 @@ $isCurrentMonth = ($month === $currentMonth && $year === $currentYear);
         height: 40px;
         border-radius: 10px;
         border: 2px solid var(--border);
-        background: var(--white);
+        background: var(--surface-card);
         color: var(--text);
         text-decoration: none;
         transition: all 0.2s var(--ease-out);
@@ -141,7 +141,7 @@ $isCurrentMonth = ($month === $currentMonth && $year === $currentYear);
         min-height: 80px;
         height: 80px;
         border-radius: 10px;
-        background: var(--white);
+        background: var(--surface-card);
         border: 1px solid var(--border);
         transition: all 0.2s var(--ease-out);
     }
@@ -201,7 +201,7 @@ $isCurrentMonth = ($month === $currentMonth && $year === $currentYear);
         height: 20px;
         border-radius: 50%;
         background: var(--accent);
-        color: var(--white);
+        color: var(--surface-card);
         font-size: 11px;
         font-weight: 700;
     }

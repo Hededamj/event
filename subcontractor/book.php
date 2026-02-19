@@ -300,7 +300,7 @@ a { color: inherit; text-decoration: none; }
    Form Card
    ============================================ */
 .book-form-card {
-    background: var(--white);
+    background: var(--surface-card);
     border-radius: 16px;
     padding: 32px;
     box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.04);
@@ -351,7 +351,7 @@ a { color: inherit; text-decoration: none; }
     font-family: var(--font-body);
     font-size: 14px;
     color: var(--text);
-    background: var(--white);
+    background: var(--surface-card);
     border: 2px solid var(--border);
     border-radius: 10px;
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
@@ -429,7 +429,7 @@ a { color: inherit; text-decoration: none; }
     font-family: var(--font-body);
     font-size: 15px;
     font-weight: 600;
-    color: var(--white);
+    color: var(--surface-card);
     background: var(--accent);
     border: none;
     border-radius: 12px;
@@ -463,7 +463,7 @@ a { color: inherit; text-decoration: none; }
    Vendor Sidebar Card
    ============================================ */
 .book-vendor-card {
-    background: var(--white);
+    background: var(--surface-card);
     border-radius: 16px;
     padding: 28px;
     box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 6px 24px rgba(0,0,0,0.06);
@@ -498,7 +498,7 @@ a { color: inherit; text-decoration: none; }
     font-family: var(--font-display);
     font-size: 24px;
     font-weight: 600;
-    color: var(--white);
+    color: var(--surface-card);
     flex-shrink: 0;
 }
 
@@ -655,7 +655,7 @@ a { color: inherit; text-decoration: none; }
     font-family: var(--font-body);
     font-size: 14px;
     font-weight: 600;
-    color: var(--white);
+    color: var(--surface-card);
     background: var(--accent);
     border-radius: 10px;
     transition: all 0.25s var(--ease-out);

@@ -229,7 +229,7 @@ require_once __DIR__ . '/includes/marketplace-header.php';
         font-family: var(--font-display);
         font-size: 42px;
         font-weight: 500;
-        color: var(--white);
+        color: var(--surface-card);
         line-height: 1.2;
         margin-bottom: 12px;
     }
@@ -287,7 +287,7 @@ require_once __DIR__ . '/includes/marketplace-header.php';
         flex-direction: column;
         align-items: center;
         padding: 28px 16px;
-        background: var(--white);
+        background: var(--surface-card);
         border-radius: 16px;
         text-decoration: none;
         text-align: center;
@@ -334,7 +334,7 @@ require_once __DIR__ . '/includes/marketplace-header.php';
 
     /* ---- Filter Sidebar ---- */
     .mp-filters {
-        background: var(--white);
+        background: var(--surface-card);
         border-radius: 16px;
         padding: 24px;
         box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.03);
@@ -373,7 +373,7 @@ require_once __DIR__ . '/includes/marketplace-header.php';
         font-size: 14px;
         border: 2px solid var(--border);
         border-radius: 8px;
-        background: var(--white);
+        background: var(--surface-card);
         color: var(--text);
         transition: border-color 0.2s ease;
     }
@@ -410,7 +410,7 @@ require_once __DIR__ . '/includes/marketplace-header.php';
         font-family: var(--font-body);
         font-size: 14px;
         font-weight: 600;
-        color: var(--white);
+        color: var(--surface-card);
         background: var(--accent);
         border: none;
         border-radius: 8px;
@@ -466,7 +466,7 @@ require_once __DIR__ . '/includes/marketplace-header.php';
 
     /* ---- Vendor Card ---- */
     .mp-vendor-card {
-        background: var(--white);
+        background: var(--surface-card);
         border-radius: 16px;
         overflow: hidden;
         text-decoration: none;
@@ -573,7 +573,7 @@ require_once __DIR__ . '/includes/marketplace-header.php';
     .mp-cta-section {
         padding: 64px 24px;
         text-align: center;
-        background: var(--white);
+        background: var(--surface-card);
     }
 
     .mp-cta-inner {
@@ -604,7 +604,7 @@ require_once __DIR__ . '/includes/marketplace-header.php';
         font-family: var(--font-body);
         font-size: 16px;
         font-weight: 600;
-        color: var(--white);
+        color: var(--surface-card);
         background: var(--accent);
         border: none;
         border-radius: 12px;

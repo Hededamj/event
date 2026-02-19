@@ -332,7 +332,7 @@ if ($eventDateTs) {
                 <?php if ($daysUntilEvent !== null): ?>
                     <?php if ($daysUntilEvent > 0): ?>
                         <div style="display: flex; align-items: center; gap: 16px; margin-top: 12px;">
-                            <div style="background: var(--white); border-radius: 12px; padding: 16px 24px; text-align: center;">
+                            <div style="background: var(--surface-card); border-radius: 12px; padding: 16px 24px; text-align: center;">
                                 <div style="font-family: var(--font-display); font-size: 36px; font-weight: 500; color: var(--accent-dark); line-height: 1;"><?= $daysUntilEvent ?></div>
                                 <div class="text-sm text-muted" style="margin-top: 4px;">dage til event</div>
                             </div>

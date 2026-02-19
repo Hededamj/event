@@ -236,7 +236,7 @@ $photoCount = count($photos);
         cursor: pointer;
         transition: all 0.25s var(--ease-out);
         margin-bottom: 24px;
-        background: var(--white);
+        background: var(--surface-card);
     }
     .upload-zone:hover,
     .upload-zone.dragover {
@@ -276,7 +276,7 @@ $photoCount = count($photos);
         left: 0;
         right: 0;
         background: linear-gradient(to top, rgba(0,0,0,0.6), transparent);
-        color: var(--white);
+        color: var(--surface-card);
         padding: 24px 10px 8px;
         font-size: 12px;
         line-height: 1.3;
@@ -294,7 +294,7 @@ $photoCount = count($photos);
 
     .gallery-item-actions button.edit-btn:hover {
         background: var(--accent-dark);
-        color: var(--white);
+        color: var(--surface-card);
     }
 
     /* Caption edit modal */
@@ -311,7 +311,7 @@ $photoCount = count($photos);
         display: flex;
     }
     .caption-modal {
-        background: var(--white);
+        background: var(--surface-card);
         border-radius: 16px;
         padding: 28px;
         width: 90%;

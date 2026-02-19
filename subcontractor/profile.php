@@ -160,7 +160,7 @@ require_once __DIR__ . '/includes/marketplace-header.php';
     position: sticky;
     top: 0;
     z-index: 100;
-    background: var(--white);
+    background: var(--surface-card);
     border-bottom: 1px solid var(--border);
     box-shadow: 0 1px 4px rgba(0,0,0,0.04);
 }
@@ -242,7 +242,7 @@ require_once __DIR__ . '/includes/marketplace-header.php';
     top: 64px;
     left: 0;
     right: 0;
-    background: var(--white);
+    background: var(--surface-card);
     border-bottom: 1px solid var(--border);
     z-index: 99;
     padding: 12px;
@@ -308,7 +308,7 @@ require_once __DIR__ . '/includes/marketplace-header.php';
 
 .btn-primary {
     background: var(--accent);
-    color: var(--white);
+    color: var(--surface-card);
 }
 
 .btn-primary:hover {
@@ -318,7 +318,7 @@ require_once __DIR__ . '/includes/marketplace-header.php';
 }
 
 .btn-secondary {
-    background: var(--white);
+    background: var(--surface-card);
     color: var(--text);
     border: 2px solid var(--border);
 }
@@ -348,7 +348,7 @@ require_once __DIR__ . '/includes/marketplace-header.php';
 
 .btn-outline:hover {
     background: var(--accent);
-    color: var(--white);
+    color: var(--surface-card);
 }
 
 /* ============================================
@@ -395,9 +395,9 @@ require_once __DIR__ . '/includes/marketplace-header.php';
     width: 90px;
     height: 90px;
     border-radius: 16px;
-    border: 3px solid var(--white);
+    border: 3px solid var(--surface-card);
     object-fit: cover;
-    background: var(--white);
+    background: var(--surface-card);
     flex-shrink: 0;
     box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
@@ -406,7 +406,7 @@ require_once __DIR__ . '/includes/marketplace-header.php';
     width: 90px;
     height: 90px;
     border-radius: 16px;
-    border: 3px solid var(--white);
+    border: 3px solid var(--surface-card);
     background: var(--accent-light);
     flex-shrink: 0;
     display: flex;
@@ -415,7 +415,7 @@ require_once __DIR__ . '/includes/marketplace-header.php';
     font-family: var(--font-display);
     font-size: 36px;
     font-weight: 600;
-    color: var(--white);
+    color: var(--surface-card);
     box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
@@ -428,7 +428,7 @@ require_once __DIR__ . '/includes/marketplace-header.php';
     font-family: var(--font-display);
     font-size: 32px;
     font-weight: 500;
-    color: var(--white);
+    color: var(--surface-card);
     line-height: 1.2;
     margin-bottom: 6px;
     text-shadow: 0 1px 4px rgba(0,0,0,0.2);
@@ -479,7 +479,7 @@ require_once __DIR__ . '/includes/marketplace-header.php';
     font-size: 12px;
     font-weight: 600;
     backdrop-filter: blur(4px);
-    color: var(--white);
+    color: var(--surface-card);
 }
 
 /* ============================================
@@ -491,7 +491,7 @@ require_once __DIR__ . '/includes/marketplace-header.php';
     align-items: center;
     gap: 20px;
     padding: 18px 24px;
-    background: var(--white);
+    background: var(--surface-card);
     border-radius: 14px;
     margin-top: 16px;
     box-shadow: 0 1px 3px rgba(0,0,0,0.04);
@@ -631,7 +631,7 @@ require_once __DIR__ . '/includes/marketplace-header.php';
    Services (Ydelser tab)
    ============================================ */
 .service-card {
-    background: var(--white);
+    background: var(--surface-card);
     border-radius: 14px;
     padding: 24px;
     margin-bottom: 16px;
@@ -743,7 +743,7 @@ require_once __DIR__ . '/includes/marketplace-header.php';
     right: 0;
     padding: 20px 12px 10px;
     background: linear-gradient(to top, rgba(0,0,0,0.6), transparent);
-    color: var(--white);
+    color: var(--surface-card);
     font-size: 13px;
     line-height: 1.3;
     pointer-events: none;
@@ -785,7 +785,7 @@ require_once __DIR__ . '/includes/marketplace-header.php';
     bottom: 16px;
     left: 50%;
     transform: translateX(-50%);
-    color: var(--white);
+    color: var(--surface-card);
     font-size: 14px;
     background: rgba(0,0,0,0.5);
     padding: 8px 20px;
@@ -803,7 +803,7 @@ require_once __DIR__ . '/includes/marketplace-header.php';
     background: rgba(255,255,255,0.15);
     border: none;
     border-radius: 50%;
-    color: var(--white);
+    color: var(--surface-card);
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -829,7 +829,7 @@ require_once __DIR__ . '/includes/marketplace-header.php';
     background: rgba(255,255,255,0.15);
     border: none;
     border-radius: 50%;
-    color: var(--white);
+    color: var(--surface-card);
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -935,7 +935,7 @@ require_once __DIR__ . '/includes/marketplace-header.php';
 
 /* Review cards */
 .review-card {
-    background: var(--white);
+    background: var(--surface-card);
     border-radius: 14px;
     padding: 24px;
     margin-bottom: 16px;
@@ -1030,7 +1030,7 @@ require_once __DIR__ . '/includes/marketplace-header.php';
 }
 
 .sidebar-cta-card {
-    background: var(--white);
+    background: var(--surface-card);
     border-radius: 16px;
     padding: 28px;
     box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 6px 24px rgba(0,0,0,0.06);
@@ -1084,7 +1084,7 @@ require_once __DIR__ . '/includes/marketplace-header.php';
    Description section
    ============================================ */
 .vendor-description {
-    background: var(--white);
+    background: var(--surface-card);
     border-radius: 14px;
     padding: 24px;
     margin-bottom: 24px;

@@ -5,7 +5,7 @@
  */
 ?>
 
-    <footer style="background:var(--white);border-top:1px solid var(--border);padding:32px 24px;text-align:center;">
+    <footer style="background:var(--surface-card);border-top:1px solid var(--border);padding:32px 24px;text-align:center;">
         <div style="max-width:1280px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;">
             <a href="/" style="font-family:var(--font-display);font-size:18px;font-weight:500;color:var(--text);text-decoration:none;">
                 Party<span style="color:var(--accent);">Parart</span>

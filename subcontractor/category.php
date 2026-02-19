@@ -184,7 +184,7 @@ function renderStars(float $rating, int $max = 5): string {
 <style>
     /* ---- Category page specific styles ---- */
     .cat-hero {
-        background: var(--white);
+        background: var(--surface-card);
         border-bottom: 1px solid var(--border);
         padding: 40px 0 32px;
     }
@@ -252,7 +252,7 @@ function renderStars(float $rating, int $max = 5): string {
         font-size: 13px;
         font-weight: 500;
         color: var(--text-secondary);
-        background: var(--white);
+        background: var(--surface-card);
         border: 2px solid var(--border);
         border-radius: 8px;
         text-decoration: none;
@@ -265,7 +265,7 @@ function renderStars(float $rating, int $max = 5): string {
     }
     .cat-sort-link.active {
         background: var(--accent);
-        color: var(--white);
+        color: var(--surface-card);
         border-color: var(--accent);
     }
     .cat-filter-form {
@@ -279,7 +279,7 @@ function renderStars(float $rating, int $max = 5): string {
         font-size: 13px;
         border: 2px solid var(--border);
         border-radius: 8px;
-        background: var(--white);
+        background: var(--surface-card);
         color: var(--text);
         width: 180px;
         transition: all 0.2s ease;
@@ -297,7 +297,7 @@ function renderStars(float $rating, int $max = 5): string {
         font-family: var(--font-body);
         font-size: 13px;
         font-weight: 600;
-        color: var(--white);
+        color: var(--surface-card);
         background: var(--accent);
         border: none;
         border-radius: 8px;
@@ -327,7 +327,7 @@ function renderStars(float $rating, int $max = 5): string {
         gap: 24px;
     }
     .cat-vendor-card {
-        background: var(--white);
+        background: var(--surface-card);
         border-radius: 16px;
         overflow: hidden;
         box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.03);
@@ -369,7 +369,7 @@ function renderStars(float $rating, int $max = 5): string {
         align-items: center;
         justify-content: center;
         font-size: 40px;
-        color: var(--white);
+        color: var(--surface-card);
         opacity: 0.6;
     }
     .cat-vendor-body {
@@ -509,7 +509,7 @@ function renderStars(float $rating, int $max = 5): string {
     .cat-pagination a {
         color: var(--text);
         text-decoration: none;
-        background: var(--white);
+        background: var(--surface-card);
         border: 1px solid var(--border);
     }
     .cat-pagination a:hover {
@@ -518,7 +518,7 @@ function renderStars(float $rating, int $max = 5): string {
     }
     .cat-pagination .pg-active {
         background: var(--accent);
-        color: var(--white);
+        color: var(--surface-card);
         border: 1px solid var(--accent);
     }
     .cat-pagination .pg-disabled {

@@ -46,6 +46,7 @@ $currentSearch = isset($_GET['search']) ? trim($_GET['search']) : '';
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/css/design-system.css">
     <link rel="stylesheet" href="/subcontractor/assets/css/subcontractor.css">
     <style>
         /* ============================================
@@ -62,7 +63,7 @@ $currentSearch = isset($_GET['search']) ? trim($_GET['search']) : '';
             position: sticky;
             top: 0;
             z-index: 100;
-            background: var(--white);
+            background: var(--surface-card);
             border-bottom: 1px solid var(--border);
             box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
         }
@@ -129,7 +130,7 @@ $currentSearch = isset($_GET['search']) ? trim($_GET['search']) : '';
             font-family: var(--font-body);
             font-size: 14px;
             font-weight: 600;
-            color: var(--white);
+            color: var(--surface-card);
             background: var(--accent);
             border: none;
             border-radius: 8px;
@@ -217,7 +218,7 @@ $currentSearch = isset($_GET['search']) ? trim($_GET['search']) : '';
             font-size: 14px;
             border: 2px solid var(--border);
             border-radius: 10px;
-            background: var(--white);
+            background: var(--surface-card);
             color: var(--text);
             transition: border-color 0.2s ease;
         }
@@ -237,7 +238,7 @@ $currentSearch = isset($_GET['search']) ? trim($_GET['search']) : '';
             font-family: var(--font-body);
             font-size: 14px;
             font-weight: 600;
-            color: var(--white);
+            color: var(--surface-card);
             background: var(--accent);
             border: none;
             border-radius: 10px;
@@ -271,7 +272,7 @@ $currentSearch = isset($_GET['search']) ? trim($_GET['search']) : '';
 
         .mp-mobile-nav {
             display: none;
-            background: var(--white);
+            background: var(--surface-card);
             border-bottom: 1px solid var(--border);
             padding: 12px 16px;
             flex-direction: column;

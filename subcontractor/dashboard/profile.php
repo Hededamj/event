@@ -339,7 +339,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         font-weight: 600;
         border: 2px solid var(--border);
         border-radius: 8px;
-        background: var(--white);
+        background: var(--surface-card);
         color: var(--text);
         cursor: pointer;
         margin-right: 12px;
