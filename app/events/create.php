@@ -613,7 +613,7 @@ $error = $error ?? '';
     .info-box svg {
         width: 24px;
         height: 24px;
-        color: #3b82f6;
+        color: var(--accent);
         flex-shrink: 0;
     }
 

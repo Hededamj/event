@@ -141,7 +141,7 @@ $photoStats = $stmt->fetch();
         background: white;
         border-radius: 12px;
         overflow: hidden;
-        border: 1px solid var(--gray-200);
+        border: 1px solid var(--border);
     }
     .photo-card.pending {
         border-color: var(--warning);
@@ -149,7 +149,7 @@ $photoStats = $stmt->fetch();
     .photo-image {
         position: relative;
         aspect-ratio: 4/3;
-        background: var(--gray-100);
+        background: var(--border-light);
     }
     .photo-image img {
         width: 100%;
@@ -175,10 +175,10 @@ $photoStats = $stmt->fetch();
     }
     .photo-uploader {
         font-weight: 500;
-        color: var(--gray-700);
+        color: var(--text);
     }
     .photo-date {
-        color: var(--gray-500);
+        color: var(--text-secondary);
     }
     .photo-actions {
         padding: 0 12px 12px;

@@ -201,8 +201,8 @@ require_once __DIR__ . '/includes/marketplace-header.php';
 
 body {
     font-family: var(--font-body);
-    background: var(--cream);
-    color: var(--charcoal);
+    background: var(--surface);
+    color: var(--text);
     min-height: 100vh;
     -webkit-font-smoothing: antialiased;
     line-height: 1.5;
@@ -225,13 +225,13 @@ a { color: inherit; text-decoration: none; }
     gap: 6px;
     font-size: 14px;
     font-weight: 500;
-    color: var(--charcoal-light);
+    color: var(--text-secondary);
     margin-bottom: 24px;
     transition: color 0.2s;
 }
 
 .book-back-link:hover {
-    color: var(--sage-dark);
+    color: var(--accent-dark);
 }
 
 .book-back-link svg {
@@ -243,14 +243,14 @@ a { color: inherit; text-decoration: none; }
     font-family: var(--font-display);
     font-size: 32px;
     font-weight: 500;
-    color: var(--charcoal);
+    color: var(--text);
     margin-bottom: 8px;
     line-height: 1.2;
 }
 
 .book-page-subtitle {
     font-size: 15px;
-    color: var(--charcoal-light);
+    color: var(--text-secondary);
     margin-bottom: 32px;
 }
 
@@ -310,10 +310,10 @@ a { color: inherit; text-decoration: none; }
     font-family: var(--font-display);
     font-size: 20px;
     font-weight: 500;
-    color: var(--charcoal);
+    color: var(--text);
     margin-bottom: 20px;
     padding-bottom: 12px;
-    border-bottom: 1px solid var(--cream-dark);
+    border-bottom: 1px solid var(--border);
 }
 
 .book-form-group {
@@ -328,7 +328,7 @@ a { color: inherit; text-decoration: none; }
     display: block;
     font-size: 14px;
     font-weight: 600;
-    color: var(--charcoal);
+    color: var(--text);
     margin-bottom: 6px;
 }
 
@@ -339,7 +339,7 @@ a { color: inherit; text-decoration: none; }
 
 .book-form-hint {
     font-size: 13px;
-    color: var(--charcoal-light);
+    color: var(--text-secondary);
     margin-top: 4px;
 }
 
@@ -350,9 +350,9 @@ a { color: inherit; text-decoration: none; }
     padding: 12px 16px;
     font-family: var(--font-body);
     font-size: 14px;
-    color: var(--charcoal);
+    color: var(--text);
     background: var(--white);
-    border: 2px solid var(--cream-dark);
+    border: 2px solid var(--border);
     border-radius: 10px;
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
     -webkit-appearance: none;
@@ -363,7 +363,7 @@ a { color: inherit; text-decoration: none; }
 .book-form-select:focus,
 .book-form-textarea:focus {
     outline: none;
-    border-color: var(--sage);
+    border-color: var(--accent);
     box-shadow: 0 0 0 3px rgba(168, 181, 160, 0.15);
 }
 
@@ -396,7 +396,7 @@ a { color: inherit; text-decoration: none; }
 .book-form-char-count {
     text-align: right;
     font-size: 12px;
-    color: var(--charcoal-light);
+    color: var(--text-secondary);
     margin-top: 4px;
 }
 
@@ -415,7 +415,7 @@ a { color: inherit; text-decoration: none; }
 .book-submit-section {
     margin-top: 28px;
     padding-top: 20px;
-    border-top: 1px solid var(--cream-dark);
+    border-top: 1px solid var(--border);
     display: flex;
     align-items: center;
     gap: 16px;
@@ -430,7 +430,7 @@ a { color: inherit; text-decoration: none; }
     font-size: 15px;
     font-weight: 600;
     color: var(--white);
-    background: var(--sage);
+    background: var(--accent);
     border: none;
     border-radius: 12px;
     cursor: pointer;
@@ -439,7 +439,7 @@ a { color: inherit; text-decoration: none; }
 }
 
 .book-submit-btn:hover {
-    background: var(--sage-dark);
+    background: var(--accent-dark);
     transform: translateY(-1px);
     box-shadow: 0 4px 16px rgba(122, 139, 114, 0.3);
 }
@@ -451,12 +451,12 @@ a { color: inherit; text-decoration: none; }
 
 .book-cancel-link {
     font-size: 14px;
-    color: var(--charcoal-light);
+    color: var(--text-secondary);
     transition: color 0.2s;
 }
 
 .book-cancel-link:hover {
-    color: var(--charcoal);
+    color: var(--text);
 }
 
 /* ============================================
@@ -483,7 +483,7 @@ a { color: inherit; text-decoration: none; }
     height: 56px;
     border-radius: 12px;
     object-fit: cover;
-    background: var(--cream);
+    background: var(--surface);
     flex-shrink: 0;
 }
 
@@ -491,7 +491,7 @@ a { color: inherit; text-decoration: none; }
     width: 56px;
     height: 56px;
     border-radius: 12px;
-    background: var(--sage-light);
+    background: var(--accent-light);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -506,7 +506,7 @@ a { color: inherit; text-decoration: none; }
     font-family: var(--font-display);
     font-size: 20px;
     font-weight: 500;
-    color: var(--charcoal);
+    color: var(--text);
     line-height: 1.2;
 }
 
@@ -515,7 +515,7 @@ a { color: inherit; text-decoration: none; }
     align-items: center;
     gap: 4px;
     font-size: 13px;
-    color: var(--charcoal-light);
+    color: var(--text-secondary);
     margin-top: 2px;
 }
 
@@ -530,10 +530,10 @@ a { color: inherit; text-decoration: none; }
     align-items: center;
     gap: 6px;
     font-size: 14px;
-    color: var(--charcoal-light);
+    color: var(--text-secondary);
     margin-bottom: 18px;
     padding-bottom: 18px;
-    border-bottom: 1px solid var(--cream-dark);
+    border-bottom: 1px solid var(--border);
 }
 
 .book-vendor-rating svg {
@@ -542,13 +542,13 @@ a { color: inherit; text-decoration: none; }
 }
 
 .book-vendor-rating .star-filled {
-    color: var(--gold);
-    fill: var(--gold);
+    color: var(--warning);
+    fill: var(--warning);
 }
 
 .book-vendor-rating-value {
     font-weight: 600;
-    color: var(--charcoal);
+    color: var(--text);
 }
 
 /* ============================================
@@ -557,7 +557,7 @@ a { color: inherit; text-decoration: none; }
 .book-service-detail {
     margin-bottom: 18px;
     padding-bottom: 18px;
-    border-bottom: 1px solid var(--cream-dark);
+    border-bottom: 1px solid var(--border);
 }
 
 .book-service-label {
@@ -565,7 +565,7 @@ a { color: inherit; text-decoration: none; }
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    color: var(--sage-dark);
+    color: var(--accent-dark);
     margin-bottom: 8px;
 }
 
@@ -573,23 +573,23 @@ a { color: inherit; text-decoration: none; }
     font-family: var(--font-display);
     font-size: 18px;
     font-weight: 500;
-    color: var(--charcoal);
+    color: var(--text);
     margin-bottom: 4px;
 }
 
 .book-service-price {
     font-size: 14px;
-    color: var(--charcoal-light);
+    color: var(--text-secondary);
 }
 
 .book-service-price strong {
-    color: var(--charcoal);
+    color: var(--text);
     font-weight: 600;
 }
 
 .book-service-description {
     font-size: 13px;
-    color: var(--charcoal-light);
+    color: var(--text-secondary);
     margin-top: 8px;
     line-height: 1.5;
 }
@@ -608,13 +608,13 @@ a { color: inherit; text-decoration: none; }
     align-items: center;
     gap: 10px;
     font-size: 13px;
-    color: var(--charcoal-light);
+    color: var(--text-secondary);
 }
 
 .book-vendor-stat svg {
     width: 16px;
     height: 16px;
-    color: var(--sage-dark);
+    color: var(--accent-dark);
     flex-shrink: 0;
 }
 
@@ -629,7 +629,7 @@ a { color: inherit; text-decoration: none; }
 .book-no-events svg {
     width: 48px;
     height: 48px;
-    color: var(--cream-dark);
+    color: var(--border);
     margin-bottom: 12px;
 }
 
@@ -637,13 +637,13 @@ a { color: inherit; text-decoration: none; }
     font-family: var(--font-display);
     font-size: 20px;
     font-weight: 500;
-    color: var(--charcoal);
+    color: var(--text);
     margin-bottom: 6px;
 }
 
 .book-no-events p {
     font-size: 14px;
-    color: var(--charcoal-light);
+    color: var(--text-secondary);
     margin-bottom: 20px;
 }
 
@@ -656,13 +656,13 @@ a { color: inherit; text-decoration: none; }
     font-size: 14px;
     font-weight: 600;
     color: var(--white);
-    background: var(--sage);
+    background: var(--accent);
     border-radius: 10px;
     transition: all 0.25s var(--ease-out);
 }
 
 .book-no-events-btn:hover {
-    background: var(--sage-dark);
+    background: var(--accent-dark);
     transform: translateY(-1px);
     box-shadow: 0 4px 16px rgba(122, 139, 114, 0.3);
 }

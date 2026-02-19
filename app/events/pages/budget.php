@@ -133,32 +133,32 @@ foreach ($items as $item) {
 <div class="card" style="margin-bottom: 24px;">
     <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; text-align: center;">
         <div>
-            <div style="font-size: 28px; font-weight: 600; color: var(--gray-900);">
+            <div style="font-size: 28px; font-weight: 600; color: var(--text);">
                 <?= number_format($totalEstimated, 0, ',', '.') ?> kr
             </div>
-            <div style="font-size: 13px; color: var(--gray-500);">Estimeret</div>
+            <div style="font-size: 13px; color: var(--text-secondary);">Estimeret</div>
         </div>
         <div>
-            <div style="font-size: 28px; font-weight: 600; color: var(--primary);">
+            <div style="font-size: 28px; font-weight: 600; color: var(--accent);">
                 <?= number_format($totalActual, 0, ',', '.') ?> kr
             </div>
-            <div style="font-size: 13px; color: var(--gray-500);">Faktisk</div>
+            <div style="font-size: 13px; color: var(--text-secondary);">Faktisk</div>
         </div>
         <div>
             <div style="font-size: 28px; font-weight: 600; color: #10b981;">
                 <?= number_format($totalPaid, 0, ',', '.') ?> kr
             </div>
-            <div style="font-size: 13px; color: var(--gray-500);">Betalt</div>
+            <div style="font-size: 13px; color: var(--text-secondary);">Betalt</div>
         </div>
     </div>
     <?php if ($totalEstimated > 0): ?>
         <?php $paidPercent = round($totalPaid / $totalEstimated * 100); ?>
         <div style="margin-top: 20px;">
             <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
-                <span style="font-size: 13px; color: var(--gray-500);">Betalt</span>
-                <span style="font-size: 13px; color: var(--gray-500);"><?= $paidPercent ?>%</span>
+                <span style="font-size: 13px; color: var(--text-secondary);">Betalt</span>
+                <span style="font-size: 13px; color: var(--text-secondary);"><?= $paidPercent ?>%</span>
             </div>
-            <div style="height: 8px; background: var(--gray-200); border-radius: 4px; overflow: hidden;">
+            <div style="height: 8px; background: var(--border); border-radius: 4px; overflow: hidden;">
                 <div style="height: 100%; background: #10b981; width: <?= min(100, $paidPercent) ?>%; transition: width 0.3s;"></div>
             </div>
         </div>
@@ -189,7 +189,7 @@ foreach ($items as $item) {
                     <h3 style="font-size: 16px; font-weight: 600; margin: 0;">
                         <span><?= $catInfo['icon'] ?></span> <?= $catInfo['label'] ?>
                     </h3>
-                    <span style="color: var(--gray-500);"><?= number_format($catActual, 0, ',', '.') ?> kr</span>
+                    <span style="color: var(--text-secondary);"><?= number_format($catActual, 0, ',', '.') ?> kr</span>
                 </div>
 
                 <div class="budget-list">
@@ -340,7 +340,7 @@ foreach ($items as $item) {
         align-items: center;
         gap: 12px;
         padding: 12px 0;
-        border-bottom: 1px solid var(--gray-100);
+        border-bottom: 1px solid var(--border-light);
     }
 
     .budget-item:last-child {
@@ -358,7 +358,7 @@ foreach ($items as $item) {
     .budget-checkbox {
         width: 24px;
         height: 24px;
-        border: 2px solid var(--gray-300);
+        border: 2px solid var(--border);
         border-radius: 6px;
         background: transparent;
         cursor: pointer;
@@ -372,7 +372,7 @@ foreach ($items as $item) {
     }
 
     .budget-checkbox:hover {
-        border-color: var(--primary);
+        border-color: var(--accent);
     }
 
     .budget-checkbox.checked {
@@ -397,7 +397,7 @@ foreach ($items as $item) {
 
     .budget-estimated {
         font-size: 12px;
-        color: var(--gray-400);
+        color: var(--text-secondary);
         text-decoration: line-through;
         display: block;
     }

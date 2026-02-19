@@ -256,7 +256,7 @@ $items = $stmt->fetchAll();
         background: white;
         border-radius: 12px;
         padding: 20px;
-        border: 1px solid var(--gray-200);
+        border: 1px solid var(--border);
     }
 
     .wishlist-card.reserved {
@@ -290,26 +290,26 @@ $items = $stmt->fetchAll();
     .wishlist-title {
         font-size: 16px;
         font-weight: 600;
-        color: var(--gray-900);
+        color: var(--text);
         margin-bottom: 8px;
     }
 
     .wishlist-desc {
         font-size: 14px;
-        color: var(--gray-600);
+        color: var(--text-secondary);
         margin-bottom: 12px;
     }
 
     .wishlist-price {
         font-size: 18px;
         font-weight: 600;
-        color: var(--primary);
+        color: var(--accent);
         margin-bottom: 12px;
     }
 
     .reserved-by {
         font-size: 13px;
-        color: var(--gray-500);
+        color: var(--text-secondary);
         margin-bottom: 12px;
     }
 

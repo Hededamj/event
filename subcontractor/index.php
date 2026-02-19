@@ -371,7 +371,7 @@ require_once __DIR__ . '/includes/marketplace-header.php';
         padding: 10px 12px;
         font-family: var(--font-body);
         font-size: 14px;
-        border: 2px solid var(--cream-dark);
+        border: 2px solid var(--border);
         border-radius: 8px;
         background: var(--white);
         color: var(--charcoal);
@@ -625,7 +625,7 @@ require_once __DIR__ . '/includes/marketplace-header.php';
         text-align: center;
         font-size: 13px;
         color: rgba(44, 44, 44, 0.4);
-        border-top: 1px solid var(--cream-dark);
+        border-top: 1px solid var(--border);
         background: var(--cream);
     }
 

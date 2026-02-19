@@ -256,7 +256,7 @@ $maxYear = !empty($timelineYears) ? max($timelineYears) : null;
     background: var(--white);
     border-radius: 16px;
     overflow: hidden;
-    border: 1px solid var(--cream-dark);
+    border: 1px solid var(--border);
     transition: all 0.25s var(--ease-out);
 }
 
@@ -300,8 +300,8 @@ $maxYear = !empty($timelineYears) ? max($timelineYears) : null;
 
 .memory-year-badge {
     display: inline-block;
-    background: var(--cream);
-    color: var(--charcoal);
+    background: var(--surface);
+    color: var(--text);
     font-size: 13px;
     font-weight: 600;
     padding: 4px 10px;
@@ -311,7 +311,7 @@ $maxYear = !empty($timelineYears) ? max($timelineYears) : null;
 
 .memory-admin-info .memory-caption {
     font-size: 14px;
-    color: var(--charcoal);
+    color: var(--text);
     margin-bottom: 8px;
     display: -webkit-box;
     -webkit-line-clamp: 2;
@@ -323,12 +323,12 @@ $maxYear = !empty($timelineYears) ? max($timelineYears) : null;
     display: flex;
     justify-content: space-between;
     font-size: 12px;
-    color: var(--charcoal-light);
+    color: var(--text-secondary);
 }
 
 .memory-admin-actions {
     padding: 12px 16px;
-    border-top: 1px solid var(--cream-dark);
+    border-top: 1px solid var(--border);
     display: flex;
     gap: 8px;
     justify-content: flex-end;

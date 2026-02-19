@@ -124,14 +124,14 @@ try {
         button {
             width: 100%;
             padding: 0.75rem;
-            background: #3b82f6;
+            background: #6B8F5E;
             color: white;
             border: none;
             border-radius: 4px;
             font-size: 1rem;
             cursor: pointer;
         }
-        button:hover { background: #2563eb; }
+        button:hover { background: #4D6E42; }
         .message {
             padding: 1rem;
             border-radius: 4px;
@@ -147,7 +147,7 @@ try {
             margin-top: 1rem;
             font-weight: 500;
         }
-        a { color: #3b82f6; }
+        a { color: #6B8F5E; }
     </style>
 </head>
 <body>

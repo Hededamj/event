@@ -196,14 +196,14 @@ $baseUrl = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : '
         <span style="font-size: 28px;">👑</span>
         <div>
             <h3 style="font-size: 18px; font-weight: 600; margin: 0;">Vælg Toastmaster</h3>
-            <p style="font-size: 13px; color: var(--charcoal-light); margin: 4px 0 0;">Vælg en af de tilmeldte gæster som toastmaster</p>
+            <p style="font-size: 13px; color: var(--text-secondary); margin: 4px 0 0;">Vælg en af de tilmeldte gæster som toastmaster</p>
         </div>
     </div>
 
     <?php if (empty($confirmedGuests)): ?>
-        <div style="padding: 24px; text-align: center; background: var(--cream); border-radius: 12px;">
-            <p style="color: var(--charcoal-light);">Ingen gæster har bekræftet deltagelse endnu.</p>
-            <p style="font-size: 13px; color: var(--charcoal-light); margin-top: 8px;">Når gæster tilmelder sig, kan du vælge en toastmaster her.</p>
+        <div style="padding: 24px; text-align: center; background: var(--surface); border-radius: 12px;">
+            <p style="color: var(--text-secondary);">Ingen gæster har bekræftet deltagelse endnu.</p>
+            <p style="font-size: 13px; color: var(--text-secondary); margin-top: 8px;">Når gæster tilmelder sig, kan du vælge en toastmaster her.</p>
         </div>
     <?php else: ?>
         <div class="toastmaster-select-wrapper">
@@ -224,7 +224,7 @@ $baseUrl = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : '
                 $stmt->execute([$designatedToastmaster]);
                 $tmGuest = $stmt->fetch();
             ?>
-                <div class="toastmaster-selected" style="margin-top: 16px; padding: 16px; background: linear-gradient(135deg, var(--sage-light), var(--sage)); border-radius: 12px; color: white;">
+                <div class="toastmaster-selected" style="margin-top: 16px; padding: 16px; background: linear-gradient(135deg, var(--accent-light), var(--accent)); border-radius: 12px; color: white;">
                     <div style="display: flex; align-items: center; gap: 12px;">
                         <span style="font-size: 32px;">🎤</span>
                         <div>
@@ -363,7 +363,7 @@ $baseUrl = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : '
             <button type="button" class="modal-close" onclick="hideAccessModal()">&times;</button>
         </div>
         <div class="modal-body">
-            <p style="margin-bottom: 16px; color: var(--gray-600);">
+            <p style="margin-bottom: 16px; color: var(--text-secondary);">
                 Giv toastmasteren adgang til at se programmet og markere indslag som gennemfort.
             </p>
 
@@ -376,7 +376,7 @@ $baseUrl = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : '
                                 <?php if (!empty($access['is_primary'])): ?>
                                     <span class="badge-primary">Hoved</span>
                                 <?php endif; ?>
-                                <div style="font-size: 12px; color: var(--gray-500); margin-top: 4px;">
+                                <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">
                                     <?= $baseUrl ?>/toastmaster/?kode=<?= $access['access_code'] ?>
                                 </div>
                             </div>
@@ -388,10 +388,10 @@ $baseUrl = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : '
                     <?php endforeach; ?>
                 </div>
             <?php else: ?>
-                <p style="color: var(--gray-500); padding: 16px; text-align: center;">Ingen adgangskoder oprettet endnu</p>
+                <p style="color: var(--text-secondary); padding: 16px; text-align: center;">Ingen adgangskoder oprettet endnu</p>
             <?php endif; ?>
 
-            <div style="border-top: 1px solid var(--gray-200); padding-top: 16px; margin-top: 16px;">
+            <div style="border-top: 1px solid var(--border); padding-top: 16px; margin-top: 16px;">
                 <h4 style="font-size: 14px; font-weight: 600; margin-bottom: 12px;">Opret ny adgang</h4>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
                     <input type="text" id="new-access-name" class="form-input" placeholder="Navn">
@@ -413,7 +413,7 @@ $baseUrl = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : '
 
     .stat-card {
         background: white;
-        border: 1px solid var(--gray-200);
+        border: 1px solid var(--border);
         border-radius: 12px;
         padding: 16px;
         text-align: center;
@@ -423,12 +423,12 @@ $baseUrl = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : '
         display: block;
         font-size: 24px;
         font-weight: 600;
-        color: var(--gray-900);
+        color: var(--text);
     }
 
     .stat-label {
         font-size: 13px;
-        color: var(--gray-500);
+        color: var(--text-secondary);
     }
 
     .tm-list {
@@ -442,9 +442,9 @@ $baseUrl = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : '
         align-items: center;
         gap: 12px;
         padding: 12px;
-        background: var(--gray-50);
+        background: var(--surface);
         border-radius: 8px;
-        border-left: 4px solid var(--gray-300);
+        border-left: 4px solid var(--border);
     }
 
     .tm-item--pending {
@@ -452,7 +452,7 @@ $baseUrl = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : '
     }
 
     .tm-item--approved {
-        border-left-color: var(--primary);
+        border-left-color: var(--accent);
     }
 
     .tm-item--completed {
@@ -478,7 +478,7 @@ $baseUrl = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : '
 
     .tm-item__meta {
         font-size: 13px;
-        color: var(--gray-500);
+        color: var(--text-secondary);
         display: flex;
         gap: 6px;
     }
@@ -504,14 +504,14 @@ $baseUrl = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : '
         justify-content: space-between;
         align-items: center;
         padding: 12px;
-        background: var(--gray-50);
+        background: var(--surface);
         border-radius: 8px;
         gap: 12px;
     }
 
     .access-item.primary {
         background: rgba(102, 126, 234, 0.1);
-        border: 2px solid var(--primary);
+        border: 2px solid var(--accent);
     }
 
     .access-actions {
@@ -525,7 +525,7 @@ $baseUrl = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : '
         padding: 2px 8px;
         font-size: 10px;
         font-weight: 600;
-        background: var(--primary);
+        background: var(--accent);
         color: white;
         border-radius: 10px;
         margin-left: 8px;

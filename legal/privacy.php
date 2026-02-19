@@ -14,14 +14,12 @@ $pageTitle = 'Privatlivspolitik';
     <title>Privatlivspolitik - Partypart</title>
     <style>
         :root {
-            --primary: #667eea;
-            --gray-50: #f9fafb;
-            --gray-100: #f3f4f6;
-            --gray-200: #e5e7eb;
-            --gray-500: #6b7280;
-            --gray-600: #4b5563;
-            --gray-700: #374151;
-            --gray-900: #111827;
+            --accent: #6B8F5E;
+            --surface: #FAF9F7;
+            --border-light: #EDEAE5;
+            --border: #E2DED8;
+            --text-secondary: #6B6560;
+            --text: #1A1A1A;
         }
 
         * {
@@ -33,13 +31,13 @@ $pageTitle = 'Privatlivspolitik';
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, sans-serif;
             line-height: 1.7;
-            color: var(--gray-700);
-            background: var(--gray-50);
+            color: var(--text);
+            background: var(--surface);
         }
 
         .header {
             background: white;
-            border-bottom: 1px solid var(--gray-200);
+            border-bottom: 1px solid var(--border);
             padding: 20px 0;
             position: sticky;
             top: 0;
@@ -58,18 +56,18 @@ $pageTitle = 'Privatlivspolitik';
         .logo {
             font-size: 24px;
             font-weight: 700;
-            color: var(--primary);
+            color: var(--accent);
             text-decoration: none;
         }
 
         .back-link {
-            color: var(--gray-500);
+            color: var(--text-secondary);
             text-decoration: none;
             font-size: 14px;
         }
 
         .back-link:hover {
-            color: var(--primary);
+            color: var(--accent);
         }
 
         .container {
@@ -80,12 +78,12 @@ $pageTitle = 'Privatlivspolitik';
 
         h1 {
             font-size: 32px;
-            color: var(--gray-900);
+            color: var(--text);
             margin-bottom: 8px;
         }
 
         .last-updated {
-            color: var(--gray-500);
+            color: var(--text-secondary);
             font-size: 14px;
             margin-bottom: 40px;
         }
@@ -99,10 +97,10 @@ $pageTitle = 'Privatlivspolitik';
 
         h2 {
             font-size: 20px;
-            color: var(--gray-900);
+            color: var(--text);
             margin: 32px 0 16px;
             padding-top: 24px;
-            border-top: 1px solid var(--gray-100);
+            border-top: 1px solid var(--border-light);
         }
 
         h2:first-child {
@@ -113,7 +111,7 @@ $pageTitle = 'Privatlivspolitik';
 
         h3 {
             font-size: 16px;
-            color: var(--gray-700);
+            color: var(--text);
             margin: 20px 0 12px;
         }
 
@@ -132,14 +130,14 @@ $pageTitle = 'Privatlivspolitik';
 
         .highlight-box {
             background: #eef2ff;
-            border-left: 4px solid var(--primary);
+            border-left: 4px solid var(--accent);
             padding: 16px 20px;
             margin: 24px 0;
             border-radius: 0 8px 8px 0;
         }
 
         .contact-info {
-            background: var(--gray-50);
+            background: var(--surface);
             padding: 20px;
             border-radius: 8px;
             margin-top: 24px;
@@ -150,7 +148,7 @@ $pageTitle = 'Privatlivspolitik';
         }
 
         a {
-            color: var(--primary);
+            color: var(--accent);
         }
 
         @media (max-width: 640px) {

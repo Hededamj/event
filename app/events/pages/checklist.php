@@ -166,21 +166,21 @@ $pending = array_filter($items, fn($i) => !$i['completed']);
 
 <style>
     .progress-bar-container { display: flex; align-items: center; gap: 16px; margin-bottom: 24px; }
-    .progress-bar { flex: 1; height: 8px; background: var(--gray-200); border-radius: 4px; overflow: hidden; }
+    .progress-bar { flex: 1; height: 8px; background: var(--border); border-radius: 4px; overflow: hidden; }
     .progress-fill { height: 100%; background: var(--success); transition: width 0.3s; }
-    .progress-text { font-size: 14px; font-weight: 600; color: var(--gray-600); min-width: 80px; }
+    .progress-text { font-size: 14px; font-weight: 600; color: var(--text-secondary); min-width: 80px; }
     .checklist { padding: 8px 0; }
-    .checklist-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-bottom: 1px solid var(--gray-100); }
+    .checklist-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-bottom: 1px solid var(--border-light); }
     .checklist-item:last-child { border-bottom: none; }
     .checklist-item.completed { opacity: 0.6; }
     .checklist-item.completed .task-text { text-decoration: line-through; }
-    .checkbox-btn { width: 24px; height: 24px; border: 2px solid var(--gray-300); border-radius: 6px; background: white; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; }
+    .checkbox-btn { width: 24px; height: 24px; border: 2px solid var(--border); border-radius: 6px; background: white; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; }
     .checklist-item.completed .checkbox-btn { background: var(--success); border-color: var(--success); }
     .checkbox-btn svg { width: 14px; height: 14px; color: white; }
     .checklist-content { flex: 1; }
-    .task-text { font-size: 15px; color: var(--gray-900); }
+    .task-text { font-size: 15px; color: var(--text); }
     .task-meta { display: flex; gap: 12px; margin-top: 4px; }
-    .task-category, .task-due { font-size: 12px; color: var(--gray-500); }
+    .task-category, .task-due { font-size: 12px; color: var(--text-secondary); }
     .check-form, .delete-form { display: flex; }
 </style>
 

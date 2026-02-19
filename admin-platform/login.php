@@ -46,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $platformName = getPlatformSetting('platform_name', 'EventPlatform');
 ?>
 <!DOCTYPE html>
-<html lang="da">
+<html lang="da" data-area="admin">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -54,29 +54,13 @@ $platformName = getPlatformSetting('platform_name', 'EventPlatform');
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="<?= BASE_PATH ?>/assets/css/design-system.css">
 
     <style>
-        :root {
-            --color-bg: #f8fafc;
-            --color-surface: #ffffff;
-            --color-primary: #3b82f6;
-            --color-primary-deep: #2563eb;
-            --color-text: #1e293b;
-            --color-text-muted: #64748b;
-            --color-border: #e2e8f0;
-            --color-error: #ef4444;
-            --color-error-soft: #fee2e2;
-            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1);
-            --radius-lg: 12px;
-        }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: var(--color-bg);
-            color: var(--color-text);
+            background: var(--surface);
+            color: var(--text);
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -97,18 +81,18 @@ $platformName = getPlatformSetting('platform_name', 'EventPlatform');
         .login-brand-name {
             font-size: 1.5rem;
             font-weight: 700;
-            color: var(--color-primary);
+            color: var(--accent);
         }
 
         .login-brand-label {
             font-size: 0.875rem;
-            color: var(--color-text-muted);
+            color: var(--text-secondary);
         }
 
         .login-card {
-            background: var(--color-surface);
+            background: var(--surface-card);
             border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-lg);
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
             padding: 2rem;
         }
 
@@ -133,57 +117,59 @@ $platformName = getPlatformSetting('platform_name', 'EventPlatform');
         .form-input {
             width: 100%;
             padding: 0.75rem 1rem;
-            border: 1px solid var(--color-border);
-            border-radius: 8px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
             font-size: 0.875rem;
+            font-family: var(--font-body);
             transition: border-color 0.15s ease;
         }
 
         .form-input:focus {
             outline: none;
-            border-color: var(--color-primary);
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(124, 109, 175, 0.1);
         }
 
         .btn {
             display: block;
             width: 100%;
             padding: 0.75rem 1rem;
-            background: var(--color-primary);
+            background: var(--accent);
             color: white;
             border: none;
-            border-radius: 8px;
+            border-radius: var(--radius-sm);
             font-size: 0.875rem;
+            font-family: var(--font-body);
             font-weight: 500;
             cursor: pointer;
             transition: background 0.15s ease;
         }
 
         .btn:hover {
-            background: var(--color-primary-deep);
+            background: var(--accent-dark);
         }
 
         .alert {
             padding: 0.75rem 1rem;
-            border-radius: 8px;
+            border-radius: var(--radius-sm);
             margin-bottom: 1rem;
             font-size: 0.875rem;
         }
 
         .alert-error {
-            background: var(--color-error-soft);
-            color: var(--color-error);
+            background: var(--error-light);
+            color: var(--error);
         }
 
         .login-footer {
             text-align: center;
             margin-top: 1.5rem;
             font-size: 0.875rem;
-            color: var(--color-text-muted);
+            color: var(--text-secondary);
         }
 
         .login-footer a {
-            color: var(--color-primary);
+            color: var(--accent);
             text-decoration: none;
         }
 

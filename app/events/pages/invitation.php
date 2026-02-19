@@ -112,19 +112,19 @@ $readiness = isInvitationReadyToPublish($db, $eventId);
         left: 50%;
         width: 100%;
         height: 2px;
-        background: var(--cream-dark);
+        background: var(--border);
     }
 
     .wizard-step.completed:not(:last-child)::after {
-        background: var(--sage);
+        background: var(--accent);
     }
 
     .step-number {
         width: 36px;
         height: 36px;
         border-radius: 50%;
-        background: var(--cream-dark);
-        color: var(--charcoal-light);
+        background: var(--border);
+        color: var(--text-secondary);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -136,24 +136,24 @@ $readiness = isInvitationReadyToPublish($db, $eventId);
     }
 
     .wizard-step.active .step-number {
-        background: var(--sage);
+        background: var(--accent);
         color: var(--white);
         transform: scale(1.1);
     }
 
     .wizard-step.completed .step-number {
-        background: var(--sage);
+        background: var(--accent);
         color: var(--white);
     }
 
     .step-label {
         font-size: 12px;
-        color: var(--charcoal-light);
+        color: var(--text-secondary);
         text-align: center;
     }
 
     .wizard-step.active .step-label {
-        color: var(--charcoal);
+        color: var(--text);
         font-weight: 600;
     }
 
@@ -176,7 +176,7 @@ $readiness = isInvitationReadyToPublish($db, $eventId);
 
     .template-card {
         background: var(--white);
-        border: 2px solid var(--cream-dark);
+        border: 2px solid var(--border);
         border-radius: 16px;
         overflow: hidden;
         cursor: pointer;
@@ -184,12 +184,12 @@ $readiness = isInvitationReadyToPublish($db, $eventId);
     }
 
     .template-card:hover {
-        border-color: var(--sage-light);
+        border-color: var(--accent-light);
         transform: translateY(-2px);
     }
 
     .template-card.selected {
-        border-color: var(--sage);
+        border-color: var(--accent);
         box-shadow: 0 0 0 3px rgba(143, 165, 131, 0.2);
     }
 
@@ -202,7 +202,7 @@ $readiness = isInvitationReadyToPublish($db, $eventId);
         position: absolute;
         top: 12px;
         right: 12px;
-        background: var(--gold);
+        background: var(--warning);
         color: var(--white);
         font-size: 10px;
         font-weight: 600;
@@ -327,34 +327,34 @@ $readiness = isInvitationReadyToPublish($db, $eventId);
 
     .template-meta {
         font-size: 12px;
-        color: var(--charcoal-light);
+        color: var(--text-secondary);
     }
 
     /* Image Upload */
     .upload-zone {
-        border: 2px dashed var(--cream-dark);
+        border: 2px dashed var(--border);
         border-radius: 16px;
         padding: 40px;
         text-align: center;
         cursor: pointer;
         transition: all 0.25s var(--ease-out);
-        background: var(--cream);
+        background: var(--surface);
     }
 
     .upload-zone:hover {
-        border-color: var(--sage);
+        border-color: var(--accent);
         background: var(--white);
     }
 
     .upload-zone.dragover {
-        border-color: var(--sage);
+        border-color: var(--accent);
         background: rgba(143, 165, 131, 0.1);
     }
 
     .upload-zone svg {
         width: 48px;
         height: 48px;
-        color: var(--sage);
+        color: var(--accent);
         margin-bottom: 16px;
     }
 
@@ -365,7 +365,7 @@ $readiness = isInvitationReadyToPublish($db, $eventId);
 
     .upload-zone p {
         font-size: 13px;
-        color: var(--charcoal-light);
+        color: var(--text-secondary);
     }
 
     /* Image Grid */
@@ -429,7 +429,7 @@ $readiness = isInvitationReadyToPublish($db, $eventId);
     }
 
     .image-action:hover {
-        background: var(--cream);
+        background: var(--surface);
     }
 
     .image-action.danger:hover {
@@ -446,7 +446,7 @@ $readiness = isInvitationReadyToPublish($db, $eventId);
         position: absolute;
         top: 12px;
         left: 12px;
-        background: var(--gold);
+        background: var(--warning);
         color: var(--white);
         font-size: 10px;
         font-weight: 600;
@@ -466,7 +466,7 @@ $readiness = isInvitationReadyToPublish($db, $eventId);
         align-items: center;
         gap: 12px;
         padding: 12px;
-        background: var(--cream);
+        background: var(--surface);
         border-radius: 12px;
     }
 
@@ -493,7 +493,7 @@ $readiness = isInvitationReadyToPublish($db, $eventId);
 
     .layout-option {
         padding: 20px;
-        border: 2px solid var(--cream-dark);
+        border: 2px solid var(--border);
         border-radius: 14px;
         text-align: center;
         cursor: pointer;
@@ -501,11 +501,11 @@ $readiness = isInvitationReadyToPublish($db, $eventId);
     }
 
     .layout-option:hover {
-        border-color: var(--sage-light);
+        border-color: var(--accent-light);
     }
 
     .layout-option.selected {
-        border-color: var(--sage);
+        border-color: var(--accent);
         background: rgba(143, 165, 131, 0.08);
     }
 
@@ -517,16 +517,16 @@ $readiness = isInvitationReadyToPublish($db, $eventId);
         width: 48px;
         height: 48px;
         margin: 0 auto 12px;
-        background: var(--cream);
+        background: var(--surface);
         border-radius: 10px;
         display: flex;
         align-items: center;
         justify-content: center;
-        color: var(--sage-dark);
+        color: var(--accent-dark);
     }
 
     .layout-option.selected .layout-icon {
-        background: var(--sage);
+        background: var(--accent);
         color: var(--white);
     }
 
@@ -547,7 +547,7 @@ $readiness = isInvitationReadyToPublish($db, $eventId);
         align-items: center;
         justify-content: space-between;
         padding: 16px;
-        background: var(--cream);
+        background: var(--surface);
         border-radius: 12px;
     }
 
@@ -559,7 +559,7 @@ $readiness = isInvitationReadyToPublish($db, $eventId);
 
     .toggle-label p {
         font-size: 13px;
-        color: var(--charcoal-light);
+        color: var(--text-secondary);
     }
 
     .toggle-switch {
@@ -578,7 +578,7 @@ $readiness = isInvitationReadyToPublish($db, $eventId);
         position: absolute;
         cursor: pointer;
         inset: 0;
-        background: var(--cream-dark);
+        background: var(--border);
         border-radius: 28px;
         transition: 0.3s;
     }
@@ -596,7 +596,7 @@ $readiness = isInvitationReadyToPublish($db, $eventId);
     }
 
     .toggle-switch input:checked + .toggle-slider {
-        background: var(--sage);
+        background: var(--accent);
     }
 
     .toggle-switch input:checked + .toggle-slider::before {
@@ -605,7 +605,7 @@ $readiness = isInvitationReadyToPublish($db, $eventId);
 
     /* Preview Panel */
     .preview-panel {
-        background: var(--charcoal);
+        background: var(--text);
         border-radius: 20px;
         overflow: hidden;
         height: 500px;
@@ -634,12 +634,12 @@ $readiness = isInvitationReadyToPublish($db, $eventId);
         width: 100%;
         height: calc(100% - 40px);
         border: none;
-        background: var(--cream);
+        background: var(--surface);
     }
 
     /* Publish Section */
     .publish-card {
-        background: linear-gradient(135deg, var(--sage) 0%, var(--sage-dark) 100%);
+        background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
         color: var(--white);
         padding: 32px;
         border-radius: 20px;
@@ -659,7 +659,7 @@ $readiness = isInvitationReadyToPublish($db, $eventId);
 
     .publish-btn {
         background: var(--white);
-        color: var(--sage-dark);
+        color: var(--accent-dark);
         padding: 16px 40px;
         border: none;
         border-radius: 12px;
@@ -710,7 +710,7 @@ $readiness = isInvitationReadyToPublish($db, $eventId);
         left: 0;
         width: 14px;
         height: 14px;
-        background: var(--gold);
+        background: var(--warning);
         border-radius: 50%;
         font-size: 10px;
         font-weight: bold;
@@ -726,7 +726,7 @@ $readiness = isInvitationReadyToPublish($db, $eventId);
         justify-content: space-between;
         margin-top: 32px;
         padding-top: 24px;
-        border-top: 1px solid var(--cream-dark);
+        border-top: 1px solid var(--border);
     }
 
     @media (max-width: 768px) {

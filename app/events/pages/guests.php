@@ -377,7 +377,7 @@ if ($showExport):
 
     <!-- Text View -->
     <div id="export-view-text" class="export-view">
-        <textarea id="text-export" readonly style="width: 100%; height: 400px; font-family: monospace; font-size: 13px; padding: 16px; border: 1px solid var(--gray-200); border-radius: 8px;"><?php foreach ($guests as $guest): ?>
+        <textarea id="text-export" readonly style="width: 100%; height: 400px; font-family: monospace; font-size: 13px; padding: 16px; border: 1px solid var(--border); border-radius: 8px;"><?php foreach ($guests as $guest): ?>
 <?= $guest['name'] ?>
 <?= $eventBaseUrl ?>?kode=<?= $guest['unique_code'] ?>
 
@@ -389,13 +389,13 @@ if ($showExport):
 
     <!-- CSV View -->
     <div id="export-view-csv" class="export-view">
-        <textarea id="csv-export" readonly style="width: 100%; height: 400px; font-family: monospace; font-size: 13px; padding: 16px; border: 1px solid var(--gray-200); border-radius: 8px;">Navn;Kode;Link
+        <textarea id="csv-export" readonly style="width: 100%; height: 400px; font-family: monospace; font-size: 13px; padding: 16px; border: 1px solid var(--border); border-radius: 8px;">Navn;Kode;Link
 <?php foreach ($guests as $guest): ?>
 <?= $guest['name'] ?>;<?= $guest['unique_code'] ?>;<?= $eventBaseUrl ?>?kode=<?= $guest['unique_code'] ?>
 <?php endforeach; ?></textarea>
         <div style="margin-top: 12px;">
             <button type="button" class="btn btn-primary" onclick="copyExportCSV()">Kopiér CSV</button>
-            <span style="margin-left: 12px; color: var(--gray-500); font-size: 13px;">Kan indsættes direkte i Excel</span>
+            <span style="margin-left: 12px; color: var(--text-secondary); font-size: 13px;">Kan indsættes direkte i Excel</span>
         </div>
     </div>
 </div>
@@ -406,11 +406,11 @@ if ($showExport):
         gap: 8px;
         margin-bottom: 20px;
         padding-bottom: 16px;
-        border-bottom: 1px solid var(--gray-200);
+        border-bottom: 1px solid var(--border);
     }
     .export-tab {
         padding: 8px 16px;
-        border: 1px solid var(--gray-200);
+        border: 1px solid var(--border);
         background: white;
         border-radius: 8px;
         font-size: 14px;
@@ -418,12 +418,12 @@ if ($showExport):
         transition: all 0.2s;
     }
     .export-tab:hover {
-        background: var(--gray-50);
+        background: var(--surface);
     }
     .export-tab.active {
-        background: var(--primary);
+        background: var(--accent);
         color: white;
-        border-color: var(--primary);
+        border-color: var(--accent);
     }
     .export-view {
         display: none;
@@ -433,7 +433,7 @@ if ($showExport):
     }
     .export-row {
         padding: 12px 0;
-        border-bottom: 1px solid var(--gray-100);
+        border-bottom: 1px solid var(--border-light);
     }
     .export-row:last-child {
         border-bottom: none;
@@ -445,7 +445,7 @@ if ($showExport):
     .export-link {
         font-family: monospace;
         font-size: 13px;
-        color: var(--gray-500);
+        color: var(--text-secondary);
         word-break: break-all;
     }
 </style>
@@ -530,7 +530,7 @@ endif;
             (<?= $guestStats['total_guests'] > 0 ? round($invitationsSent / $guestStats['total_guests'] * 100) : 0 ?>%)
         </span>
     </div>
-    <div style="height: 8px; background: var(--gray-200); border-radius: 4px; overflow: hidden;">
+    <div style="height: 8px; background: var(--border); border-radius: 4px; overflow: hidden;">
         <div style="height: 100%; background: #10b981; width: <?= $guestStats['total_guests'] > 0 ? ($invitationsSent / $guestStats['total_guests'] * 100) : 0 ?>%; transition: width 0.3s;"></div>
     </div>
     <?php if ($invitationsNotSent > 0): ?>
@@ -666,7 +666,7 @@ endif;
                             }
                             ?>
                             <?php if (count($namesList) > 0): ?>
-                                <br><span style="font-size: 12px; color: var(--gray-500);" title="<?= htmlspecialchars(implode(', ', $namesList)) ?>">
+                                <br><span style="font-size: 12px; color: var(--text-secondary);" title="<?= htmlspecialchars(implode(', ', $namesList)) ?>">
                                     <?= htmlspecialchars(implode(', ', array_slice($namesList, 0, 3))) ?><?= count($namesList) > 3 ? '...' : '' ?>
                                 </span>
                             <?php endif; ?>
@@ -696,8 +696,8 @@ endif;
 </div>
 
 <!-- Summary -->
-<div style="margin-top: 16px; padding: 12px 16px; background: var(--gray-50); border-radius: 8px;">
-    <p style="font-size: 13px; color: var(--gray-600); margin: 0;">
+<div style="margin-top: 16px; padding: 12px 16px; background: var(--surface); border-radius: 8px;">
+    <p style="font-size: 13px; color: var(--text-secondary); margin: 0;">
         Viser <?= count($guests) ?> gæst<?= count($guests) !== 1 ? 'er' : '' ?>
         <?php if ($guestStats['accepted'] > 0): ?>
             &middot; <strong><?= $guestStats['total_adults'] ?? 0 ?></strong> voksne og
@@ -767,7 +767,7 @@ endif;
                 <div class="form-group">
                     <label class="form-label">Standard max gæster</label>
                     <input type="number" name="default_max_guests" class="form-input" value="1" min="1" max="20" style="width: 100px;">
-                    <p style="font-size: 12px; color: var(--gray-500); margin-top: 4px;">Bruges hvis ikke angivet per linje</p>
+                    <p style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">Bruges hvis ikke angivet per linje</p>
                 </div>
                 <div class="form-group">
                     <label class="form-label">Navne (ét navn per linje)</label>
@@ -776,7 +776,7 @@ Onkel Peter (4)
 Tante Lisa
 Fætter Magnus (1)
 ..."></textarea>
-                    <p style="font-size: 12px; color: var(--gray-500); margin-top: 4px;">
+                    <p style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">
                         Skriv ét navn per linje. Tilføj <strong>(antal)</strong> for at angive max gæster.<br>
                         F.eks. "Peter og familie (4)" = max 4 gæster.
                     </p>
@@ -803,7 +803,7 @@ Fætter Magnus (1)
                 <div class="form-group">
                     <label class="form-label">Vælg CSV-fil</label>
                     <input type="file" id="csv-file-input" accept=".csv,.txt" class="form-input" onchange="handleFileSelect(event)">
-                    <p style="font-size: 12px; color: var(--gray-500); margin-top: 4px;">
+                    <p style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">
                         Understøtter CSV-filer med semikolon (;) eller komma (,) som separator.<br>
                         Første række skal indeholde kolonnenavne.
                     </p>
@@ -848,7 +848,7 @@ Marie Jensen;marie@email.dk;;1"></textarea>
 
                 <div id="preview-summary" style="margin-bottom: 16px;"></div>
 
-                <div style="max-height: 300px; overflow-y: auto; border: 1px solid var(--gray-200); border-radius: 8px;">
+                <div style="max-height: 300px; overflow-y: auto; border: 1px solid var(--border); border-radius: 8px;">
                     <table class="data-table" id="preview-table">
                         <thead></thead>
                         <tbody></tbody>
@@ -913,7 +913,7 @@ Marie Jensen;marie@email.dk;;1"></textarea>
                 </div>
 
                 <!-- RSVP Status -->
-                <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--gray-200);">
+                <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border);">
                     <div class="form-group">
                         <label class="form-label">RSVP Status</label>
                         <select name="rsvp_status" id="edit_rsvp_status" class="form-input" onchange="toggleRsvpDetails()">
@@ -948,8 +948,8 @@ Marie Jensen;marie@email.dk;;1"></textarea>
                 </div>
 
                 <!-- Read-only info -->
-                <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--gray-200);">
-                    <p style="font-size: 13px; color: var(--gray-500); margin: 0;">
+                <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border);">
+                    <p style="font-size: 13px; color: var(--text-secondary); margin: 0;">
                         <strong>Kode:</strong> <span id="edit_code"></span>
                     </p>
                 </div>
@@ -995,12 +995,12 @@ Marie Jensen;marie@email.dk;;1"></textarea>
     .section-title {
         font-size: 24px;
         font-weight: 700;
-        color: var(--gray-900);
+        color: var(--text);
         margin-bottom: 4px;
     }
 
     .section-subtitle {
-        color: var(--gray-500);
+        color: var(--text-secondary);
         font-size: 14px;
     }
 
@@ -1022,18 +1022,18 @@ Marie Jensen;marie@email.dk;;1"></textarea>
     .filter-tab {
         padding: 8px 16px;
         font-size: 14px;
-        color: var(--gray-600);
+        color: var(--text-secondary);
         text-decoration: none;
         border-radius: 8px;
         transition: all 0.2s;
     }
 
     .filter-tab:hover {
-        background: var(--gray-100);
+        background: var(--border-light);
     }
 
     .filter-tab.active {
-        background: var(--primary);
+        background: var(--accent);
         color: white;
     }
 
@@ -1043,7 +1043,7 @@ Marie Jensen;marie@email.dk;;1"></textarea>
 
     .search-input {
         padding: 8px 16px;
-        border: 1px solid var(--gray-200);
+        border: 1px solid var(--border);
         border-radius: 8px;
         font-size: 14px;
         width: 250px;
@@ -1058,20 +1058,20 @@ Marie Jensen;marie@email.dk;;1"></textarea>
     .data-table td {
         padding: 12px 16px;
         text-align: left;
-        border-bottom: 1px solid var(--gray-100);
+        border-bottom: 1px solid var(--border-light);
     }
 
     .data-table th {
-        background: var(--gray-50);
+        background: var(--surface);
         font-size: 12px;
         font-weight: 600;
         text-transform: uppercase;
         letter-spacing: 0.5px;
-        color: var(--gray-500);
+        color: var(--text-secondary);
     }
 
     .data-table tbody tr:hover {
-        background: var(--gray-50);
+        background: var(--surface);
     }
 
     .guest-name {
@@ -1082,11 +1082,11 @@ Marie Jensen;marie@email.dk;;1"></textarea>
 
     .guest-email, .guest-phone {
         font-size: 13px;
-        color: var(--gray-500);
+        color: var(--text-secondary);
     }
 
     .guest-code {
-        background: var(--gray-100);
+        background: var(--border-light);
         padding: 4px 8px;
         border-radius: 4px;
         font-size: 13px;
@@ -1102,19 +1102,19 @@ Marie Jensen;marie@email.dk;;1"></textarea>
         background: none;
         border: none;
         cursor: pointer;
-        color: var(--gray-400);
+        color: var(--text-secondary);
         border-radius: 4px;
     }
 
     .copy-btn:hover {
-        background: var(--gray-100);
-        color: var(--gray-600);
+        background: var(--border-light);
+        color: var(--text-secondary);
     }
 
     .max-badge {
         display: inline-block;
         padding: 2px 8px;
-        background: var(--gray-100);
+        background: var(--border-light);
         border-radius: 4px;
         font-size: 13px;
         font-weight: 500;
@@ -1149,7 +1149,7 @@ Marie Jensen;marie@email.dk;;1"></textarea>
         display: flex;
         align-items: center;
         justify-content: center;
-        background: var(--gray-100);
+        background: var(--border-light);
         border: none;
         border-radius: 6px;
         cursor: pointer;
@@ -1159,7 +1159,7 @@ Marie Jensen;marie@email.dk;;1"></textarea>
     .invitation-toggle svg {
         width: 18px;
         height: 18px;
-        color: var(--gray-400);
+        color: var(--text-secondary);
     }
 
     .invitation-toggle.sent {
@@ -1185,13 +1185,13 @@ Marie Jensen;marie@email.dk;;1"></textarea>
         border: none;
         border-radius: 6px;
         cursor: pointer;
-        color: var(--gray-400);
+        color: var(--text-secondary);
         transition: all 0.2s;
     }
 
     .row-action:hover {
-        background: var(--gray-100);
-        color: var(--gray-700);
+        background: var(--border-light);
+        color: var(--text);
     }
 
     .row-action.danger:hover {
@@ -1230,7 +1230,7 @@ Marie Jensen;marie@email.dk;;1"></textarea>
         align-items: center;
         justify-content: space-between;
         padding: 20px 24px;
-        border-bottom: 1px solid var(--gray-200);
+        border-bottom: 1px solid var(--border);
     }
 
     .modal-header h3 {
@@ -1248,14 +1248,14 @@ Marie Jensen;marie@email.dk;;1"></textarea>
         background: none;
         border: none;
         font-size: 24px;
-        color: var(--gray-400);
+        color: var(--text-secondary);
         cursor: pointer;
         border-radius: 6px;
     }
 
     .modal-close:hover {
-        background: var(--gray-100);
-        color: var(--gray-700);
+        background: var(--border-light);
+        color: var(--text);
     }
 
     .modal-body {
@@ -1267,7 +1267,7 @@ Marie Jensen;marie@email.dk;;1"></textarea>
         justify-content: flex-end;
         gap: 12px;
         padding: 16px 24px;
-        border-top: 1px solid var(--gray-200);
+        border-top: 1px solid var(--border);
     }
 
     .form-group {
@@ -1282,7 +1282,7 @@ Marie Jensen;marie@email.dk;;1"></textarea>
         display: block;
         font-size: 14px;
         font-weight: 500;
-        color: var(--gray-700);
+        color: var(--text);
         margin-bottom: 6px;
     }
 
@@ -1290,14 +1290,14 @@ Marie Jensen;marie@email.dk;;1"></textarea>
         width: 100%;
         padding: 10px 14px;
         font-size: 14px;
-        border: 1px solid var(--gray-200);
+        border: 1px solid var(--border);
         border-radius: 8px;
         font-family: inherit;
     }
 
     .form-input:focus {
         outline: none;
-        border-color: var(--primary);
+        border-color: var(--accent);
         box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
     }
 </style>
@@ -1563,9 +1563,9 @@ function initializeColumnMapping() {
         row.innerHTML = `
             <div>
                 <strong>${escapeHtml(header)}</strong>
-                <div style="font-size: 12px; color: var(--gray-500);">${escapeHtml(sampleData.substring(0, 30))}${sampleData.length > 30 ? '...' : ''}</div>
+                <div style="font-size: 12px; color: var(--text-secondary);">${escapeHtml(sampleData.substring(0, 30))}${sampleData.length > 30 ? '...' : ''}</div>
             </div>
-            <div style="color: var(--gray-400);">→</div>
+            <div style="color: var(--text-secondary);">→</div>
             <select class="form-input column-mapping-select" data-col="${index}">
                 ${fieldOptions.map(opt =>
                     `<option value="${opt.value}" ${autoMapping[index] === opt.value ? 'selected' : ''}>${opt.label}</option>`
@@ -1689,7 +1689,7 @@ function buildPreview() {
     }).join('');
 
     if (csvRows.length > 20) {
-        tbody.innerHTML += `<tr><td colspan="${mappedFields.length + 1}" style="color: var(--gray-500); text-align: center;">... og ${csvRows.length - 20} flere rækker</td></tr>`;
+        tbody.innerHTML += `<tr><td colspan="${mappedFields.length + 1}" style="color: var(--text-secondary); text-align: center;">... og ${csvRows.length - 20} flere rækker</td></tr>`;
     }
 
     // Summary

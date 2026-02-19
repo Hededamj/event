@@ -117,7 +117,7 @@ $plans = $db->query("SELECT slug, name FROM plans ORDER BY sort_order")->fetchAl
     <div class="card mb-lg">
         <form method="GET" class="flex gap-md items-center" style="flex-wrap: wrap;">
             <div class="search-box" style="flex: 1; min-width: 250px;">
-                <span class="search-box-icon">&#128269;</span>
+                <span class="search-box-icon"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></span>
                 <input type="text" name="search" class="form-input" placeholder="Søg efter navn, email eller firma..."
                        value="<?= escape($search) ?>" style="padding-left: 40px;">
             </div>
@@ -149,7 +149,7 @@ $plans = $db->query("SELECT slug, name FROM plans ORDER BY sort_order")->fetchAl
     <div class="card">
         <?php if (empty($accounts)): ?>
             <div class="empty-state">
-                <div class="empty-state-icon">&#128100;</div>
+                <div class="empty-state-icon"><svg width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"/></svg></div>
                 <p>Ingen konti fundet</p>
             </div>
         <?php else: ?>

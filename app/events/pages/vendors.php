@@ -183,36 +183,36 @@ $statusColors = [
     <div style="overflow-x: auto;">
         <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
             <thead>
-                <tr style="border-bottom: 2px solid var(--cream-dark);">
-                    <th style="text-align: left; padding: 12px 8px; font-weight: 600; color: var(--charcoal-light);">Leverandor</th>
-                    <th style="text-align: left; padding: 12px 8px; font-weight: 600; color: var(--charcoal-light);">Ydelse</th>
-                    <th style="text-align: right; padding: 12px 8px; font-weight: 600; color: var(--charcoal-light);">Pris</th>
-                    <th style="text-align: right; padding: 12px 8px; font-weight: 600; color: var(--charcoal-light);">Depositum</th>
-                    <th style="text-align: center; padding: 12px 8px; font-weight: 600; color: var(--charcoal-light);">Status</th>
-                    <th style="text-align: right; padding: 12px 8px; font-weight: 600; color: var(--charcoal-light);">Handling</th>
+                <tr style="border-bottom: 2px solid var(--border);">
+                    <th style="text-align: left; padding: 12px 8px; font-weight: 600; color: var(--text-secondary);">Leverandor</th>
+                    <th style="text-align: left; padding: 12px 8px; font-weight: 600; color: var(--text-secondary);">Ydelse</th>
+                    <th style="text-align: right; padding: 12px 8px; font-weight: 600; color: var(--text-secondary);">Pris</th>
+                    <th style="text-align: right; padding: 12px 8px; font-weight: 600; color: var(--text-secondary);">Depositum</th>
+                    <th style="text-align: center; padding: 12px 8px; font-weight: 600; color: var(--text-secondary);">Status</th>
+                    <th style="text-align: right; padding: 12px 8px; font-weight: 600; color: var(--text-secondary);">Handling</th>
                 </tr>
             </thead>
             <tbody>
                 <?php foreach ($bookings as $b): ?>
-                <tr style="border-bottom: 1px solid var(--cream-dark);">
+                <tr style="border-bottom: 1px solid var(--border);">
                     <td style="padding: 12px 8px; font-weight: 500;">
                         <?= htmlspecialchars($b['vendor_company_name']) ?>
                     </td>
-                    <td style="padding: 12px 8px; color: var(--charcoal-light);">
+                    <td style="padding: 12px 8px; color: var(--text-secondary);">
                         <?= htmlspecialchars($b['service_title'] ?? 'Generel') ?>
                     </td>
                     <td style="padding: 12px 8px; text-align: right;">
                         <?php if ($b['quoted_price']): ?>
                             <?= number_format((float)$b['quoted_price'], 0, ',', '.') ?> kr
                         <?php else: ?>
-                            <span style="color: var(--charcoal-light);">-</span>
+                            <span style="color: var(--text-secondary);">-</span>
                         <?php endif; ?>
                     </td>
                     <td style="padding: 12px 8px; text-align: right;">
                         <?php if ($b['depositum_amount']): ?>
                             <?= number_format((float)$b['depositum_amount'], 0, ',', '.') ?> kr
                         <?php else: ?>
-                            <span style="color: var(--charcoal-light);">-</span>
+                            <span style="color: var(--text-secondary);">-</span>
                         <?php endif; ?>
                     </td>
                     <td style="padding: 12px 8px; text-align: center;">
@@ -225,7 +225,7 @@ $statusColors = [
                         $bookingDetailUrl = "?id=$eventId&page=vendor-booking&booking_id=" . $b['id'];
                         switch ($b['status']):
                             case 'requested': ?>
-                                <span style="font-size: 13px; color: var(--charcoal-light);">Afventer svar</span>
+                                <span style="font-size: 13px; color: var(--text-secondary);">Afventer svar</span>
                                 <?php break;
                             case 'quoted': ?>
                                 <a href="<?= $bookingDetailUrl ?>" class="btn btn-sm btn-primary">Se tilbud</a>
@@ -243,7 +243,7 @@ $statusColors = [
                                 <?php break;
                             case 'cancelled':
                             case 'refunded': ?>
-                                <span style="font-size: 13px; color: var(--charcoal-light);">
+                                <span style="font-size: 13px; color: var(--text-secondary);">
                                     <?= $statusLabels[$b['status']] ?>
                                 </span>
                                 <?php break;
@@ -293,25 +293,25 @@ $statusColors = [
     <div style="overflow-x: auto;">
         <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
             <thead>
-                <tr style="border-bottom: 2px solid var(--cream-dark);">
-                    <th style="text-align: left; padding: 12px 8px; font-weight: 600; color: var(--charcoal-light);">Virksomhed</th>
-                    <th style="text-align: left; padding: 12px 8px; font-weight: 600; color: var(--charcoal-light);">Kategori</th>
-                    <th style="text-align: left; padding: 12px 8px; font-weight: 600; color: var(--charcoal-light);">Kontakt</th>
-                    <th style="text-align: right; padding: 12px 8px; font-weight: 600; color: var(--charcoal-light);">Pris</th>
-                    <th style="text-align: center; padding: 12px 8px; font-weight: 600; color: var(--charcoal-light);">Betalt</th>
-                    <th style="text-align: right; padding: 12px 8px; font-weight: 600; color: var(--charcoal-light);">Handlinger</th>
+                <tr style="border-bottom: 2px solid var(--border);">
+                    <th style="text-align: left; padding: 12px 8px; font-weight: 600; color: var(--text-secondary);">Virksomhed</th>
+                    <th style="text-align: left; padding: 12px 8px; font-weight: 600; color: var(--text-secondary);">Kategori</th>
+                    <th style="text-align: left; padding: 12px 8px; font-weight: 600; color: var(--text-secondary);">Kontakt</th>
+                    <th style="text-align: right; padding: 12px 8px; font-weight: 600; color: var(--text-secondary);">Pris</th>
+                    <th style="text-align: center; padding: 12px 8px; font-weight: 600; color: var(--text-secondary);">Betalt</th>
+                    <th style="text-align: right; padding: 12px 8px; font-weight: 600; color: var(--text-secondary);">Handlinger</th>
                 </tr>
             </thead>
             <tbody>
                 <?php foreach ($manualVendors as $mv): ?>
-                <tr style="border-bottom: 1px solid var(--cream-dark);">
+                <tr style="border-bottom: 1px solid var(--border);">
                     <td style="padding: 12px 8px; font-weight: 500;">
                         <?= htmlspecialchars($mv['company_name']) ?>
                         <?php if (!empty($mv['notes'])): ?>
-                            <div style="font-size: 12px; color: var(--charcoal-light); margin-top: 2px;"><?= htmlspecialchars(mb_strimwidth($mv['notes'], 0, 60, '...')) ?></div>
+                            <div style="font-size: 12px; color: var(--text-secondary); margin-top: 2px;"><?= htmlspecialchars(mb_strimwidth($mv['notes'], 0, 60, '...')) ?></div>
                         <?php endif; ?>
                     </td>
-                    <td style="padding: 12px 8px; color: var(--charcoal-light);">
+                    <td style="padding: 12px 8px; color: var(--text-secondary);">
                         <?= htmlspecialchars($mv['category'] ?: '-') ?>
                     </td>
                     <td style="padding: 12px 8px;">
@@ -319,20 +319,20 @@ $statusColors = [
                             <div style="font-weight: 500;"><?= htmlspecialchars($mv['contact_name']) ?></div>
                         <?php endif; ?>
                         <?php if (!empty($mv['email'])): ?>
-                            <div style="font-size: 12px; color: var(--charcoal-light);"><?= htmlspecialchars($mv['email']) ?></div>
+                            <div style="font-size: 12px; color: var(--text-secondary);"><?= htmlspecialchars($mv['email']) ?></div>
                         <?php endif; ?>
                         <?php if (!empty($mv['phone'])): ?>
-                            <div style="font-size: 12px; color: var(--charcoal-light);"><?= htmlspecialchars($mv['phone']) ?></div>
+                            <div style="font-size: 12px; color: var(--text-secondary);"><?= htmlspecialchars($mv['phone']) ?></div>
                         <?php endif; ?>
                         <?php if (empty($mv['contact_name']) && empty($mv['email']) && empty($mv['phone'])): ?>
-                            <span style="color: var(--charcoal-light);">-</span>
+                            <span style="color: var(--text-secondary);">-</span>
                         <?php endif; ?>
                     </td>
                     <td style="padding: 12px 8px; text-align: right;">
                         <?php if ($mv['agreed_price']): ?>
                             <?= number_format((float)$mv['agreed_price'], 0, ',', '.') ?> kr
                         <?php else: ?>
-                            <span style="color: var(--charcoal-light);">-</span>
+                            <span style="color: var(--text-secondary);">-</span>
                         <?php endif; ?>
                     </td>
                     <td style="padding: 12px 8px; text-align: center;">
@@ -340,7 +340,7 @@ $statusColors = [
                             <?= accountCsrfField() ?>
                             <input type="hidden" name="action" value="toggle_paid">
                             <input type="hidden" name="id" value="<?= $mv['id'] ?>">
-                            <button type="submit" style="background: none; border: 2px solid <?= $mv['is_paid'] ? '#10b981' : 'var(--cream-dark)' ?>; width: 28px; height: 28px; border-radius: 8px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; font-size: 14px; color: white; <?= $mv['is_paid'] ? 'background: #10b981;' : '' ?> transition: all 0.2s;" title="<?= $mv['is_paid'] ? 'Marker som ubetalt' : 'Marker som betalt' ?>">
+                            <button type="submit" style="background: none; border: 2px solid <?= $mv['is_paid'] ? '#10b981' : 'var(--border)' ?>; width: 28px; height: 28px; border-radius: 8px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; font-size: 14px; color: white; <?= $mv['is_paid'] ? 'background: #10b981;' : '' ?> transition: all 0.2s;" title="<?= $mv['is_paid'] ? 'Marker som ubetalt' : 'Marker som betalt' ?>">
                                 <?= $mv['is_paid'] ? '&#10003;' : '' ?>
                             </button>
                         </form>
@@ -381,38 +381,38 @@ $statusColors = [
     </div>
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 24px; text-align: center;">
         <div>
-            <div style="font-family: var(--font-display); font-size: 28px; font-weight: 500; color: var(--charcoal);">
+            <div style="font-family: var(--font-display); font-size: 28px; font-weight: 500; color: var(--text);">
                 <?= number_format($grandTotal, 0, ',', '.') ?> kr
             </div>
-            <div style="font-size: 13px; color: var(--charcoal-light); margin-top: 4px;">Samlet leverandorudgift</div>
+            <div style="font-size: 13px; color: var(--text-secondary); margin-top: 4px;">Samlet leverandorudgift</div>
         </div>
         <div>
-            <div style="font-family: var(--font-display); font-size: 28px; font-weight: 500; color: var(--sage-dark);">
+            <div style="font-family: var(--font-display); font-size: 28px; font-weight: 500; color: var(--accent-dark);">
                 <?= number_format($marketplaceDeposit, 0, ',', '.') ?> kr
             </div>
-            <div style="font-size: 13px; color: var(--charcoal-light); margin-top: 4px;">Depositum betalt</div>
+            <div style="font-size: 13px; color: var(--text-secondary); margin-top: 4px;">Depositum betalt</div>
         </div>
         <div>
             <div style="font-family: var(--font-display); font-size: 28px; font-weight: 500; color: #10b981;">
                 <?= number_format($manualPaid, 0, ',', '.') ?> kr
             </div>
-            <div style="font-size: 13px; color: var(--charcoal-light); margin-top: 4px;">Manuelle betalt</div>
+            <div style="font-size: 13px; color: var(--text-secondary); margin-top: 4px;">Manuelle betalt</div>
         </div>
         <div>
             <div style="font-family: var(--font-display); font-size: 28px; font-weight: 500; color: var(--warning);">
                 <?= number_format($grandTotal - $totalPaid, 0, ',', '.') ?> kr
             </div>
-            <div style="font-size: 13px; color: var(--charcoal-light); margin-top: 4px;">Udestaaende</div>
+            <div style="font-size: 13px; color: var(--text-secondary); margin-top: 4px;">Udestaaende</div>
         </div>
     </div>
     <?php if ($grandTotal > 0): ?>
         <?php $paidPercent = round($totalPaid / $grandTotal * 100); ?>
         <div style="margin-top: 24px;">
             <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
-                <span style="font-size: 13px; color: var(--charcoal-light);">Betalt</span>
-                <span style="font-size: 13px; color: var(--charcoal-light);"><?= $paidPercent ?>%</span>
+                <span style="font-size: 13px; color: var(--text-secondary);">Betalt</span>
+                <span style="font-size: 13px; color: var(--text-secondary);"><?= $paidPercent ?>%</span>
             </div>
-            <div style="height: 8px; background: var(--cream-dark); border-radius: 4px; overflow: hidden;">
+            <div style="height: 8px; background: var(--border); border-radius: 4px; overflow: hidden;">
                 <div style="height: 100%; background: #10b981; width: <?= min(100, $paidPercent) ?>%; border-radius: 4px; transition: width 0.3s;"></div>
             </div>
         </div>

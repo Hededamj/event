@@ -19,26 +19,32 @@ require_once __DIR__ . '/includes/functions.php';
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         :root {
-            --cream: #FAF9F7;
-            --cream-dark: #E8E4DE;
-            --sage: #8FA583;
-            --sage-light: #B8C9B0;
-            --sage-dark: #5D7255;
-            --charcoal: #1A1A1A;
-            --charcoal-light: #3D3D3D;
-            --gold: #B8923D;
-            --gold-light: #D4B86A;
+            --surface: #FAF9F7;
+            --surface-card: #FFFFFF;
+            --border: #E2DED8;
+            --border-light: #EDEAE5;
+            --text: #1A1A1A;
+            --text-secondary: #6B6560;
+            --accent: #6B8F5E;
+            --accent-light: #E8F0E4;
+            --accent-dark: #4D6E42;
+            --warning: #C4922D;
+            --warning-light: #FDF6E8;
+            --success: #3D8B3D;
+            --error: #C14B4B;
             --blush: #D4A5A5;
             --white: #FFFFFF;
+            --font-display: 'Cormorant Garamond', Georgia, serif;
+            --font-body: 'DM Sans', -apple-system, sans-serif;
         }
 
         html { scroll-behavior: smooth; }
 
         body {
             font-family: 'DM Sans', -apple-system, sans-serif;
-            color: var(--charcoal);
+            color: var(--text);
             line-height: 1.6;
-            background: var(--cream);
+            background: var(--surface);
             -webkit-font-smoothing: antialiased;
         }
 
@@ -87,12 +93,12 @@ require_once __DIR__ . '/includes/functions.php';
             font-family: 'Cormorant Garamond', serif;
             font-size: 28px;
             font-weight: 500;
-            color: var(--charcoal);
+            color: var(--text);
             text-decoration: none;
             letter-spacing: -0.02em;
         }
 
-        .logo span { color: var(--sage-dark); }
+        .logo span { color: var(--accent-dark); }
 
         .nav-links {
             display: flex;
@@ -101,14 +107,14 @@ require_once __DIR__ . '/includes/functions.php';
         }
 
         .nav-links a {
-            color: var(--charcoal-light);
+            color: var(--text-secondary);
             text-decoration: none;
             font-weight: 500;
             font-size: 15px;
             transition: color 0.3s;
         }
 
-        .nav-links a:hover { color: var(--sage-dark); }
+        .nav-links a:hover { color: var(--accent-dark); }
 
         .btn {
             display: inline-flex;
@@ -125,34 +131,34 @@ require_once __DIR__ . '/includes/functions.php';
         }
 
         .btn-primary {
-            background: var(--sage);
+            background: var(--accent);
             color: white;
         }
 
         .btn-primary:hover {
-            background: var(--sage-dark);
+            background: var(--accent-dark);
             transform: translateY(-2px);
             box-shadow: 0 12px 40px rgba(143, 165, 131, 0.35);
         }
 
         .btn-secondary {
             background: transparent;
-            color: var(--charcoal);
-            border: 2px solid var(--cream-dark);
+            color: var(--text);
+            border: 2px solid var(--border);
         }
 
         .btn-secondary:hover {
-            border-color: var(--sage);
-            color: var(--sage-dark);
+            border-color: var(--accent);
+            color: var(--accent-dark);
         }
 
         .btn-gold {
-            background: var(--gold);
+            background: var(--warning);
             color: white;
         }
 
         .btn-gold:hover {
-            background: var(--gold-light);
+            background: var(--warning-light);
             transform: translateY(-2px);
             box-shadow: 0 12px 40px rgba(184, 146, 61, 0.35);
         }
@@ -173,7 +179,7 @@ require_once __DIR__ . '/includes/functions.php';
             right: -5%;
             width: 55%;
             height: 120%;
-            background: linear-gradient(135deg, var(--sage-light) 0%, var(--sage) 50%, var(--sage-dark) 100%);
+            background: linear-gradient(135deg, var(--accent-light) 0%, var(--accent) 50%, var(--accent-dark) 100%);
             border-radius: 0 0 0 40%;
             opacity: 0.15;
             z-index: -1;
@@ -196,11 +202,11 @@ require_once __DIR__ . '/includes/functions.php';
             gap: 8px;
             padding: 10px 20px;
             background: var(--white);
-            border: 1px solid var(--cream-dark);
+            border: 1px solid var(--border);
             border-radius: 50px;
             font-size: 13px;
             font-weight: 600;
-            color: var(--sage-dark);
+            color: var(--accent-dark);
             margin-bottom: 28px;
             box-shadow: 0 2px 20px rgba(0,0,0,0.04);
         }
@@ -208,7 +214,7 @@ require_once __DIR__ . '/includes/functions.php';
         .hero-badge svg {
             width: 16px;
             height: 16px;
-            color: var(--gold);
+            color: var(--warning);
         }
 
         .hero h1 {
@@ -222,12 +228,12 @@ require_once __DIR__ . '/includes/functions.php';
 
         .hero h1 em {
             font-style: italic;
-            color: var(--sage-dark);
+            color: var(--accent-dark);
         }
 
         .hero-description {
             font-size: 18px;
-            color: var(--charcoal-light);
+            color: var(--text-secondary);
             line-height: 1.8;
             margin-bottom: 40px;
         }
@@ -288,7 +294,7 @@ require_once __DIR__ . '/includes/functions.php';
 
         .hero-card-image {
             height: 65%;
-            background: linear-gradient(135deg, var(--sage-light) 0%, var(--blush) 100%);
+            background: linear-gradient(135deg, var(--accent-light) 0%, var(--blush) 100%);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -307,21 +313,21 @@ require_once __DIR__ . '/includes/functions.php';
 
         .hero-card p {
             font-size: 13px;
-            color: var(--charcoal-light);
+            color: var(--text-secondary);
         }
 
         .hero-card-3 .stat {
             font-family: 'Cormorant Garamond', serif;
             font-size: 48px;
             font-weight: 500;
-            color: var(--sage-dark);
+            color: var(--accent-dark);
             line-height: 1;
             margin-bottom: 8px;
         }
 
         .hero-card-3 .stat-label {
             font-size: 13px;
-            color: var(--charcoal-light);
+            color: var(--text-secondary);
         }
 
         @keyframes float {
@@ -332,8 +338,8 @@ require_once __DIR__ . '/includes/functions.php';
         /* ===== TRUST BAR ===== */
         .trust-bar {
             padding: 60px 0;
-            border-top: 1px solid var(--cream-dark);
-            border-bottom: 1px solid var(--cream-dark);
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
         }
 
         .trust-bar .container {
@@ -352,13 +358,13 @@ require_once __DIR__ . '/includes/functions.php';
             font-family: 'Cormorant Garamond', serif;
             font-size: 36px;
             font-weight: 500;
-            color: var(--sage-dark);
+            color: var(--accent-dark);
             margin-bottom: 4px;
         }
 
         .trust-label {
             font-size: 13px;
-            color: var(--charcoal-light);
+            color: var(--text-secondary);
         }
 
         /* ===== FEATURES ===== */
@@ -377,7 +383,7 @@ require_once __DIR__ . '/includes/functions.php';
             font-weight: 600;
             letter-spacing: 0.15em;
             text-transform: uppercase;
-            color: var(--sage);
+            color: var(--accent);
             margin-bottom: 16px;
         }
 
@@ -391,7 +397,7 @@ require_once __DIR__ . '/includes/functions.php';
 
         .section-header p {
             font-size: 17px;
-            color: var(--charcoal-light);
+            color: var(--text-secondary);
             line-height: 1.7;
         }
 
@@ -405,7 +411,7 @@ require_once __DIR__ . '/includes/functions.php';
             padding: 40px 32px;
             background: var(--white);
             border-radius: 24px;
-            border: 1px solid var(--cream-dark);
+            border: 1px solid var(--border);
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
@@ -418,7 +424,7 @@ require_once __DIR__ . '/includes/functions.php';
         .feature-icon {
             width: 64px;
             height: 64px;
-            background: linear-gradient(135deg, var(--sage-light) 0%, var(--sage) 100%);
+            background: linear-gradient(135deg, var(--accent-light) 0%, var(--accent) 100%);
             border-radius: 18px;
             display: flex;
             align-items: center;
@@ -440,7 +446,7 @@ require_once __DIR__ . '/includes/functions.php';
         }
 
         .feature-card p {
-            color: var(--charcoal-light);
+            color: var(--text-secondary);
             font-size: 15px;
             line-height: 1.7;
         }
@@ -448,7 +454,7 @@ require_once __DIR__ . '/includes/functions.php';
         /* ===== INVITATION SHOWCASE ===== */
         .invitation-showcase {
             padding: 120px 0;
-            background: var(--charcoal);
+            background: var(--text);
             color: white;
             position: relative;
             overflow: hidden;
@@ -474,7 +480,7 @@ require_once __DIR__ . '/includes/functions.php';
         }
 
         .invitation-text .section-eyebrow {
-            color: var(--gold);
+            color: var(--warning);
         }
 
         .invitation-text h2 {
@@ -519,7 +525,7 @@ require_once __DIR__ . '/includes/functions.php';
         .invitation-feature-icon svg {
             width: 20px;
             height: 20px;
-            color: var(--gold);
+            color: var(--warning);
         }
 
         .invitation-feature h4 {
@@ -548,7 +554,7 @@ require_once __DIR__ . '/includes/functions.php';
         }
 
         .preview-screen {
-            background: linear-gradient(180deg, var(--sage-dark) 0%, var(--charcoal) 100%);
+            background: linear-gradient(180deg, var(--accent-dark) 0%, var(--text) 100%);
             border-radius: 32px;
             aspect-ratio: 9/16;
             display: flex;
@@ -608,20 +614,20 @@ require_once __DIR__ . '/includes/functions.php';
             background: var(--white);
             border-radius: 24px;
             text-align: center;
-            border: 1px solid var(--cream-dark);
+            border: 1px solid var(--border);
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .event-type-card:hover {
             transform: translateY(-8px);
             box-shadow: 0 30px 60px rgba(0,0,0,0.08);
-            border-color: var(--sage);
+            border-color: var(--accent);
         }
 
         .event-type-icon {
             width: 72px;
             height: 72px;
-            background: var(--cream);
+            background: var(--surface);
             border-radius: 20px;
             display: flex;
             align-items: center;
@@ -631,13 +637,13 @@ require_once __DIR__ . '/includes/functions.php';
         }
 
         .event-type-card:hover .event-type-icon {
-            background: var(--sage);
+            background: var(--accent);
         }
 
         .event-type-icon svg {
             width: 32px;
             height: 32px;
-            color: var(--sage-dark);
+            color: var(--accent-dark);
             transition: color 0.4s;
         }
 
@@ -654,7 +660,7 @@ require_once __DIR__ . '/includes/functions.php';
 
         .event-type-card p {
             font-size: 14px;
-            color: var(--charcoal-light);
+            color: var(--text-secondary);
         }
 
         /* ===== TESTIMONIAL ===== */
@@ -675,7 +681,7 @@ require_once __DIR__ . '/includes/functions.php';
             font-style: italic;
             line-height: 1.6;
             margin-bottom: 40px;
-            color: var(--charcoal);
+            color: var(--text);
         }
 
         .testimonial-author {
@@ -688,7 +694,7 @@ require_once __DIR__ . '/includes/functions.php';
         .testimonial-avatar {
             width: 56px;
             height: 56px;
-            background: linear-gradient(135deg, var(--sage-light), var(--blush));
+            background: linear-gradient(135deg, var(--accent-light), var(--blush));
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -705,7 +711,7 @@ require_once __DIR__ . '/includes/functions.php';
 
         .testimonial-info p {
             font-size: 14px;
-            color: var(--charcoal-light);
+            color: var(--text-secondary);
         }
 
         /* ===== CTA ===== */
@@ -714,7 +720,7 @@ require_once __DIR__ . '/includes/functions.php';
         }
 
         .cta-box {
-            background: linear-gradient(135deg, var(--sage) 0%, var(--sage-dark) 100%);
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
             border-radius: 40px;
             padding: 80px;
             text-align: center;
@@ -753,7 +759,7 @@ require_once __DIR__ . '/includes/functions.php';
 
         .cta-box .btn {
             background: white;
-            color: var(--sage-dark);
+            color: var(--accent-dark);
             padding: 18px 40px;
             font-size: 16px;
             position: relative;
@@ -767,7 +773,7 @@ require_once __DIR__ . '/includes/functions.php';
         /* ===== FOOTER ===== */
         .footer {
             padding: 60px 0;
-            background: var(--charcoal);
+            background: var(--text);
             color: white;
         }
 
@@ -783,7 +789,7 @@ require_once __DIR__ . '/includes/functions.php';
             font-weight: 500;
         }
 
-        .footer-logo span { color: var(--sage-light); }
+        .footer-logo span { color: var(--accent-light); }
 
         .footer-links {
             display: flex;
@@ -874,7 +880,7 @@ require_once __DIR__ . '/includes/functions.php';
                             </div>
                         </div>
                         <div class="hero-card hero-card-2">
-                            <div class="hero-card-image" style="background: linear-gradient(135deg, var(--gold-light), var(--gold));">A</div>
+                            <div class="hero-card-image" style="background: linear-gradient(135deg, var(--warning-light), var(--warning));">A</div>
                             <div class="hero-card-content">
                                 <h4>Anna & Peters Bryllup</h4>
                                 <p>22. august 2025</p>

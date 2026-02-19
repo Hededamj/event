@@ -116,19 +116,19 @@ $filteredGuests = match($filter) {
         background: var(--white);
         padding: 16px 20px;
         border-radius: 12px;
-        border: 1px solid var(--cream-dark);
+        border: 1px solid var(--border);
         min-width: 120px;
     }
 
     .stat-mini-value {
         font-size: 24px;
         font-weight: 600;
-        color: var(--charcoal);
+        color: var(--text);
     }
 
     .stat-mini-label {
         font-size: 12px;
-        color: var(--charcoal-light);
+        color: var(--text-secondary);
         margin-top: 2px;
     }
 
@@ -145,16 +145,16 @@ $filteredGuests = match($filter) {
     .guest-table td {
         padding: 14px 16px;
         text-align: left;
-        border-bottom: 1px solid var(--cream-dark);
+        border-bottom: 1px solid var(--border);
     }
 
     .guest-table th {
         font-size: 12px;
         font-weight: 600;
-        color: var(--charcoal-light);
+        color: var(--text-secondary);
         text-transform: uppercase;
         letter-spacing: 0.05em;
-        background: var(--cream);
+        background: var(--surface);
     }
 
     .guest-table tr:hover td {
@@ -167,7 +167,7 @@ $filteredGuests = match($filter) {
 
     .guest-email {
         font-size: 13px;
-        color: var(--charcoal-light);
+        color: var(--text-secondary);
     }
 
     .no-email {
@@ -192,8 +192,8 @@ $filteredGuests = match($filter) {
     .status-pill.clicked { background: #DCFCE7; color: #15803D; }
     .status-pill.bounced { background: #FEE2E2; color: var(--error); }
     .status-pill.failed { background: #FEE2E2; color: var(--error); }
-    .status-pill.pending { background: var(--cream); color: var(--charcoal-light); }
-    .status-pill.not-sent { background: var(--cream-dark); color: var(--charcoal-light); }
+    .status-pill.pending { background: var(--surface); color: var(--text-secondary); }
+    .status-pill.not-sent { background: var(--border); color: var(--text-secondary); }
 
     .checkbox-cell {
         width: 40px;
@@ -210,14 +210,14 @@ $filteredGuests = match($filter) {
         gap: 12px;
         align-items: center;
         padding: 16px;
-        background: var(--cream);
+        background: var(--surface);
         border-radius: 12px;
         margin-bottom: 20px;
     }
 
     .bulk-actions span {
         font-size: 14px;
-        color: var(--charcoal-light);
+        color: var(--text-secondary);
     }
 
     .config-warning {
@@ -258,7 +258,7 @@ $filteredGuests = match($filter) {
 
     .send-date {
         font-size: 12px;
-        color: var(--charcoal-light);
+        color: var(--text-secondary);
     }
 </style>
 
@@ -438,7 +438,7 @@ $filteredGuests = match($filter) {
 
                 <?php if (empty($filteredGuests)): ?>
                 <tr>
-                    <td colspan="5" style="text-align: center; padding: 40px; color: var(--charcoal-light);">
+                    <td colspan="5" style="text-align: center; padding: 40px; color: var(--text-secondary);">
                         Ingen gæster matcher dette filter
                     </td>
                 </tr>
@@ -455,7 +455,7 @@ if ($guestsWithoutInvitation > 0 && $emailConfigured):
 ?>
 <div class="card" style="text-align: center; padding: 32px;">
     <h3 class="card-title" style="margin-bottom: 12px;">Send til alle der ikke har modtaget</h3>
-    <p style="color: var(--charcoal-light); margin-bottom: 20px;">
+    <p style="color: var(--text-secondary); margin-bottom: 20px;">
         <?= $guestsWithoutInvitation ?> gæst(er) har ikke modtaget en invitation endnu
     </p>
     <form method="POST" style="display: inline;">

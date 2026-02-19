@@ -23,8 +23,8 @@ if ($slug === '') {
     require_once __DIR__ . '/includes/marketplace-header.php';
     echo '<div style="text-align:center;padding:100px 24px;">';
     echo '<h1 style="font-family:var(--font-display);font-size:38px;margin-bottom:12px;">404</h1>';
-    echo '<p style="color:var(--charcoal-light);font-size:16px;margin-bottom:24px;">Kategorien blev ikke fundet.</p>';
-    echo '<a href="/subcontractor/" style="color:var(--sage-dark);font-weight:600;text-decoration:underline;">Tilbage til leverandøroversigten</a>';
+    echo '<p style="color:var(--text-secondary);font-size:16px;margin-bottom:24px;">Kategorien blev ikke fundet.</p>';
+    echo '<a href="/subcontractor/" style="color:var(--accent-dark);font-weight:600;text-decoration:underline;">Tilbage til leverandøroversigten</a>';
     echo '</div>';
     require_once __DIR__ . '/includes/marketplace-footer.php';
     exit;
@@ -45,8 +45,8 @@ if (!$category) {
     require_once __DIR__ . '/includes/marketplace-header.php';
     echo '<div style="text-align:center;padding:100px 24px;">';
     echo '<h1 style="font-family:var(--font-display);font-size:38px;margin-bottom:12px;">404</h1>';
-    echo '<p style="color:var(--charcoal-light);font-size:16px;margin-bottom:24px;">Kategorien blev ikke fundet.</p>';
-    echo '<a href="/subcontractor/" style="color:var(--sage-dark);font-weight:600;text-decoration:underline;">Tilbage til leverandøroversigten</a>';
+    echo '<p style="color:var(--text-secondary);font-size:16px;margin-bottom:24px;">Kategorien blev ikke fundet.</p>';
+    echo '<a href="/subcontractor/" style="color:var(--accent-dark);font-weight:600;text-decoration:underline;">Tilbage til leverandøroversigten</a>';
     echo '</div>';
     require_once __DIR__ . '/includes/marketplace-footer.php';
     exit;
@@ -185,7 +185,7 @@ function renderStars(float $rating, int $max = 5): string {
     /* ---- Category page specific styles ---- */
     .cat-hero {
         background: var(--white);
-        border-bottom: 1px solid var(--cream-dark);
+        border-bottom: 1px solid var(--border);
         padding: 40px 0 32px;
     }
     .cat-hero-inner {
@@ -202,22 +202,22 @@ function renderStars(float $rating, int $max = 5): string {
         font-family: var(--font-display);
         font-size: 36px;
         font-weight: 400;
-        color: var(--charcoal);
+        color: var(--text);
         line-height: 1.2;
         margin-bottom: 6px;
     }
     .cat-hero-desc {
         font-size: 16px;
-        color: var(--charcoal-light);
+        color: var(--text-secondary);
         margin-bottom: 10px;
         max-width: 600px;
     }
     .cat-hero-count {
         font-size: 14px;
-        color: var(--charcoal-light);
+        color: var(--text-secondary);
     }
     .cat-hero-count strong {
-        color: var(--charcoal);
+        color: var(--text);
         font-weight: 600;
     }
 
@@ -241,7 +241,7 @@ function renderStars(float $rating, int $max = 5): string {
     .cat-toolbar-label {
         font-size: 13px;
         font-weight: 600;
-        color: var(--charcoal-light);
+        color: var(--text-secondary);
         margin-right: 4px;
     }
     .cat-sort-link {
@@ -251,22 +251,22 @@ function renderStars(float $rating, int $max = 5): string {
         font-family: var(--font-body);
         font-size: 13px;
         font-weight: 500;
-        color: var(--charcoal-light);
+        color: var(--text-secondary);
         background: var(--white);
-        border: 2px solid var(--cream-dark);
+        border: 2px solid var(--border);
         border-radius: 8px;
         text-decoration: none;
         transition: all 0.2s ease;
         white-space: nowrap;
     }
     .cat-sort-link:hover {
-        border-color: var(--sage);
-        color: var(--charcoal);
+        border-color: var(--accent);
+        color: var(--text);
     }
     .cat-sort-link.active {
-        background: var(--sage);
+        background: var(--accent);
         color: var(--white);
-        border-color: var(--sage);
+        border-color: var(--accent);
     }
     .cat-filter-form {
         display: flex;
@@ -277,16 +277,16 @@ function renderStars(float $rating, int $max = 5): string {
         padding: 7px 14px;
         font-family: var(--font-body);
         font-size: 13px;
-        border: 2px solid var(--cream-dark);
+        border: 2px solid var(--border);
         border-radius: 8px;
         background: var(--white);
-        color: var(--charcoal);
+        color: var(--text);
         width: 180px;
         transition: all 0.2s ease;
     }
     .cat-filter-input:focus {
         outline: none;
-        border-color: var(--sage);
+        border-color: var(--accent);
         box-shadow: 0 0 0 3px rgba(168, 181, 160, 0.15);
     }
     .cat-filter-input::placeholder {
@@ -298,23 +298,23 @@ function renderStars(float $rating, int $max = 5): string {
         font-size: 13px;
         font-weight: 600;
         color: var(--white);
-        background: var(--sage);
+        background: var(--accent);
         border: none;
         border-radius: 8px;
         cursor: pointer;
         transition: background 0.2s ease;
     }
     .cat-filter-btn:hover {
-        background: var(--sage-dark);
+        background: var(--accent-dark);
     }
     .cat-filter-clear {
         font-size: 13px;
-        color: var(--charcoal-light);
+        color: var(--text-secondary);
         text-decoration: underline;
         transition: color 0.2s ease;
     }
     .cat-filter-clear:hover {
-        color: var(--charcoal);
+        color: var(--text);
     }
 
     /* ---- Vendor grid ---- */
@@ -351,7 +351,7 @@ function renderStars(float $rating, int $max = 5): string {
         aspect-ratio: 16 / 10;
         position: relative;
         overflow: hidden;
-        background: linear-gradient(135deg, var(--sage-light) 0%, var(--sage) 100%);
+        background: linear-gradient(135deg, var(--accent-light) 0%, var(--accent) 100%);
     }
     .cat-vendor-cover img {
         width: 100%;
@@ -382,13 +382,13 @@ function renderStars(float $rating, int $max = 5): string {
         font-family: var(--font-display);
         font-size: 20px;
         font-weight: 500;
-        color: var(--charcoal);
+        color: var(--text);
         line-height: 1.3;
         margin-bottom: 4px;
     }
     .cat-vendor-desc {
         font-size: 13px;
-        color: var(--charcoal-light);
+        color: var(--text-secondary);
         line-height: 1.5;
         margin-bottom: 12px;
         flex: 1;
@@ -418,33 +418,33 @@ function renderStars(float $rating, int $max = 5): string {
         height: 14px;
     }
     .cat-vendor-stars .star-filled {
-        color: var(--gold);
-        fill: var(--gold);
+        color: var(--warning);
+        fill: var(--warning);
     }
     .cat-vendor-stars .star-empty {
-        color: var(--cream-dark);
+        color: var(--border);
         fill: none;
-        stroke: var(--cream-dark);
+        stroke: var(--border);
     }
     .cat-vendor-rating-text {
         font-size: 13px;
         font-weight: 600;
-        color: var(--charcoal);
+        color: var(--text);
     }
     .cat-vendor-rating-count {
         font-size: 12px;
-        color: var(--charcoal-light);
+        color: var(--text-secondary);
         font-weight: 400;
     }
     .cat-vendor-price {
         font-size: 13px;
         font-weight: 600;
-        color: var(--sage-dark);
+        color: var(--accent-dark);
         white-space: nowrap;
     }
     .cat-vendor-city {
         font-size: 12px;
-        color: var(--charcoal-light);
+        color: var(--text-secondary);
         margin-top: 8px;
         display: flex;
         align-items: center;
@@ -471,16 +471,16 @@ function renderStars(float $rating, int $max = 5): string {
         font-family: var(--font-display);
         font-size: 24px;
         font-weight: 400;
-        color: var(--charcoal);
+        color: var(--text);
         margin-bottom: 8px;
     }
     .cat-empty p {
         font-size: 15px;
-        color: var(--charcoal-light);
+        color: var(--text-secondary);
         margin-bottom: 24px;
     }
     .cat-empty a {
-        color: var(--sage-dark);
+        color: var(--accent-dark);
         font-weight: 600;
         text-decoration: underline;
     }
@@ -507,22 +507,22 @@ function renderStars(float $rating, int $max = 5): string {
         transition: all 0.2s ease;
     }
     .cat-pagination a {
-        color: var(--charcoal);
+        color: var(--text);
         text-decoration: none;
         background: var(--white);
-        border: 1px solid var(--cream-dark);
+        border: 1px solid var(--border);
     }
     .cat-pagination a:hover {
-        border-color: var(--sage);
-        background: var(--cream);
+        border-color: var(--accent);
+        background: var(--surface);
     }
     .cat-pagination .pg-active {
-        background: var(--sage);
+        background: var(--accent);
         color: var(--white);
-        border: 1px solid var(--sage);
+        border: 1px solid var(--accent);
     }
     .cat-pagination .pg-disabled {
-        color: var(--cream-dark);
+        color: var(--border);
         pointer-events: none;
         background: transparent;
         border: 1px solid transparent;
@@ -530,7 +530,7 @@ function renderStars(float $rating, int $max = 5): string {
     .cat-pagination .pg-ellipsis {
         border: none;
         background: none;
-        color: var(--charcoal-light);
+        color: var(--text-secondary);
         min-width: 32px;
     }
 

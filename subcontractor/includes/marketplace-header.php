@@ -63,7 +63,7 @@ $currentSearch = isset($_GET['search']) ? trim($_GET['search']) : '';
             top: 0;
             z-index: 100;
             background: var(--white);
-            border-bottom: 1px solid var(--cream-dark);
+            border-bottom: 1px solid var(--border);
             box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
         }
 
@@ -82,14 +82,14 @@ $currentSearch = isset($_GET['search']) ? trim($_GET['search']) : '';
             font-family: var(--font-display);
             font-size: 24px;
             font-weight: 500;
-            color: var(--charcoal);
+            color: var(--text);
             text-decoration: none;
             white-space: nowrap;
             flex-shrink: 0;
         }
 
         .mp-logo span {
-            color: var(--sage);
+            color: var(--accent);
         }
 
         .mp-nav {
@@ -105,7 +105,7 @@ $currentSearch = isset($_GET['search']) ? trim($_GET['search']) : '';
             padding: 8px 16px;
             font-size: 14px;
             font-weight: 500;
-            color: var(--charcoal-light);
+            color: var(--text-secondary);
             text-decoration: none;
             border-radius: 8px;
             transition: all 0.2s ease;
@@ -113,12 +113,12 @@ $currentSearch = isset($_GET['search']) ? trim($_GET['search']) : '';
         }
 
         .mp-nav-link:hover {
-            color: var(--charcoal);
-            background: var(--cream);
+            color: var(--text);
+            background: var(--surface);
         }
 
         .mp-nav-link.active {
-            color: var(--sage-dark);
+            color: var(--accent-dark);
             background: rgba(168, 181, 160, 0.12);
         }
 
@@ -130,7 +130,7 @@ $currentSearch = isset($_GET['search']) ? trim($_GET['search']) : '';
             font-size: 14px;
             font-weight: 600;
             color: var(--white);
-            background: var(--sage);
+            background: var(--accent);
             border: none;
             border-radius: 8px;
             text-decoration: none;
@@ -140,15 +140,15 @@ $currentSearch = isset($_GET['search']) ? trim($_GET['search']) : '';
         }
 
         .mp-nav-btn:hover {
-            background: var(--sage-dark);
+            background: var(--accent-dark);
             transform: translateY(-1px);
             box-shadow: 0 4px 12px rgba(122, 139, 114, 0.25);
         }
 
         /* ---- Category horizontal scroll nav ---- */
         .mp-category-bar {
-            background: var(--cream);
-            border-bottom: 1px solid var(--cream-dark);
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
         }
 
         .mp-category-bar-inner {
@@ -174,7 +174,7 @@ $currentSearch = isset($_GET['search']) ? trim($_GET['search']) : '';
             padding: 12px 16px;
             font-size: 13px;
             font-weight: 500;
-            color: var(--charcoal-light);
+            color: var(--text-secondary);
             text-decoration: none;
             white-space: nowrap;
             border-bottom: 2px solid transparent;
@@ -182,13 +182,13 @@ $currentSearch = isset($_GET['search']) ? trim($_GET['search']) : '';
         }
 
         .mp-cat-link:hover {
-            color: var(--charcoal);
-            border-bottom-color: var(--sage-light);
+            color: var(--text);
+            border-bottom-color: var(--accent-light);
         }
 
         .mp-cat-link.active {
-            color: var(--sage-dark);
-            border-bottom-color: var(--sage-dark);
+            color: var(--accent-dark);
+            border-bottom-color: var(--accent-dark);
         }
 
         .mp-cat-icon {
@@ -201,7 +201,7 @@ $currentSearch = isset($_GET['search']) ? trim($_GET['search']) : '';
             max-width: 1280px;
             margin: 0 auto;
             padding: 16px 24px;
-            background: var(--cream);
+            background: var(--surface);
         }
 
         .mp-search-form {
@@ -215,16 +215,16 @@ $currentSearch = isset($_GET['search']) ? trim($_GET['search']) : '';
             padding: 10px 16px;
             font-family: var(--font-body);
             font-size: 14px;
-            border: 2px solid var(--cream-dark);
+            border: 2px solid var(--border);
             border-radius: 10px;
             background: var(--white);
-            color: var(--charcoal);
+            color: var(--text);
             transition: border-color 0.2s ease;
         }
 
         .mp-search-input:focus {
             outline: none;
-            border-color: var(--sage);
+            border-color: var(--accent);
             box-shadow: 0 0 0 3px rgba(168, 181, 160, 0.15);
         }
 
@@ -238,7 +238,7 @@ $currentSearch = isset($_GET['search']) ? trim($_GET['search']) : '';
             font-size: 14px;
             font-weight: 600;
             color: var(--white);
-            background: var(--sage);
+            background: var(--accent);
             border: none;
             border-radius: 10px;
             cursor: pointer;
@@ -247,7 +247,7 @@ $currentSearch = isset($_GET['search']) ? trim($_GET['search']) : '';
         }
 
         .mp-search-btn:hover {
-            background: var(--sage-dark);
+            background: var(--accent-dark);
         }
 
         /* ---- Mobile ---- */
@@ -258,10 +258,10 @@ $currentSearch = isset($_GET['search']) ? trim($_GET['search']) : '';
             align-items: center;
             justify-content: center;
             border: none;
-            background: var(--cream);
+            background: var(--surface);
             border-radius: 8px;
             cursor: pointer;
-            color: var(--charcoal);
+            color: var(--text);
         }
 
         .mp-mobile-toggle svg {
@@ -272,7 +272,7 @@ $currentSearch = isset($_GET['search']) ? trim($_GET['search']) : '';
         .mp-mobile-nav {
             display: none;
             background: var(--white);
-            border-bottom: 1px solid var(--cream-dark);
+            border-bottom: 1px solid var(--border);
             padding: 12px 16px;
             flex-direction: column;
             gap: 4px;

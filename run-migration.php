@@ -15,7 +15,7 @@ if (!isset($_GET['run']) || $_GET['run'] !== 'yes') {
     echo "<li>invitation-templates.sql - Indsætter skabeloner</li>";
     echo "</ul>";
     echo "<p style='color: red;'><strong>VIGTIGT:</strong> Slet denne fil efter brug!</p>";
-    echo "<p><a href='?run=yes' style='display:inline-block; padding:12px 24px; background:#8FA583; color:white; text-decoration:none; border-radius:8px;'>Kør migrations nu</a></p>";
+    echo "<p><a href='?run=yes' style='display:inline-block; padding:12px 24px; background:#6B8F5E; color:white; text-decoration:none; border-radius:8px;'>Kør migrations nu</a></p>";
     exit;
 }
 
@@ -109,6 +109,6 @@ if ($success > 0) {
 echo "</pre>";
 
 echo "<p style='margin-top: 20px;'>";
-echo "<a href='/app/dashboard.php' style='display:inline-block; padding:10px 20px; background:#8FA583; color:white; text-decoration:none; border-radius:6px; margin-right:10px;'>Gå til Dashboard</a>";
+echo "<a href='/app/dashboard.php' style='display:inline-block; padding:10px 20px; background:#6B8F5E; color:white; text-decoration:none; border-radius:6px; margin-right:10px;'>Gå til Dashboard</a>";
 echo "<a href='?run=yes' style='display:inline-block; padding:10px 20px; background:#666; color:white; text-decoration:none; border-radius:6px;'>Kør igen</a>";
 echo "</p>";

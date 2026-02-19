@@ -165,7 +165,7 @@ if (!empty($booking['event_date'])) {
         display: inline-flex;
         align-items: center;
         gap: 8px;
-        color: var(--charcoal-light);
+        color: var(--text-secondary);
         text-decoration: none;
         font-size: 14px;
         font-weight: 500;
@@ -173,7 +173,7 @@ if (!empty($booking['event_date'])) {
         margin-bottom: 24px;
         transition: color 0.2s;
     }
-    .booking-back-link:hover { color: var(--charcoal); }
+    .booking-back-link:hover { color: var(--text); }
     .booking-back-link svg { width: 18px; height: 18px; }
 
     .booking-grid {
@@ -187,12 +187,12 @@ if (!empty($booking['event_date'])) {
         display: flex;
         justify-content: space-between;
         padding: 12px 0;
-        border-bottom: 1px solid var(--cream-dark);
+        border-bottom: 1px solid var(--border);
         font-size: 14px;
     }
     .info-row:last-child { border-bottom: none; }
-    .info-label { color: var(--charcoal-light); font-weight: 500; }
-    .info-value { color: var(--charcoal); font-weight: 500; text-align: right; }
+    .info-label { color: var(--text-secondary); font-weight: 500; }
+    .info-value { color: var(--text); font-weight: 500; text-align: right; }
 
     .status-badge {
         display: inline-block;
@@ -203,13 +203,13 @@ if (!empty($booking['event_date'])) {
     }
 
     .quote-message-box {
-        background: var(--cream);
+        background: var(--surface);
         border-radius: 12px;
         padding: 16px;
         margin-bottom: 16px;
         font-size: 14px;
         line-height: 1.6;
-        color: var(--charcoal);
+        color: var(--text);
     }
 
     .financial-row {
@@ -219,7 +219,7 @@ if (!empty($booking['event_date'])) {
         font-size: 14px;
     }
     .financial-row.total {
-        border-top: 2px solid var(--charcoal);
+        border-top: 2px solid var(--text);
         margin-top: 8px;
         padding-top: 12px;
         font-weight: 600;
@@ -246,8 +246,8 @@ if (!empty($booking['event_date'])) {
         padding: 10px 0;
         font-size: 14px;
     }
-    .contact-item svg { width: 18px; height: 18px; color: var(--sage-dark); flex-shrink: 0; }
-    .contact-item a { color: var(--sage-dark); text-decoration: none; }
+    .contact-item svg { width: 18px; height: 18px; color: var(--accent-dark); flex-shrink: 0; }
+    .contact-item a { color: var(--accent-dark); text-decoration: none; }
     .contact-item a:hover { text-decoration: underline; }
 
     .countdown-box {
@@ -255,7 +255,7 @@ if (!empty($booking['event_date'])) {
         align-items: center;
         gap: 12px;
         padding: 16px;
-        background: var(--cream);
+        background: var(--surface);
         border-radius: 12px;
         margin-top: 16px;
     }
@@ -263,11 +263,11 @@ if (!empty($booking['event_date'])) {
         font-family: var(--font-display);
         font-size: 32px;
         font-weight: 500;
-        color: var(--sage-dark);
+        color: var(--accent-dark);
     }
     .countdown-label {
         font-size: 13px;
-        color: var(--charcoal-light);
+        color: var(--text-secondary);
     }
 
     /* Message thread */
@@ -289,15 +289,15 @@ if (!empty($booking['event_date'])) {
     }
     .msg-bubble.organizer {
         align-self: flex-end;
-        background: var(--sage);
+        background: var(--accent);
         color: var(--white);
         border-bottom-right-radius: 4px;
     }
     .msg-bubble.vendor {
         align-self: flex-start;
         background: var(--white);
-        color: var(--charcoal);
-        border: 1px solid var(--cream-dark);
+        color: var(--text);
+        border: 1px solid var(--border);
         border-bottom-left-radius: 4px;
     }
     .msg-bubble.platform {
@@ -336,17 +336,17 @@ if (!empty($booking['event_date'])) {
     }
     .star-rating-input label {
         font-size: 28px;
-        color: var(--cream-dark);
+        color: var(--border);
         cursor: pointer;
         transition: color 0.15s;
         line-height: 1;
     }
     .star-rating-input label:hover,
     .star-rating-input label:hover ~ label {
-        color: var(--gold);
+        color: var(--warning);
     }
     .star-rating-input input[type="radio"]:checked ~ label {
-        color: var(--gold);
+        color: var(--warning);
     }
     /* Reverse order trick for CSS-only hover */
     .star-rating-input {
@@ -355,12 +355,12 @@ if (!empty($booking['event_date'])) {
     }
 
     .existing-review {
-        background: var(--cream);
+        background: var(--surface);
         border-radius: 12px;
         padding: 20px;
     }
     .review-stars {
-        color: var(--gold);
+        color: var(--warning);
         font-size: 20px;
         letter-spacing: 2px;
         margin-bottom: 8px;
@@ -413,11 +413,11 @@ if (!empty($booking['event_date'])) {
             <div class="info-row">
                 <span class="info-label">Leverandor</span>
                 <span class="info-value">
-                    <a href="<?= htmlspecialchars($vendorProfileUrl) ?>" target="_blank" style="color: var(--sage-dark); text-decoration: none;">
+                    <a href="<?= htmlspecialchars($vendorProfileUrl) ?>" target="_blank" style="color: var(--accent-dark); text-decoration: none;">
                         <?= htmlspecialchars($booking['vendor_company_name']) ?>
                     </a>
                     <?php if (!empty($booking['vendor_city'])): ?>
-                        <span style="color: var(--charcoal-light); font-weight: 400;"> &middot; <?= htmlspecialchars($booking['vendor_city']) ?></span>
+                        <span style="color: var(--text-secondary); font-weight: 400;"> &middot; <?= htmlspecialchars($booking['vendor_city']) ?></span>
                     <?php endif; ?>
                 </span>
             </div>
@@ -427,7 +427,7 @@ if (!empty($booking['event_date'])) {
                 <span class="info-value">
                     <?= htmlspecialchars($booking['service_title'] ?? 'Generel foresporgsel') ?>
                     <?php if (!empty($booking['service_price_from'])): ?>
-                        <span style="color: var(--charcoal-light); font-weight: 400;">
+                        <span style="color: var(--text-secondary); font-weight: 400;">
                             (fra <?= number_format((float)$booking['service_price_from'], 2, ',', '.') ?> kr)
                         </span>
                     <?php endif; ?>
@@ -439,12 +439,12 @@ if (!empty($booking['event_date'])) {
                 <span class="info-value">
                     <?= htmlspecialchars($booking['event_title']) ?>
                     <?php if (!empty($booking['event_date'])): ?>
-                        <span style="color: var(--charcoal-light); font-weight: 400;">
+                        <span style="color: var(--text-secondary); font-weight: 400;">
                             &middot; <?= date('d. M Y', strtotime($booking['event_date'])) ?>
                         </span>
                     <?php endif; ?>
                     <?php if (!empty($booking['guest_count'])): ?>
-                        <span style="color: var(--charcoal-light); font-weight: 400;">
+                        <span style="color: var(--text-secondary); font-weight: 400;">
                             &middot; <?= (int)$booking['guest_count'] ?> gaester
                         </span>
                     <?php endif; ?>
@@ -453,7 +453,7 @@ if (!empty($booking['event_date'])) {
 
             <div class="info-row">
                 <span class="info-label">Oprettet</span>
-                <span class="info-value" style="color: var(--charcoal-light); font-weight: 400;">
+                <span class="info-value" style="color: var(--text-secondary); font-weight: 400;">
                     <?= date('d. M Y, H:i', strtotime($booking['created_at'])) ?>
                 </span>
             </div>
@@ -517,7 +517,7 @@ if (!empty($booking['event_date'])) {
                 </button>
             </div>
 
-            <div id="declineSection" style="display: none; margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--cream-dark);">
+            <div id="declineSection" style="display: none; margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border);">
                 <form method="POST">
                     <?= accountCsrfField() ?>
                     <input type="hidden" name="action" value="decline">
@@ -540,7 +540,7 @@ if (!empty($booking['event_date'])) {
             <div class="card-header">
                 <h3 class="card-title">Betal depositum</h3>
             </div>
-            <p style="font-size: 14px; color: var(--charcoal-light); margin-bottom: 20px;">
+            <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 20px;">
                 Dit tilbud er accepteret. Betal depositum for at bekraefte bookingen.
             </p>
             <a href="/subcontractor/payment.php?booking_id=<?= $bookingId ?>" class="btn btn-sage">
@@ -587,7 +587,7 @@ if (!empty($booking['event_date'])) {
             <?php endif; ?>
 
             <?php if ($status === 'confirmed'): ?>
-            <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--cream-dark);">
+            <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border);">
                 <form method="POST" onsubmit="return confirm('Er du sikker pa at du vil markere bookingen som afsluttet?');">
                     <?= accountCsrfField() ?>
                     <input type="hidden" name="action" value="complete">
@@ -621,20 +621,20 @@ if (!empty($booking['event_date'])) {
                         <div style="font-weight: 600; margin-bottom: 4px;"><?= htmlspecialchars($existingReview['title']) ?></div>
                     <?php endif; ?>
                     <?php if (!empty($existingReview['review_text'])): ?>
-                        <div style="font-size: 14px; color: var(--charcoal-light); line-height: 1.6;">
+                        <div style="font-size: 14px; color: var(--text-secondary); line-height: 1.6;">
                             <?= nl2br(htmlspecialchars($existingReview['review_text'])) ?>
                         </div>
                     <?php endif; ?>
-                    <div style="font-size: 12px; color: var(--charcoal-light); margin-top: 12px;">
+                    <div style="font-size: 12px; color: var(--text-secondary); margin-top: 12px;">
                         Oprettet <?= date('d. M Y', strtotime($existingReview['created_at'])) ?>
                     </div>
 
                     <?php if (!empty($existingReview['vendor_response'])): ?>
-                        <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--cream-dark);">
-                            <div style="font-size: 12px; font-weight: 600; color: var(--charcoal-light); margin-bottom: 4px;">
+                        <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border);">
+                            <div style="font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-bottom: 4px;">
                                 Svar fra <?= htmlspecialchars($booking['vendor_company_name']) ?>
                             </div>
-                            <div style="font-size: 14px; color: var(--charcoal); line-height: 1.6;">
+                            <div style="font-size: 14px; color: var(--text); line-height: 1.6;">
                                 <?= nl2br(htmlspecialchars($existingReview['vendor_response'])) ?>
                             </div>
                         </div>
@@ -680,7 +680,7 @@ if (!empty($booking['event_date'])) {
             <div class="card-header">
                 <h3 class="card-title">Problemer?</h3>
             </div>
-            <p style="font-size: 14px; color: var(--charcoal-light); margin-bottom: 16px;">
+            <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 16px;">
                 Hvis du har oplevet problemer med leverandoren, kan du anmode om refundering.
             </p>
             <a href="mailto:support@partyparart.dk?subject=Refundering%20-%20Booking%20%23<?= $bookingId ?>" class="btn btn-danger">
@@ -719,11 +719,11 @@ if (!empty($booking['event_date'])) {
         <div class="card">
             <div class="card-header">
                 <h3 class="card-title">Beskeder</h3>
-                <span style="font-size: 13px; color: var(--charcoal-light);"><?= count($messages) ?> besked<?= count($messages) !== 1 ? 'er' : '' ?></span>
+                <span style="font-size: 13px; color: var(--text-secondary);"><?= count($messages) ?> besked<?= count($messages) !== 1 ? 'er' : '' ?></span>
             </div>
 
             <?php if (empty($messages)): ?>
-                <div style="text-align: center; padding: 32px 0; color: var(--charcoal-light); font-size: 14px;">
+                <div style="text-align: center; padding: 32px 0; color: var(--text-secondary); font-size: 14px;">
                     Ingen beskeder endnu. Send den forste besked nedenfor.
                 </div>
             <?php else: ?>
@@ -740,7 +740,7 @@ if (!empty($booking['event_date'])) {
             <?php endif; ?>
 
             <?php if (!in_array($status, ['cancelled', 'refunded'])): ?>
-            <form method="POST" class="message-form" style="border-top: 1px solid var(--cream-dark); padding-top: 16px;">
+            <form method="POST" class="message-form" style="border-top: 1px solid var(--border); padding-top: 16px;">
                 <?= accountCsrfField() ?>
                 <input type="hidden" name="action" value="message">
                 <textarea name="message" class="form-input" rows="2" placeholder="Skriv en besked..." required style="min-height: 44px;"></textarea>
@@ -764,26 +764,26 @@ if (!empty($booking['event_date'])) {
             <h4 style="font-family: var(--font-display); font-size: 18px; font-weight: 500; margin-bottom: 16px;">Opsummering</h4>
 
             <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
-                <div style="width: 48px; height: 48px; background: var(--sage-light); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
-                    <svg fill="none" stroke="var(--sage-dark)" viewBox="0 0 24 24" style="width: 24px; height: 24px;">
+                <div style="width: 48px; height: 48px; background: var(--accent-light); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                    <svg fill="none" stroke="var(--accent-dark)" viewBox="0 0 24 24" style="width: 24px; height: 24px;">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"></path>
                     </svg>
                 </div>
                 <div>
                     <div style="font-weight: 600; font-size: 15px;">
-                        <a href="<?= htmlspecialchars($vendorProfileUrl) ?>" target="_blank" style="color: var(--charcoal); text-decoration: none;">
+                        <a href="<?= htmlspecialchars($vendorProfileUrl) ?>" target="_blank" style="color: var(--text); text-decoration: none;">
                             <?= htmlspecialchars($booking['vendor_company_name']) ?>
                         </a>
                     </div>
-                    <div style="font-size: 13px; color: var(--charcoal-light);">
+                    <div style="font-size: 13px; color: var(--text-secondary);">
                         <?= htmlspecialchars($booking['service_title'] ?? 'Generel') ?>
                     </div>
                 </div>
             </div>
 
-            <div style="padding: 12px 0; border-top: 1px solid var(--cream-dark);">
+            <div style="padding: 12px 0; border-top: 1px solid var(--border);">
                 <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-                    <span style="font-size: 13px; color: var(--charcoal-light);">Status</span>
+                    <span style="font-size: 13px; color: var(--text-secondary);">Status</span>
                     <span class="status-badge" style="<?= $statusColors[$status] ?? '' ?>">
                         <?= $statusLabels[$status] ?? ucfirst($status) ?>
                     </span>
@@ -791,25 +791,25 @@ if (!empty($booking['event_date'])) {
 
                 <?php if (!empty($booking['quoted_price'])): ?>
                 <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 13px;">
-                    <span style="color: var(--charcoal-light);">Pris</span>
+                    <span style="color: var(--text-secondary);">Pris</span>
                     <span style="font-weight: 600;"><?= number_format((float)$booking['quoted_price'], 2, ',', '.') ?> kr</span>
                 </div>
                 <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 13px;">
-                    <span style="color: var(--charcoal-light);">Depositum</span>
+                    <span style="color: var(--text-secondary);">Depositum</span>
                     <span style="font-weight: 500;"><?= number_format((float)$booking['depositum_amount'], 2, ',', '.') ?> kr</span>
                 </div>
                 <?php endif; ?>
 
                 <?php if (!empty($booking['event_date'])): ?>
                 <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 13px;">
-                    <span style="color: var(--charcoal-light);">Dato</span>
+                    <span style="color: var(--text-secondary);">Dato</span>
                     <span style="font-weight: 500;"><?= date('d. M Y', strtotime($booking['event_date'])) ?></span>
                 </div>
                 <?php endif; ?>
 
                 <?php if (!empty($booking['guest_count'])): ?>
                 <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 13px;">
-                    <span style="color: var(--charcoal-light);">Gaester</span>
+                    <span style="color: var(--text-secondary);">Gaester</span>
                     <span style="font-weight: 500;"><?= (int)$booking['guest_count'] ?></span>
                 </div>
                 <?php endif; ?>
@@ -825,7 +825,7 @@ if (!empty($booking['event_date'])) {
             <?php endif; ?>
 
             <!-- Quick action buttons based on status -->
-            <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--cream-dark);">
+            <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border);">
                 <?php if ($status === 'quoted'): ?>
                     <form method="POST" style="width: 100%;">
                         <?= accountCsrfField() ?>

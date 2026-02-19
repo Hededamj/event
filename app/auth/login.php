@@ -90,10 +90,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         body {
             font-family: var(--font-body);
-            background: var(--cream);
+            background: var(--surface);
             min-height: 100vh;
             display: flex;
-            color: var(--charcoal);
+            color: var(--text);
             line-height: 1.6;
             -webkit-font-smoothing: antialiased;
         }
@@ -127,7 +127,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         /* Left side - Visual */
         .login-visual {
-            background: linear-gradient(160deg, var(--sage) 0%, var(--sage-dark) 100%);
+            background: linear-gradient(160deg, var(--accent) 0%, var(--accent-dark) 100%);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -189,7 +189,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             flex-direction: column;
             justify-content: center;
             padding: clamp(32px, 8vw, 80px);
-            background: var(--cream);
+            background: var(--surface);
         }
 
         .login-header {
@@ -200,27 +200,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             font-family: var(--font-display);
             font-size: 28px;
             font-weight: 500;
-            color: var(--charcoal);
+            color: var(--text);
             text-decoration: none;
             display: inline-block;
             margin-bottom: 32px;
         }
 
         .login-logo span {
-            color: var(--sage-dark);
+            color: var(--accent-dark);
         }
 
         .login-title {
             font-family: var(--font-display);
             font-size: clamp(28px, 4vw, 36px);
             font-weight: 400;
-            color: var(--charcoal);
+            color: var(--text);
             margin-bottom: 8px;
         }
 
         .login-subtitle {
             font-size: 15px;
-            color: var(--charcoal-light);
+            color: var(--text-secondary);
         }
 
         .login-card {
@@ -254,7 +254,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             display: block;
             font-size: 14px;
             font-weight: 600;
-            color: var(--charcoal);
+            color: var(--text);
             margin-bottom: 10px;
         }
 
@@ -263,16 +263,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             padding: 16px 18px;
             font-family: var(--font-body);
             font-size: 15px;
-            border: 2px solid var(--cream-dark);
+            border: 2px solid var(--border);
             border-radius: 14px;
             background: var(--white);
-            color: var(--charcoal);
+            color: var(--text);
             transition: all 0.3s var(--ease-out);
         }
 
         .form-input:focus {
             outline: none;
-            border-color: var(--sage);
+            border-color: var(--accent);
             box-shadow: 0 0 0 4px rgba(168, 181, 160, 0.15);
         }
 
@@ -292,18 +292,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             align-items: center;
             gap: 10px;
             font-size: 14px;
-            color: var(--charcoal-light);
+            color: var(--text-secondary);
             cursor: pointer;
         }
 
         .checkbox-label input {
             width: 18px;
             height: 18px;
-            accent-color: var(--sage);
+            accent-color: var(--accent);
         }
 
         .form-link {
-            color: var(--sage-dark);
+            color: var(--accent-dark);
             text-decoration: none;
             font-size: 14px;
             font-weight: 500;
@@ -311,7 +311,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         .form-link:hover {
-            color: var(--charcoal);
+            color: var(--text);
         }
 
         .btn {
@@ -332,12 +332,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         .btn-primary {
-            background: var(--charcoal);
+            background: var(--text);
             color: var(--white);
         }
 
         .btn-primary:hover {
-            background: var(--charcoal-light);
+            background: var(--text-secondary);
             transform: translateY(-2px);
             box-shadow: 0 8px 24px rgba(44,44,44,0.2);
         }
@@ -346,7 +346,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             display: flex;
             align-items: center;
             margin: 28px 0;
-            color: var(--charcoal-light);
+            color: var(--text-secondary);
             font-size: 13px;
         }
 
@@ -355,7 +355,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             content: '';
             flex: 1;
             height: 1px;
-            background: var(--cream-dark);
+            background: var(--border);
         }
 
         .divider span {
@@ -366,9 +366,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             display: block;
             text-align: center;
             padding: 16px 24px;
-            border: 2px solid var(--cream-dark);
+            border: 2px solid var(--border);
             border-radius: 14px;
-            color: var(--charcoal);
+            color: var(--text);
             text-decoration: none;
             font-weight: 500;
             font-size: 15px;
@@ -376,8 +376,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         .register-link:hover {
-            border-color: var(--sage);
-            background: var(--cream);
+            border-color: var(--accent);
+            background: var(--surface);
         }
 
         .form-footer {

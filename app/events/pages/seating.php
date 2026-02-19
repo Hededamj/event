@@ -287,7 +287,7 @@ $csrfToken = generateAccountCsrfToken();
 <?php if ($totalGuests === 0): ?>
 <div class="card">
     <div class="empty-state">
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 48px; height: 48px; margin-bottom: 16px; color: var(--gray-400);">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 48px; height: 48px; margin-bottom: 16px; color: var(--text-secondary);">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"></path>
         </svg>
         <h3>Ingen bekraeftede gaester endnu</h3>
@@ -305,7 +305,7 @@ $csrfToken = generateAccountCsrfToken();
             </h3>
             <div class="guest-pool" id="guest-pool">
                 <?php if (empty($unassignedGuests)): ?>
-                    <p style="color: var(--gray-500); text-align: center; padding: 16px; font-size: 14px;">
+                    <p style="color: var(--text-secondary); text-align: center; padding: 16px; font-size: 14px;">
                         Alle gaester er placeret!
                     </p>
                 <?php else: ?>
@@ -328,7 +328,7 @@ $csrfToken = generateAccountCsrfToken();
         <?php if (empty($tables)): ?>
             <div class="card">
                 <div class="empty-state">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 48px; height: 48px; margin-bottom: 16px; color: var(--gray-400);">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 48px; height: 48px; margin-bottom: 16px; color: var(--text-secondary);">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path>
                     </svg>
                     <h3>Ingen borde endnu</h3>
@@ -510,8 +510,8 @@ $csrfToken = generateAccountCsrfToken();
         display: flex;
         flex-direction: column;
         padding: 10px 14px;
-        background: var(--gray-50);
-        border: 1px solid var(--gray-200);
+        background: var(--surface);
+        border: 1px solid var(--border);
         border-radius: 8px;
         margin-bottom: 8px;
         cursor: grab;
@@ -519,8 +519,8 @@ $csrfToken = generateAccountCsrfToken();
     }
 
     .guest-chip:hover {
-        background: var(--gray-100);
-        border-color: var(--gray-300);
+        background: var(--border-light);
+        border-color: var(--border);
     }
 
     .guest-chip:active {
@@ -534,7 +534,7 @@ $csrfToken = generateAccountCsrfToken();
 
     .guest-chip__info {
         font-size: 12px;
-        color: var(--gray-500);
+        color: var(--text-secondary);
     }
 
     .tables-grid {
@@ -545,7 +545,7 @@ $csrfToken = generateAccountCsrfToken();
 
     .table-card {
         background: white;
-        border: 1px solid var(--gray-200);
+        border: 1px solid var(--border);
         border-radius: 12px;
         padding: 16px;
     }
@@ -564,7 +564,7 @@ $csrfToken = generateAccountCsrfToken();
     }
 
     .table-card__count {
-        background: var(--gray-100);
+        background: var(--border-light);
         padding: 4px 10px;
         border-radius: 20px;
         font-size: 13px;
@@ -586,8 +586,8 @@ $csrfToken = generateAccountCsrfToken();
     .seat {
         position: relative;
         aspect-ratio: 1;
-        background: var(--gray-50);
-        border: 2px dashed var(--gray-300);
+        background: var(--surface);
+        border: 2px dashed var(--border);
         border-radius: 8px;
         display: flex;
         flex-direction: column;
@@ -600,13 +600,13 @@ $csrfToken = generateAccountCsrfToken();
     }
 
     .seat--empty:hover {
-        border-color: var(--primary);
+        border-color: var(--accent);
         background: rgba(102, 126, 234, 0.05);
     }
 
     .seat--occupied {
         background: white;
-        border: 2px solid var(--primary);
+        border: 2px solid var(--accent);
         cursor: grab;
     }
 
@@ -619,7 +619,7 @@ $csrfToken = generateAccountCsrfToken();
         top: 4px;
         left: 6px;
         font-size: 10px;
-        color: var(--gray-400);
+        color: var(--text-secondary);
         font-weight: 600;
     }
 
@@ -659,13 +659,13 @@ $csrfToken = generateAccountCsrfToken();
         display: flex;
         gap: 8px;
         padding-top: 12px;
-        border-top: 1px solid var(--gray-100);
+        border-top: 1px solid var(--border-light);
     }
 
     .btn-ghost {
         background: none;
         border: none;
-        color: var(--gray-600);
+        color: var(--text-secondary);
         padding: 6px 12px;
         font-size: 13px;
         cursor: pointer;
@@ -673,7 +673,7 @@ $csrfToken = generateAccountCsrfToken();
     }
 
     .btn-ghost:hover {
-        background: var(--gray-100);
+        background: var(--border-light);
     }
 
     .btn-ghost.danger:hover {

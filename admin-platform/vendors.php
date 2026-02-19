@@ -186,7 +186,7 @@ $totalCommission = $db->query("
     <div class="card mb-lg">
         <form method="GET" class="flex gap-md items-center" style="flex-wrap: wrap;">
             <div class="search-box" style="flex: 1; min-width: 200px;">
-                <span class="search-box-icon">&#128269;</span>
+                <span class="search-box-icon"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></span>
                 <input type="text" name="search" class="form-input" placeholder="Sog efter navn, email..."
                        value="<?= escape($search) ?>" style="padding-left: 40px;">
             </div>
@@ -223,7 +223,7 @@ $totalCommission = $db->query("
     <div class="card">
         <?php if (empty($vendors)): ?>
             <div class="empty-state">
-                <div class="empty-state-icon">&#128736;</div>
+                <div class="empty-state-icon"><svg width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11.42 15.17 17.25 21A2.652 2.652 0 0 0 21 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 1 1-3.586-3.586l6.837-5.63m5.108-.233c.55-.164 1.163-.188 1.743-.14a4.5 4.5 0 0 0 4.486-6.336l-3.276 3.277a3.004 3.004 0 0 1-2.25-2.25l3.276-3.276a4.5 4.5 0 0 0-6.336 4.486c.091 1.076-.071 2.264-.904 2.95l-.102.085"/></svg></div>
                 <p>Ingen leverandorer fundet</p>
             </div>
         <?php else: ?>
