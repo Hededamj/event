@@ -87,13 +87,13 @@ require_once __DIR__ . '/includes/marketplace-header.php';
     font-family: var(--font-display);
     font-size: 28px;
     font-weight: 500;
-    color: var(--charcoal);
+    color: var(--text);
     margin-bottom: 8px;
 }
 
 .cancel-subtitle {
     font-size: 15px;
-    color: var(--charcoal-light);
+    color: var(--text-secondary);
     line-height: 1.6;
     margin-bottom: 28px;
 }
@@ -115,7 +115,7 @@ require_once __DIR__ . '/includes/marketplace-header.php';
     font-size: 15px;
     font-weight: 600;
     color: var(--white);
-    background: var(--sage);
+    background: var(--accent);
     border: none;
     border-radius: 10px;
     text-decoration: none;
@@ -124,7 +124,7 @@ require_once __DIR__ . '/includes/marketplace-header.php';
 }
 
 .cancel-btn-primary:hover {
-    background: var(--sage-dark);
+    background: var(--accent-dark);
     transform: translateY(-1px);
     box-shadow: 0 4px 16px rgba(122, 139, 114, 0.3);
 }
@@ -144,9 +144,9 @@ require_once __DIR__ . '/includes/marketplace-header.php';
     font-family: var(--font-body);
     font-size: 15px;
     font-weight: 600;
-    color: var(--charcoal);
+    color: var(--text);
     background: var(--white);
-    border: 2px solid var(--cream-dark);
+    border: 2px solid var(--border);
     border-radius: 10px;
     text-decoration: none;
     cursor: pointer;
@@ -154,8 +154,8 @@ require_once __DIR__ . '/includes/marketplace-header.php';
 }
 
 .cancel-btn-secondary:hover {
-    border-color: var(--sage);
-    background: var(--cream);
+    border-color: var(--accent);
+    background: var(--surface);
 }
 
 .cancel-btn-secondary svg {

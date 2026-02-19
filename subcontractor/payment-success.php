@@ -100,19 +100,19 @@ require_once __DIR__ . '/includes/marketplace-header.php';
     font-family: var(--font-display);
     font-size: 28px;
     font-weight: 500;
-    color: var(--charcoal);
+    color: var(--text);
     margin-bottom: 8px;
 }
 
 .success-subtitle {
     font-size: 15px;
-    color: var(--charcoal-light);
+    color: var(--text-secondary);
     line-height: 1.6;
     margin-bottom: 28px;
 }
 
 .success-details {
-    background: var(--cream);
+    background: var(--surface);
     border-radius: 12px;
     padding: 20px;
     margin-bottom: 28px;
@@ -125,11 +125,11 @@ require_once __DIR__ . '/includes/marketplace-header.php';
     align-items: center;
     padding: 8px 0;
     font-size: 14px;
-    color: var(--charcoal-light);
+    color: var(--text-secondary);
 }
 
 .success-detail-row + .success-detail-row {
-    border-top: 1px solid var(--cream-dark);
+    border-top: 1px solid var(--border);
 }
 
 .success-detail-label {
@@ -138,7 +138,7 @@ require_once __DIR__ . '/includes/marketplace-header.php';
 
 .success-detail-value {
     font-weight: 600;
-    color: var(--charcoal);
+    color: var(--text);
 }
 
 .success-actions {
@@ -158,7 +158,7 @@ require_once __DIR__ . '/includes/marketplace-header.php';
     font-size: 15px;
     font-weight: 600;
     color: var(--white);
-    background: var(--sage);
+    background: var(--accent);
     border: none;
     border-radius: 10px;
     text-decoration: none;
@@ -167,7 +167,7 @@ require_once __DIR__ . '/includes/marketplace-header.php';
 }
 
 .success-btn-primary:hover {
-    background: var(--sage-dark);
+    background: var(--accent-dark);
     transform: translateY(-1px);
     box-shadow: 0 4px 16px rgba(122, 139, 114, 0.3);
 }

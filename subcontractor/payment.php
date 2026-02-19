@@ -134,7 +134,7 @@ require_once __DIR__ . '/includes/marketplace-header.php';
     font-family: var(--font-display);
     font-size: 28px;
     font-weight: 500;
-    color: var(--charcoal);
+    color: var(--text);
     margin-bottom: 24px;
 }
 
@@ -157,9 +157,9 @@ require_once __DIR__ . '/includes/marketplace-header.php';
     justify-content: space-between;
     align-items: center;
     padding: 12px 0;
-    border-bottom: 1px solid var(--cream-dark);
+    border-bottom: 1px solid var(--border);
     font-size: 14px;
-    color: var(--charcoal-light);
+    color: var(--text-secondary);
 }
 
 .payment-summary-row:last-child {
@@ -172,7 +172,7 @@ require_once __DIR__ . '/includes/marketplace-header.php';
 
 .payment-summary-value {
     font-weight: 600;
-    color: var(--charcoal);
+    color: var(--text);
 }
 
 .payment-total-row {
@@ -180,11 +180,11 @@ require_once __DIR__ . '/includes/marketplace-header.php';
     justify-content: space-between;
     align-items: center;
     padding: 16px 0;
-    border-top: 2px solid var(--charcoal);
+    border-top: 2px solid var(--text);
     margin-top: 8px;
     font-size: 16px;
     font-weight: 600;
-    color: var(--charcoal);
+    color: var(--text);
 }
 
 .payment-total-amount {
@@ -207,19 +207,19 @@ require_once __DIR__ . '/includes/marketplace-header.php';
 .payment-guarantee svg {
     width: 24px;
     height: 24px;
-    color: var(--sage-dark);
+    color: var(--accent-dark);
     flex-shrink: 0;
     margin-top: 1px;
 }
 
 .payment-guarantee-text {
     font-size: 13px;
-    color: var(--charcoal-light);
+    color: var(--text-secondary);
     line-height: 1.6;
 }
 
 .payment-guarantee-text strong {
-    color: var(--charcoal);
+    color: var(--text);
     font-weight: 600;
     display: block;
     margin-bottom: 2px;
@@ -237,7 +237,7 @@ require_once __DIR__ . '/includes/marketplace-header.php';
     font-size: 16px;
     font-weight: 600;
     color: var(--white);
-    background: var(--sage);
+    background: var(--accent);
     border: none;
     border-radius: 12px;
     cursor: pointer;
@@ -245,7 +245,7 @@ require_once __DIR__ . '/includes/marketplace-header.php';
 }
 
 .payment-btn:hover {
-    background: var(--sage-dark);
+    background: var(--accent-dark);
     transform: translateY(-1px);
     box-shadow: 0 4px 16px rgba(122, 139, 114, 0.3);
 }
@@ -260,13 +260,13 @@ require_once __DIR__ . '/includes/marketplace-header.php';
     text-align: center;
     margin-top: 16px;
     font-size: 14px;
-    color: var(--charcoal-light);
+    color: var(--text-secondary);
     text-decoration: none;
     transition: color 0.2s;
 }
 
 .payment-back:hover {
-    color: var(--charcoal);
+    color: var(--text);
 }
 
 @media (max-width: 640px) {

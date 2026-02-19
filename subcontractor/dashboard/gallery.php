@@ -229,7 +229,7 @@ $photoCount = count($photos);
 
 <style>
     .upload-zone {
-        border: 2px dashed var(--cream-dark);
+        border: 2px dashed var(--border);
         border-radius: 12px;
         padding: 32px 24px;
         text-align: center;
@@ -240,29 +240,29 @@ $photoCount = count($photos);
     }
     .upload-zone:hover,
     .upload-zone.dragover {
-        border-color: var(--sage);
+        border-color: var(--accent);
         background: rgba(168, 181, 160, 0.05);
     }
     .upload-zone svg.upload-icon {
         width: 40px;
         height: 40px;
-        color: var(--charcoal-light);
+        color: var(--text-secondary);
         margin-bottom: 12px;
     }
     .upload-zone p {
         font-size: 14px;
-        color: var(--charcoal-light);
+        color: var(--text-secondary);
         margin: 0;
     }
     .upload-zone .upload-link {
-        color: var(--sage-dark);
+        color: var(--accent-dark);
         font-weight: 600;
         text-decoration: underline;
         cursor: pointer;
     }
     .upload-zone .upload-hint {
         font-size: 12px;
-        color: var(--charcoal-light);
+        color: var(--text-secondary);
         margin-top: 8px;
         opacity: 0.7;
     }
@@ -293,7 +293,7 @@ $photoCount = count($photos);
     }
 
     .gallery-item-actions button.edit-btn:hover {
-        background: var(--sage-dark);
+        background: var(--accent-dark);
         color: var(--white);
     }
 
@@ -322,7 +322,7 @@ $photoCount = count($photos);
         font-family: var(--font-display);
         font-size: 20px;
         font-weight: 500;
-        color: var(--charcoal);
+        color: var(--text);
         margin: 0 0 16px;
     }
     .caption-modal .form-group {
@@ -337,7 +337,7 @@ $photoCount = count($photos);
 
     .photo-counter {
         font-size: 14px;
-        color: var(--charcoal-light);
+        color: var(--text-secondary);
         font-weight: 500;
     }
 </style>

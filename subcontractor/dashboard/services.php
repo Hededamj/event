@@ -412,7 +412,7 @@ $priceUnitLabels = [
                         >
                     </div>
                     <div class="form-group">
-                        <label class="form-label" for="price_to">Pris til <span style="font-weight:400; color:var(--charcoal-light); font-size:13px;">(valgfrit)</span></label>
+                        <label class="form-label" for="price_to">Pris til <span style="font-weight:400; color:var(--text-secondary); font-size:13px;">(valgfrit)</span></label>
                         <input
                             type="number"
                             id="price_to"
@@ -437,7 +437,7 @@ $priceUnitLabels = [
                         </select>
                     </div>
                     <div class="form-group">
-                        <label class="form-label" for="duration_hours">Varighed i timer <span style="font-weight:400; color:var(--charcoal-light); font-size:13px;">(valgfrit)</span></label>
+                        <label class="form-label" for="duration_hours">Varighed i timer <span style="font-weight:400; color:var(--text-secondary); font-size:13px;">(valgfrit)</span></label>
                         <input
                             type="number"
                             id="duration_hours"

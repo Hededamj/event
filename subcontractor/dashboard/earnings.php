@@ -243,32 +243,32 @@ if (!function_exists('formatDanishDateEarnings')) {
         font-size: 12px;
         text-transform: uppercase;
         letter-spacing: 0.5px;
-        color: var(--charcoal-light);
-        border-bottom: 2px solid var(--cream-dark);
+        color: var(--text-secondary);
+        border-bottom: 2px solid var(--border);
         white-space: nowrap;
     }
     .earnings-table td {
         padding: 12px 14px;
-        border-bottom: 1px solid var(--cream-dark);
-        color: var(--charcoal);
+        border-bottom: 1px solid var(--border);
+        color: var(--text);
         white-space: nowrap;
     }
     .earnings-table tr:last-child td {
         border-bottom: none;
     }
     .earnings-table .summary-row td {
-        border-top: 2px solid var(--charcoal);
+        border-top: 2px solid var(--text);
         border-bottom: none;
         font-weight: 700;
         padding-top: 14px;
-        color: var(--charcoal);
+        color: var(--text);
     }
     .earnings-table .amount {
         text-align: right;
         font-variant-numeric: tabular-nums;
     }
     .earnings-table a {
-        color: var(--sage-dark);
+        color: var(--accent-dark);
         text-decoration: none;
         font-weight: 500;
     }

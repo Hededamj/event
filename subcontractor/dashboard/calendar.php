@@ -96,7 +96,7 @@ $isCurrentMonth = ($month === $currentMonth && $year === $currentYear);
         font-family: var(--font-display);
         font-size: 24px;
         font-weight: 500;
-        color: var(--charcoal);
+        color: var(--text);
         text-align: center;
     }
     .calendar-nav a {
@@ -106,15 +106,15 @@ $isCurrentMonth = ($month === $currentMonth && $year === $currentYear);
         width: 40px;
         height: 40px;
         border-radius: 10px;
-        border: 2px solid var(--cream-dark);
+        border: 2px solid var(--border);
         background: var(--white);
-        color: var(--charcoal);
+        color: var(--text);
         text-decoration: none;
         transition: all 0.2s var(--ease-out);
     }
     .calendar-nav a:hover {
-        border-color: var(--sage);
-        background: var(--cream);
+        border-color: var(--accent);
+        background: var(--surface);
     }
     .calendar-nav a svg {
         width: 20px;
@@ -131,7 +131,7 @@ $isCurrentMonth = ($month === $currentMonth && $year === $currentYear);
         text-align: center;
         font-size: 13px;
         font-weight: 600;
-        color: var(--charcoal-light);
+        color: var(--text-secondary);
         text-transform: uppercase;
         letter-spacing: 0.5px;
     }
@@ -142,7 +142,7 @@ $isCurrentMonth = ($month === $currentMonth && $year === $currentYear);
         height: 80px;
         border-radius: 10px;
         background: var(--white);
-        border: 1px solid var(--cream-dark);
+        border: 1px solid var(--border);
         transition: all 0.2s var(--ease-out);
     }
     .calendar-table td.empty {
@@ -150,7 +150,7 @@ $isCurrentMonth = ($month === $currentMonth && $year === $currentYear);
         border-color: transparent;
     }
     .calendar-table td.today {
-        border-color: var(--sage);
+        border-color: var(--accent);
         background: rgba(168, 181, 160, 0.06);
     }
     .calendar-table td.has-bookings {
@@ -159,11 +159,11 @@ $isCurrentMonth = ($month === $currentMonth && $year === $currentYear);
     .calendar-day-number {
         font-size: 14px;
         font-weight: 600;
-        color: var(--charcoal);
+        color: var(--text);
         margin-bottom: 4px;
     }
     .calendar-table td.today .calendar-day-number {
-        color: var(--sage-dark);
+        color: var(--accent-dark);
     }
     .calendar-booking-dot {
         display: inline-flex;
@@ -183,7 +183,7 @@ $isCurrentMonth = ($month === $currentMonth && $year === $currentYear);
     }
     .calendar-booking-dot.status-confirmed {
         background: rgba(168, 181, 160, 0.2);
-        color: var(--sage-dark);
+        color: var(--accent-dark);
     }
     .calendar-booking-dot.status-deposited {
         background: rgba(212, 175, 55, 0.15);
@@ -200,7 +200,7 @@ $isCurrentMonth = ($month === $currentMonth && $year === $currentYear);
         width: 20px;
         height: 20px;
         border-radius: 50%;
-        background: var(--sage);
+        background: var(--accent);
         color: var(--white);
         font-size: 11px;
         font-weight: 700;

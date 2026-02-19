@@ -212,7 +212,7 @@ function renderStars(int $rating): string {
 <div class="card" style="margin-bottom: 32px;">
     <div class="card-header">
         <h2 class="card-title">Kommende bookinger</h2>
-        <a href="/subcontractor/dashboard/bookings.php" class="text-sm" style="color: var(--sage-dark); text-decoration: none; font-weight: 500;">Se alle</a>
+        <a href="/subcontractor/dashboard/bookings.php" class="text-sm" style="color: var(--accent-dark); text-decoration: none; font-weight: 500;">Se alle</a>
     </div>
     <div class="card-body" style="padding: 0;">
         <?php if (empty($upcomingBookings)): ?>
@@ -262,7 +262,7 @@ function renderStars(int $rating): string {
 <div class="card">
     <div class="card-header">
         <h2 class="card-title">Seneste anmeldelser</h2>
-        <a href="/subcontractor/dashboard/reviews.php" class="text-sm" style="color: var(--sage-dark); text-decoration: none; font-weight: 500;">Se alle</a>
+        <a href="/subcontractor/dashboard/reviews.php" class="text-sm" style="color: var(--accent-dark); text-decoration: none; font-weight: 500;">Se alle</a>
     </div>
     <div class="card-body">
         <?php if (empty($recentReviews)): ?>
@@ -277,7 +277,7 @@ function renderStars(int $rating): string {
             </div>
         <?php else: ?>
             <?php foreach ($recentReviews as $review): ?>
-                <div style="padding-bottom: 20px; margin-bottom: 20px; border-bottom: 1px solid var(--cream-dark);">
+                <div style="padding-bottom: 20px; margin-bottom: 20px; border-bottom: 1px solid var(--border);">
                     <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
                         <div style="display: flex; align-items: center; gap: 10px;">
                             <?= renderStars((int) $review['rating']) ?>
@@ -294,7 +294,7 @@ function renderStars(int $rating): string {
                 </div>
             <?php endforeach; ?>
             <div style="text-align: center;">
-                <a href="/subcontractor/dashboard/reviews.php" style="color: var(--sage-dark); text-decoration: none; font-weight: 500; font-size: 14px;">Se alle anmeldelser</a>
+                <a href="/subcontractor/dashboard/reviews.php" style="color: var(--accent-dark); text-decoration: none; font-weight: 500; font-size: 14px;">Se alle anmeldelser</a>
             </div>
         <?php endif; ?>
     </div>

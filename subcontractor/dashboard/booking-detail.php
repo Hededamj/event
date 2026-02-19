@@ -151,7 +151,7 @@ if ($eventDateTs) {
     <div class="page-header-left">
         <h1 class="page-title">Booking #<?= $bookingId ?></h1>
         <p class="page-subtitle">
-            <a href="/subcontractor/dashboard/bookings.php" style="color: var(--sage-dark); text-decoration: none;">
+            <a href="/subcontractor/dashboard/bookings.php" style="color: var(--accent-dark); text-decoration: none;">
                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 16px; height: 16px; vertical-align: text-bottom; margin-right: 4px;">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
                 </svg>
@@ -209,15 +209,15 @@ if ($eventDateTs) {
     </div>
     <div class="card-body">
         <div style="display: flex; flex-direction: column; gap: 12px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 12px; border-bottom: 1px solid var(--cream-dark);">
+            <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 12px; border-bottom: 1px solid var(--border);">
                 <span class="text-muted">Tilbudt pris</span>
                 <span class="table-cell-primary"><?= number_format((float) $booking['quoted_price'], 2, ',', '.') ?> kr</span>
             </div>
-            <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 12px; border-bottom: 1px solid var(--cream-dark);">
+            <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 12px; border-bottom: 1px solid var(--border);">
                 <span class="text-muted">Depositum (25%)</span>
                 <span><?= number_format((float) $booking['depositum_amount'], 2, ',', '.') ?> kr</span>
             </div>
-            <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 12px; border-bottom: 1px solid var(--cream-dark);">
+            <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 12px; border-bottom: 1px solid var(--border);">
                 <span class="text-muted">Kommission (15%)</span>
                 <span style="color: var(--error);">-<?= number_format((float) $booking['commission_amount'], 2, ',', '.') ?> kr</span>
             </div>
@@ -241,7 +241,7 @@ if ($eventDateTs) {
             <div style="margin-bottom: 16px;">
                 <p class="text-muted" style="margin-bottom: 16px;">Arrangøren har sendt en forespørgsel. Angiv din pris og send et tilbud.</p>
                 <?php if (!empty($booking['organizer_message'])): ?>
-                    <div style="background: var(--cream); border-radius: 10px; padding: 16px; margin-bottom: 20px;">
+                    <div style="background: var(--surface); border-radius: 10px; padding: 16px; margin-bottom: 20px;">
                         <div class="text-sm" style="font-weight: 600; margin-bottom: 6px;">Besked fra arrangør:</div>
                         <p style="margin: 0; font-size: 14px; line-height: 1.6;"><?= nl2br(htmlspecialchars($booking['organizer_message'])) ?></p>
                     </div>
@@ -277,7 +277,7 @@ if ($eventDateTs) {
 
         <?php elseif ($status === 'quoted'): ?>
             <div style="background: rgba(201, 169, 98, 0.1); border: 1px solid rgba(201, 169, 98, 0.25); border-radius: 10px; padding: 20px; display: flex; align-items: center; gap: 12px;">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 24px; height: 24px; color: var(--gold); flex-shrink: 0;">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 24px; height: 24px; color: var(--warning); flex-shrink: 0;">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                 </svg>
                 <div>
@@ -288,7 +288,7 @@ if ($eventDateTs) {
 
         <?php elseif ($status === 'accepted'): ?>
             <div style="background: rgba(168, 181, 160, 0.12); border: 1px solid rgba(168, 181, 160, 0.3); border-radius: 10px; padding: 20px; display: flex; align-items: center; gap: 12px;">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 24px; height: 24px; color: var(--sage-dark); flex-shrink: 0;">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 24px; height: 24px; color: var(--accent-dark); flex-shrink: 0;">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                 </svg>
                 <div>
@@ -333,7 +333,7 @@ if ($eventDateTs) {
                     <?php if ($daysUntilEvent > 0): ?>
                         <div style="display: flex; align-items: center; gap: 16px; margin-top: 12px;">
                             <div style="background: var(--white); border-radius: 12px; padding: 16px 24px; text-align: center;">
-                                <div style="font-family: var(--font-display); font-size: 36px; font-weight: 500; color: var(--sage-dark); line-height: 1;"><?= $daysUntilEvent ?></div>
+                                <div style="font-family: var(--font-display); font-size: 36px; font-weight: 500; color: var(--accent-dark); line-height: 1;"><?= $daysUntilEvent ?></div>
                                 <div class="text-sm text-muted" style="margin-top: 4px;">dage til event</div>
                             </div>
                             <div>
@@ -345,7 +345,7 @@ if ($eventDateTs) {
                             </div>
                         </div>
                     <?php elseif ($daysUntilEvent === 0): ?>
-                        <p style="margin: 0; font-size: 14px; font-weight: 600; color: var(--sage-dark);">Eventet er i dag!</p>
+                        <p style="margin: 0; font-size: 14px; font-weight: 600; color: var(--accent-dark);">Eventet er i dag!</p>
                     <?php else: ?>
                         <p class="text-muted" style="margin: 0; font-size: 14px;">Eventet fandt sted <?= formatDanishDate($booking['event_date']) ?>.</p>
                     <?php endif; ?>
@@ -354,7 +354,7 @@ if ($eventDateTs) {
 
         <?php elseif ($status === 'completed' || $status === 'reviewed'): ?>
             <div style="display: flex; align-items: center; gap: 12px;">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 24px; height: 24px; color: var(--charcoal-light); flex-shrink: 0;">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 24px; height: 24px; color: var(--text-secondary); flex-shrink: 0;">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                 </svg>
                 <div>

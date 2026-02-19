@@ -215,7 +215,7 @@ require_once __DIR__ . '/includes/marketplace-header.php';
 
     /* ---- Hero Section ---- */
     .mp-hero {
-        background: linear-gradient(135deg, var(--sage-light) 0%, var(--sage) 100%);
+        background: linear-gradient(135deg, var(--accent-light) 0%, var(--accent) 100%);
         padding: 64px 24px;
         text-align: center;
     }
@@ -253,11 +253,11 @@ require_once __DIR__ . '/includes/marketplace-header.php';
     }
 
     .mp-hero-search .mp-search-btn {
-        background: var(--charcoal);
+        background: var(--text);
     }
 
     .mp-hero-search .mp-search-btn:hover {
-        background: var(--charcoal-light);
+        background: var(--text-secondary);
     }
 
     /* ---- Category Grid ---- */
@@ -269,7 +269,7 @@ require_once __DIR__ . '/includes/marketplace-header.php';
         font-family: var(--font-display);
         font-size: 28px;
         font-weight: 500;
-        color: var(--charcoal);
+        color: var(--text);
         text-align: center;
         margin-bottom: 32px;
     }
@@ -309,19 +309,19 @@ require_once __DIR__ . '/includes/marketplace-header.php';
     .mp-category-card-name {
         font-size: 15px;
         font-weight: 600;
-        color: var(--charcoal);
+        color: var(--text);
         margin-bottom: 4px;
     }
 
     .mp-category-card-count {
         font-size: 13px;
-        color: var(--charcoal-light);
+        color: var(--text-secondary);
     }
 
     /* ---- Filter + Vendor Grid Layout ---- */
     .mp-browse-section {
         padding: 48px 24px;
-        background: var(--cream);
+        background: var(--surface);
     }
 
     .mp-browse-layout {
@@ -347,7 +347,7 @@ require_once __DIR__ . '/includes/marketplace-header.php';
         font-family: var(--font-display);
         font-size: 20px;
         font-weight: 500;
-        color: var(--charcoal);
+        color: var(--text);
         margin-bottom: 20px;
     }
 
@@ -359,7 +359,7 @@ require_once __DIR__ . '/includes/marketplace-header.php';
         display: block;
         font-size: 13px;
         font-weight: 600;
-        color: var(--charcoal);
+        color: var(--text);
         margin-bottom: 8px;
         text-transform: uppercase;
         letter-spacing: 0.03em;
@@ -374,14 +374,14 @@ require_once __DIR__ . '/includes/marketplace-header.php';
         border: 2px solid var(--border);
         border-radius: 8px;
         background: var(--white);
-        color: var(--charcoal);
+        color: var(--text);
         transition: border-color 0.2s ease;
     }
 
     .mp-filter-input:focus,
     .mp-filter-select:focus {
         outline: none;
-        border-color: var(--sage);
+        border-color: var(--accent);
     }
 
     .mp-filter-select {
@@ -411,7 +411,7 @@ require_once __DIR__ . '/includes/marketplace-header.php';
         font-size: 14px;
         font-weight: 600;
         color: var(--white);
-        background: var(--sage);
+        background: var(--accent);
         border: none;
         border-radius: 8px;
         cursor: pointer;
@@ -420,7 +420,7 @@ require_once __DIR__ . '/includes/marketplace-header.php';
     }
 
     .mp-filter-apply:hover {
-        background: var(--sage-dark);
+        background: var(--accent-dark);
     }
 
     .mp-filter-reset {
@@ -429,7 +429,7 @@ require_once __DIR__ . '/includes/marketplace-header.php';
         text-align: center;
         margin-top: 8px;
         font-size: 13px;
-        color: var(--charcoal-light);
+        color: var(--text-secondary);
         text-decoration: none;
         padding: 6px;
         border-radius: 6px;
@@ -437,8 +437,8 @@ require_once __DIR__ . '/includes/marketplace-header.php';
     }
 
     .mp-filter-reset:hover {
-        background: var(--cream);
-        color: var(--charcoal);
+        background: var(--surface);
+        color: var(--text);
     }
 
     /* ---- Vendor Grid ---- */
@@ -455,7 +455,7 @@ require_once __DIR__ . '/includes/marketplace-header.php';
 
     .mp-vendor-grid-count {
         font-size: 14px;
-        color: var(--charcoal-light);
+        color: var(--text-secondary);
     }
 
     .mp-vendor-grid {
@@ -485,13 +485,13 @@ require_once __DIR__ . '/includes/marketplace-header.php';
         width: 100%;
         height: 180px;
         object-fit: cover;
-        background: var(--sage-light);
+        background: var(--accent-light);
     }
 
     .mp-vendor-card-placeholder {
         width: 100%;
         height: 180px;
-        background: linear-gradient(135deg, var(--sage-light) 0%, var(--sage) 100%);
+        background: linear-gradient(135deg, var(--accent-light) 0%, var(--accent) 100%);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -514,14 +514,14 @@ require_once __DIR__ . '/includes/marketplace-header.php';
         font-family: var(--font-display);
         font-size: 20px;
         font-weight: 500;
-        color: var(--charcoal);
+        color: var(--text);
         margin-bottom: 6px;
         line-height: 1.3;
     }
 
     .mp-vendor-card-desc {
         font-size: 14px;
-        color: var(--charcoal-light);
+        color: var(--text-secondary);
         line-height: 1.5;
         margin-bottom: 12px;
         flex: 1;
@@ -540,7 +540,7 @@ require_once __DIR__ . '/includes/marketplace-header.php';
         align-items: center;
         gap: 6px;
         font-size: 13px;
-        color: var(--charcoal-light);
+        color: var(--text-secondary);
     }
 
     .mp-vendor-card-rating .stars svg {
@@ -551,12 +551,12 @@ require_once __DIR__ . '/includes/marketplace-header.php';
     .mp-vendor-card-price {
         font-size: 14px;
         font-weight: 600;
-        color: var(--sage-dark);
+        color: var(--accent-dark);
     }
 
     .mp-vendor-card-city {
         font-size: 13px;
-        color: var(--charcoal-light);
+        color: var(--text-secondary);
         margin-top: 8px;
         display: flex;
         align-items: center;
@@ -585,13 +585,13 @@ require_once __DIR__ . '/includes/marketplace-header.php';
         font-family: var(--font-display);
         font-size: 32px;
         font-weight: 500;
-        color: var(--charcoal);
+        color: var(--text);
         margin-bottom: 12px;
     }
 
     .mp-cta-section p {
         font-size: 16px;
-        color: var(--charcoal-light);
+        color: var(--text-secondary);
         margin-bottom: 28px;
         line-height: 1.6;
     }
@@ -605,7 +605,7 @@ require_once __DIR__ . '/includes/marketplace-header.php';
         font-size: 16px;
         font-weight: 600;
         color: var(--white);
-        background: var(--sage);
+        background: var(--accent);
         border: none;
         border-radius: 12px;
         text-decoration: none;
@@ -614,7 +614,7 @@ require_once __DIR__ . '/includes/marketplace-header.php';
     }
 
     .mp-cta-btn:hover {
-        background: var(--sage-dark);
+        background: var(--accent-dark);
         transform: translateY(-2px);
         box-shadow: 0 6px 20px rgba(122, 139, 114, 0.3);
     }
@@ -626,7 +626,7 @@ require_once __DIR__ . '/includes/marketplace-header.php';
         font-size: 13px;
         color: rgba(44, 44, 44, 0.4);
         border-top: 1px solid var(--border);
-        background: var(--cream);
+        background: var(--surface);
     }
 
     .mp-footer a {
@@ -636,7 +636,7 @@ require_once __DIR__ . '/includes/marketplace-header.php';
     }
 
     .mp-footer a:hover {
-        color: var(--charcoal);
+        color: var(--text);
     }
 
     /* ---- Empty State ---- */
@@ -655,13 +655,13 @@ require_once __DIR__ . '/includes/marketplace-header.php';
         font-family: var(--font-display);
         font-size: 22px;
         font-weight: 500;
-        color: var(--charcoal);
+        color: var(--text);
         margin-bottom: 8px;
     }
 
     .mp-empty p {
         font-size: 15px;
-        color: var(--charcoal-light);
+        color: var(--text-secondary);
     }
 
     /* ---- Responsive ---- */

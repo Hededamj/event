@@ -192,10 +192,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         font-family: var(--font-display);
         font-size: 22px;
         font-weight: 500;
-        color: var(--charcoal);
+        color: var(--text);
         margin-bottom: 20px;
         padding-bottom: 12px;
-        border-bottom: 2px solid var(--cream-dark);
+        border-bottom: 2px solid var(--border);
         display: flex;
         align-items: center;
         gap: 10px;
@@ -203,7 +203,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     .profile-section-heading svg {
         width: 22px;
         height: 22px;
-        color: var(--sage-dark);
+        color: var(--accent-dark);
         flex-shrink: 0;
     }
     .error-list {
@@ -228,7 +228,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     .char-counter {
         text-align: right;
         font-size: 12px;
-        color: var(--charcoal-light);
+        color: var(--text-secondary);
         margin-top: 6px;
     }
     .char-counter.over-limit {
@@ -250,25 +250,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         align-items: center;
         gap: 10px;
         padding: 12px 14px;
-        border: 2px solid var(--cream-dark);
+        border: 2px solid var(--border);
         border-radius: 10px;
         cursor: pointer;
         transition: all 0.2s var(--ease-out);
         font-size: 14px;
     }
     .category-option:hover {
-        border-color: var(--sage-light);
-        background: var(--cream);
+        border-color: var(--accent-light);
+        background: var(--surface);
     }
     .category-option input[type="checkbox"] {
         width: 18px;
         height: 18px;
-        accent-color: var(--sage-dark);
+        accent-color: var(--accent-dark);
         flex-shrink: 0;
         cursor: pointer;
     }
     .category-option:has(input:checked) {
-        border-color: var(--sage);
+        border-color: var(--accent);
         background: rgba(168, 181, 160, 0.08);
     }
     .category-option:has(input:checked) .category-label-text {
@@ -289,8 +289,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         height: 120px;
         border-radius: 12px;
         overflow: hidden;
-        border: 2px solid var(--cream-dark);
-        background: var(--cream);
+        border: 2px solid var(--border);
+        background: var(--surface);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -307,7 +307,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         object-fit: cover;
     }
     .image-preview .no-image {
-        color: var(--charcoal-light);
+        color: var(--text-secondary);
         font-size: 13px;
         text-align: center;
         padding: 8px;
@@ -330,24 +330,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         padding: 10px 0;
         font-family: var(--font-body);
         font-size: 14px;
-        color: var(--charcoal);
+        color: var(--text);
     }
     .form-input-file::file-selector-button {
         padding: 8px 16px;
         font-family: var(--font-body);
         font-size: 13px;
         font-weight: 600;
-        border: 2px solid var(--cream-dark);
+        border: 2px solid var(--border);
         border-radius: 8px;
         background: var(--white);
-        color: var(--charcoal);
+        color: var(--text);
         cursor: pointer;
         margin-right: 12px;
         transition: all 0.2s var(--ease-out);
     }
     .form-input-file::file-selector-button:hover {
-        border-color: var(--sage);
-        background: var(--cream);
+        border-color: var(--accent);
+        background: var(--surface);
     }
 </style>
 

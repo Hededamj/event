@@ -126,7 +126,7 @@ if (!function_exists('renderAvgStars')) {
         font-family: var(--font-display);
         font-size: 42px;
         font-weight: 600;
-        color: var(--charcoal);
+        color: var(--text);
         line-height: 1;
     }
     .reviews-avg-detail {
@@ -140,11 +140,11 @@ if (!function_exists('renderAvgStars')) {
     }
     .reviews-count-label {
         font-size: 14px;
-        color: var(--charcoal-light);
+        color: var(--text-secondary);
     }
     .review-item {
         padding: 24px 0;
-        border-bottom: 1px solid var(--cream-dark);
+        border-bottom: 1px solid var(--border);
     }
     .review-item:first-child {
         padding-top: 0;
@@ -169,37 +169,37 @@ if (!function_exists('renderAvgStars')) {
     .review-reviewer {
         font-weight: 600;
         font-size: 15px;
-        color: var(--charcoal);
+        color: var(--text);
     }
     .review-date {
         font-size: 13px;
-        color: var(--charcoal-light);
+        color: var(--text-secondary);
     }
     .review-title {
         font-weight: 600;
         font-size: 16px;
-        color: var(--charcoal);
+        color: var(--text);
         margin-bottom: 6px;
     }
     .review-text {
         font-size: 14px;
         line-height: 1.7;
-        color: var(--charcoal);
+        color: var(--text);
         margin: 0;
     }
     .review-response {
         margin-top: 16px;
         padding: 16px 20px;
-        background: var(--cream);
+        background: var(--surface);
         border-radius: 12px;
-        border-left: 3px solid var(--sage);
+        border-left: 3px solid var(--accent);
     }
     .review-response-label {
         font-size: 12px;
         font-weight: 600;
         text-transform: uppercase;
         letter-spacing: 0.5px;
-        color: var(--sage-dark);
+        color: var(--accent-dark);
         margin-bottom: 6px;
         display: flex;
         align-items: center;
@@ -209,12 +209,12 @@ if (!function_exists('renderAvgStars')) {
         font-weight: 400;
         text-transform: none;
         letter-spacing: 0;
-        color: var(--charcoal-light);
+        color: var(--text-secondary);
     }
     .review-response-text {
         font-size: 14px;
         line-height: 1.6;
-        color: var(--charcoal);
+        color: var(--text);
         margin: 0;
     }
     .review-respond-form {
@@ -223,7 +223,7 @@ if (!function_exists('renderAvgStars')) {
     .review-respond-form textarea {
         width: 100%;
         padding: 12px 14px;
-        border: 2px solid var(--cream-dark);
+        border: 2px solid var(--border);
         border-radius: 10px;
         font-family: var(--font-body);
         font-size: 14px;
@@ -235,7 +235,7 @@ if (!function_exists('renderAvgStars')) {
     }
     .review-respond-form textarea:focus {
         outline: none;
-        border-color: var(--sage);
+        border-color: var(--accent);
     }
     .review-respond-form .form-actions {
         margin-top: 10px;
