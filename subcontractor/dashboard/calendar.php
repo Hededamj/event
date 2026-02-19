@@ -71,7 +71,8 @@ $bookings = $stmt->fetchAll();
 // Group bookings by day number
 $bookingsByDay = [];
 foreach ($bookings as $booking) {
-    $day = (int)date('j', strtotime($booking['event_date']));
+    $eventDate = $booking['event_date'] ?? '';
+    $day = $eventDate ? (int)date('j', strtotime($eventDate)) : 0;
     if (!isset($bookingsByDay[$day])) {
         $bookingsByDay[$day] = [];
     }

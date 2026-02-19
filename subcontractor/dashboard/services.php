@@ -43,9 +43,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ");
                 $stmt->execute([
                     $vendorId,
-                    sanitizeString($_POST['title']),
+                    sanitizeString($_POST['title'] ?? ''),
                     !empty($_POST['description']) ? trim($_POST['description']) : null,
-                    (float) $_POST['price_from'],
+                    (float) ($_POST['price_from'] ?? 0),
                     (!empty($_POST['price_to']) && $_POST['price_to'] !== '') ? (float) $_POST['price_to'] : null,
                     $_POST['price_unit'] ?? 'fixed',
                     (!empty($_POST['duration_hours']) && $_POST['duration_hours'] !== '') ? (float) $_POST['duration_hours'] : null,
@@ -77,9 +77,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     WHERE id = ? AND vendor_id = ?
                 ");
                 $stmt->execute([
-                    sanitizeString($_POST['title']),
+                    sanitizeString($_POST['title'] ?? ''),
                     !empty($_POST['description']) ? trim($_POST['description']) : null,
-                    (float) $_POST['price_from'],
+                    (float) ($_POST['price_from'] ?? 0),
                     (!empty($_POST['price_to']) && $_POST['price_to'] !== '') ? (float) $_POST['price_to'] : null,
                     $_POST['price_unit'] ?? 'fixed',
                     (!empty($_POST['duration_hours']) && $_POST['duration_hours'] !== '') ? (float) $_POST['duration_hours'] : null,

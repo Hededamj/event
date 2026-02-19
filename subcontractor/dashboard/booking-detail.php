@@ -19,6 +19,7 @@ if (!function_exists('formatDanishDate')) {
             9 => 'september', 10 => 'oktober', 11 => 'november', 12 => 'december'
         ];
         $ts = strtotime($dateStr);
+        if (!$ts) return $dateStr;
         $day = (int) date('j', $ts);
         $month = $months[(int) date('n', $ts)];
         $year = date('Y', $ts);
