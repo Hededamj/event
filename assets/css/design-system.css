@@ -246,6 +246,12 @@ img {
   position: relative;
 }
 
+.ds-nav-link svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
 .ds-nav-link:hover {
   background: rgba(255, 255, 255, 0.06);
   color: var(--text-sidebar-hover);
@@ -829,6 +835,12 @@ tr:hover td {
   font-size: 14px;
   font-weight: 500;
   margin-bottom: var(--space-md);
+}
+
+.flash-message svg {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
 }
 
 .flash-message.success,
