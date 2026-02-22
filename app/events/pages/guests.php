@@ -708,7 +708,7 @@ endif;
 <?php endif; ?>
 
 <!-- Add Guest Modal -->
-<div class="modal-overlay" id="addModal" style="display: none;">
+<div class="modal-overlay" id="addModal">
     <div class="modal">
         <div class="modal-header">
             <h3>Tilføj gæst</h3>
@@ -754,7 +754,7 @@ endif;
 </div>
 
 <!-- Bulk Add Modal -->
-<div class="modal-overlay" id="bulkModal" style="display: none;">
+<div class="modal-overlay" id="bulkModal">
     <div class="modal" style="max-width: 500px;">
         <div class="modal-header">
             <h3>Tilføj mange gæster</h3>
@@ -791,7 +791,7 @@ Fætter Magnus (1)
 </div>
 
 <!-- CSV Import Modal -->
-<div class="modal-overlay" id="importModal" style="display: none;">
+<div class="modal-overlay" id="importModal">
     <div class="modal" style="max-width: 700px;">
         <div class="modal-header">
             <h3>Importér gæster fra CSV</h3>
@@ -878,7 +878,7 @@ Marie Jensen;marie@email.dk;;1"></textarea>
 </div>
 
 <!-- Edit Guest Modal -->
-<div class="modal-overlay" id="editModal" style="display: none;">
+<div class="modal-overlay" id="editModal">
     <div class="modal">
         <div class="modal-header">
             <h3>Rediger gæst</h3>
@@ -1307,28 +1307,28 @@ Marie Jensen;marie@email.dk;;1"></textarea>
 let currentEditGuest = null;
 
 function showAddModal() {
-    document.getElementById('addModal').style.display = 'flex';
+    document.getElementById('addModal').classList.add('active');
 }
 
 function hideAddModal() {
-    document.getElementById('addModal').style.display = 'none';
+    document.getElementById('addModal').classList.remove('active');
 }
 
 function showBulkModal() {
-    document.getElementById('bulkModal').style.display = 'flex';
+    document.getElementById('bulkModal').classList.add('active');
 }
 
 function hideBulkModal() {
-    document.getElementById('bulkModal').style.display = 'none';
+    document.getElementById('bulkModal').classList.remove('active');
 }
 
 function showImportModal() {
-    document.getElementById('importModal').style.display = 'flex';
+    document.getElementById('importModal').classList.add('active');
     goToStep(1);
 }
 
 function hideImportModal() {
-    document.getElementById('importModal').style.display = 'none';
+    document.getElementById('importModal').classList.remove('active');
 }
 
 function editGuest(guest) {
@@ -1352,11 +1352,11 @@ function editGuest(guest) {
     // Generate name input fields
     updateEditNameFields();
 
-    document.getElementById('editModal').style.display = 'flex';
+    document.getElementById('editModal').classList.add('active');
 }
 
 function hideEditModal() {
-    document.getElementById('editModal').style.display = 'none';
+    document.getElementById('editModal').classList.remove('active');
 }
 
 function updateEditNameFields() {
@@ -1428,7 +1428,7 @@ function copyLink(code) {
 document.querySelectorAll('.modal-overlay').forEach(overlay => {
     overlay.addEventListener('click', function(e) {
         if (e.target === this) {
-            this.style.display = 'none';
+            this.classList.remove('active');
         }
     });
 });

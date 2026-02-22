@@ -7,7 +7,7 @@
 /**
  * Load environment variables from .env file
  */
-function loadEnv(string $path = null): void {
+function loadEnv(?string $path = null): void {
     static $loaded = false;
 
     if ($loaded) {

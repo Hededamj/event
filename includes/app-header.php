@@ -3,6 +3,7 @@
  * App Header - Main application layout wrapper
  * Nordic Design System
  */
+ob_start();
 
 require_once __DIR__ . '/../config/saas.php';
 require_once __DIR__ . '/functions.php';
