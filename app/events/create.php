@@ -180,7 +180,7 @@ $error = $error ?? '';
                             ?>
                         </div>
                         <h3><?= htmlspecialchars($type['name']) ?></h3>
-                        <p><?= htmlspecialchars($type['description']) ?></p>
+                        <p><?= htmlspecialchars($type['description'] ?? '') ?></p>
                     </div>
                 </label>
                 <?php endforeach; ?>
@@ -669,7 +669,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let currentStep = 1;
 
     // Event type data for secondary person display
-    const eventTypesWithSecondary = <?= json_encode(array_filter($eventTypes, function($t) { return $t['has_secondary_person']; })) ?>;
+    const eventTypesWithSecondary = <?= json_encode(array_values(array_filter($eventTypes, function($t) { return !empty($t['has_secondary_person']); }))) ?>;
     const eventTypeIds = eventTypesWithSecondary.map(t => t.id);
 
     // Navigation
