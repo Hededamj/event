@@ -661,6 +661,17 @@ $error = $error ?? '';
     }
 </style>
 
+<?php
+// Compute before script tag so any PHP warnings appear in HTML, not inside JS
+$secondaryTypeIds = [];
+foreach ($eventTypes as $t) {
+    if (!empty($t['has_secondary_person'])) {
+        $secondaryTypeIds[] = (int)$t['id'];
+    }
+}
+$secondaryTypeIdsJson = json_encode($secondaryTypeIds);
+?>
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('wizardForm');
@@ -668,9 +679,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const progressSteps = document.querySelectorAll('.progress-step');
     let currentStep = 1;
 
-    // Event type data for secondary person display
-    const eventTypesWithSecondary = <?= json_encode(array_values(array_filter($eventTypes, function($t) { return !empty($t['has_secondary_person']); }))) ?>;
-    const eventTypeIds = eventTypesWithSecondary.map(t => t.id);
+    // Event type IDs that support secondary person
+    const eventTypeIds = <?= $secondaryTypeIdsJson ?>;
 
     // Navigation
     document.querySelectorAll('.next-step').forEach(btn => {
