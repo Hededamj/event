@@ -146,7 +146,7 @@ $items = $stmt->fetchAll();
 <?php endif; ?>
 
 <!-- Add Item Modal -->
-<div class="modal-overlay" id="addModal" style="display: none;">
+<div class="modal-overlay" id="addModal">
     <div class="modal">
         <div class="modal-header">
             <h3>Tilføj ønske</h3>
@@ -192,7 +192,7 @@ $items = $stmt->fetchAll();
 </div>
 
 <!-- Edit Item Modal -->
-<div class="modal-overlay" id="editModal" style="display: none;">
+<div class="modal-overlay" id="editModal">
     <div class="modal">
         <div class="modal-header">
             <h3>Rediger ønske</h3>
@@ -337,10 +337,10 @@ $items = $stmt->fetchAll();
 
 <script>
 function showAddModal() {
-    document.getElementById('addModal').style.display = 'flex';
+    document.getElementById('addModal').classList.add('active');
 }
 function hideAddModal() {
-    document.getElementById('addModal').style.display = 'none';
+    document.getElementById('addModal').classList.remove('active');
 }
 function editItem(item) {
     document.getElementById('edit_item_id').value = item.id;
@@ -349,10 +349,10 @@ function editItem(item) {
     document.getElementById('edit_price').value = item.price || '';
     document.getElementById('edit_priority').value = item.priority || 0;
     document.getElementById('edit_url').value = item.url || '';
-    document.getElementById('editModal').style.display = 'flex';
+    document.getElementById('editModal').classList.add('active');
 }
 function hideEditModal() {
-    document.getElementById('editModal').style.display = 'none';
+    document.getElementById('editModal').classList.remove('active');
 }
 function deleteItem(id) {
     if (confirm('Er du sikker på at du vil slette dette ønske?')) {
@@ -361,6 +361,6 @@ function deleteItem(id) {
     }
 }
 document.querySelectorAll('.modal-overlay').forEach(o => {
-    o.addEventListener('click', function(e) { if (e.target === this) this.style.display = 'none'; });
+    o.addEventListener('click', function(e) { if (e.target === this) this.classList.remove('active'); });
 });
 </script>

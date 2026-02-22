@@ -303,7 +303,7 @@ $baseUrl = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : '
 </div>
 
 <!-- Add Item Modal -->
-<div class="modal-overlay" id="addModal" style="display: none;">
+<div class="modal-overlay" id="addModal">
     <div class="modal" style="max-width: 450px;">
         <div class="modal-header">
             <h3>Tilfoj indslag</h3>
@@ -356,7 +356,7 @@ $baseUrl = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : '
 </div>
 
 <!-- Access Modal -->
-<div class="modal-overlay" id="accessModal" style="display: none;">
+<div class="modal-overlay" id="accessModal">
     <div class="modal" style="max-width: 500px;">
         <div class="modal-header">
             <h3>Toastmaster-adgang</h3>
@@ -553,19 +553,19 @@ const eventId = <?= $eventId ?>;
 const baseUrl = '<?= $baseUrl ?>';
 
 function showAddModal() {
-    document.getElementById('addModal').style.display = 'flex';
+    document.getElementById('addModal').classList.add('active');
 }
 
 function hideAddModal() {
-    document.getElementById('addModal').style.display = 'none';
+    document.getElementById('addModal').classList.remove('active');
 }
 
 function showAccessModal() {
-    document.getElementById('accessModal').style.display = 'flex';
+    document.getElementById('accessModal').classList.add('active');
 }
 
 function hideAccessModal() {
-    document.getElementById('accessModal').style.display = 'none';
+    document.getElementById('accessModal').classList.remove('active');
 }
 
 // Toggle other name input
@@ -724,7 +724,7 @@ function copyAccessLink(code) {
 document.querySelectorAll('.modal-overlay').forEach(overlay => {
     overlay.addEventListener('click', function(e) {
         if (e.target === this) {
-            this.style.display = 'none';
+            this.classList.remove('active');
         }
     });
 });

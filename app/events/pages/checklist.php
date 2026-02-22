@@ -133,7 +133,7 @@ $pending = array_filter($items, fn($i) => !$i['completed']);
 </div>
 <?php endif; ?>
 
-<div class="modal-overlay" id="addModal" style="display: none;">
+<div class="modal-overlay" id="addModal">
     <div class="modal">
         <div class="modal-header">
             <h3>Tilføj opgave</h3>
@@ -185,9 +185,9 @@ $pending = array_filter($items, fn($i) => !$i['completed']);
 </style>
 
 <script>
-function showAddModal() { document.getElementById('addModal').style.display = 'flex'; }
-function hideAddModal() { document.getElementById('addModal').style.display = 'none'; }
+function showAddModal() { document.getElementById('addModal').classList.add('active'); }
+function hideAddModal() { document.getElementById('addModal').classList.remove('active'); }
 document.querySelectorAll('.modal-overlay').forEach(o => {
-    o.addEventListener('click', function(e) { if (e.target === this) this.style.display = 'none'; });
+    o.addEventListener('click', function(e) { if (e.target === this) this.classList.remove('active'); });
 });
 </script>

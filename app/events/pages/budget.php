@@ -233,7 +233,7 @@ foreach ($items as $item) {
 <?php endif; ?>
 
 <!-- Add Modal -->
-<div class="modal-overlay" id="addModal" style="display: none;">
+<div class="modal-overlay" id="addModal">
     <div class="modal" style="max-width: 450px;">
         <div class="modal-header">
             <h3>Tilfoj budgetpost</h3>
@@ -281,7 +281,7 @@ foreach ($items as $item) {
 </div>
 
 <!-- Edit Modal -->
-<div class="modal-overlay" id="editModal" style="display: none;">
+<div class="modal-overlay" id="editModal">
     <div class="modal" style="max-width: 450px;">
         <div class="modal-header">
             <h3>Rediger budgetpost</h3>
@@ -415,19 +415,19 @@ foreach ($items as $item) {
 
 <script>
 function showAddModal() {
-    document.getElementById('addModal').style.display = 'flex';
+    document.getElementById('addModal').classList.add('active');
 }
 
 function hideAddModal() {
-    document.getElementById('addModal').style.display = 'none';
+    document.getElementById('addModal').classList.remove('active');
 }
 
 function showEditModal() {
-    document.getElementById('editModal').style.display = 'flex';
+    document.getElementById('editModal').classList.add('active');
 }
 
 function hideEditModal() {
-    document.getElementById('editModal').style.display = 'none';
+    document.getElementById('editModal').classList.remove('active');
 }
 
 function editItem(item) {
@@ -443,7 +443,7 @@ function editItem(item) {
 document.querySelectorAll('.modal-overlay').forEach(overlay => {
     overlay.addEventListener('click', function(e) {
         if (e.target === this) {
-            this.style.display = 'none';
+            this.classList.remove('active');
         }
     });
 });

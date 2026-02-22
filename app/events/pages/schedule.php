@@ -176,7 +176,7 @@ $section = in_array($_GET['section'] ?? '', ['schedule', 'menu']) ? $_GET['secti
 <?php endif; ?>
 
 <!-- Schedule Add Modal -->
-<div class="modal-overlay" id="addModal" style="display: none;">
+<div class="modal-overlay" id="addModal">
     <div class="modal">
         <div class="modal-header">
             <h3>Tilføj programpunkt</h3>
@@ -208,7 +208,7 @@ $section = in_array($_GET['section'] ?? '', ['schedule', 'menu']) ? $_GET['secti
 </div>
 
 <!-- Schedule Edit Modal -->
-<div class="modal-overlay" id="editModal" style="display: none;">
+<div class="modal-overlay" id="editModal">
     <div class="modal">
         <div class="modal-header">
             <h3>Rediger programpunkt</h3>
@@ -248,16 +248,16 @@ $section = in_array($_GET['section'] ?? '', ['schedule', 'menu']) ? $_GET['secti
 </form>
 
 <script>
-function showAddModal() { document.getElementById('addModal').style.display = 'flex'; }
-function hideAddModal() { document.getElementById('addModal').style.display = 'none'; }
+function showAddModal() { document.getElementById('addModal').classList.add('active'); }
+function hideAddModal() { document.getElementById('addModal').classList.remove('active'); }
 function editItem(item) {
     document.getElementById('edit_item_id').value = item.id;
     document.getElementById('edit_time').value = item.time ? item.time.substring(0, 5) : '';
     document.getElementById('edit_title').value = item.title;
     document.getElementById('edit_description').value = item.description || '';
-    document.getElementById('editModal').style.display = 'flex';
+    document.getElementById('editModal').classList.add('active');
 }
-function hideEditModal() { document.getElementById('editModal').style.display = 'none'; }
+function hideEditModal() { document.getElementById('editModal').classList.remove('active'); }
 function deleteItem(id) {
     if (confirm('Slet dette programpunkt?')) {
         document.getElementById('delete_item_id').value = id;
@@ -265,7 +265,7 @@ function deleteItem(id) {
     }
 }
 document.querySelectorAll('.modal-overlay').forEach(o => {
-    o.addEventListener('click', function(e) { if (e.target === this) this.style.display = 'none'; });
+    o.addEventListener('click', function(e) { if (e.target === this) this.classList.remove('active'); });
 });
 </script>
 
@@ -316,7 +316,7 @@ document.querySelectorAll('.modal-overlay').forEach(o => {
 </div>
 
 <!-- Menu Add Modal -->
-<div class="modal-overlay" id="menuAddModal" style="display: none;">
+<div class="modal-overlay" id="menuAddModal">
     <div class="modal">
         <div class="modal-header">
             <h3>Tilføj ret</h3>
@@ -352,7 +352,7 @@ document.querySelectorAll('.modal-overlay').forEach(o => {
 </div>
 
 <!-- Menu Edit Modal -->
-<div class="modal-overlay" id="menuEditModal" style="display: none;">
+<div class="modal-overlay" id="menuEditModal">
     <div class="modal">
         <div class="modal-header">
             <h3>Rediger ret</h3>
@@ -396,16 +396,16 @@ document.querySelectorAll('.modal-overlay').forEach(o => {
 </form>
 
 <script>
-function showMenuAddModal() { document.getElementById('menuAddModal').style.display = 'flex'; }
-function hideMenuAddModal() { document.getElementById('menuAddModal').style.display = 'none'; }
+function showMenuAddModal() { document.getElementById('menuAddModal').classList.add('active'); }
+function hideMenuAddModal() { document.getElementById('menuAddModal').classList.remove('active'); }
 function editMenuItem(item) {
     document.getElementById('menu_edit_item_id').value = item.id;
     document.getElementById('menu_edit_course').value = item.course;
     document.getElementById('menu_edit_title').value = item.title;
     document.getElementById('menu_edit_description').value = item.description || '';
-    document.getElementById('menuEditModal').style.display = 'flex';
+    document.getElementById('menuEditModal').classList.add('active');
 }
-function hideMenuEditModal() { document.getElementById('menuEditModal').style.display = 'none'; }
+function hideMenuEditModal() { document.getElementById('menuEditModal').classList.remove('active'); }
 function deleteMenuItem(id) {
     if (confirm('Slet denne ret?')) {
         document.getElementById('menu_delete_item_id').value = id;
@@ -413,7 +413,7 @@ function deleteMenuItem(id) {
     }
 }
 document.querySelectorAll('.modal-overlay').forEach(o => {
-    o.addEventListener('click', function(e) { if (e.target === this) this.style.display = 'none'; });
+    o.addEventListener('click', function(e) { if (e.target === this) this.classList.remove('active'); });
 });
 </script>
 

@@ -263,7 +263,7 @@ $eventTypes = getAllEventTypes();
 </div>
 
 <!-- Delete Modal -->
-<div class="modal-overlay" id="deleteModal" style="display: none;">
+<div class="modal-overlay" id="deleteModal">
     <div class="modal">
         <div class="modal-header">
             <h3>Slet arrangement</h3>
@@ -328,10 +328,10 @@ function copyLink() {
         alert('Link kopieret!');
     });
 }
-function showDeleteModal() { document.getElementById('deleteModal').style.display = 'flex'; }
-function hideDeleteModal() { document.getElementById('deleteModal').style.display = 'none'; }
+function showDeleteModal() { document.getElementById('deleteModal').classList.add('active'); }
+function hideDeleteModal() { document.getElementById('deleteModal').classList.remove('active'); }
 document.querySelectorAll('.modal-overlay').forEach(o => {
-    o.addEventListener('click', function(e) { if (e.target === this) this.style.display = 'none'; });
+    o.addEventListener('click', function(e) { if (e.target === this) this.classList.remove('active'); });
 });
 function applySuggestedTimeline(date, label) {
     document.querySelector('input[name="timeline_start_date"]').value = date;

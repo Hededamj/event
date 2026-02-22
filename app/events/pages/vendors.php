@@ -424,7 +424,7 @@ $statusColors = [
      Add Manual Vendor Modal
      ============================================================ -->
 
-<div class="modal-overlay" id="manualAddModal" style="display: none;">
+<div class="modal-overlay" id="manualAddModal">
     <div class="modal" style="max-width: 520px;">
         <div class="modal-header">
             <h3>Tilfoj leverandor</h3>
@@ -478,7 +478,7 @@ $statusColors = [
      Edit Manual Vendor Modal
      ============================================================ -->
 
-<div class="modal-overlay" id="manualEditModal" style="display: none;">
+<div class="modal-overlay" id="manualEditModal">
     <div class="modal" style="max-width: 520px;">
         <div class="modal-header">
             <h3>Rediger leverandor</h3>
@@ -532,18 +532,18 @@ $statusColors = [
 <script>
 // ── Manual Vendor Add Modal ──
 function showManualAddModal() {
-    document.getElementById('manualAddModal').style.display = 'flex';
+    document.getElementById('manualAddModal').classList.add('active');
 }
 function hideManualAddModal() {
-    document.getElementById('manualAddModal').style.display = 'none';
+    document.getElementById('manualAddModal').classList.remove('active');
 }
 
 // ── Manual Vendor Edit Modal ──
 function showManualEditModal() {
-    document.getElementById('manualEditModal').style.display = 'flex';
+    document.getElementById('manualEditModal').classList.add('active');
 }
 function hideManualEditModal() {
-    document.getElementById('manualEditModal').style.display = 'none';
+    document.getElementById('manualEditModal').classList.remove('active');
 }
 
 function editManualVendor(vendor) {
@@ -562,7 +562,7 @@ function editManualVendor(vendor) {
 document.querySelectorAll('.modal-overlay').forEach(function(overlay) {
     overlay.addEventListener('click', function(e) {
         if (e.target === this) {
-            this.style.display = 'none';
+            this.classList.remove('active');
         }
     });
 });

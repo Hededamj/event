@@ -393,7 +393,7 @@ $csrfToken = generateAccountCsrfToken();
 <?php endif; ?>
 
 <!-- Add Table Modal -->
-<div class="modal-overlay" id="addTableModal" style="display: none;">
+<div class="modal-overlay" id="addTableModal">
     <div class="modal" style="max-width: 400px;">
         <div class="modal-header">
             <h3>Tilfoj bord</h3>
@@ -429,7 +429,7 @@ $csrfToken = generateAccountCsrfToken();
 </div>
 
 <!-- Edit Table Modal -->
-<div class="modal-overlay" id="editTableModal" style="display: none;">
+<div class="modal-overlay" id="editTableModal">
     <div class="modal" style="max-width: 400px;">
         <div class="modal-header">
             <h3>Rediger bord</h3>
@@ -454,7 +454,7 @@ $csrfToken = generateAccountCsrfToken();
 </div>
 
 <!-- Auto Create Tables Modal -->
-<div class="modal-overlay" id="autoModal" style="display: none;">
+<div class="modal-overlay" id="autoModal">
     <div class="modal" style="max-width: 400px;">
         <div class="modal-header">
             <h3>Auto-opret borde</h3>
@@ -876,22 +876,22 @@ function deleteTable(tableId, tableName) {
 }
 
 function showAddTableModal() {
-    document.getElementById('addTableModal').style.display = 'flex';
+    document.getElementById('addTableModal').classList.add('active');
 }
 
 function hideAddTableModal() {
-    document.getElementById('addTableModal').style.display = 'none';
+    document.getElementById('addTableModal').classList.remove('active');
 }
 
 function editTable(table) {
     document.getElementById('edit_table_id').value = table.id;
     document.getElementById('edit_table_name').value = table.name;
     document.getElementById('edit_table_capacity').value = table.capacity;
-    document.getElementById('editTableModal').style.display = 'flex';
+    document.getElementById('editTableModal').classList.add('active');
 }
 
 function hideEditTableModal() {
-    document.getElementById('editTableModal').style.display = 'none';
+    document.getElementById('editTableModal').classList.remove('active');
 }
 
 function saveTableEdit() {
@@ -917,11 +917,11 @@ function saveTableEdit() {
 }
 
 function showAutoModal() {
-    document.getElementById('autoModal').style.display = 'flex';
+    document.getElementById('autoModal').classList.add('active');
 }
 
 function hideAutoModal() {
-    document.getElementById('autoModal').style.display = 'none';
+    document.getElementById('autoModal').classList.remove('active');
 }
 
 function createTablesAuto() {
@@ -952,7 +952,7 @@ function createTablesAuto() {
 document.querySelectorAll('.modal-overlay').forEach(overlay => {
     overlay.addEventListener('click', function(e) {
         if (e.target === this) {
-            this.style.display = 'none';
+            this.classList.remove('active');
         }
     });
 });
