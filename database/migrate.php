@@ -18,6 +18,7 @@ if (php_sapi_name() !== 'cli') {
 
 require_once __DIR__ . '/../config/database.php';
 
+$db = getDB();
 $migrationsDir = __DIR__ . '/migrations';
 $dryRun = in_array('--dry-run', $argv);
 $force = in_array('--force', $argv);
