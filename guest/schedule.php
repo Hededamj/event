@@ -14,7 +14,9 @@ $hasItemDate = false;
 try {
     $checkStmt = $db->query("SHOW COLUMNS FROM schedule_items LIKE 'item_date'");
     $hasItemDate = $checkStmt->rowCount() > 0;
-} catch (Exception $e) {}
+} catch (Exception $e) {
+    error_log('Failed to check item_date column existence in schedule_items: ' . $e->getMessage());
+}
 
 // Get schedule items - sort by date and time if available, otherwise by sort_order
 if ($hasItemDate) {

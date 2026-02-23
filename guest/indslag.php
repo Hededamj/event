@@ -36,7 +36,9 @@ try {
             FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE CASCADE
         )
     ");
-} catch (Exception $e) {}
+} catch (Exception $e) {
+    error_log('Failed to create toastmaster tables (toastmaster_items/toastmaster_messages) in guest/indslag: ' . $e->getMessage());
+}
 
 // Check if there's a primary toastmaster (or any toastmaster)
 $stmt = $db->prepare("SELECT * FROM toastmaster_access WHERE event_id = ? ORDER BY is_primary DESC, created_at ASC LIMIT 1");

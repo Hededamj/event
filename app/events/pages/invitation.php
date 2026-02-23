@@ -24,6 +24,10 @@ foreach ($images as $image) {
 
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (!verifyAccountCsrfToken($_POST['csrf_token'] ?? '')) {
+        setFlash('error', 'Ugyldig anmodning. Prøv igen.');
+        redirect("/app/events/manage.php?id=$eventId&page=invitation");
+    }
     $action = $_POST['action'] ?? '';
 
     if ($action === 'apply-template') {
@@ -796,6 +800,7 @@ $readiness = isInvitationReadyToPublish($db, $eventId);
         <div class="template-grid">
             <?php foreach ($templates as $template): ?>
             <form method="POST" style="display: contents;">
+                <?= accountCsrfField() ?>
                 <input type="hidden" name="action" value="apply-template">
                 <input type="hidden" name="template_id" value="<?= $template['id'] ?>">
                 <?php
@@ -911,6 +916,7 @@ $readiness = isInvitationReadyToPublish($db, $eventId);
 <!-- Step 3: Text Content -->
 <div class="step-content <?= $step === 3 ? 'active' : '' ?>">
     <form method="POST" id="text-form">
+        <?= accountCsrfField() ?>
         <input type="hidden" name="action" value="save-config">
 
         <div class="card">
@@ -980,6 +986,7 @@ $readiness = isInvitationReadyToPublish($db, $eventId);
 <!-- Step 4: Style & Colors -->
 <div class="step-content <?= $step === 4 ? 'active' : '' ?>">
     <form method="POST" id="style-form">
+        <?= accountCsrfField() ?>
         <input type="hidden" name="action" value="save-config">
 
         <div class="card">
@@ -1096,6 +1103,7 @@ $readiness = isInvitationReadyToPublish($db, $eventId);
 <!-- Step 5: Sections -->
 <div class="step-content <?= $step === 5 ? 'active' : '' ?>">
     <form method="POST" id="sections-form">
+        <?= accountCsrfField() ?>
         <input type="hidden" name="action" value="save-config">
 
         <div class="card">
@@ -1225,6 +1233,7 @@ $readiness = isInvitationReadyToPublish($db, $eventId);
         </p>
 
         <form method="POST">
+            <?= accountCsrfField() ?>
             <input type="hidden" name="action" value="publish">
             <?php if ($invitationConfig['is_published']): ?>
             <button type="submit" name="publish" value="0" class="publish-btn unpublish">Skjul invitation</button>

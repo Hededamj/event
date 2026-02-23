@@ -141,13 +141,17 @@ function getPlatformStats(): array {
         // New accounts this month
         $stmt = $db->query("SELECT COUNT(*) FROM accounts WHERE is_platform_admin = 0 AND created_at >= DATE_FORMAT(NOW(), '%Y-%m-01')");
         $stats['new_accounts_month'] = $stmt->fetchColumn();
-    } catch (Exception $e) {}
+    } catch (Exception $e) {
+        error_log('Failed to fetch account stats for platform dashboard: ' . $e->getMessage());
+    }
 
     try {
         // Total events
         $stmt = $db->query("SELECT COUNT(*) FROM events");
         $stats['total_events'] = $stmt->fetchColumn();
-    } catch (Exception $e) {}
+    } catch (Exception $e) {
+        error_log('Failed to fetch total events count for platform dashboard: ' . $e->getMessage());
+    }
 
     try {
         // Active subscriptions
@@ -162,7 +166,9 @@ function getPlatformStats(): array {
             WHERE s.status = 'active'
         ");
         $stats['mrr'] = $stmt->fetchColumn();
-    } catch (Exception $e) {}
+    } catch (Exception $e) {
+        error_log('Failed to fetch subscription stats and MRR for platform dashboard: ' . $e->getMessage());
+    }
 
     try {
         // Total revenue this month
@@ -173,7 +179,9 @@ function getPlatformStats(): array {
             AND created_at >= DATE_FORMAT(NOW(), '%Y-%m-01')
         ");
         $stats['revenue_month'] = $stmt->fetchColumn();
-    } catch (Exception $e) {}
+    } catch (Exception $e) {
+        error_log('Failed to fetch monthly revenue for platform dashboard: ' . $e->getMessage());
+    }
 
     try {
         // Pending vendors (subcontractor module)
@@ -183,7 +191,9 @@ function getPlatformStats(): array {
         // Approved vendors
         $stmt = $db->query("SELECT COUNT(*) FROM vendors WHERE status = 'approved'");
         $stats['approved_vendors'] = $stmt->fetchColumn();
-    } catch (Exception $e) {}
+    } catch (Exception $e) {
+        error_log('Failed to fetch vendor counts for platform dashboard: ' . $e->getMessage());
+    }
 
     return $stats;
 }

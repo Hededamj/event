@@ -253,6 +253,31 @@ class EmailService {
     }
 
     /**
+     * Send password reset email
+     */
+    public function sendPasswordReset(string $email, string $token): array {
+        if (!$this->isConfigured()) {
+            return ['success' => false, 'error' => 'Email service ikke konfigureret'];
+        }
+
+        $baseUrl = env('APP_URL', 'https://partyparart.dk');
+        $resetUrl = "{$baseUrl}/app/auth/forgot-password.php?token=" . urlencode($token);
+
+        $html = '<!DOCTYPE html><html><body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">'
+            . '<h2 style="color: #1a1a2e;">Nulstil din adgangskode</h2>'
+            . '<p>Vi har modtaget en anmodning om at nulstille adgangskoden for din konto.</p>'
+            . '<p>Klik på linket herunder for at vælge en ny adgangskode:</p>'
+            . '<p style="margin: 24px 0;"><a href="' . htmlspecialchars($resetUrl) . '" '
+            . 'style="background: #667eea; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; display: inline-block;">'
+            . 'Nulstil adgangskode</a></p>'
+            . '<p style="color: #6b7280; font-size: 14px;">Linket udløber om 1 time.</p>'
+            . '<p style="color: #6b7280; font-size: 14px;">Hvis du ikke har anmodet om dette, kan du ignorere denne email.</p>'
+            . '</body></html>';
+
+        return $this->sendViaSendGrid($email, 'Bruger', 'Nulstil din adgangskode - PartyParart', $html);
+    }
+
+    /**
      * Process webhook event from SendGrid
      */
     public function processWebhook(array $events): void {

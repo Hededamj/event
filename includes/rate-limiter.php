@@ -62,7 +62,9 @@ function checkRateLimit(PDO $db, string $action, int $maxAttempts = 5, int $wind
     // Clean up old entries (older than 24 hours)
     try {
         $db->prepare("DELETE FROM rate_limits WHERE last_attempt_at < ?")->execute([$now - 86400]);
-    } catch (Exception $e) {}
+    } catch (Exception $e) {
+        error_log('Failed to clean up old rate_limits entries: ' . $e->getMessage());
+    }
 
     // Check for existing rate limit record
     $stmt = $db->prepare("

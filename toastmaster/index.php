@@ -114,7 +114,9 @@ try {
             FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE CASCADE
         )
     ");
-} catch (Exception $e) {}
+} catch (Exception $e) {
+    error_log('Failed to create toastmaster_messages table in toastmaster/index: ' . $e->getMessage());
+}
 
 // Handle AJAX requests
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && $eventId) {

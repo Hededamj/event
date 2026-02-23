@@ -44,8 +44,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                     // Redirect to return URL or dashboard
                     $returnUrl = $_GET['return'] ?? '/app/dashboard.php';
-                    // Validate return URL is local
-                    if (strpos($returnUrl, '/') !== 0) {
+                    // Validate return URL is local (reject //evil.com and non-slash starts)
+                    if (!preg_match('#^/[^/]#', $returnUrl)) {
                         $returnUrl = '/app/dashboard.php';
                     }
                     redirect($returnUrl);

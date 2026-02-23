@@ -178,7 +178,9 @@ function anonymizeOldGuestData(PDO $db): int {
             SET last_cleanup_at = NOW()
             WHERE data_type = 'guest_data'
         ");
-    } catch (Exception $e) {}
+    } catch (Exception $e) {
+        error_log('Failed to update data retention last_cleanup_at timestamp: ' . $e->getMessage());
+    }
 
     return $anonymized;
 }

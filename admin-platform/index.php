@@ -24,7 +24,9 @@ for ($i = 5; $i >= 0; $i--) {
         ");
         $stmt->execute([$month]);
         $newAccounts = $stmt->fetchColumn();
-    } catch (Exception $e) {}
+    } catch (Exception $e) {
+        error_log('Failed to fetch monthly new accounts count for dashboard: ' . $e->getMessage());
+    }
 
     try {
         $stmt = $db->prepare("
@@ -34,7 +36,9 @@ for ($i = 5; $i >= 0; $i--) {
         ");
         $stmt->execute([$month]);
         $revenue = $stmt->fetchColumn();
-    } catch (Exception $e) {}
+    } catch (Exception $e) {
+        error_log('Failed to fetch monthly revenue sum for dashboard: ' . $e->getMessage());
+    }
 
     $monthlyStats[] = [
         'month' => $monthName,
@@ -56,7 +60,9 @@ try {
         LIMIT 5
     ");
     $recentAccounts = $stmt->fetchAll();
-} catch (Exception $e) {}
+} catch (Exception $e) {
+    error_log('Failed to fetch recent accounts for dashboard: ' . $e->getMessage());
+}
 
 // Get recent payments
 $recentPayments = [];
@@ -69,7 +75,9 @@ try {
         LIMIT 5
     ");
     $recentPayments = $stmt->fetchAll();
-} catch (Exception $e) {}
+} catch (Exception $e) {
+    error_log('Failed to fetch recent payments for dashboard: ' . $e->getMessage());
+}
 
 // Plans breakdown
 $plansBreakdown = [];
@@ -82,7 +90,9 @@ try {
         ORDER BY p.sort_order
     ");
     $plansBreakdown = $stmt->fetchAll();
-} catch (Exception $e) {}
+} catch (Exception $e) {
+    error_log('Failed to fetch plans breakdown for dashboard: ' . $e->getMessage());
+}
 ?>
 
 <header class="platform-header">

@@ -191,7 +191,9 @@ try {
     $db->exec("ALTER TABLE toastmaster_access ADD COLUMN IF NOT EXISTS email VARCHAR(255) DEFAULT NULL AFTER name");
     $db->exec("ALTER TABLE toastmaster_access ADD COLUMN IF NOT EXISTS is_primary TINYINT(1) DEFAULT 0 AFTER email");
     $db->exec("ALTER TABLE toastmaster_access ADD COLUMN IF NOT EXISTS guest_id INT DEFAULT NULL AFTER is_primary");
-} catch (Exception $e) {}
+} catch (Exception $e) {
+    error_log('Failed to create or migrate toastmaster tables (toastmaster_items/toastmaster_access): ' . $e->getMessage());
+}
 
 // Get all items
 $stmt = $db->prepare("SELECT * FROM toastmaster_items WHERE event_id = ? ORDER BY sort_order, created_at");

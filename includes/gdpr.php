@@ -40,7 +40,9 @@ function ensureGdprTables(PDO $db): void {
                 $db->exec("ALTER TABLE guests ADD COLUMN IF NOT EXISTS privacy_consent_version VARCHAR(20) DEFAULT NULL");
                 $db->exec("ALTER TABLE guests ADD COLUMN IF NOT EXISTS marketing_consent TINYINT(1) DEFAULT 0");
                 $db->exec("ALTER TABLE guests ADD COLUMN IF NOT EXISTS marketing_consent_at TIMESTAMP NULL");
-            } catch (Exception $e) {}
+            } catch (Exception $e) {
+                error_log('Failed to add GDPR consent columns to guests table: ' . $e->getMessage());
+            }
         }
         $checked = true;
     } catch (Exception $e) {
@@ -317,12 +319,10 @@ function exportUserData(PDO $db, int $accountId): array {
     // Events owned by account
     $stmt = $db->prepare("
         SELECT e.* FROM events e
-        JOIN users u ON e.id = u.event_id
-        WHERE u.id IN (SELECT id FROM users WHERE event_id IN (
-            SELECT event_id FROM users WHERE id = (SELECT MIN(id) FROM users WHERE event_id = e.id)
-        ))
+        JOIN event_owners eo ON e.id = eo.event_id
+        WHERE eo.account_id = ?
     ");
-    $stmt->execute();
+    $stmt->execute([$accountId]);
     $data['events'] = $stmt->fetchAll();
 
     // Consent history
@@ -387,7 +387,9 @@ function runDataRetention(PDO $db): array {
     try {
         $stmt = $db->query("DELETE FROM rate_limits WHERE expires_at < NOW()");
         $results['rate_limits'] = $stmt->rowCount();
-    } catch (Exception $e) {}
+    } catch (Exception $e) {
+        error_log('Failed to clean up expired rate_limits records during GDPR cleanup: ' . $e->getMessage());
+    }
 
     // Clean old export files
     try {
@@ -409,7 +411,9 @@ function runDataRetention(PDO $db): array {
             WHERE expires_at < NOW() AND status = 'completed'
         ");
         $results['export_files'] = count($files);
-    } catch (Exception $e) {}
+    } catch (Exception $e) {
+        error_log('Failed to clean up expired data export files during GDPR cleanup: ' . $e->getMessage());
+    }
 
     // Clean old audit logs (keep 2 years)
     try {
@@ -418,7 +422,9 @@ function runDataRetention(PDO $db): array {
             WHERE created_at < DATE_SUB(NOW(), INTERVAL 730 DAY)
         ");
         $results['audit_logs'] = $stmt->rowCount();
-    } catch (Exception $e) {}
+    } catch (Exception $e) {
+        error_log('Failed to clean up old audit_log records during GDPR cleanup: ' . $e->getMessage());
+    }
 
     return $results;
 }

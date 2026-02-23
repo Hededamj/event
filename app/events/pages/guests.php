@@ -378,8 +378,8 @@ if ($showExport):
     <!-- Text View -->
     <div id="export-view-text" class="export-view">
         <textarea id="text-export" readonly style="width: 100%; height: 400px; font-family: monospace; font-size: 13px; padding: 16px; border: 1px solid var(--border); border-radius: 8px;"><?php foreach ($guests as $guest): ?>
-<?= $guest['name'] ?>
-<?= $eventBaseUrl ?>?kode=<?= $guest['unique_code'] ?>
+<?= htmlspecialchars($guest['name']) ?>
+<?= htmlspecialchars($eventBaseUrl) ?>?kode=<?= htmlspecialchars($guest['unique_code']) ?>
 
 <?php endforeach; ?></textarea>
         <div style="margin-top: 12px;">
@@ -1650,7 +1650,7 @@ function buildPreview() {
         'notes': 'Noter'
     };
 
-    thead.innerHTML = '<tr>' + mappedFields.map(f => `<th>${fieldLabels[f] || f}</th>`).join('') + '<th>Status</th></tr>';
+    thead.innerHTML = '<tr>' + mappedFields.map(f => `<th>${escapeHtml(fieldLabels[f] || f)}</th>`).join('') + '<th>Status</th></tr>';
 
     // Rows
     const errors = [];

@@ -5,6 +5,10 @@
 require_once __DIR__ . '/../../includes/gdpr.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['rsvp_action'])) {
+    if (!verifyCsrfToken($_POST['csrf_token'] ?? '')) {
+        setFlash('error', 'Ugyldig anmodning. Prøv igen.');
+        redirect("/e/$slug/rsvp");
+    }
     $action = trim($_POST['rsvp_action']);
     // ENUM values are: 'pending', 'yes', 'no'
     $rsvpStatus = ($action === 'accept') ? 'yes' : 'no';
@@ -90,6 +94,7 @@ $existingChildren = array_values($existingChildren);
 
 <div class="card">
     <form method="POST" id="rsvpForm">
+        <?= csrfField() ?>
         <input type="hidden" name="rsvp_action" id="rsvpActionInput" value="">
 
         <!-- Accept Form -->

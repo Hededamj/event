@@ -5,6 +5,10 @@
 
 // Handle reservation
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['reserve_item'])) {
+    if (!verifyCsrfToken($_POST['csrf_token'] ?? '')) {
+        setFlash('error', 'Ugyldig anmodning. Prøv igen.');
+        redirect("/e/$slug/wishlist");
+    }
     $itemId = (int)$_POST['reserve_item'];
 
     // Check if item is available
@@ -22,6 +26,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['reserve_item'])) {
 
 // Handle unreservation
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['unreserve_item'])) {
+    if (!verifyCsrfToken($_POST['csrf_token'] ?? '')) {
+        setFlash('error', 'Ugyldig anmodning. Prøv igen.');
+        redirect("/e/$slug/wishlist");
+    }
     $itemId = (int)$_POST['unreserve_item'];
 
     $stmt = $db->prepare("UPDATE wishlist_items SET reserved_by_guest_id = NULL WHERE id = ? AND event_id = ? AND reserved_by_guest_id = ?");
@@ -78,6 +86,7 @@ $items = $stmt->fetchAll();
             <div>
                 <?php if ($isMyReservation): ?>
                     <form method="POST">
+                        <?= csrfField() ?>
                         <button type="submit" name="unreserve_item" value="<?= $item['id'] ?>" class="btn btn-secondary" style="padding: 10px 16px; font-size: 13px;">
                             Annuller
                         </button>
@@ -89,6 +98,7 @@ $items = $stmt->fetchAll();
                     </span>
                 <?php else: ?>
                     <form method="POST">
+                        <?= csrfField() ?>
                         <button type="submit" name="reserve_item" value="<?= $item['id'] ?>" class="btn btn-sage" style="padding: 10px 16px; font-size: 13px;">
                             Reservér
                         </button>

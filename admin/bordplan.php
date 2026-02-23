@@ -38,7 +38,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Add is_high_table column if it doesn't exist
         try {
             $db->exec("ALTER TABLE seating_tables ADD COLUMN is_high_table BOOLEAN DEFAULT FALSE AFTER sort_order");
-        } catch (Exception $e) {}
+        } catch (Exception $e) {
+            error_log('Failed to add is_high_table column to seating_tables: ' . $e->getMessage());
+        }
 
         $db->exec("
             CREATE TABLE IF NOT EXISTS seating_assignments (
@@ -54,7 +56,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 FOREIGN KEY (guest_id) REFERENCES guests(id) ON DELETE SET NULL
             )
         ");
-    } catch (Exception $e) {}
+    } catch (Exception $e) {
+        error_log('Failed to create seating tables (seating_tables/seating_assignments): ' . $e->getMessage());
+    }
 
     header('Content-Type: application/json');
     $action = $_POST['action'] ?? '';

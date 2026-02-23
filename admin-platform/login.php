@@ -4,6 +4,7 @@
  */
 
 require_once __DIR__ . '/../includes/admin-platform-auth.php';
+require_once __DIR__ . '/../includes/rate-limiter.php';
 
 // If already logged in, redirect to dashboard
 if (isPlatformAdmin()) {
@@ -13,32 +14,42 @@ if (isPlatformAdmin()) {
 $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $email = trim($_POST['email'] ?? '');
-    $password = $_POST['password'] ?? '';
-
-    if (empty($email) || empty($password)) {
-        $error = 'Indtast email og adgangskode';
+    if (!verifyCsrfToken($_POST['csrf_token'] ?? '')) {
+        $error = 'Ugyldig anmodning. Prøv igen.';
     } else {
-        $db = getDB();
+        $email = trim($_POST['email'] ?? '');
+        $password = $_POST['password'] ?? '';
 
-        // Find admin account
-        $stmt = $db->prepare("
-            SELECT id, password_hash, name, is_active, is_platform_admin
-            FROM accounts
-            WHERE email = ? AND is_platform_admin = 1
-        ");
-        $stmt->execute([$email]);
-        $admin = $stmt->fetch();
-
-        if ($admin && password_verify($password, $admin['password_hash'])) {
-            if (!$admin['is_active']) {
-                $error = 'Din konto er deaktiveret';
-            } else {
-                loginPlatformAdmin($admin['id']);
-                redirect(BASE_PATH . '/admin-platform/index.php');
-            }
+        if (empty($email) || empty($password)) {
+            $error = 'Indtast email og adgangskode';
         } else {
-            $error = 'Forkert email eller adgangskode';
+            // Rate limiting
+            $db = getDB();
+            $rateLimit = checkRateLimit($db, 'admin_login', 5, 900);
+            if (!$rateLimit['allowed']) {
+                $error = 'For mange loginforsøg. Prøv igen om ' . ceil($rateLimit['retry_after'] / 60) . ' minutter.';
+            } else {
+                // Find admin account
+                $stmt = $db->prepare("
+                    SELECT id, password_hash, name, is_active, is_platform_admin
+                    FROM accounts
+                    WHERE email = ? AND is_platform_admin = 1
+                ");
+                $stmt->execute([$email]);
+                $admin = $stmt->fetch();
+
+                if ($admin && password_verify($password, $admin['password_hash'])) {
+                    if (!$admin['is_active']) {
+                        $error = 'Din konto er deaktiveret';
+                    } else {
+                        loginPlatformAdmin($admin['id']);
+                        redirect(BASE_PATH . '/admin-platform/index.php');
+                    }
+                } else {
+                    recordRateLimitAttempt($db, 'admin_login', 5, 900);
+                    $error = 'Forkert email eller adgangskode';
+                }
+            }
         }
     }
 }
@@ -193,6 +204,7 @@ $platformName = getPlatformSetting('platform_name', 'EventPlatform');
             <?php endif; ?>
 
             <form method="POST">
+                <?= csrfField() ?>
                 <div class="form-group">
                     <label class="form-label" for="email">Email</label>
                     <input type="email" id="email" name="email" class="form-input" required autofocus

@@ -97,7 +97,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' &&
                     if ($checkCol->rowCount() === 0) {
                         $db->exec("ALTER TABLE toastmaster_access ADD COLUMN guest_id INT DEFAULT NULL");
                     }
-                } catch (Exception $e) {}
+                } catch (Exception $e) {
+                    error_log('Failed to create or migrate toastmaster_access table when assigning toastmaster: ' . $e->getMessage());
+                }
 
                 // Check if already a toastmaster
                 $stmt = $db->prepare("SELECT id FROM toastmaster_access WHERE event_id = ? AND guest_id = ?");
@@ -161,7 +163,9 @@ try {
     if ($checkStmt->rowCount() === 0) {
         $db->exec("ALTER TABLE guests ADD COLUMN max_guests INT DEFAULT 1 AFTER name");
     }
-} catch (Exception $e) {}
+} catch (Exception $e) {
+    error_log('Failed to check or add max_guests column to guests table: ' . $e->getMessage());
+}
 
 // Check if guest_names column exists, add if not
 try {
@@ -169,7 +173,9 @@ try {
     if ($checkStmt->rowCount() === 0) {
         $db->exec("ALTER TABLE guests ADD COLUMN guest_names TEXT NULL AFTER dietary_notes");
     }
-} catch (Exception $e) {}
+} catch (Exception $e) {
+    error_log('Failed to check or add guest_names column to guests table: ' . $e->getMessage());
+}
 
 // Handle form submissions
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -720,8 +726,8 @@ if ($showExport):
         <!-- Text View -->
         <div id="view-text" class="view">
             <textarea id="text-export" readonly><?php foreach ($guests as $guest): ?>
-<?= $guest['name'] ?>
-<?= $baseUrl ?>?kode=<?= $guest['unique_code'] ?>
+<?= htmlspecialchars($guest['name']) ?>
+<?= htmlspecialchars($baseUrl) ?>?kode=<?= htmlspecialchars($guest['unique_code']) ?>
 
 <?php endforeach; ?></textarea>
             <p class="copy-hint">Markér alt (Ctrl+A) og kopiér (Ctrl+C)</p>

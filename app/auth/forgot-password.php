@@ -5,6 +5,7 @@
 require_once __DIR__ . '/../../config/saas.php';
 require_once __DIR__ . '/../../includes/functions.php';
 require_once __DIR__ . '/../../includes/auth-account.php';
+require_once __DIR__ . '/../../includes/email-service.php';
 
 // Redirect if already logged in
 if (isAccountLoggedIn()) {
@@ -33,8 +34,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $success = 'Hvis der findes en konto med denne email, har vi sendt instruktioner til at nulstille din adgangskode.';
 
             if ($token) {
-                // TODO: Send email with reset link
-                // sendPasswordResetEmail($email, $token);
+                $emailService = getEmailService();
+                $result = $emailService->sendPasswordReset($email, $token);
+                if (!$result['success']) {
+                    error_log('Failed to send password reset email to ' . $email . ': ' . ($result['error'] ?? 'unknown'));
+                }
             }
         }
     }
