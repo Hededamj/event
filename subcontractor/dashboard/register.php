@@ -22,20 +22,7 @@ $formData = [
     'phone' => '',
     'password' => '',
     'password_confirm' => '',
-    'categories' => [],
-    'short_description' => '',
 ];
-
-// Fetch active vendor categories
-$db = getDB();
-$categories = [];
-try {
-    $catStmt = $db->query("SELECT id, name, icon FROM vendor_categories WHERE is_active = 1 ORDER BY sort_order ASC");
-    $categories = $catStmt->fetchAll(PDO::FETCH_ASSOC);
-} catch (PDOException $e) {
-    // Table may not exist yet if migration 015 hasn't run
-    error_log('vendor_categories table not found - run migration 015: ' . $e->getMessage());
-}
 
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -49,10 +36,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $formData['phone'] = trim($_POST['phone'] ?? '');
         $formData['password'] = $_POST['password'] ?? '';
         $formData['password_confirm'] = $_POST['password_confirm'] ?? '';
-        $formData['categories'] = $_POST['categories'] ?? [];
-        $formData['short_description'] = trim($_POST['short_description'] ?? '');
 
-        // 1. Validate with validateVendorRegistration()
+        // Validate with validateVendorRegistration()
         $errors = validateVendorRegistration([
             'email' => $formData['email'],
             'password' => $formData['password'],
@@ -60,27 +45,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'contact_name' => $formData['contact_name'],
         ]);
 
-        // 2. Validate passwords match
+        // Validate passwords match
         if ($formData['password'] !== $formData['password_confirm']) {
             $errors[] = 'Adgangskoderne er ikke ens.';
         }
 
-        // 3. Validate at least 1 category selected
-        $selectedCategories = array_filter(array_map('intval', $formData['categories']));
-        if (empty($selectedCategories)) {
-            $errors[] = 'Vælg mindst én kategori.';
-        }
-
-        // 4. Validate short_description required, max 500
-        if (empty($formData['short_description'])) {
-            $errors[] = 'Kort beskrivelse er påkrævet.';
-        } elseif (mb_strlen($formData['short_description']) > 500) {
-            $errors[] = 'Kort beskrivelse må højst være 500 tegn.';
-        }
-
         // If no errors, proceed with registration
         if (empty($errors)) {
-            // 4. Call registerVendor()
             $result = registerVendor(
                 $formData['email'],
                 $formData['password'],
@@ -90,31 +61,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             );
 
             if ($result['success']) {
-                $vendorId = $result['vendor_id'];
-
-                // 5. Insert category links
-                $linkStmt = $db->prepare("INSERT INTO vendor_category_links (vendor_id, category_id) VALUES (?, ?)");
-                foreach ($selectedCategories as $catId) {
-                    try {
-                        $linkStmt->execute([$vendorId, $catId]);
-                    } catch (Exception $e) {
-                        error_log("Failed to insert vendor category link: " . $e->getMessage());
-                    }
-                }
-
-                // 6. Update short_description
-                try {
-                    $descStmt = $db->prepare("UPDATE vendors SET short_description = ? WHERE id = ?");
-                    $descStmt->execute([$formData['short_description'], $vendorId]);
-                } catch (Exception $e) {
-                    error_log("Failed to update vendor short_description: " . $e->getMessage());
-                }
-
-                // 7. Redirect to login with flash message
+                // Redirect to login with flash message
                 setFlash('success', 'Din registrering er modtaget! Vi gennemgår din ansøgning hurtigst muligt.');
                 redirect('/subcontractor/dashboard/login.php');
             } else {
-                // Registration failed
                 $errors[] = $result['error'] ?? 'Der opstod en fejl. Prøv igen.';
             }
         }
@@ -439,68 +389,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             color: #A8A39B;
         }
 
-        textarea.form-input {
-            resize: vertical;
-            min-height: 100px;
-        }
-
-        .char-count {
-            text-align: right;
-            font-size: 12px;
-            color: var(--text-secondary);
-            margin-top: 6px;
-        }
-
-        .category-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-        }
-
-        @media (max-width: 400px) {
-            .category-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .category-option {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 12px 14px;
-            border: 2px solid var(--border);
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.2s var(--ease-out);
-            font-size: 14px;
-        }
-
-        .category-option:hover {
-            border-color: var(--accent-light);
-            background: var(--surface);
-        }
-
-        .category-option input[type="checkbox"] {
-            width: 18px;
-            height: 18px;
-            accent-color: var(--accent);
-            flex-shrink: 0;
-        }
-
-        .category-option input[type="checkbox"]:checked + .category-label-text {
-            font-weight: 600;
-        }
-
-        .category-option:has(input:checked) {
-            border-color: var(--accent);
-            background: rgba(168, 181, 160, 0.08);
-        }
-
-        .category-icon {
-            font-size: 18px;
-            flex-shrink: 0;
-        }
-
         .btn {
             display: inline-flex;
             align-items: center;
@@ -735,50 +623,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     minlength="8"
                                 >
                             </div>
-                        </div>
-                    </div>
-
-                    <!-- Step 3: Kategorier -->
-                    <div class="form-section">
-                        <h3 class="section-heading">
-                            <span class="step-number">3</span>
-                            Kategorier
-                        </h3>
-
-                        <div class="category-grid">
-                            <?php foreach ($categories as $cat): ?>
-                                <label class="category-option">
-                                    <input
-                                        type="checkbox"
-                                        name="categories[]"
-                                        value="<?= (int)$cat['id'] ?>"
-                                        <?= in_array((int)$cat['id'], array_map('intval', $formData['categories'])) ? 'checked' : '' ?>
-                                    >
-                                    <span class="category-icon"><?= htmlspecialchars($cat['icon'] ?? '') ?></span>
-                                    <span class="category-label-text"><?= htmlspecialchars($cat['name']) ?></span>
-                                </label>
-                            <?php endforeach; ?>
-                        </div>
-                    </div>
-
-                    <!-- Step 4: Beskrivelse -->
-                    <div class="form-section">
-                        <h3 class="section-heading">
-                            <span class="step-number">4</span>
-                            Beskrivelse
-                        </h3>
-
-                        <div class="form-group">
-                            <label class="form-label" for="short_description">Kort beskrivelse</label>
-                            <textarea
-                                id="short_description"
-                                name="short_description"
-                                class="form-input"
-                                placeholder="Beskriv din virksomhed og de ydelser I tilbyder..."
-                                maxlength="500"
-                                required
-                            ><?= htmlspecialchars($formData['short_description']) ?></textarea>
-                            <div class="char-count">Maks 500 tegn</div>
                         </div>
                     </div>
 

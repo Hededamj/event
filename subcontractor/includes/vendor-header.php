@@ -14,6 +14,12 @@ require_once __DIR__ . '/../../includes/functions.php';
 // Require login for all vendor dashboard pages
 requireVendorLogin();
 
+// Redirect non-onboarded vendors to onboarding wizard
+if (!isVendorOnboarded() && basename($_SERVER['PHP_SELF']) !== 'onboarding.php') {
+    header('Location: /subcontractor/dashboard/onboarding.php');
+    exit;
+}
+
 // Get current vendor data
 $currentVendor = getCurrentVendor();
 $vendorId = getCurrentVendorId();

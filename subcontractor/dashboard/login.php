@@ -61,6 +61,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     clearLoginAttempts($email);
                     vendorLogin($result['id'], $result['email'], $result['company_name']);
 
+                    // Check onboarding status
+                    if (!isVendorOnboarded()) {
+                        redirect('/subcontractor/dashboard/onboarding.php');
+                    }
+
                     // Redirect to return URL or dashboard
                     $returnUrl = $_GET['return'] ?? '/subcontractor/dashboard/';
                     // Validate return URL is local

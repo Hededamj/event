@@ -209,6 +209,80 @@ function registerVendor(string $email, string $password, string $companyName, st
 }
 
 /**
+ * Check if the current vendor has completed onboarding
+ */
+function isVendorOnboarded(): bool {
+    $vendorId = getCurrentVendorId();
+    if (!$vendorId) {
+        return false;
+    }
+
+    try {
+        $db = getDB();
+        $stmt = $db->prepare("SELECT onboarding_completed FROM vendors WHERE id = ? LIMIT 1");
+        $stmt->execute([$vendorId]);
+        return (bool) $stmt->fetchColumn();
+    } catch (Exception $e) {
+        error_log("Failed to check vendor onboarding status: " . $e->getMessage());
+        return false;
+    }
+}
+
+/**
+ * Determine which onboarding step the vendor should be on.
+ * Returns: 1=categories, 2=description, 3=logo, 4=done
+ */
+function getVendorOnboardingStep(int $vendorId): int {
+    try {
+        $db = getDB();
+
+        // Step 1: Check if vendor has any categories
+        $stmt = $db->prepare("SELECT COUNT(*) FROM vendor_category_links WHERE vendor_id = ?");
+        $stmt->execute([$vendorId]);
+        if ((int) $stmt->fetchColumn() === 0) {
+            return 1;
+        }
+
+        // Step 2: Check if vendor has a short_description
+        $stmt = $db->prepare("SELECT short_description FROM vendors WHERE id = ? LIMIT 1");
+        $stmt->execute([$vendorId]);
+        $desc = $stmt->fetchColumn();
+        if (empty($desc) || mb_strlen(trim($desc)) < 50) {
+            return 2;
+        }
+
+        // Step 3: Logo (optional, but show the step)
+        $stmt = $db->prepare("SELECT logo_filename FROM vendors WHERE id = ? LIMIT 1");
+        $stmt->execute([$vendorId]);
+        $logo = $stmt->fetchColumn();
+        if (empty($logo)) {
+            return 3;
+        }
+
+        // All done
+        return 4;
+    } catch (Exception $e) {
+        error_log("Failed to determine vendor onboarding step: " . $e->getMessage());
+        return 1;
+    }
+}
+
+/**
+ * Mark vendor onboarding as complete
+ */
+function markOnboardingComplete(int $vendorId): bool {
+    try {
+        $db = getDB();
+        $stmt = $db->prepare("UPDATE vendors SET onboarding_completed = 1 WHERE id = ?");
+        $stmt->execute([$vendorId]);
+        return true;
+    } catch (Exception $e) {
+        error_log("Failed to mark vendor onboarding complete: " . $e->getMessage());
+        return false;
+    }
+}
+
+/**
  * CSRF token functions
  */
 if (!function_exists('generateVendorCsrfToken')) {

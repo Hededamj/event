@@ -69,6 +69,44 @@ function validateVendorRegistration(array $data): array {
 }
 
 // ============================================================
+// Onboarding validation
+// ============================================================
+
+/**
+ * Validate onboarding category selection.
+ *
+ * @param array $categoryIds Array of selected category IDs
+ * @return array Error messages (empty = valid)
+ */
+function validateOnboardingCategories(array $categoryIds): array {
+    $errors = [];
+    $filtered = array_filter(array_map('intval', $categoryIds));
+    if (empty($filtered)) {
+        $errors[] = 'Vælg mindst én kategori.';
+    }
+    return $errors;
+}
+
+/**
+ * Validate onboarding description (short_description).
+ *
+ * @param string $description The short description text
+ * @return array Error messages (empty = valid)
+ */
+function validateOnboardingDescription(string $description): array {
+    $errors = [];
+    $trimmed = trim($description);
+    if (empty($trimmed)) {
+        $errors[] = 'Kort beskrivelse er påkrævet.';
+    } elseif (mb_strlen($trimmed) < 50) {
+        $errors[] = 'Kort beskrivelse skal være mindst 50 tegn.';
+    } elseif (mb_strlen($trimmed) > 500) {
+        $errors[] = 'Kort beskrivelse må højst være 500 tegn.';
+    }
+    return $errors;
+}
+
+// ============================================================
 // 2. validateVendorProfile
 // ============================================================
 
