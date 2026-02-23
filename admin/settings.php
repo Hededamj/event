@@ -13,49 +13,9 @@ requireLogin();
 $db = getDB();
 $eventId = getCurrentEventId();
 
-// Check if visibility columns exist
-$visibilityColumnsExist = false;
-try {
-    $checkStmt = $db->query("SHOW COLUMNS FROM events LIKE 'show_wishlist'");
-    $visibilityColumnsExist = $checkStmt->rowCount() > 0;
-} catch (Exception $e) {
-    $visibilityColumnsExist = false;
-}
-
-// If columns don't exist, try to add them
-if (!$visibilityColumnsExist) {
-    try {
-        $db->exec("
-            ALTER TABLE events
-            ADD COLUMN show_wishlist BOOLEAN DEFAULT TRUE,
-            ADD COLUMN show_menu BOOLEAN DEFAULT TRUE,
-            ADD COLUMN show_schedule BOOLEAN DEFAULT TRUE,
-            ADD COLUMN show_photos BOOLEAN DEFAULT TRUE
-        ");
-        $visibilityColumnsExist = true;
-    } catch (Exception $e) {
-        // Columns might already exist or user doesn't have ALTER permission
-    }
-}
-
-// Check if oenskesky_url column exists
-$oenskeskyColumnExists = false;
-try {
-    $checkStmt = $db->query("SHOW COLUMNS FROM events LIKE 'oenskesky_url'");
-    $oenskeskyColumnExists = $checkStmt->rowCount() > 0;
-} catch (Exception $e) {
-    $oenskeskyColumnExists = false;
-}
-
-// If column doesn't exist, try to add it
-if (!$oenskeskyColumnExists) {
-    try {
-        $db->exec("ALTER TABLE events ADD COLUMN oenskesky_url VARCHAR(500) NULL");
-        $oenskeskyColumnExists = true;
-    } catch (Exception $e) {
-        // Column might already exist or user doesn't have ALTER permission
-    }
-}
+// Schema is guaranteed by migration 017_consolidate_schema.sql
+$visibilityColumnsExist = true;
+$oenskeskyColumnExists = true;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     requireCsrf();

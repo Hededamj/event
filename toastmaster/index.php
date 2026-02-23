@@ -99,25 +99,6 @@ if ($accessCode) {
     }
 }
 
-// Ensure messages table exists
-try {
-    $db->exec("
-        CREATE TABLE IF NOT EXISTS toastmaster_messages (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            event_id INT NOT NULL,
-            guest_id INT DEFAULT NULL,
-            guest_name VARCHAR(255) NOT NULL,
-            message TEXT NOT NULL,
-            is_from_toastmaster TINYINT(1) DEFAULT 0,
-            is_read TINYINT(1) DEFAULT 0,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE CASCADE
-        )
-    ");
-} catch (Exception $e) {
-    error_log('Failed to create toastmaster_messages table in toastmaster/index: ' . $e->getMessage());
-}
-
 // Handle AJAX requests
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && $eventId) {
     header('Content-Type: application/json');

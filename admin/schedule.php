@@ -4,16 +4,6 @@
  */
 require_once __DIR__ . '/../includes/admin-header.php';
 
-// Check if item_date column exists, add if not
-try {
-    $checkStmt = $db->query("SHOW COLUMNS FROM schedule_items LIKE 'item_date'");
-    if ($checkStmt->rowCount() === 0) {
-        $db->exec("ALTER TABLE schedule_items ADD COLUMN item_date DATE NULL AFTER time");
-    }
-} catch (Exception $e) {
-    // Column might already exist
-}
-
 // Handle form submissions
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     requireCsrf();

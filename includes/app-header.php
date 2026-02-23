@@ -170,6 +170,7 @@ $pageTitle = $pageTitle ?? 'Dashboard';
     </style>
 </head>
 <body>
+    <a href="#main-content" class="sr-only">Spring til indhold</a>
     <!-- Sidebar overlay for mobile -->
     <div class="ds-sidebar-overlay" id="sidebarOverlay"></div>
 
@@ -275,7 +276,7 @@ $pageTitle = $pageTitle ?? 'Dashboard';
     </header>
 
     <!-- Main Content -->
-    <main class="app-main">
+    <main class="app-main" id="main-content">
         <div class="app-content">
             <?php if ($flash): ?>
                 <div class="flash-message <?= htmlspecialchars($flash['type']) ?>">

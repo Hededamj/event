@@ -18,48 +18,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $db = getDB();
     $eventId = getCurrentEventId();
 
-    // Ensure tables exist
-    try {
-        $db->exec("
-            CREATE TABLE IF NOT EXISTS seating_tables (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                event_id INT NOT NULL,
-                name VARCHAR(100) NOT NULL,
-                table_type ENUM('round', 'rectangle', 'square', 'ushape') DEFAULT 'round',
-                capacity INT DEFAULT 8,
-                position_x INT DEFAULT 0,
-                position_y INT DEFAULT 0,
-                sort_order INT DEFAULT 0,
-                is_high_table BOOLEAN DEFAULT FALSE,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE CASCADE
-            )
-        ");
-        // Add is_high_table column if it doesn't exist
-        try {
-            $db->exec("ALTER TABLE seating_tables ADD COLUMN is_high_table BOOLEAN DEFAULT FALSE AFTER sort_order");
-        } catch (Exception $e) {
-            error_log('Failed to add is_high_table column to seating_tables: ' . $e->getMessage());
-        }
-
-        $db->exec("
-            CREATE TABLE IF NOT EXISTS seating_assignments (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                event_id INT NOT NULL,
-                table_id INT NOT NULL,
-                guest_name VARCHAR(255) NOT NULL,
-                seat_number INT DEFAULT NULL,
-                guest_id INT DEFAULT NULL,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE CASCADE,
-                FOREIGN KEY (table_id) REFERENCES seating_tables(id) ON DELETE CASCADE,
-                FOREIGN KEY (guest_id) REFERENCES guests(id) ON DELETE SET NULL
-            )
-        ");
-    } catch (Exception $e) {
-        error_log('Failed to create seating tables (seating_tables/seating_assignments): ' . $e->getMessage());
-    }
-
     header('Content-Type: application/json');
     $action = $_POST['action'] ?? '';
 
@@ -641,41 +599,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 require_once __DIR__ . '/../includes/admin-header.php';
-
-// Create tables if they don't exist
-try {
-    $db->exec("
-        CREATE TABLE IF NOT EXISTS seating_tables (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            event_id INT NOT NULL,
-            name VARCHAR(100) NOT NULL,
-            table_type ENUM('round', 'rectangle', 'square', 'ushape') DEFAULT 'round',
-            capacity INT DEFAULT 8,
-            position_x INT DEFAULT 0,
-            position_y INT DEFAULT 0,
-            sort_order INT DEFAULT 0,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE CASCADE
-        )
-    ");
-
-    $db->exec("
-        CREATE TABLE IF NOT EXISTS seating_assignments (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            event_id INT NOT NULL,
-            table_id INT NOT NULL,
-            guest_name VARCHAR(255) NOT NULL,
-            seat_number INT DEFAULT NULL,
-            guest_id INT DEFAULT NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE CASCADE,
-            FOREIGN KEY (table_id) REFERENCES seating_tables(id) ON DELETE CASCADE,
-            FOREIGN KEY (guest_id) REFERENCES guests(id) ON DELETE SET NULL
-        )
-    ");
-} catch (Exception $e) {
-    // Tables might already exist
-}
 
 // Get all tables
 $stmt = $db->prepare("SELECT * FROM seating_tables WHERE event_id = ? ORDER BY sort_order");

@@ -4,27 +4,8 @@
  * Prevents brute force attacks on guest codes and login forms
  */
 
-/**
- * Get client IP address (only declare if not already defined in audit.php)
- */
-if (!function_exists('getClientIP')) {
-    function getClientIP(): string {
-        $headers = ['HTTP_CF_CONNECTING_IP', 'HTTP_X_FORWARDED_FOR', 'HTTP_X_REAL_IP', 'REMOTE_ADDR'];
-        foreach ($headers as $header) {
-            if (!empty($_SERVER[$header])) {
-                $ip = $_SERVER[$header];
-                // Handle comma-separated IPs (X-Forwarded-For)
-                if (strpos($ip, ',') !== false) {
-                    $ip = trim(explode(',', $ip)[0]);
-                }
-                if (filter_var($ip, FILTER_VALIDATE_IP)) {
-                    return $ip;
-                }
-            }
-        }
-        return '0.0.0.0';
-    }
-}
+require_once __DIR__ . '/functions.php';
+// getClientIP() is now defined in includes/functions.php
 
 /**
  * Check if IP is rate limited
@@ -39,25 +20,6 @@ function checkRateLimit(PDO $db, string $action, int $maxAttempts = 5, int $wind
     $ip = getClientIP();
     $now = time();
     $windowStart = $now - $windowSeconds;
-
-    // Ensure table exists
-    try {
-        $db->exec("
-            CREATE TABLE IF NOT EXISTS rate_limits (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                ip_address VARCHAR(45) NOT NULL,
-                action VARCHAR(50) NOT NULL,
-                attempts INT DEFAULT 1,
-                first_attempt_at INT NOT NULL,
-                last_attempt_at INT NOT NULL,
-                blocked_until INT DEFAULT NULL,
-                INDEX idx_ip_action (ip_address, action),
-                INDEX idx_blocked (blocked_until)
-            )
-        ");
-    } catch (Exception $e) {
-        // Table might already exist
-    }
 
     // Clean up old entries (older than 24 hours)
     try {

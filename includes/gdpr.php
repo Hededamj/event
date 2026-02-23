@@ -6,49 +6,11 @@
 
 /**
  * Ensure GDPR tables exist
+ * Schema is guaranteed by migration 017_consolidate_schema.sql
  */
 function ensureGdprTables(PDO $db): void {
     static $checked = false;
-    if ($checked) return;
-
-    try {
-        $result = $db->query("SHOW TABLES LIKE 'consent_records'")->rowCount();
-        if ($result === 0) {
-            // Create consent_records table
-            $db->exec("
-                CREATE TABLE IF NOT EXISTS consent_records (
-                    id INT AUTO_INCREMENT PRIMARY KEY,
-                    account_id INT DEFAULT NULL,
-                    guest_id INT DEFAULT NULL,
-                    partner_id INT DEFAULT NULL,
-                    consent_type ENUM('privacy_policy', 'terms', 'marketing', 'data_processing', 'cookies') NOT NULL,
-                    consent_version VARCHAR(20) NOT NULL DEFAULT '1.0',
-                    is_granted TINYINT(1) NOT NULL DEFAULT 1,
-                    ip_address VARCHAR(45) DEFAULT NULL,
-                    user_agent VARCHAR(500) DEFAULT NULL,
-                    granted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                    withdrawn_at TIMESTAMP NULL,
-                    INDEX idx_consent_account (account_id),
-                    INDEX idx_consent_guest (guest_id)
-                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
-            ");
-
-            // Add consent columns to guests
-            try {
-                $db->exec("ALTER TABLE guests ADD COLUMN IF NOT EXISTS privacy_consent TINYINT(1) DEFAULT 0");
-                $db->exec("ALTER TABLE guests ADD COLUMN IF NOT EXISTS privacy_consent_at TIMESTAMP NULL");
-                $db->exec("ALTER TABLE guests ADD COLUMN IF NOT EXISTS privacy_consent_version VARCHAR(20) DEFAULT NULL");
-                $db->exec("ALTER TABLE guests ADD COLUMN IF NOT EXISTS marketing_consent TINYINT(1) DEFAULT 0");
-                $db->exec("ALTER TABLE guests ADD COLUMN IF NOT EXISTS marketing_consent_at TIMESTAMP NULL");
-            } catch (Exception $e) {
-                error_log('Failed to add GDPR consent columns to guests table: ' . $e->getMessage());
-            }
-        }
-        $checked = true;
-    } catch (Exception $e) {
-        error_log("Failed to ensure GDPR tables: " . $e->getMessage());
-        $checked = true;
-    }
+    $checked = true;
 }
 
 /**
@@ -256,6 +218,7 @@ function requestAccountDeletion(PDO $db, int $accountId, ?string $reason = null)
         VALUES (?, ?, ?, ?)
     ");
 
+    $db->beginTransaction();
     try {
         $stmt->execute([$accountId, $reason, $scheduledDate, $token]);
 
@@ -265,8 +228,10 @@ function requestAccountDeletion(PDO $db, int $accountId, ?string $reason = null)
             WHERE id = ?
         ")->execute([$scheduledDate, $accountId]);
 
+        $db->commit();
         return $token;
     } catch (Exception $e) {
+        $db->rollBack();
         error_log("Failed to request deletion: " . $e->getMessage());
         return null;
     }

@@ -79,30 +79,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' &&
     }
 
     if ($action === 'generate_access') {
-        // Check if toastmaster_access table exists
-        try {
-            $db->exec("
-                CREATE TABLE IF NOT EXISTS toastmaster_access (
-                    id INT AUTO_INCREMENT PRIMARY KEY,
-                    event_id INT NOT NULL,
-                    access_code VARCHAR(20) NOT NULL,
-                    name VARCHAR(255) DEFAULT 'Toastmaster',
-                    email VARCHAR(255) DEFAULT NULL,
-                    is_primary TINYINT(1) DEFAULT 0,
-                    guest_id INT DEFAULT NULL,
-                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                    UNIQUE KEY (event_id, access_code),
-                    FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE CASCADE
-                )
-            ");
-            // Add columns if they don't exist
-            $db->exec("ALTER TABLE toastmaster_access ADD COLUMN IF NOT EXISTS email VARCHAR(255) DEFAULT NULL AFTER name");
-            $db->exec("ALTER TABLE toastmaster_access ADD COLUMN IF NOT EXISTS is_primary TINYINT(1) DEFAULT 0 AFTER email");
-            $db->exec("ALTER TABLE toastmaster_access ADD COLUMN IF NOT EXISTS guest_id INT DEFAULT NULL AFTER is_primary");
-        } catch (Exception $e) {
-            // Table might already exist or FK issue - continue anyway
-        }
-
         // Generate new code
         $code = strtoupper(substr(md5(uniqid(mt_rand(), true)), 0, 8));
         $name = trim($_POST['name'] ?? '') ?: 'Toastmaster';
@@ -153,47 +129,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' &&
 }
 
 require_once __DIR__ . '/../includes/admin-header.php';
-
-// Create tables if they don't exist
-try {
-    $db->exec("
-        CREATE TABLE IF NOT EXISTS toastmaster_items (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            event_id INT NOT NULL,
-            guest_name VARCHAR(255) NOT NULL,
-            item_type ENUM('tale', 'sang', 'sketch', 'quiz', 'leg', 'musik', 'andet') DEFAULT 'tale',
-            title VARCHAR(255) DEFAULT NULL,
-            description TEXT,
-            duration_minutes INT DEFAULT 5,
-            is_secret TINYINT(1) DEFAULT 0,
-            status ENUM('pending', 'approved', 'completed') DEFAULT 'pending',
-            sort_order INT DEFAULT 0,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE CASCADE
-        )
-    ");
-
-    $db->exec("
-        CREATE TABLE IF NOT EXISTS toastmaster_access (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            event_id INT NOT NULL,
-            access_code VARCHAR(20) NOT NULL,
-            name VARCHAR(255) DEFAULT 'Toastmaster',
-            email VARCHAR(255) DEFAULT NULL,
-            is_primary TINYINT(1) DEFAULT 0,
-            guest_id INT DEFAULT NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            UNIQUE KEY (event_id, access_code),
-            FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE CASCADE
-        )
-    ");
-    // Add columns if they don't exist (for upgrades)
-    $db->exec("ALTER TABLE toastmaster_access ADD COLUMN IF NOT EXISTS email VARCHAR(255) DEFAULT NULL AFTER name");
-    $db->exec("ALTER TABLE toastmaster_access ADD COLUMN IF NOT EXISTS is_primary TINYINT(1) DEFAULT 0 AFTER email");
-    $db->exec("ALTER TABLE toastmaster_access ADD COLUMN IF NOT EXISTS guest_id INT DEFAULT NULL AFTER is_primary");
-} catch (Exception $e) {
-    error_log('Failed to create or migrate toastmaster tables (toastmaster_items/toastmaster_access): ' . $e->getMessage());
-}
 
 // Get all items
 $stmt = $db->prepare("SELECT * FROM toastmaster_items WHERE event_id = ? ORDER BY sort_order, created_at");

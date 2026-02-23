@@ -375,16 +375,7 @@ function accountCsrfField(): string {
 define('MAX_LOGIN_ATTEMPTS', 5);
 define('LOGIN_LOCKOUT_MINUTES', 15);
 
-/**
- * Get client IP address
- */
-function getClientIp(): string {
-    if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-        $ips = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
-        return trim($ips[0]);
-    }
-    return $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
-}
+// getClientIP() is now defined in includes/functions.php
 
 /**
  * Record a failed login attempt
@@ -393,21 +384,8 @@ function recordLoginAttempt(string $email): void {
     try {
         $db = getDB();
 
-        // Ensure table exists (auto-create on first use)
-        $db->exec("
-            CREATE TABLE IF NOT EXISTS login_attempts (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                ip_address VARCHAR(45) NOT NULL,
-                email VARCHAR(255) NULL,
-                attempted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                INDEX idx_ip (ip_address),
-                INDEX idx_email (email),
-                INDEX idx_attempted (attempted_at)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
-        ");
-
         $stmt = $db->prepare("INSERT INTO login_attempts (ip_address, email) VALUES (?, ?)");
-        $stmt->execute([getClientIp(), $email]);
+        $stmt->execute([getClientIP(), $email]);
 
         // Clean up old attempts (older than 24 hours)
         $db->exec("DELETE FROM login_attempts WHERE attempted_at < DATE_SUB(NOW(), INTERVAL 24 HOUR)");
@@ -423,7 +401,7 @@ function recordLoginAttempt(string $email): void {
 function isLoginRateLimited(string $email): int {
     try {
         $db = getDB();
-        $ip = getClientIp();
+        $ip = getClientIP();
         $window = LOGIN_LOCKOUT_MINUTES;
 
         // Check attempts by IP in the lockout window
@@ -477,7 +455,7 @@ function isLoginRateLimited(string $email): int {
 function clearLoginAttempts(string $email): void {
     try {
         $db = getDB();
-        $ip = getClientIp();
+        $ip = getClientIP();
         $stmt = $db->prepare("DELETE FROM login_attempts WHERE ip_address = ? OR email = ?");
         $stmt->execute([$ip, $email]);
     } catch (Exception $e) {

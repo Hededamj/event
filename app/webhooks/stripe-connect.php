@@ -64,25 +64,31 @@ try {
             }
 
             $bookingId = (int) $bookingId;
+            $paymentIntentId = $session['payment_intent'] ?? null;
 
-            // Confirm the booking (transition from 'accepted' to 'deposited')
-            $confirmed = confirmBooking($bookingId);
+            // Confirm booking + save payment intent atomically
+            $db->beginTransaction();
+            try {
+                // Transition from 'accepted' to 'deposited'
+                $stmt = $db->prepare("
+                    UPDATE bookings SET status = 'deposited', paid_at = NOW(),
+                    stripe_payment_intent_id = COALESCE(?, stripe_payment_intent_id)
+                    WHERE id = ? AND status = 'accepted'
+                ");
+                $stmt->execute([$paymentIntentId, $bookingId]);
+                $confirmed = $stmt->rowCount() > 0;
+
+                $db->commit();
+            } catch (Exception $e) {
+                $db->rollBack();
+                error_log("Stripe Connect webhook: Failed to confirm booking $bookingId: " . $e->getMessage());
+                $confirmed = false;
+            }
 
             if ($confirmed) {
                 error_log("Stripe Connect webhook: Booking $bookingId confirmed (deposited)");
 
-                // Update stripe_payment_intent_id on the booking
-                $paymentIntentId = $session['payment_intent'] ?? null;
-                if ($paymentIntentId) {
-                    $stmt = $db->prepare("
-                        UPDATE bookings
-                        SET stripe_payment_intent_id = ?
-                        WHERE id = ?
-                    ");
-                    $stmt->execute([$paymentIntentId, $bookingId]);
-                }
-
-                // Send payment confirmation notifications
+                // Send payment confirmation notifications (outside transaction)
                 $booking = getBooking($bookingId);
                 if ($booking) {
                     $vendor = [

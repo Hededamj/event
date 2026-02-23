@@ -66,41 +66,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' &&
             $guestInfo = $stmt->fetch();
 
             if ($guestInfo) {
-                // Check if toastmaster_access table exists and has all columns
-                try {
-                    $db->exec("
-                        CREATE TABLE IF NOT EXISTS toastmaster_access (
-                            id INT AUTO_INCREMENT PRIMARY KEY,
-                            event_id INT NOT NULL,
-                            access_code VARCHAR(20) NOT NULL,
-                            name VARCHAR(255) DEFAULT 'Toastmaster',
-                            email VARCHAR(255) DEFAULT NULL,
-                            is_primary TINYINT(1) DEFAULT 0,
-                            guest_id INT DEFAULT NULL,
-                            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                            UNIQUE KEY (event_id, access_code),
-                            FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE CASCADE
-                        )
-                    ");
-                    // Ensure email column exists
-                    $checkCol = $db->query("SHOW COLUMNS FROM toastmaster_access LIKE 'email'");
-                    if ($checkCol->rowCount() === 0) {
-                        $db->exec("ALTER TABLE toastmaster_access ADD COLUMN email VARCHAR(255) DEFAULT NULL");
-                    }
-                    // Ensure is_primary column exists
-                    $checkCol = $db->query("SHOW COLUMNS FROM toastmaster_access LIKE 'is_primary'");
-                    if ($checkCol->rowCount() === 0) {
-                        $db->exec("ALTER TABLE toastmaster_access ADD COLUMN is_primary TINYINT(1) DEFAULT 0");
-                    }
-                    // Ensure guest_id column exists
-                    $checkCol = $db->query("SHOW COLUMNS FROM toastmaster_access LIKE 'guest_id'");
-                    if ($checkCol->rowCount() === 0) {
-                        $db->exec("ALTER TABLE toastmaster_access ADD COLUMN guest_id INT DEFAULT NULL");
-                    }
-                } catch (Exception $e) {
-                    error_log('Failed to create or migrate toastmaster_access table when assigning toastmaster: ' . $e->getMessage());
-                }
-
                 // Check if already a toastmaster
                 $stmt = $db->prepare("SELECT id FROM toastmaster_access WHERE event_id = ? AND guest_id = ?");
                 $stmt->execute([$eventId, $guestId]);
@@ -156,26 +121,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' &&
 }
 
 require_once __DIR__ . '/../includes/admin-header.php';
-
-// Check if max_guests column exists, add if not
-try {
-    $checkStmt = $db->query("SHOW COLUMNS FROM guests LIKE 'max_guests'");
-    if ($checkStmt->rowCount() === 0) {
-        $db->exec("ALTER TABLE guests ADD COLUMN max_guests INT DEFAULT 1 AFTER name");
-    }
-} catch (Exception $e) {
-    error_log('Failed to check or add max_guests column to guests table: ' . $e->getMessage());
-}
-
-// Check if guest_names column exists, add if not
-try {
-    $checkStmt = $db->query("SHOW COLUMNS FROM guests LIKE 'guest_names'");
-    if ($checkStmt->rowCount() === 0) {
-        $db->exec("ALTER TABLE guests ADD COLUMN guest_names TEXT NULL AFTER dietary_notes");
-    }
-} catch (Exception $e) {
-    error_log('Failed to check or add guest_names column to guests table: ' . $e->getMessage());
-}
 
 // Handle form submissions
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -494,41 +439,31 @@ $guests = $stmt->fetchAll();
 // Get toastmasters linked to guests
 $toastmasterGuests = [];
 try {
-    // Check if toastmaster_access table exists
-    $tableCheck = $db->query("SHOW TABLES LIKE 'toastmaster_access'");
-    if ($tableCheck->rowCount() > 0) {
-        // Check if guest_id column exists
-        $checkCol = $db->query("SHOW COLUMNS FROM toastmaster_access LIKE 'guest_id'");
-        if ($checkCol->rowCount() === 0) {
-            $db->exec("ALTER TABLE toastmaster_access ADD COLUMN guest_id INT DEFAULT NULL");
+    // Auto-link unlinked toastmasters to guests by matching name
+    $stmt = $db->prepare("SELECT id, name FROM toastmaster_access WHERE event_id = ? AND guest_id IS NULL AND name IS NOT NULL");
+    $stmt->execute([$eventId]);
+    $unlinkedToastmasters = $stmt->fetchAll();
+
+    foreach ($unlinkedToastmasters as $tm) {
+        // Try to find a guest with matching name
+        $stmtGuest = $db->prepare("SELECT id FROM guests WHERE event_id = ? AND LOWER(name) = LOWER(?)");
+        $stmtGuest->execute([$eventId, $tm['name']]);
+        $matchingGuest = $stmtGuest->fetch();
+
+        if ($matchingGuest) {
+            // Link the toastmaster to this guest
+            $stmtUpdate = $db->prepare("UPDATE toastmaster_access SET guest_id = ? WHERE id = ?");
+            $stmtUpdate->execute([$matchingGuest['id'], $tm['id']]);
         }
+    }
 
-        // Auto-link unlinked toastmasters to guests by matching name
-        $stmt = $db->prepare("SELECT id, name FROM toastmaster_access WHERE event_id = ? AND guest_id IS NULL AND name IS NOT NULL");
-        $stmt->execute([$eventId]);
-        $unlinkedToastmasters = $stmt->fetchAll();
-
-        foreach ($unlinkedToastmasters as $tm) {
-            // Try to find a guest with matching name
-            $stmtGuest = $db->prepare("SELECT id FROM guests WHERE event_id = ? AND LOWER(name) = LOWER(?)");
-            $stmtGuest->execute([$eventId, $tm['name']]);
-            $matchingGuest = $stmtGuest->fetch();
-
-            if ($matchingGuest) {
-                // Link the toastmaster to this guest
-                $stmtUpdate = $db->prepare("UPDATE toastmaster_access SET guest_id = ? WHERE id = ?");
-                $stmtUpdate->execute([$matchingGuest['id'], $tm['id']]);
-            }
-        }
-
-        $stmt = $db->prepare("SELECT guest_id, access_code, is_primary FROM toastmaster_access WHERE event_id = ? AND guest_id IS NOT NULL");
-        $stmt->execute([$eventId]);
-        while ($row = $stmt->fetch()) {
-            $toastmasterGuests[$row['guest_id']] = [
-                'code' => $row['access_code'],
-                'is_primary' => $row['is_primary']
-            ];
-        }
+    $stmt = $db->prepare("SELECT guest_id, access_code, is_primary FROM toastmaster_access WHERE event_id = ? AND guest_id IS NOT NULL");
+    $stmt->execute([$eventId]);
+    while ($row = $stmt->fetch()) {
+        $toastmasterGuests[$row['guest_id']] = [
+            'code' => $row['access_code'],
+            'is_primary' => $row['is_primary']
+        ];
     }
 } catch (Exception $e) {
     // Table might not exist yet or other error

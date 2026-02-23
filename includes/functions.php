@@ -299,3 +299,22 @@ function getFlash(): ?array {
     unset($_SESSION['flash']);
     return $flash;
 }
+
+/**
+ * Get client IP address (checks Cloudflare, proxy headers, validates format)
+ */
+if (!function_exists('getClientIP')) {
+    function getClientIP(): string {
+        $headers = ['HTTP_CF_CONNECTING_IP', 'HTTP_X_FORWARDED_FOR', 'HTTP_X_REAL_IP', 'REMOTE_ADDR'];
+        foreach ($headers as $header) {
+            if (!empty($_SERVER[$header])) {
+                $ips = explode(',', $_SERVER[$header]);
+                $ip = trim($ips[0]);
+                if (filter_var($ip, FILTER_VALIDATE_IP)) {
+                    return $ip;
+                }
+            }
+        }
+        return '0.0.0.0';
+    }
+}

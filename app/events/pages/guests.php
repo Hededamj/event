@@ -117,6 +117,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         $skipped = 0;
         $errors = [];
 
+        $db->beginTransaction();
+        try {
         foreach ($rows as $index => $row) {
             // Map columns to fields
             $name = '';
@@ -192,6 +194,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             $existingNames[strtolower($name)] = true;
 
             $added++;
+        }
+        $db->commit();
+        } catch (Exception $e) {
+            $db->rollBack();
+            error_log('CSV guest import failed: ' . $e->getMessage());
+            setFlash('error', 'Import fejlede. Ingen gæster blev tilføjet.');
+            redirect("?id=$eventId&page=guests");
         }
 
         // Build result message

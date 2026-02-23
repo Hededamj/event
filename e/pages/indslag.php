@@ -3,42 +3,6 @@
  * Guest Indslag (Performance/Contribution) Page - Nordic Design
  */
 
-// Ensure toastmaster tables exist
-try {
-    $db->exec("
-        CREATE TABLE IF NOT EXISTS toastmaster_items (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            event_id INT NOT NULL,
-            guest_name VARCHAR(255) NOT NULL,
-            item_type ENUM('tale', 'sang', 'sketch', 'quiz', 'leg', 'musik', 'andet') DEFAULT 'tale',
-            title VARCHAR(255) DEFAULT NULL,
-            description TEXT,
-            duration_minutes INT DEFAULT 5,
-            is_secret TINYINT(1) DEFAULT 0,
-            status ENUM('pending', 'approved', 'completed') DEFAULT 'pending',
-            sort_order INT DEFAULT 0,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE CASCADE
-        )
-    ");
-
-    $db->exec("
-        CREATE TABLE IF NOT EXISTS toastmaster_messages (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            event_id INT NOT NULL,
-            guest_id INT DEFAULT NULL,
-            guest_name VARCHAR(255) NOT NULL,
-            message TEXT NOT NULL,
-            is_from_toastmaster TINYINT(1) DEFAULT 0,
-            is_read TINYINT(1) DEFAULT 0,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE CASCADE
-        )
-    ");
-} catch (Exception $e) {
-    error_log('Failed to create toastmaster tables (toastmaster_items/toastmaster_messages) in e/pages/indslag: ' . $e->getMessage());
-}
-
 // Check if there's a toastmaster
 $stmt = $db->prepare("SELECT * FROM toastmaster_access WHERE event_id = ? ORDER BY is_primary DESC, created_at ASC LIMIT 1");
 $stmt->execute([$eventId]);

@@ -4,6 +4,8 @@
  * Tracks authentication events, data changes, and admin actions
  */
 
+require_once __DIR__ . '/functions.php';
+
 /**
  * Audit event types
  */
@@ -155,59 +157,15 @@ function auditSecurity(PDO $db, string $type, array $details = []): void {
     auditLog($db, $type, $details);
 }
 
-/**
- * Get client IP address (handles proxies)
- */
-function getClientIP(): string {
-    $headers = ['HTTP_CF_CONNECTING_IP', 'HTTP_X_FORWARDED_FOR', 'HTTP_X_REAL_IP', 'REMOTE_ADDR'];
-
-    foreach ($headers as $header) {
-        if (!empty($_SERVER[$header])) {
-            // Handle comma-separated IPs (X-Forwarded-For)
-            $ips = explode(',', $_SERVER[$header]);
-            $ip = trim($ips[0]);
-            if (filter_var($ip, FILTER_VALIDATE_IP)) {
-                return $ip;
-            }
-        }
-    }
-
-    return $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
-}
+// getClientIP() is now defined in includes/functions.php
 
 /**
  * Ensure audit_log table exists
+ * Schema is guaranteed by migration 017_consolidate_schema.sql
  */
 function ensureAuditTable(PDO $db): void {
     static $checked = false;
-    if ($checked) return;
-
-    try {
-        $db->exec("
-            CREATE TABLE IF NOT EXISTS audit_log (
-                id BIGINT AUTO_INCREMENT PRIMARY KEY,
-                account_id INT DEFAULT NULL,
-                user_id INT DEFAULT NULL,
-                guest_id INT DEFAULT NULL,
-                event_id INT DEFAULT NULL,
-                action VARCHAR(50) NOT NULL,
-                resource_type VARCHAR(50) DEFAULT NULL,
-                resource_id INT DEFAULT NULL,
-                ip_address VARCHAR(45) DEFAULT NULL,
-                user_agent VARCHAR(500) DEFAULT NULL,
-                details JSON DEFAULT NULL,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                INDEX idx_event_id (event_id),
-                INDEX idx_action (action),
-                INDEX idx_created_at (created_at),
-                INDEX idx_user_id (user_id)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
-        ");
-        $checked = true;
-    } catch (Exception $e) {
-        // Table might already exist with different structure
-        $checked = true;
-    }
+    $checked = true;
 }
 
 /**
