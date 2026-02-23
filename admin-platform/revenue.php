@@ -50,24 +50,28 @@ $stmt = $db->prepare("
 $stmt->execute([$startDate, $endDate]);
 $stats = $stmt->fetch();
 
-// Monthly revenue trend (last 12 months)
+// Monthly revenue trend (last 12 months) - single aggregated query
+$twelveMonthsAgo = date('Y-m-01', strtotime('-11 months'));
+$stmt = $db->prepare("
+    SELECT DATE_FORMAT(created_at, '%Y-%m') as month_key,
+           COALESCE(SUM(amount), 0) as revenue
+    FROM payment_history
+    WHERE status = 'succeeded'
+      AND created_at >= ?
+    GROUP BY DATE_FORMAT(created_at, '%Y-%m')
+");
+$stmt->execute([$twelveMonthsAgo]);
+$revenueByMonth = [];
+while ($row = $stmt->fetch()) {
+    $revenueByMonth[$row['month_key']] = $row['revenue'];
+}
+
 $monthlyRevenue = [];
 for ($i = 11; $i >= 0; $i--) {
-    $month = date('Y-m', strtotime("-$i months"));
-    $monthName = date('M Y', strtotime("-$i months"));
-
-    $stmt = $db->prepare("
-        SELECT COALESCE(SUM(amount), 0) as revenue
-        FROM payment_history
-        WHERE status = 'succeeded'
-        AND DATE_FORMAT(created_at, '%Y-%m') = ?
-    ");
-    $stmt->execute([$month]);
-    $revenue = $stmt->fetchColumn();
-
+    $monthKey = date('Y-m', strtotime("-$i months"));
     $monthlyRevenue[] = [
-        'month' => $monthName,
-        'revenue' => $revenue
+        'month' => date('M Y', strtotime("-$i months")),
+        'revenue' => $revenueByMonth[$monthKey] ?? 0
     ];
 }
 

@@ -28,8 +28,14 @@ $formData = [
 
 // Fetch active vendor categories
 $db = getDB();
-$catStmt = $db->query("SELECT id, name, icon FROM vendor_categories WHERE is_active = 1 ORDER BY sort_order ASC");
-$categories = $catStmt->fetchAll(PDO::FETCH_ASSOC);
+$categories = [];
+try {
+    $catStmt = $db->query("SELECT id, name, icon FROM vendor_categories WHERE is_active = 1 ORDER BY sort_order ASC");
+    $categories = $catStmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    // Table may not exist yet if migration 015 hasn't run
+    error_log('vendor_categories table not found - run migration 015: ' . $e->getMessage());
+}
 
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {

@@ -108,12 +108,10 @@ $vendorSql = "
            v.avg_rating,
            v.review_count,
            v.created_at,
-           (SELECT MIN(vs.price_from)
-            FROM vendor_services vs
-            WHERE vs.vendor_id = v.id AND vs.is_active = 1
-           ) AS min_price
+           MIN(vs.price_from) AS min_price
     FROM vendors v
     INNER JOIN vendor_category_links vcl ON vcl.vendor_id = v.id
+    LEFT JOIN vendor_services vs ON vs.vendor_id = v.id AND vs.is_active = 1
     WHERE vcl.category_id = ?
       AND v.status = 'approved'
       AND v.is_active = 1

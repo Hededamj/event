@@ -64,49 +64,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/css/design-system.css">
     <style>
-        *, *::before, *::after {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        :root {
-            --cream: #FAF9F7;
-            --cream-dark: #F5F3EF;
-            --sage: #A8B5A0;
-            --sage-light: #C8D4C2;
-            --sage-dark: #7A8B72;
-            --charcoal: #2C2C2C;
-            --charcoal-light: #4A4A4A;
-            --gold: #C9A962;
-            --white: #FFFFFF;
-            --error: #C75D5D;
-
-            --font-display: 'Cormorant Garamond', Georgia, serif;
-            --font-body: 'DM Sans', -apple-system, sans-serif;
-            --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
         body {
-            font-family: var(--font-body);
-            background: var(--surface);
             min-height: 100vh;
             display: flex;
-            color: var(--text);
-            line-height: 1.6;
-            -webkit-font-smoothing: antialiased;
-        }
-
-        /* Subtle grain texture */
-        body::before {
-            content: '';
-            position: fixed;
-            inset: 0;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
-            opacity: 0.025;
-            pointer-events: none;
-            z-index: 9999;
         }
 
         .login-layout {
@@ -224,8 +186,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         .login-card {
-            background: var(--white);
-            border-radius: 24px;
+            background: var(--surface-card);
+            border-radius: var(--radius-lg);
             padding: 40px;
             box-shadow:
                 0 1px 2px rgba(0,0,0,0.04),
