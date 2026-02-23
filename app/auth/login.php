@@ -1,6 +1,6 @@
 <?php
 /**
- * Account Login Page - Nordic Design
+ * Account Login Page - Nordic Design (Mobile-First)
  */
 require_once __DIR__ . '/../../config/saas.php';
 require_once __DIR__ . '/../../includes/functions.php';
@@ -66,39 +66,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/assets/css/design-system.css">
     <style>
+        /* =============================================
+           MOBILE-FIRST: Base styles (< 768px)
+           ============================================= */
         body {
             min-height: 100vh;
+            min-height: 100dvh;
             display: flex;
+            flex-direction: column;
         }
 
-        .login-layout {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
+        .auth-layout {
+            display: flex;
+            flex-direction: column;
             width: 100%;
             min-height: 100vh;
+            min-height: 100dvh;
         }
 
-        @media (max-width: 900px) {
-            .login-layout {
-                grid-template-columns: 1fr;
-            }
-            .login-visual {
-                display: none;
-            }
-        }
-
-        /* Left side - Visual */
-        .login-visual {
+        /* Mobile branded header */
+        .auth-visual {
             background: linear-gradient(160deg, var(--accent) 0%, var(--accent-dark) 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 48px;
+            padding: 24px 20px;
+            text-align: center;
+            color: var(--text-on-dark);
             position: relative;
             overflow: hidden;
         }
 
-        .login-visual::before {
+        .auth-visual::before {
             content: '';
             position: absolute;
             inset: 0;
@@ -108,108 +104,109 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         .visual-content {
-            text-align: center;
-            color: var(--white);
             position: relative;
             z-index: 1;
         }
 
         .visual-icon {
-            width: 80px;
-            height: 80px;
+            width: 48px;
+            height: 48px;
             background: rgba(255,255,255,0.15);
-            border-radius: 24px;
+            border-radius: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 32px;
+            margin: 0 auto 12px;
         }
 
         .visual-icon svg {
-            width: 40px;
-            height: 40px;
+            width: 24px;
+            height: 24px;
         }
 
         .visual-title {
             font-family: var(--font-display);
-            font-size: 32px;
+            font-size: 22px;
             font-weight: 400;
-            margin-bottom: 16px;
+            margin-bottom: 4px;
             line-height: 1.2;
         }
 
         .visual-text {
-            font-size: 16px;
+            font-size: 14px;
             opacity: 0.9;
-            max-width: 320px;
-            line-height: 1.6;
+            line-height: 1.5;
         }
 
-        /* Right side - Form */
-        .login-form-section {
+        /* Form section */
+        .auth-form-section {
+            flex: 1;
             display: flex;
             flex-direction: column;
-            justify-content: center;
-            padding: clamp(32px, 8vw, 80px);
+            padding: 24px 20px 32px;
             background: var(--surface);
         }
 
-        .login-header {
-            margin-bottom: 40px;
+        .auth-header {
+            margin-bottom: 20px;
         }
 
-        .login-logo {
+        .auth-logo {
             font-family: var(--font-display);
-            font-size: 28px;
+            font-size: 24px;
             font-weight: 500;
             color: var(--text);
             text-decoration: none;
             display: inline-block;
-            margin-bottom: 32px;
+            margin-bottom: 16px;
         }
 
-        .login-logo span {
+        .auth-logo span {
             color: var(--accent-dark);
         }
 
-        .login-title {
+        .auth-title {
             font-family: var(--font-display);
-            font-size: clamp(28px, 4vw, 36px);
+            font-size: 26px;
             font-weight: 400;
             color: var(--text);
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
 
-        .login-subtitle {
-            font-size: 15px;
+        .auth-subtitle {
+            font-size: 14px;
             color: var(--text-secondary);
         }
 
-        .login-card {
+        .auth-card {
             background: var(--surface-card);
             border-radius: var(--radius-lg);
-            padding: 40px;
+            padding: 24px;
             box-shadow:
                 0 1px 2px rgba(0,0,0,0.04),
                 0 4px 16px rgba(0,0,0,0.04);
-            max-width: 440px;
+            animation: fadeIn 0.6s var(--ease-out);
         }
 
         .error-message {
-            background: #FDF2F2;
-            border: 1px solid #F5D5D5;
+            background: var(--error-light);
+            border: 1px solid rgba(193, 75, 75, 0.2);
             color: var(--error);
-            padding: 14px 18px;
-            border-radius: 14px;
+            padding: 12px 14px;
+            border-radius: var(--radius-md);
             font-size: 14px;
-            margin-bottom: 24px;
+            margin-bottom: 20px;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
+        }
+
+        .error-message svg {
+            flex-shrink: 0;
         }
 
         .form-group {
-            margin-bottom: 24px;
+            margin-bottom: 16px;
         }
 
         .form-label {
@@ -217,42 +214,45 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             font-size: 14px;
             font-weight: 600;
             color: var(--text);
-            margin-bottom: 10px;
+            margin-bottom: 6px;
         }
 
         .form-input {
             width: 100%;
-            padding: 16px 18px;
+            padding: 12px 14px;
             font-family: var(--font-body);
-            font-size: 15px;
-            border: 2px solid var(--border);
-            border-radius: 14px;
-            background: var(--white);
+            font-size: 16px;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-md);
+            background: var(--surface-card);
             color: var(--text);
-            transition: all 0.3s var(--ease-out);
+            transition: border-color 0.15s ease, box-shadow 0.15s ease;
+            -webkit-appearance: none;
+            appearance: none;
         }
 
         .form-input:focus {
             outline: none;
             border-color: var(--accent);
-            box-shadow: 0 0 0 4px rgba(168, 181, 160, 0.15);
+            box-shadow: 0 0 0 3px var(--accent-light);
         }
 
         .form-input::placeholder {
-            color: #A8A39B;
+            color: var(--text-secondary);
+            opacity: 0.6;
         }
 
         .remember-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 28px;
+            margin-bottom: 24px;
         }
 
         .checkbox-label {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
             font-size: 14px;
             color: var(--text-secondary);
             cursor: pointer;
@@ -269,45 +269,45 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             text-decoration: none;
             font-size: 14px;
             font-weight: 500;
-            transition: color 0.2s;
         }
 
-        .form-link:hover {
-            color: var(--text);
-        }
-
-        .btn {
-            display: inline-flex;
+        .btn-submit {
+            display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
-            padding: 16px 32px;
+            gap: 8px;
+            width: 100%;
+            padding: 14px 24px;
             font-family: var(--font-body);
             font-size: 15px;
             font-weight: 600;
             border: none;
-            border-radius: 14px;
+            border-radius: var(--radius-md);
             cursor: pointer;
-            text-decoration: none;
-            transition: all 0.3s var(--ease-out);
-            width: 100%;
-        }
-
-        .btn-primary {
+            transition: background 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
             background: var(--text);
-            color: var(--white);
+            color: var(--text-on-dark);
+            -webkit-appearance: none;
+            appearance: none;
         }
 
-        .btn-primary:hover {
+        .btn-submit:hover {
             background: var(--text-secondary);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(44,44,44,0.2);
+        }
+
+        .btn-submit:active {
+            transform: scale(0.98);
+        }
+
+        .btn-submit svg {
+            width: 18px;
+            height: 18px;
         }
 
         .divider {
             display: flex;
             align-items: center;
-            margin: 28px 0;
+            margin: 20px 0;
             color: var(--text-secondary);
             font-size: 13px;
         }
@@ -321,45 +321,183 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         .divider span {
-            padding: 0 16px;
+            padding: 0 14px;
         }
 
-        .register-link {
+        .alt-link {
             display: block;
             text-align: center;
-            padding: 16px 24px;
-            border: 2px solid var(--border);
-            border-radius: 14px;
+            padding: 12px 20px;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-md);
             color: var(--text);
             text-decoration: none;
             font-weight: 500;
             font-size: 15px;
-            transition: all 0.3s var(--ease-out);
+            transition: border-color 0.15s ease, background 0.15s ease;
         }
 
-        .register-link:hover {
+        .alt-link:hover {
             border-color: var(--accent);
-            background: var(--surface);
+            background: var(--accent-light);
         }
 
         .form-footer {
-            margin-top: 28px;
+            margin-top: 20px;
             text-align: center;
         }
 
+        .form-footer a {
+            color: var(--accent-dark);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(12px); }
+            from { opacity: 0; transform: translateY(8px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        .login-card {
-            animation: fadeIn 0.6s var(--ease-out);
+        /* =============================================
+           TABLET: >= 768px
+           ============================================= */
+        @media (min-width: 768px) {
+            .auth-visual {
+                padding: 32px;
+            }
+
+            .visual-icon {
+                width: 56px;
+                height: 56px;
+                border-radius: 18px;
+            }
+
+            .visual-icon svg {
+                width: 28px;
+                height: 28px;
+            }
+
+            .visual-title {
+                font-size: 26px;
+            }
+
+            .auth-form-section {
+                padding: 40px;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .auth-header {
+                margin-bottom: 28px;
+                max-width: 440px;
+                width: 100%;
+            }
+
+            .auth-logo {
+                font-size: 28px;
+            }
+
+            .auth-title {
+                font-size: 32px;
+            }
+
+            .auth-subtitle {
+                font-size: 15px;
+            }
+
+            .auth-card {
+                padding: 36px;
+                max-width: 440px;
+                width: 100%;
+            }
+
+            .form-group {
+                margin-bottom: 20px;
+            }
+
+            .form-input {
+                padding: 14px 16px;
+            }
+
+            .btn-submit {
+                padding: 16px 32px;
+            }
+        }
+
+        /* =============================================
+           DESKTOP: >= 1024px — Split layout
+           ============================================= */
+        @media (min-width: 1024px) {
+            .auth-layout {
+                flex-direction: row;
+            }
+
+            .auth-visual {
+                width: 45%;
+                min-height: 100vh;
+                min-height: 100dvh;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 48px;
+                position: sticky;
+                top: 0;
+            }
+
+            .visual-icon {
+                width: 80px;
+                height: 80px;
+                border-radius: 24px;
+                margin-bottom: 32px;
+            }
+
+            .visual-icon svg {
+                width: 40px;
+                height: 40px;
+            }
+
+            .visual-title {
+                font-size: 32px;
+                margin-bottom: 16px;
+            }
+
+            .visual-text {
+                font-size: 16px;
+                max-width: 320px;
+                margin: 0 auto;
+                line-height: 1.6;
+            }
+
+            .auth-form-section {
+                width: 55%;
+                min-height: 100vh;
+                min-height: 100dvh;
+                padding: 48px 64px;
+            }
+
+            .auth-header {
+                margin-bottom: 32px;
+            }
+
+            .auth-logo {
+                margin-bottom: 24px;
+            }
+
+            .auth-title {
+                font-size: 36px;
+            }
+
+            .btn-submit:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 8px 24px rgba(44,44,44,0.2);
+            }
         }
     </style>
 </head>
 <body>
-    <div class="login-layout">
-        <div class="login-visual">
+    <div class="auth-layout">
+        <div class="auth-visual">
             <div class="visual-content">
                 <div class="visual-icon">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -373,14 +511,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
         </div>
 
-        <div class="login-form-section">
-            <div class="login-header">
-                <a href="/" class="login-logo">Party<span>Parart</span></a>
-                <h1 class="login-title">Velkommen tilbage</h1>
-                <p class="login-subtitle">Log ind for at administrere dine arrangementer</p>
+        <div class="auth-form-section">
+            <div class="auth-header">
+                <a href="/" class="auth-logo">Party<span>Parart</span></a>
+                <h1 class="auth-title">Velkommen tilbage</h1>
+                <p class="auth-subtitle">Log ind for at administrere dine arrangementer</p>
             </div>
 
-            <div class="login-card">
+            <div class="auth-card">
                 <?php if ($error): ?>
                     <div class="error-message">
                         <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
@@ -402,6 +540,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             value="<?= htmlspecialchars($email) ?>"
                             required
                             autofocus
+                            autocomplete="email"
                         >
                     </div>
 
@@ -414,6 +553,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             class="form-input"
                             placeholder="Din adgangskode"
                             required
+                            autocomplete="current-password"
                         >
                     </div>
 
@@ -425,18 +565,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <a href="/app/auth/forgot-password.php" class="form-link">Glemt adgangskode?</a>
                     </div>
 
-                    <button type="submit" class="btn btn-primary">
+                    <button type="submit" class="btn-submit">
                         Log ind
-                        <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                     </button>
                 </form>
 
                 <div class="divider"><span>eller</span></div>
 
-                <a href="/register" class="register-link">Opret ny konto</a>
+                <a href="/register" class="alt-link">Opret ny konto</a>
 
                 <div class="form-footer">
-                    <a href="/" class="form-link">Tilbage til forsiden</a>
+                    <a href="/">Tilbage til forsiden</a>
                 </div>
             </div>
         </div>
