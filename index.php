@@ -11,8 +11,8 @@ require_once __DIR__ . '/includes/functions.php';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PartyParart - Skab uforglemmelige øjeblikke</title>
-    <meta name="description" content="PartyParart gør dine livsfejringer magiske. Personlige invitationer, gæstehåndtering og smukke oplevelser til konfirmationer, bryllupper, fødselsdage og jubilæer.">
+    <title>PartyParart — Din perfekte event planner | Planlæg festen nemt</title>
+    <meta name="description" content="Vi gør festplanlægning til en leg. Invitationer, gæstehåndtering, bordplan, budget og meget mere — alt samlet ét sted. Din event-makker fra start til slut.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
@@ -921,14 +921,14 @@ require_once __DIR__ . '/includes/functions.php';
         <div class="container">
             <div class="hero-text">
                 <div class="hero-badge">
-                    <svg fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
-                    Skab magiske øjeblikke
+                    <svg fill="currentColor" viewBox="0 0 20 20"><path d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"/></svg>
+                    Din perfekte event planner
                 </div>
-                <h1>Gør livets store <em>fejringer</em> uforglemmelige</h1>
+                <h1>Lad <em>festen</em> begynde</h1>
                 <p class="hero-description">
-                    PartyParart er din partner i at skabe perfekte arrangementer.
-                    Fra smukke personlige invitationer til nem gæstehåndtering
-                    – vi hjælper dig med at fejre livets vigtigste øjeblikke.
+                    Uanset om det er 20 eller 500 gæster — vi giver dig overblikket,
+                    så du kan fokusere på det vigtige. Alt samlet ét sted: invitationer,
+                    gæster, bordplan, budget og meget mere.
                 </p>
                 <div class="hero-buttons">
                     <a href="/app/auth/register.php" class="btn btn-primary">
@@ -1169,8 +1169,8 @@ require_once __DIR__ . '/includes/functions.php';
     <section class="cta">
         <div class="container">
             <div class="cta-box">
-                <h2>Klar til at skabe magi?</h2>
-                <p>Start dit arrangement gratis i dag og oplev hvor nemt det kan være at planlægge livets store øjeblikke.</p>
+                <h2>Vi gør festplanlægning til en leg</h2>
+                <p>Start dit arrangement gratis i dag og oplev hvordan det føles at have en event-makker fra start til slut.</p>
                 <a href="/app/auth/register.php" class="btn">
                     Kom i gang gratis
                     <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
