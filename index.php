@@ -168,35 +168,22 @@ require_once __DIR__ . '/includes/functions.php';
 
         /* ===== HERO ===== */
         .hero {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            padding: 140px 0 100px;
             position: relative;
             overflow: hidden;
         }
 
-        .hero-bg {
-            position: absolute;
-            top: -10%;
-            right: -5%;
-            width: 55%;
-            height: 120%;
-            background: linear-gradient(135deg, var(--accent-light) 0%, var(--accent) 50%, var(--accent-dark) 100%);
-            border-radius: 0 0 0 40%;
-            opacity: 0.15;
-            z-index: -1;
-        }
-
-        .hero-content {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 80px;
-            align-items: center;
+        .hero-image {
+            width: 100%;
+            height: 60vh;
+            min-height: 360px;
+            object-fit: cover;
+            object-position: center 30%;
+            display: block;
         }
 
         .hero-text {
-            max-width: 560px;
+            padding: 40px 24px 60px;
+            max-width: 600px;
         }
 
         .hero-badge {
@@ -222,7 +209,7 @@ require_once __DIR__ . '/includes/functions.php';
 
         .hero h1 {
             font-family: 'Cormorant Garamond', serif;
-            font-size: clamp(42px, 5vw, 64px);
+            font-size: 36px;
             font-weight: 500;
             line-height: 1.15;
             margin-bottom: 24px;
@@ -235,7 +222,7 @@ require_once __DIR__ . '/includes/functions.php';
         }
 
         .hero-description {
-            font-size: 18px;
+            font-size: 17px;
             color: var(--text-secondary);
             line-height: 1.8;
             margin-bottom: 40px;
@@ -247,95 +234,74 @@ require_once __DIR__ . '/includes/functions.php';
             flex-wrap: wrap;
         }
 
-        .hero-visual {
-            position: relative;
-        }
+        /* Desktop hero: image as background with text overlay */
+        @media (min-width: 1024px) {
+            .hero {
+                min-height: 100vh;
+                display: flex;
+                align-items: flex-end;
+            }
 
-        .hero-image-stack {
-            position: relative;
-            height: 500px;
-        }
+            .hero-image {
+                position: absolute;
+                inset: 0;
+                height: 100%;
+                z-index: 0;
+            }
 
-        .hero-card {
-            position: absolute;
-            background: var(--white);
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
-            overflow: hidden;
-        }
+            .hero::after {
+                content: '';
+                position: absolute;
+                inset: 0;
+                background: linear-gradient(to top, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.2) 40%, transparent 70%);
+                z-index: 1;
+            }
 
-        .hero-card-1 {
-            width: 320px;
-            height: 400px;
-            top: 0;
-            right: 0;
-            z-index: 3;
-            animation: float 6s ease-in-out infinite;
-        }
+            .hero-text {
+                position: relative;
+                z-index: 2;
+                padding: 0 0 80px;
+                max-width: 620px;
+                margin-left: 0;
+            }
 
-        .hero-card-2 {
-            width: 260px;
-            height: 320px;
-            top: 60px;
-            right: 200px;
-            z-index: 2;
-            animation: float 6s ease-in-out infinite 1s;
-        }
+            .hero .container {
+                width: 100%;
+            }
 
-        .hero-card-3 {
-            width: 200px;
-            padding: 24px;
-            bottom: 40px;
-            right: 40px;
-            z-index: 4;
-            animation: float 6s ease-in-out infinite 2s;
-        }
+            .hero h1 {
+                font-size: clamp(42px, 5vw, 64px);
+                color: white;
+            }
 
-        .hero-card-content {
-            padding: 24px;
-        }
+            .hero h1 em {
+                color: var(--accent-light);
+            }
 
-        .hero-card-image {
-            height: 65%;
-            background: linear-gradient(135deg, var(--accent-light) 0%, var(--blush) 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 80px;
-            font-style: italic;
-            color: white;
-            opacity: 0.8;
-        }
+            .hero-description {
+                color: rgba(255,255,255,0.85);
+            }
 
-        .hero-card h4 {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 20px;
-            margin-bottom: 4px;
-        }
+            .hero-badge {
+                background: rgba(255,255,255,0.15);
+                backdrop-filter: blur(10px);
+                border-color: rgba(255,255,255,0.2);
+                color: white;
+            }
 
-        .hero-card p {
-            font-size: 13px;
-            color: var(--text-secondary);
-        }
+            .hero-badge svg {
+                color: var(--warning);
+            }
 
-        .hero-card-3 .stat {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 48px;
-            font-weight: 500;
-            color: var(--accent-dark);
-            line-height: 1;
-            margin-bottom: 8px;
-        }
+            .hero .btn-secondary {
+                color: white;
+                border-color: rgba(255,255,255,0.4);
+            }
 
-        .hero-card-3 .stat-label {
-            font-size: 13px;
-            color: var(--text-secondary);
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-15px); }
+            .hero .btn-secondary:hover {
+                border-color: white;
+                color: white;
+            }
         }
 
         /* ===== TRUST BAR ===== */
@@ -815,8 +781,6 @@ require_once __DIR__ . '/includes/functions.php';
 
         /* ===== RESPONSIVE ===== */
         @media (max-width: 1024px) {
-            .hero-content { grid-template-columns: 1fr; gap: 60px; }
-            .hero-visual { display: none; }
             .features-grid { grid-template-columns: repeat(2, 1fr); }
             .invitation-content { grid-template-columns: 1fr; }
             .invitation-preview { margin-top: 60px; }
@@ -825,8 +789,6 @@ require_once __DIR__ . '/includes/functions.php';
 
         @media (max-width: 768px) {
             .nav-links { display: none; }
-            .hero { padding: 120px 0 80px; }
-            .hero h1 { font-size: 36px; }
             .features-grid { grid-template-columns: 1fr; }
             .event-types-grid { grid-template-columns: 1fr; }
             .cta-box { padding: 60px 32px; border-radius: 28px; }
@@ -849,51 +811,30 @@ require_once __DIR__ . '/includes/functions.php';
     </header>
 
     <section class="hero">
-        <div class="hero-bg"></div>
+        <img src="/billeder/hero-konfirmation.png"
+             alt="Konfirmationsfest i haven med lyskæder, glade gæster og dansk sommer"
+             class="hero-image"
+             loading="eager">
         <div class="container">
-            <div class="hero-content">
-                <div class="hero-text">
-                    <div class="hero-badge">
-                        <svg fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
-                        Skab magiske øjeblikke
-                    </div>
-                    <h1>Gør livets store <em>fejringer</em> uforglemmelige</h1>
-                    <p class="hero-description">
-                        PartyParart er din partner i at skabe perfekte arrangementer.
-                        Fra smukke personlige invitationer til nem gæstehåndtering
-                        – vi hjælper dig med at fejre livets vigtigste øjeblikke.
-                    </p>
-                    <div class="hero-buttons">
-                        <a href="/app/auth/register.php" class="btn btn-primary">
-                            Start dit arrangement
-                            <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
-                            </svg>
-                        </a>
-                        <a href="#features" class="btn btn-secondary">Se hvordan det virker</a>
-                    </div>
+            <div class="hero-text">
+                <div class="hero-badge">
+                    <svg fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                    Skab magiske øjeblikke
                 </div>
-                <div class="hero-visual">
-                    <div class="hero-image-stack">
-                        <div class="hero-card hero-card-1">
-                            <div class="hero-card-image">S</div>
-                            <div class="hero-card-content">
-                                <h4>Sofies Konfirmation</h4>
-                                <p>18. maj 2025 • 45 gæster</p>
-                            </div>
-                        </div>
-                        <div class="hero-card hero-card-2">
-                            <div class="hero-card-image" style="background: linear-gradient(135deg, var(--warning-light), var(--warning));">A</div>
-                            <div class="hero-card-content">
-                                <h4>Anna & Peters Bryllup</h4>
-                                <p>22. august 2025</p>
-                            </div>
-                        </div>
-                        <div class="hero-card hero-card-3">
-                            <div class="stat">98%</div>
-                            <div class="stat-label">af vores brugere anbefaler os</div>
-                        </div>
-                    </div>
+                <h1>Gør livets store <em>fejringer</em> uforglemmelige</h1>
+                <p class="hero-description">
+                    PartyParart er din partner i at skabe perfekte arrangementer.
+                    Fra smukke personlige invitationer til nem gæstehåndtering
+                    – vi hjælper dig med at fejre livets vigtigste øjeblikke.
+                </p>
+                <div class="hero-buttons">
+                    <a href="/app/auth/register.php" class="btn btn-primary">
+                        Start dit arrangement
+                        <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                        </svg>
+                    </a>
+                    <a href="#features" class="btn btn-secondary">Se hvordan det virker</a>
                 </div>
             </div>
         </div>
