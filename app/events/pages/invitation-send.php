@@ -283,8 +283,8 @@ $filteredGuests = match($filter) {
     <div>
         <h4>Email service ikke konfigureret</h4>
         <p>
-            For at sende emails skal du tilføje din SendGrid API nøgle i <code>.env</code> filen:<br>
-            <code>SENDGRID_API_KEY=SG.xxxxxx</code>
+            For at sende emails skal du tilføje din Resend API nøgle i <code>.env</code> filen:<br>
+            <code>RESEND_API_KEY=re_xxxxxx</code>
         </p>
     </div>
 </div>

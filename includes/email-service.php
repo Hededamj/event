@@ -1,7 +1,7 @@
 <?php
 /**
- * Email Service - SendGrid Integration
- * Handles sending invitation emails via SendGrid API
+ * Email Service - Resend Integration
+ * Handles sending invitation emails via Resend API
  */
 
 require_once __DIR__ . '/env.php';
@@ -14,7 +14,7 @@ class EmailService {
     private ?PDO $db;
 
     public function __construct(?PDO $db = null) {
-        $this->apiKey = env('SENDGRID_API_KEY', '');
+        $this->apiKey = env('RESEND_API_KEY', '');
         $this->fromEmail = env('EMAIL_FROM_ADDRESS', 'invitation@partyparart.dk');
         $this->fromName = env('EMAIL_FROM_NAME', 'PartyParart');
         $this->db = $db;
@@ -173,30 +173,17 @@ class EmailService {
     }
 
     /**
-     * Send email via SendGrid API
+     * Send email via Resend API
      */
     private function sendViaSendGrid(string $toEmail, string $toName, string $subject, string $html): array {
         $data = [
-            'personalizations' => [
-                [
-                    'to' => [['email' => $toEmail, 'name' => $toName]],
-                    'subject' => $subject
-                ]
-            ],
-            'from' => [
-                'email' => $this->fromEmail,
-                'name' => $this->fromName
-            ],
-            'content' => [
-                ['type' => 'text/html', 'value' => $html]
-            ],
-            'tracking_settings' => [
-                'click_tracking' => ['enable' => true],
-                'open_tracking' => ['enable' => true]
-            ]
+            'from' => $this->fromName . ' <' . $this->fromEmail . '>',
+            'to' => [$toEmail],
+            'subject' => $subject,
+            'html' => $html
         ];
 
-        $ch = curl_init('https://api.sendgrid.com/v3/mail/send');
+        $ch = curl_init('https://api.resend.com/emails');
         curl_setopt_array($ch, [
             CURLOPT_POST => true,
             CURLOPT_POSTFIELDS => json_encode($data),
@@ -218,16 +205,15 @@ class EmailService {
         }
 
         if ($httpCode >= 200 && $httpCode < 300) {
-            // Extract message ID from response headers if available
             $responseData = json_decode($response, true);
             return [
                 'success' => true,
-                'message_id' => $responseData['x-message-id'] ?? null
+                'message_id' => $responseData['id'] ?? null
             ];
         }
 
         $responseData = json_decode($response, true);
-        $errorMessage = $responseData['errors'][0]['message'] ?? "HTTP fejl: $httpCode";
+        $errorMessage = $responseData['message'] ?? "HTTP fejl: $httpCode";
 
         return ['success' => false, 'error' => $errorMessage];
     }
@@ -278,7 +264,7 @@ class EmailService {
     }
 
     /**
-     * Process webhook event from SendGrid
+     * Process webhook event from Resend
      */
     public function processWebhook(array $events): void {
         if (!$this->db) {
@@ -286,16 +272,17 @@ class EmailService {
         }
 
         foreach ($events as $event) {
-            $messageId = $event['sg_message_id'] ?? null;
-            $eventType = $event['event'] ?? '';
+            // Resend format: { type: "email.delivered", data: { email_id: "..." } }
+            $eventType = $event['type'] ?? '';
+            $messageId = $event['data']['email_id'] ?? null;
 
             if (!$messageId) {
                 continue;
             }
 
             // Find email by external ID
-            $stmt = $this->db->prepare("SELECT id FROM invitation_emails WHERE external_id LIKE ?");
-            $stmt->execute([$messageId . '%']);
+            $stmt = $this->db->prepare("SELECT id FROM invitation_emails WHERE external_id = ?");
+            $stmt->execute([$messageId]);
             $email = $stmt->fetch();
 
             if (!$email) {
@@ -303,11 +290,11 @@ class EmailService {
             }
 
             $statusMap = array(
-                'delivered' => 'delivered',
-                'open' => 'opened',
-                'click' => 'clicked',
-                'bounce' => 'bounced',
-                'dropped' => 'bounced'
+                'email.delivered' => 'delivered',
+                'email.opened' => 'opened',
+                'email.clicked' => 'clicked',
+                'email.bounced' => 'bounced',
+                'email.complained' => 'bounced'
             );
             $status = isset($statusMap[$eventType]) ? $statusMap[$eventType] : null;
 

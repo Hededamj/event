@@ -116,6 +116,9 @@ require_once __DIR__ . '/includes/functions.php';
 
         .nav-links a:hover { color: var(--accent-dark); }
 
+        .nav-links a.btn-primary { color: white; }
+        .nav-links a.btn-primary:hover { color: white; }
+
         .btn {
             display: inline-flex;
             align-items: center;
