@@ -523,7 +523,6 @@ require_once __DIR__ . '/includes/functions.php';
         }
 
         .preview-screen {
-            background: url('/billeder/kort-konfirmation.png') center 15%/cover no-repeat;
             border-radius: 32px;
             aspect-ratio: 9/16;
             display: flex;
@@ -532,6 +531,23 @@ require_once __DIR__ . '/includes/functions.php';
             padding: 0;
             position: relative;
             overflow: hidden;
+        }
+
+        .preview-slider {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+        }
+        .preview-slide {
+            position: absolute;
+            inset: 0;
+            background-size: cover;
+            background-position: center 15%;
+            opacity: 0;
+            transition: opacity 1.2s ease-in-out;
+        }
+        .preview-slide.active {
+            opacity: 1;
         }
 
         .preview-screen::before {
@@ -1050,6 +1066,11 @@ require_once __DIR__ . '/includes/functions.php';
                 <div class="invitation-preview">
                     <div class="preview-phone">
                         <div class="preview-screen">
+                            <div class="preview-slider">
+                                <div class="preview-slide active" style="background-image: url('/billeder/kort-konfirmation.png')"></div>
+                                <div class="preview-slide" style="background-image: url('/billeder/Ungdom med basketball p%C3%A5 banen.png')"></div>
+                                <div class="preview-slide" style="background-image: url('/billeder/Venner i skolegangen, smil og latter.png')"></div>
+                            </div>
                             <div class="preview-content">
                                 <div class="preview-ornament">&#10045; Du er inviteret &#10045;</div>
                                 <div class="preview-event-type">Konfirmation</div>
@@ -1185,6 +1206,17 @@ require_once __DIR__ . '/includes/functions.php';
                 header.classList.remove('scrolled');
             }
         });
+
+        // Invitation preview slider
+        const slides = document.querySelectorAll('.preview-slide');
+        if (slides.length > 1) {
+            let current = 0;
+            setInterval(() => {
+                slides[current].classList.remove('active');
+                current = (current + 1) % slides.length;
+                slides[current].classList.add('active');
+            }, 4000);
+        }
     </script>
 </body>
 </html>
