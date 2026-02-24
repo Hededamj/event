@@ -13,7 +13,7 @@ if (!$accountId) {
 }
 
 // Get account
-$stmt = $db->prepare("SELECT * FROM accounts WHERE id = ? AND is_platform_admin = 0");
+$stmt = $db->prepare("SELECT * FROM accounts WHERE id = ?");
 $stmt->execute([$accountId]);
 $account = $stmt->fetch();
 
@@ -50,6 +50,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $stmt = $db->prepare("UPDATE accounts SET name = ?, email = ?, company = ?, phone = ? WHERE id = ?");
                     $stmt->execute([$name, $email, $company, $phone, $accountId]);
                     setFlash('success', 'Konto opdateret');
+                }
+                break;
+
+            case 'change_plan':
+                $newPlanId = (int)($_POST['plan_id'] ?? 0);
+                if ($newPlanId) {
+                    // Check plan exists
+                    $planCheck = $db->prepare("SELECT id, name FROM plans WHERE id = ?");
+                    $planCheck->execute([$newPlanId]);
+                    $newPlan = $planCheck->fetch();
+
+                    if ($newPlan) {
+                        // Check if account has an active subscription
+                        $subCheck = $db->prepare("SELECT id FROM subscriptions WHERE account_id = ? AND status = 'active' LIMIT 1");
+                        $subCheck->execute([$accountId]);
+                        $existingSub = $subCheck->fetch();
+
+                        if ($existingSub) {
+                            $stmt = $db->prepare("UPDATE subscriptions SET plan_id = ?, updated_at = NOW() WHERE id = ?");
+                            $stmt->execute([$newPlanId, $existingSub['id']]);
+                        } else {
+                            $stmt = $db->prepare("INSERT INTO subscriptions (account_id, plan_id, status, created_at, updated_at) VALUES (?, ?, 'active', NOW(), NOW())");
+                            $stmt->execute([$accountId, $newPlanId]);
+                        }
+                        setFlash('success', 'Plan ændret til ' . $newPlan['name']);
+                    }
                 }
                 break;
         }
@@ -96,6 +122,9 @@ $stmt = $db->prepare("
 ");
 $stmt->execute([$accountId]);
 $payments = $stmt->fetchAll();
+
+// Get all plans for dropdown
+$allPlans = $db->query("SELECT id, name, slug, price_monthly FROM plans ORDER BY sort_order")->fetchAll();
 
 // Get login history
 $stmt = $db->prepare("
@@ -264,6 +293,23 @@ $sessions = $stmt->fetchAll();
                     <p>Ingen aktivt abonnement</p>
                 </div>
             <?php endif; ?>
+
+            <hr style="margin: var(--space-lg) 0; border: none; border-top: 1px solid var(--border);">
+
+            <form method="POST" class="flex gap-md items-center" style="flex-wrap: wrap;">
+                <?= csrfField() ?>
+                <input type="hidden" name="action" value="change_plan">
+                <label class="form-label" style="margin-bottom: 0;">Skift plan:</label>
+                <select name="plan_id" class="form-input form-select" style="width: auto;">
+                    <?php foreach ($allPlans as $plan): ?>
+                        <option value="<?= $plan['id'] ?>"
+                            <?= ($subscription && $subscription['plan_id'] == $plan['id']) ? 'selected' : '' ?>>
+                            <?= escape($plan['name']) ?> (<?= number_format($plan['price_monthly'], 0, ',', '.') ?> kr/md)
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+                <button type="submit" class="btn btn-primary btn-sm">Gem</button>
+            </form>
         </div>
     </div>
 

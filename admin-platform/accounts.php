@@ -41,7 +41,7 @@ $perPage = 20;
 $offset = ($page - 1) * $perPage;
 
 // Build query
-$where = ["a.is_platform_admin = 0"];
+$where = ["1=1"];
 $params = [];
 
 if ($search) {

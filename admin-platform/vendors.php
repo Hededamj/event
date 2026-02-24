@@ -50,6 +50,49 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         redirect(BASE_PATH . '/admin-platform/vendors.php');
     }
+
+    // Handle create vendor (no vendor_id needed)
+    if (($action ?? '') === 'create' && verifyCsrfToken($_POST['csrf_token'] ?? '')) {
+        $companyName = trim($_POST['company_name'] ?? '');
+        $contactName = trim($_POST['contact_name'] ?? '');
+        $email = trim($_POST['email'] ?? '');
+        $phone = trim($_POST['phone'] ?? '');
+        $password = $_POST['password'] ?? '';
+
+        $createErrors = [];
+        if (empty($companyName)) $createErrors[] = 'Firmanavn er påkrævet.';
+        if (empty($contactName)) $createErrors[] = 'Kontaktperson er påkrævet.';
+        if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) $createErrors[] = 'Gyldig email er påkrævet.';
+        if (strlen($password) < 8) $createErrors[] = 'Adgangskode skal være mindst 8 tegn.';
+
+        // Check duplicate email
+        if (empty($createErrors)) {
+            $chk = $db->prepare("SELECT id FROM vendors WHERE email = ? LIMIT 1");
+            $chk->execute([$email]);
+            if ($chk->fetch()) $createErrors[] = 'Email er allerede registreret.';
+        }
+
+        if (empty($createErrors)) {
+            $hash = password_hash($password, PASSWORD_DEFAULT);
+            $autoApprove = isset($_POST['auto_approve']);
+            $status = $autoApprove ? 'approved' : 'pending';
+
+            $stmt = $db->prepare("
+                INSERT INTO vendors (company_name, contact_name, email, phone, password_hash, status, approved_at, approved_by)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            ");
+            $stmt->execute([
+                $companyName, $contactName, $email, $phone ?: null, $hash,
+                $status,
+                $autoApprove ? date('Y-m-d H:i:s') : null,
+                $autoApprove ? $adminId : null
+            ]);
+            setFlash('success', 'Leverandør oprettet' . ($autoApprove ? ' og godkendt' : ''));
+        } else {
+            setFlash('error', implode(' ', $createErrors));
+        }
+        redirect(BASE_PATH . '/admin-platform/vendors.php');
+    }
 }
 
 // Filters
@@ -146,6 +189,7 @@ $totalCommission = $db->query("
                 <?= $statusCounts['pending'] ?> afventer godkendelse
             </span>
         <?php endif; ?>
+        <button type="button" class="btn btn-primary" onclick="showCreateModal()">+ Opret leverandør</button>
     </div>
 </header>
 
@@ -390,6 +434,54 @@ $totalCommission = $db->query("
     </div>
 </div>
 
+<!-- Create Vendor Modal -->
+<div id="createModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
+    <div style="background: white; border-radius: 12px; padding: 2rem; max-width: 480px; width: 90%;">
+        <h3 style="margin-bottom: 1rem;">Opret leverandør</h3>
+        <form method="POST">
+            <?= csrfField() ?>
+            <input type="hidden" name="action" value="create">
+
+            <div class="form-group">
+                <label class="form-label">Firmanavn</label>
+                <input type="text" name="company_name" class="form-input" required placeholder="Firmanavn">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Kontaktperson</label>
+                <input type="text" name="contact_name" class="form-input" required placeholder="Fulde navn">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Email</label>
+                <input type="email" name="email" class="form-input" required placeholder="firma@email.dk">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Telefon (valgfrit)</label>
+                <input type="text" name="phone" class="form-input" placeholder="+45 12 34 56 78">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Adgangskode</label>
+                <input type="password" name="password" class="form-input" required minlength="8" placeholder="Mindst 8 tegn">
+            </div>
+
+            <div class="form-group">
+                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                    <input type="checkbox" name="auto_approve" value="1" checked style="width: 18px; height: 18px; accent-color: var(--primary);">
+                    Godkend med det samme
+                </label>
+            </div>
+
+            <div class="flex gap-sm">
+                <button type="submit" class="btn btn-primary">Opret</button>
+                <button type="button" class="btn btn-secondary" onclick="hideCreateModal()">Annuller</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <script>
 function showRejectModal(vendorId) {
     document.getElementById('rejectVendorId').value = vendorId;
@@ -400,9 +492,20 @@ function hideRejectModal() {
     document.getElementById('rejectModal').style.display = 'none';
 }
 
-// Close modal on backdrop click
+function showCreateModal() {
+    document.getElementById('createModal').style.display = 'flex';
+}
+
+function hideCreateModal() {
+    document.getElementById('createModal').style.display = 'none';
+}
+
+// Close modals on backdrop click
 document.getElementById('rejectModal').addEventListener('click', function(e) {
     if (e.target === this) hideRejectModal();
+});
+document.getElementById('createModal').addEventListener('click', function(e) {
+    if (e.target === this) hideCreateModal();
 });
 </script>
 
