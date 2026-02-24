@@ -569,20 +569,19 @@ require_once __DIR__ . '/includes/functions.php';
 
         /* ===== EVENT TYPES ===== */
         .event-types {
-            padding: 120px 0;
+            padding: 80px 0;
         }
 
         .event-types-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 24px;
+            grid-template-columns: 1fr;
+            gap: 20px;
         }
 
         .event-type-card {
-            padding: 40px 28px;
             background: var(--white);
             border-radius: 24px;
-            text-align: center;
+            overflow: hidden;
             border: 1px solid var(--border);
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
@@ -593,43 +592,54 @@ require_once __DIR__ . '/includes/functions.php';
             border-color: var(--accent);
         }
 
-        .event-type-icon {
-            width: 72px;
-            height: 72px;
-            background: var(--surface);
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 20px;
-            transition: all 0.4s;
+        .event-type-card img {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            display: block;
         }
 
-        .event-type-card:hover .event-type-icon {
-            background: var(--accent);
-        }
-
-        .event-type-icon svg {
-            width: 32px;
-            height: 32px;
-            color: var(--accent-dark);
-            transition: color 0.4s;
-        }
-
-        .event-type-card:hover .event-type-icon svg {
-            color: white;
+        .event-type-card-body {
+            padding: 24px;
+            text-align: center;
         }
 
         .event-type-card h3 {
             font-family: 'Cormorant Garamond', serif;
             font-size: 22px;
             font-weight: 500;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
 
         .event-type-card p {
             font-size: 14px;
             color: var(--text-secondary);
+        }
+
+        @media (min-width: 768px) {
+            .event-types { padding: 120px 0; }
+            .event-types-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 24px;
+            }
+            .event-type-card:last-child {
+                grid-column: 1 / -1;
+                max-width: calc(50% - 12px);
+                margin: 0 auto;
+            }
+            .event-type-card img { height: 250px; }
+        }
+
+        @media (min-width: 1024px) {
+            .event-types-grid {
+                grid-template-columns: repeat(5, 1fr);
+            }
+            .event-type-card:last-child {
+                grid-column: auto;
+                max-width: none;
+                margin: 0;
+            }
+            .event-type-card img { height: 200px; }
         }
 
         /* ===== TESTIMONIAL ===== */
@@ -784,13 +794,11 @@ require_once __DIR__ . '/includes/functions.php';
             .features-grid { grid-template-columns: repeat(2, 1fr); }
             .invitation-content { grid-template-columns: 1fr; }
             .invitation-preview { margin-top: 60px; }
-            .event-types-grid { grid-template-columns: repeat(2, 1fr); }
         }
 
         @media (max-width: 768px) {
             .nav-links { display: none; }
             .features-grid { grid-template-columns: 1fr; }
-            .event-types-grid { grid-template-columns: 1fr; }
             .cta-box { padding: 60px 32px; border-radius: 28px; }
             .footer-content { flex-direction: column; gap: 24px; text-align: center; }
             .footer-links { flex-wrap: wrap; justify-content: center; gap: 24px; }
@@ -984,32 +992,39 @@ require_once __DIR__ . '/includes/functions.php';
             </div>
             <div class="event-types-grid">
                 <div class="event-type-card">
-                    <div class="event-type-icon">
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v18m-9-9h18"/></svg>
+                    <img src="/billeder/kort-konfirmation.png" alt="Konfirmationsfest" loading="lazy">
+                    <div class="event-type-card-body">
+                        <h3>Konfirmation</h3>
+                        <p>Fejr den store dag med stil</p>
                     </div>
-                    <h3>Konfirmation</h3>
-                    <p>Fejr den store dag med stil</p>
                 </div>
                 <div class="event-type-card">
-                    <div class="event-type-icon">
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+                    <img src="/billeder/kort-bryllup.png" alt="Bryllupsfest" loading="lazy">
+                    <div class="event-type-card-body">
+                        <h3>Bryllup</h3>
+                        <p>Planlæg den perfekte dag</p>
                     </div>
-                    <h3>Bryllup</h3>
-                    <p>Planlæg den perfekte dag</p>
                 </div>
                 <div class="event-type-card">
-                    <div class="event-type-icon">
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 15.546c-.523 0-1.046.151-1.5.454a2.704 2.704 0 01-3 0 2.704 2.704 0 00-3 0 2.704 2.704 0 01-3 0 2.704 2.704 0 00-3 0 2.704 2.704 0 01-3 0A1.75 1.75 0 013 15.546V19a2 2 0 002 2h14a2 2 0 002-2v-3.454z"/></svg>
+                    <img src="/billeder/kort-foedselsdag.png" alt="Fødselsdagsfest" loading="lazy">
+                    <div class="event-type-card-body">
+                        <h3>Fødselsdag</h3>
+                        <p>Mærkedage fortjener at fejres</p>
                     </div>
-                    <h3>Fødselsdag</h3>
-                    <p>Mærkedage fortjener at fejres</p>
                 </div>
                 <div class="event-type-card">
-                    <div class="event-type-icon">
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/></svg>
+                    <img src="/billeder/kort-jubileum.png" alt="Jubilæumsfest" loading="lazy">
+                    <div class="event-type-card-body">
+                        <h3>Jubilæum</h3>
+                        <p>Fejr milepælene sammen</p>
                     </div>
-                    <h3>Jubilæum</h3>
-                    <p>Fejr milepælene sammen</p>
+                </div>
+                <div class="event-type-card">
+                    <img src="/billeder/kort-temafest.png" alt="Temafest" loading="lazy">
+                    <div class="event-type-card-body">
+                        <h3>Temafest</h3>
+                        <p>Giv festen et unikt tema</p>
+                    </div>
                 </div>
             </div>
         </div>
