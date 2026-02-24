@@ -642,6 +642,44 @@ require_once __DIR__ . '/includes/functions.php';
             .event-type-card img { height: 200px; }
         }
 
+        /* ===== ATMOSPHERE BREAK ===== */
+        .atmosphere-break {
+            height: 400px;
+            background: url('/billeder/stemning-stort-arrangement.png') center/cover no-repeat;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .atmosphere-break::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,0.45);
+        }
+
+        .atmosphere-break p {
+            position: relative;
+            z-index: 1;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(28px, 5vw, 48px);
+            font-style: italic;
+            font-weight: 400;
+            color: white;
+            text-align: center;
+            padding: 0 24px;
+            max-width: 700px;
+            line-height: 1.3;
+        }
+
+        @media (min-width: 1024px) {
+            .atmosphere-break {
+                height: 500px;
+                background-attachment: fixed;
+            }
+        }
+
         /* ===== TESTIMONIAL ===== */
         .testimonial {
             padding: 120px 0;
@@ -1028,6 +1066,10 @@ require_once __DIR__ . '/includes/functions.php';
                 </div>
             </div>
         </div>
+    </section>
+
+    <section class="atmosphere-break">
+        <p>Fra intime middage til store fejringer</p>
     </section>
 
     <section class="testimonial">
