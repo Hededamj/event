@@ -860,7 +860,8 @@ require_once __DIR__ . '/includes/functions.php';
         <img src="/billeder/hero-konfirmation.png"
              alt="Konfirmationsfest i haven med lyskæder, glade gæster og dansk sommer"
              class="hero-image"
-             loading="eager">
+             loading="eager"
+             fetchpriority="high">
         <div class="container">
             <div class="hero-text">
                 <div class="hero-badge">
@@ -1030,35 +1031,35 @@ require_once __DIR__ . '/includes/functions.php';
             </div>
             <div class="event-types-grid">
                 <div class="event-type-card">
-                    <img src="/billeder/kort-konfirmation.png" alt="Konfirmationsfest" loading="lazy">
+                    <img src="/billeder/kort-konfirmation.png" alt="Ung konfirmand med blomsterkrans i haven" loading="lazy">
                     <div class="event-type-card-body">
                         <h3>Konfirmation</h3>
                         <p>Fejr den store dag med stil</p>
                     </div>
                 </div>
                 <div class="event-type-card">
-                    <img src="/billeder/kort-bryllup.png" alt="Bryllupsfest" loading="lazy">
+                    <img src="/billeder/kort-bryllup.png" alt="Brudepar danser første dans under lyskæder" loading="lazy">
                     <div class="event-type-card-body">
                         <h3>Bryllup</h3>
                         <p>Planlæg den perfekte dag</p>
                     </div>
                 </div>
                 <div class="event-type-card">
-                    <img src="/billeder/kort-foedselsdag.png" alt="Fødselsdagsfest" loading="lazy">
+                    <img src="/billeder/kort-foedselsdag.png" alt="Kvinde med krone puster lys ud på fødselsdagskage" loading="lazy">
                     <div class="event-type-card-body">
                         <h3>Fødselsdag</h3>
                         <p>Mærkedage fortjener at fejres</p>
                     </div>
                 </div>
                 <div class="event-type-card">
-                    <img src="/billeder/kort-jubileum.png" alt="Jubilæumsfest" loading="lazy">
+                    <img src="/billeder/kort-jubileum.png" alt="Mand griner ved 50 års jubilæumsfest med guldballoner" loading="lazy">
                     <div class="event-type-card-body">
                         <h3>Jubilæum</h3>
                         <p>Fejr milepælene sammen</p>
                     </div>
                 </div>
                 <div class="event-type-card">
-                    <img src="/billeder/kort-temafest.png" alt="Temafest" loading="lazy">
+                    <img src="/billeder/kort-temafest.png" alt="Familie i kostumer til hyggelig Halloween-temafest" loading="lazy">
                     <div class="event-type-card-body">
                         <h3>Temafest</h3>
                         <p>Giv festen et unikt tema</p>
@@ -1068,7 +1069,7 @@ require_once __DIR__ . '/includes/functions.php';
         </div>
     </section>
 
-    <section class="atmosphere-break">
+    <section class="atmosphere-break" aria-label="Stemningsbillede fra stort arrangement">
         <p>Fra intime middage til store fejringer</p>
     </section>
 
