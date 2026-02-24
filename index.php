@@ -523,13 +523,13 @@ require_once __DIR__ . '/includes/functions.php';
         }
 
         .preview-screen {
-            background: linear-gradient(180deg, var(--accent-dark) 0%, var(--text) 100%);
+            background: url('/billeder/kort-konfirmation.png') center 15%/cover no-repeat;
             border-radius: 32px;
             aspect-ratio: 9/16;
             display: flex;
             flex-direction: column;
             justify-content: flex-end;
-            padding: 40px 24px;
+            padding: 0;
             position: relative;
             overflow: hidden;
         }
@@ -538,33 +538,73 @@ require_once __DIR__ . '/includes/functions.php';
             content: '';
             position: absolute;
             inset: 0;
-            background: linear-gradient(to bottom, transparent 40%, rgba(0,0,0,0.7) 100%);
+            background: linear-gradient(to bottom, transparent 25%, rgba(0,0,0,0.75) 100%);
         }
 
         .preview-content {
             position: relative;
             z-index: 1;
+            padding: 32px 24px;
+        }
+
+        .preview-ornament {
+            font-size: 13px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.5);
+            margin-bottom: 12px;
         }
 
         .preview-event-type {
             font-family: 'Cormorant Garamond', serif;
             font-style: italic;
-            font-size: 18px;
+            font-size: 16px;
             color: var(--blush);
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
 
         .preview-name {
             font-family: 'Cormorant Garamond', serif;
-            font-size: 42px;
+            font-size: 38px;
             font-weight: 400;
-            line-height: 1;
-            margin-bottom: 16px;
+            line-height: 1.1;
+            margin-bottom: 20px;
         }
 
-        .preview-date {
-            font-size: 13px;
-            color: rgba(255,255,255,0.7);
+        .preview-details {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .preview-detail {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 12px;
+            color: rgba(255,255,255,0.75);
+        }
+
+        .preview-detail svg {
+            width: 14px;
+            height: 14px;
+            flex-shrink: 0;
+            color: var(--blush);
+        }
+
+        .preview-rsvp {
+            display: inline-block;
+            padding: 10px 24px;
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255,255,255,0.25);
+            border-radius: 50px;
+            font-size: 12px;
+            font-weight: 600;
+            color: white;
+            letter-spacing: 1px;
+            text-transform: uppercase;
         }
 
         /* ===== EVENT TYPES ===== */
@@ -1011,9 +1051,24 @@ require_once __DIR__ . '/includes/functions.php';
                     <div class="preview-phone">
                         <div class="preview-screen">
                             <div class="preview-content">
+                                <div class="preview-ornament">&#10045; Du er inviteret &#10045;</div>
                                 <div class="preview-event-type">Konfirmation</div>
-                                <div class="preview-name">Sofie</div>
-                                <div class="preview-date">18. maj 2025 • Kl. 13:00</div>
+                                <div class="preview-name">Sofies<br>Konfirmation</div>
+                                <div class="preview-details">
+                                    <div class="preview-detail">
+                                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                                        Lørdag d. 18. maj 2025
+                                    </div>
+                                    <div class="preview-detail">
+                                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                        Kl. 13:00 - Kirke &bull; Kl. 15:00 - Fest
+                                    </div>
+                                    <div class="preview-detail">
+                                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                                        Skovriderkroen, Charlottenlund
+                                    </div>
+                                </div>
+                                <div class="preview-rsvp">Bekræft deltagelse</div>
                             </div>
                         </div>
                     </div>
@@ -1031,14 +1086,14 @@ require_once __DIR__ . '/includes/functions.php';
             </div>
             <div class="event-types-grid">
                 <div class="event-type-card">
-                    <img src="/billeder/kort-konfirmation.png" alt="Ung konfirmand med blomsterkrans i haven" loading="lazy">
+                    <img src="/billeder/kort-konfirmation.png" alt="Ung konfirmand med blomsterkrans i haven" loading="lazy" style="object-position: center 15%;">
                     <div class="event-type-card-body">
                         <h3>Konfirmation</h3>
                         <p>Fejr den store dag med stil</p>
                     </div>
                 </div>
                 <div class="event-type-card">
-                    <img src="/billeder/kort-bryllup.png" alt="Brudepar danser første dans under lyskæder" loading="lazy">
+                    <img src="/billeder/kort-bryllup.png" alt="Brudepar danser første dans under lyskæder" loading="lazy" style="object-position: center 20%;">
                     <div class="event-type-card-body">
                         <h3>Bryllup</h3>
                         <p>Planlæg den perfekte dag</p>
