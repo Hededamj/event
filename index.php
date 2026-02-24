@@ -336,11 +336,7 @@ require_once __DIR__ . '/includes/functions.php';
             color: var(--text-secondary);
         }
 
-        /* ===== FEATURES ===== */
-        .features {
-            padding: 80px 0;
-        }
-
+        /* ===== SHARED SECTION STYLES ===== */
         .section-header {
             text-align: center;
             max-width: 600px;
@@ -370,63 +366,99 @@ require_once __DIR__ . '/includes/functions.php';
             line-height: 1.7;
         }
 
-        .features-grid {
+        /* ===== FEATURES ===== */
+        .features-intro {
+            padding: 80px 0 40px;
+        }
+
+        .feature-section {
+            padding: 60px 0;
+        }
+
+        .feature-section:nth-child(even) {
+            background: var(--white);
+        }
+
+        .feature-layout {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 20px;
-        }
-
-        .feature-card {
-            background: var(--white);
-            border-radius: 24px;
-            border: 1px solid var(--border);
-            overflow: hidden;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .feature-card:hover {
-            transform: translateY(-6px);
-            box-shadow: 0 24px 48px rgba(0,0,0,0.08);
-            border-color: var(--accent);
+            gap: 40px;
+            align-items: center;
         }
 
         .feature-screenshot {
-            padding: 20px;
+            padding: 32px;
             background: var(--surface);
-            border-bottom: 1px solid var(--border);
-            min-height: 180px;
+            border-radius: 24px;
+            border: 1px solid var(--border);
+            min-height: 280px;
             display: flex;
             flex-direction: column;
             justify-content: center;
         }
 
-        .feature-card-body {
-            padding: 24px;
+        .feature-section:nth-child(even) .feature-screenshot {
+            background: var(--surface);
         }
 
-        .feature-card-body h3 {
+        .feature-text h3 {
             font-family: 'Cormorant Garamond', serif;
-            font-size: 22px;
+            font-size: clamp(28px, 4vw, 40px);
             font-weight: 500;
-            margin-bottom: 8px;
+            margin-bottom: 16px;
+            line-height: 1.2;
         }
 
-        .feature-card-body p {
+        .feature-text p {
             color: var(--text-secondary);
-            font-size: 14px;
-            line-height: 1.6;
+            font-size: 17px;
+            line-height: 1.7;
+            margin-bottom: 16px;
         }
 
-        /* Simulated UI elements */
+        .feature-text .feature-eyebrow {
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 12px;
+        }
+
+        @media (min-width: 1024px) {
+            .features-intro {
+                padding: 120px 0 40px;
+            }
+
+            .feature-section {
+                padding: 80px 0;
+            }
+
+            .feature-layout {
+                grid-template-columns: 1fr 1fr;
+                gap: 80px;
+            }
+
+            /* Even sections: reverse order (text left, screenshot right) */
+            .feature-section:nth-child(even) .feature-layout {
+                direction: rtl;
+            }
+
+            .feature-section:nth-child(even) .feature-layout > * {
+                direction: ltr;
+            }
+        }
+
+        /* Simulated UI elements — scaled up */
         .sim-row {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 8px 12px;
+            padding: 12px 16px;
             background: var(--white);
-            border-radius: 10px;
-            margin-bottom: 6px;
-            font-size: 12px;
+            border-radius: 12px;
+            margin-bottom: 8px;
+            font-size: 14px;
         }
 
         .sim-row:last-child {
@@ -436,26 +468,26 @@ require_once __DIR__ . '/includes/functions.php';
         .sim-row-left {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 12px;
         }
 
         .sim-avatar {
-            width: 28px;
-            height: 28px;
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 11px;
+            font-size: 13px;
             font-weight: 600;
             color: white;
             flex-shrink: 0;
         }
 
         .sim-badge {
-            padding: 3px 10px;
+            padding: 4px 12px;
             border-radius: 50px;
-            font-size: 10px;
+            font-size: 12px;
             font-weight: 600;
             white-space: nowrap;
         }
@@ -492,19 +524,23 @@ require_once __DIR__ . '/includes/functions.php';
 
         .sim-detail {
             color: var(--text-secondary);
-            font-size: 11px;
+            font-size: 12px;
         }
 
         /* Budget progress bar */
         .sim-progress-wrap {
-            margin-bottom: 10px;
+            margin-bottom: 14px;
+        }
+
+        .sim-progress-wrap:last-child {
+            margin-bottom: 0;
         }
 
         .sim-progress-label {
             display: flex;
             justify-content: space-between;
-            font-size: 11px;
-            margin-bottom: 4px;
+            font-size: 13px;
+            margin-bottom: 6px;
             color: var(--text-secondary);
         }
 
@@ -514,28 +550,28 @@ require_once __DIR__ . '/includes/functions.php';
         }
 
         .sim-progress {
-            height: 8px;
+            height: 10px;
             background: var(--border-light, #EDEAE5);
-            border-radius: 4px;
+            border-radius: 5px;
             overflow: hidden;
         }
 
         .sim-progress-bar {
             height: 100%;
-            border-radius: 4px;
+            border-radius: 5px;
             background: var(--accent);
         }
 
         /* Timeline */
         .sim-timeline {
             position: relative;
-            padding-left: 20px;
+            padding-left: 24px;
         }
 
         .sim-timeline::before {
             content: '';
             position: absolute;
-            left: 5px;
+            left: 6px;
             top: 4px;
             bottom: 4px;
             width: 2px;
@@ -544,24 +580,24 @@ require_once __DIR__ . '/includes/functions.php';
 
         .sim-timeline-item {
             position: relative;
-            padding: 6px 0 6px 12px;
-            font-size: 12px;
+            padding: 10px 0 10px 16px;
+            font-size: 14px;
         }
 
         .sim-timeline-item::before {
             content: '';
             position: absolute;
-            left: -19px;
-            top: 12px;
-            width: 10px;
-            height: 10px;
+            left: -22px;
+            top: 16px;
+            width: 12px;
+            height: 12px;
             border-radius: 50%;
             background: var(--accent);
-            border: 2px solid var(--white);
+            border: 2px solid var(--surface);
         }
 
         .sim-timeline-time {
-            font-size: 10px;
+            font-size: 12px;
             color: var(--accent-dark);
             font-weight: 600;
         }
@@ -574,14 +610,14 @@ require_once __DIR__ . '/includes/functions.php';
         /* Table layout for bordplan */
         .sim-tables {
             display: flex;
-            gap: 12px;
+            gap: 16px;
             justify-content: center;
             flex-wrap: wrap;
         }
 
         .sim-table {
-            width: 80px;
-            height: 80px;
+            width: 100px;
+            height: 100px;
             border-radius: 50%;
             border: 2px solid var(--accent);
             display: flex;
@@ -589,11 +625,10 @@ require_once __DIR__ . '/includes/functions.php';
             align-items: center;
             justify-content: center;
             background: var(--white);
-            position: relative;
         }
 
         .sim-table-label {
-            font-size: 9px;
+            font-size: 10px;
             font-weight: 600;
             color: var(--accent-dark);
             text-transform: uppercase;
@@ -602,14 +637,14 @@ require_once __DIR__ . '/includes/functions.php';
 
         .sim-table-count {
             font-family: 'Cormorant Garamond', serif;
-            font-size: 22px;
+            font-size: 28px;
             font-weight: 500;
             color: var(--text);
             line-height: 1;
         }
 
         .sim-table-names {
-            font-size: 8px;
+            font-size: 10px;
             color: var(--text-secondary);
             text-align: center;
             line-height: 1.2;
@@ -619,28 +654,28 @@ require_once __DIR__ . '/includes/functions.php';
         .sim-photos {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 6px;
+            gap: 8px;
         }
 
         .sim-photo {
             aspect-ratio: 1;
-            border-radius: 8px;
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 18px;
+            font-size: 24px;
         }
 
         /* Checklist / wishlist */
         .sim-check-item {
             display: flex;
             align-items: center;
-            gap: 8px;
-            padding: 7px 12px;
+            gap: 12px;
+            padding: 10px 16px;
             background: var(--white);
-            border-radius: 10px;
-            margin-bottom: 6px;
-            font-size: 12px;
+            border-radius: 12px;
+            margin-bottom: 8px;
+            font-size: 14px;
         }
 
         .sim-check-item:last-child {
@@ -648,9 +683,9 @@ require_once __DIR__ . '/includes/functions.php';
         }
 
         .sim-checkbox {
-            width: 18px;
-            height: 18px;
-            border-radius: 5px;
+            width: 22px;
+            height: 22px;
+            border-radius: 6px;
             border: 2px solid var(--border);
             display: flex;
             align-items: center;
@@ -665,8 +700,8 @@ require_once __DIR__ . '/includes/functions.php';
         }
 
         .sim-checkbox svg {
-            width: 12px;
-            height: 12px;
+            width: 14px;
+            height: 14px;
         }
 
         .sim-check-text {
@@ -678,28 +713,6 @@ require_once __DIR__ . '/includes/functions.php';
         .sim-check-text.done {
             text-decoration: line-through;
             color: var(--text-secondary);
-        }
-
-        .sim-check-meta {
-            font-size: 10px;
-            color: var(--text-secondary);
-        }
-
-        @media (min-width: 768px) {
-            .features { padding: 120px 0; }
-            .features-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 24px;
-            }
-        }
-
-        @media (min-width: 1024px) {
-            .features-grid {
-                grid-template-columns: repeat(4, 1fr);
-            }
-            .feature-screenshot {
-                min-height: 200px;
-            }
         }
 
         /* ===== INVITATION SHOWCASE ===== */
@@ -1223,256 +1236,335 @@ require_once __DIR__ . '/includes/functions.php';
         </div>
     </section>
 
-    <section class="features" id="features">
+    <div class="features-intro" id="features">
         <div class="container">
             <div class="section-header">
                 <div class="section-eyebrow">Funktioner</div>
                 <h2>Alt du behøver — samlet ét sted</h2>
                 <p>Din event-makker fra start til slut. Vi giver dig overblikket, så du kan fokusere på det vigtige.</p>
             </div>
-            <div class="features-grid">
+        </div>
+    </div>
 
-                <!-- Invitationer -->
-                <div class="feature-card">
-                    <div class="feature-screenshot">
-                        <div class="sim-row">
-                            <div class="sim-row-left">
-                                <div class="sim-avatar" style="background:#6B8F5E;">MJ</div>
-                                <div>
-                                    <div class="sim-name">Mette Jensen</div>
-                                    <div class="sim-detail">Sendt i går</div>
-                                </div>
+    <!-- Invitationer -->
+    <section class="feature-section">
+        <div class="container">
+            <div class="feature-layout">
+                <div class="feature-screenshot">
+                    <div class="sim-row">
+                        <div class="sim-row-left">
+                            <div class="sim-avatar" style="background:#6B8F5E;">MJ</div>
+                            <div>
+                                <div class="sim-name">Mette Jensen</div>
+                                <div class="sim-detail">Sendt i går</div>
                             </div>
-                            <div class="sim-badge sim-badge-green">Bekræftet</div>
                         </div>
-                        <div class="sim-row">
-                            <div class="sim-row-left">
-                                <div class="sim-avatar" style="background:#C4922D;">TN</div>
-                                <div>
-                                    <div class="sim-name">Thomas Nielsen</div>
-                                    <div class="sim-detail">Sendt i går</div>
-                                </div>
-                            </div>
-                            <div class="sim-badge sim-badge-gold">Åbnet</div>
-                        </div>
-                        <div class="sim-row">
-                            <div class="sim-row-left">
-                                <div class="sim-avatar" style="background:#D4A5A5;">LP</div>
-                                <div>
-                                    <div class="sim-name">Line Pedersen</div>
-                                    <div class="sim-detail">Sendt for 2 dage siden</div>
-                                </div>
-                            </div>
-                            <div class="sim-badge sim-badge-green">Bekræftet</div>
-                        </div>
+                        <div class="sim-badge sim-badge-green">Bekræftet</div>
                     </div>
-                    <div class="feature-card-body">
-                        <h3>Invitationer</h3>
-                        <p>Fuldt overblik over tilmeldingerne af dine gæster</p>
+                    <div class="sim-row">
+                        <div class="sim-row-left">
+                            <div class="sim-avatar" style="background:#C4922D;">TN</div>
+                            <div>
+                                <div class="sim-name">Thomas Nielsen</div>
+                                <div class="sim-detail">Sendt i går</div>
+                            </div>
+                        </div>
+                        <div class="sim-badge sim-badge-gold">Åbnet</div>
+                    </div>
+                    <div class="sim-row">
+                        <div class="sim-row-left">
+                            <div class="sim-avatar" style="background:#D4A5A5;">LP</div>
+                            <div>
+                                <div class="sim-name">Line Pedersen</div>
+                                <div class="sim-detail">Sendt for 2 dage siden</div>
+                            </div>
+                        </div>
+                        <div class="sim-badge sim-badge-green">Bekræftet</div>
+                    </div>
+                    <div class="sim-row">
+                        <div class="sim-row-left">
+                            <div class="sim-avatar" style="background:#7C6DAF;">PH</div>
+                            <div>
+                                <div class="sim-name">Peter Hansen</div>
+                                <div class="sim-detail">Sendt for 3 dage siden</div>
+                            </div>
+                        </div>
+                        <div class="sim-badge sim-badge-gray">Afventer</div>
                     </div>
                 </div>
+                <div class="feature-text">
+                    <div class="feature-eyebrow">Invitationer</div>
+                    <h3>Fuldt overblik over tilmeldingerne af dine gæster</h3>
+                    <p>Send smukke, personlige invitationer og følg med i realtid. Se hvem der har åbnet, bekræftet eller stadig mangler at svare — alt samlet ét sted.</p>
+                </div>
+            </div>
+        </div>
+    </section>
 
-                <!-- Gæstehåndtering -->
-                <div class="feature-card">
-                    <div class="feature-screenshot">
-                        <div class="sim-row">
-                            <div class="sim-row-left">
-                                <div class="sim-avatar" style="background:#6B8F5E;">AH</div>
-                                <div>
-                                    <div class="sim-name">Anna Hansen</div>
-                                    <div class="sim-detail">2 voksne, 1 barn</div>
-                                </div>
+    <!-- Gæstehåndtering -->
+    <section class="feature-section">
+        <div class="container">
+            <div class="feature-layout">
+                <div class="feature-screenshot">
+                    <div class="sim-row">
+                        <div class="sim-row-left">
+                            <div class="sim-avatar" style="background:#6B8F5E;">AH</div>
+                            <div>
+                                <div class="sim-name">Anna Hansen</div>
+                                <div class="sim-detail">2 voksne, 1 barn</div>
                             </div>
-                            <div class="sim-badge sim-badge-blush">Glutenfri</div>
                         </div>
-                        <div class="sim-row">
-                            <div class="sim-row-left">
-                                <div class="sim-avatar" style="background:#7C6DAF;">KS</div>
-                                <div>
-                                    <div class="sim-name">Klaus Sørensen</div>
-                                    <div class="sim-detail">1 voksen</div>
-                                </div>
-                            </div>
-                            <div class="sim-badge sim-badge-gray">Ingen allergier</div>
-                        </div>
-                        <div class="sim-row">
-                            <div class="sim-row-left">
-                                <div class="sim-avatar" style="background:#C4922D;">BM</div>
-                                <div>
-                                    <div class="sim-name">Birgitte Møller</div>
-                                    <div class="sim-detail">2 voksne</div>
-                                </div>
-                            </div>
-                            <div class="sim-badge sim-badge-blush">Laktosefri</div>
-                        </div>
+                        <div class="sim-badge sim-badge-blush">Glutenfri</div>
                     </div>
-                    <div class="feature-card-body">
-                        <h3>Gæstehåndtering</h3>
-                        <p>Allergier, børn, voksne — du har styr på alle detaljer</p>
+                    <div class="sim-row">
+                        <div class="sim-row-left">
+                            <div class="sim-avatar" style="background:#7C6DAF;">KS</div>
+                            <div>
+                                <div class="sim-name">Klaus Sørensen</div>
+                                <div class="sim-detail">1 voksen</div>
+                            </div>
+                        </div>
+                        <div class="sim-badge sim-badge-gray">Ingen allergier</div>
+                    </div>
+                    <div class="sim-row">
+                        <div class="sim-row-left">
+                            <div class="sim-avatar" style="background:#C4922D;">BM</div>
+                            <div>
+                                <div class="sim-name">Birgitte Møller</div>
+                                <div class="sim-detail">2 voksne</div>
+                            </div>
+                        </div>
+                        <div class="sim-badge sim-badge-blush">Laktosefri</div>
+                    </div>
+                    <div class="sim-row">
+                        <div class="sim-row-left">
+                            <div class="sim-avatar" style="background:#D4A5A5;">ML</div>
+                            <div>
+                                <div class="sim-name">Martin Larsen</div>
+                                <div class="sim-detail">2 voksne, 2 børn</div>
+                            </div>
+                        </div>
+                        <div class="sim-badge sim-badge-blush">Nøddeallergi</div>
                     </div>
                 </div>
+                <div class="feature-text">
+                    <div class="feature-eyebrow">Gæstehåndtering</div>
+                    <h3>Allergier, børn, voksne — du har styr på alle detaljer</h3>
+                    <p>Se med det samme hvor mange voksne og børn der kommer, hvem der har allergier, og hvilke særlige hensyn du skal tage. Ingen overraskelser på dagen.</p>
+                </div>
+            </div>
+        </div>
+    </section>
 
-                <!-- Bordplan -->
-                <div class="feature-card">
-                    <div class="feature-screenshot">
-                        <div class="sim-tables">
-                            <div class="sim-table">
-                                <div class="sim-table-label">Bord 1</div>
-                                <div class="sim-table-count">8</div>
-                                <div class="sim-table-names">Familie</div>
-                            </div>
-                            <div class="sim-table">
-                                <div class="sim-table-label">Bord 2</div>
-                                <div class="sim-table-count">6</div>
-                                <div class="sim-table-names">Venner</div>
-                            </div>
-                            <div class="sim-table">
-                                <div class="sim-table-label">Bord 3</div>
-                                <div class="sim-table-count">8</div>
-                                <div class="sim-table-names">Kolleger</div>
-                            </div>
+    <!-- Bordplan -->
+    <section class="feature-section">
+        <div class="container">
+            <div class="feature-layout">
+                <div class="feature-screenshot">
+                    <div class="sim-tables">
+                        <div class="sim-table">
+                            <div class="sim-table-label">Bord 1</div>
+                            <div class="sim-table-count">8</div>
+                            <div class="sim-table-names">Familie</div>
                         </div>
-                    </div>
-                    <div class="feature-card-body">
-                        <h3>Bordplan</h3>
-                        <p>Den rigtige person ved det rigtige bord, uden kaos</p>
+                        <div class="sim-table">
+                            <div class="sim-table-label">Bord 2</div>
+                            <div class="sim-table-count">6</div>
+                            <div class="sim-table-names">Venner</div>
+                        </div>
+                        <div class="sim-table">
+                            <div class="sim-table-label">Bord 3</div>
+                            <div class="sim-table-count">8</div>
+                            <div class="sim-table-names">Kolleger</div>
+                        </div>
+                        <div class="sim-table">
+                            <div class="sim-table-label">Bord 4</div>
+                            <div class="sim-table-count">6</div>
+                            <div class="sim-table-names">Naboer</div>
+                        </div>
                     </div>
                 </div>
+                <div class="feature-text">
+                    <div class="feature-eyebrow">Bordplan</div>
+                    <h3>Den rigtige person ved det rigtige bord, uden kaos</h3>
+                    <p>Planlæg bordplanen visuelt og sørg for den perfekte placering. Træk og slip gæster mellem borde og se det hele falde på plads.</p>
+                </div>
+            </div>
+        </div>
+    </section>
 
-                <!-- Toastmaster -->
-                <div class="feature-card">
-                    <div class="feature-screenshot">
-                        <div class="sim-timeline">
-                            <div class="sim-timeline-item">
-                                <div class="sim-timeline-time">15:30</div>
-                                <div class="sim-timeline-title">Velkomsttale — Far</div>
-                            </div>
-                            <div class="sim-timeline-item">
-                                <div class="sim-timeline-time">16:00</div>
-                                <div class="sim-timeline-title">Sang — Mormor & Morfar</div>
-                            </div>
-                            <div class="sim-timeline-item">
-                                <div class="sim-timeline-time">17:15</div>
-                                <div class="sim-timeline-title">Tale — Bedste veninde</div>
-                            </div>
-                            <div class="sim-timeline-item">
-                                <div class="sim-timeline-time">18:00</div>
-                                <div class="sim-timeline-title">Quiz — Onkel Henrik</div>
-                            </div>
+    <!-- Toastmaster -->
+    <section class="feature-section">
+        <div class="container">
+            <div class="feature-layout">
+                <div class="feature-screenshot">
+                    <div class="sim-timeline">
+                        <div class="sim-timeline-item">
+                            <div class="sim-timeline-time">15:30</div>
+                            <div class="sim-timeline-title">Velkomsttale — Far</div>
                         </div>
-                    </div>
-                    <div class="feature-card-body">
-                        <h3>Toastmaster</h3>
-                        <p>Styring af taler så festen flyder uden akavede pauser</p>
+                        <div class="sim-timeline-item">
+                            <div class="sim-timeline-time">16:00</div>
+                            <div class="sim-timeline-title">Sang — Mormor & Morfar</div>
+                        </div>
+                        <div class="sim-timeline-item">
+                            <div class="sim-timeline-time">17:15</div>
+                            <div class="sim-timeline-title">Tale — Bedste veninde</div>
+                        </div>
+                        <div class="sim-timeline-item">
+                            <div class="sim-timeline-time">18:00</div>
+                            <div class="sim-timeline-title">Quiz — Onkel Henrik</div>
+                        </div>
+                        <div class="sim-timeline-item">
+                            <div class="sim-timeline-time">19:00</div>
+                            <div class="sim-timeline-title">Overraskelse — Kusine Marie</div>
+                        </div>
                     </div>
                 </div>
+                <div class="feature-text">
+                    <div class="feature-eyebrow">Toastmaster</div>
+                    <h3>Styring af taler så festen flyder uden akavede pauser</h3>
+                    <p>Koordiner taler, sange og indslag med fuld kontrol. Toastmasteren ser hele programmet og holder styr på timingen.</p>
+                </div>
+            </div>
+        </div>
+    </section>
 
-                <!-- Budget -->
-                <div class="feature-card">
-                    <div class="feature-screenshot">
-                        <div class="sim-progress-wrap">
-                            <div class="sim-progress-label"><span>Forplejning</span><span>8.500 kr</span></div>
-                            <div class="sim-progress"><div class="sim-progress-bar" style="width:75%;"></div></div>
-                        </div>
-                        <div class="sim-progress-wrap">
-                            <div class="sim-progress-label"><span>Lokale</span><span>5.000 kr</span></div>
-                            <div class="sim-progress"><div class="sim-progress-bar" style="width:100%; background:var(--warning);"></div></div>
-                        </div>
-                        <div class="sim-progress-wrap">
-                            <div class="sim-progress-label"><span>Underholdning</span><span>2.200 kr</span></div>
-                            <div class="sim-progress"><div class="sim-progress-bar" style="width:45%;"></div></div>
-                        </div>
-                        <div class="sim-progress-wrap">
-                            <div class="sim-progress-label"><span>Dekoration</span><span>1.800 kr</span></div>
-                            <div class="sim-progress"><div class="sim-progress-bar" style="width:60%; background:var(--blush);"></div></div>
-                        </div>
+    <!-- Budget -->
+    <section class="feature-section">
+        <div class="container">
+            <div class="feature-layout">
+                <div class="feature-screenshot">
+                    <div class="sim-progress-wrap">
+                        <div class="sim-progress-label"><span>Forplejning</span><span>8.500 kr</span></div>
+                        <div class="sim-progress"><div class="sim-progress-bar" style="width:75%;"></div></div>
                     </div>
-                    <div class="feature-card-body">
-                        <h3>Budget</h3>
-                        <p>Hold styr på hver en krone fra start til slut</p>
+                    <div class="sim-progress-wrap">
+                        <div class="sim-progress-label"><span>Lokale & udstyr</span><span>5.000 kr</span></div>
+                        <div class="sim-progress"><div class="sim-progress-bar" style="width:100%; background:var(--warning);"></div></div>
+                    </div>
+                    <div class="sim-progress-wrap">
+                        <div class="sim-progress-label"><span>Underholdning</span><span>2.200 kr</span></div>
+                        <div class="sim-progress"><div class="sim-progress-bar" style="width:45%;"></div></div>
+                    </div>
+                    <div class="sim-progress-wrap">
+                        <div class="sim-progress-label"><span>Dekoration & blomster</span><span>1.800 kr</span></div>
+                        <div class="sim-progress"><div class="sim-progress-bar" style="width:60%; background:var(--blush);"></div></div>
+                    </div>
+                    <div class="sim-progress-wrap">
+                        <div class="sim-progress-label"><span>Fotograf</span><span>3.500 kr</span></div>
+                        <div class="sim-progress"><div class="sim-progress-bar" style="width:100%; background:var(--accent-dark);"></div></div>
                     </div>
                 </div>
+                <div class="feature-text">
+                    <div class="feature-eyebrow">Budget</div>
+                    <h3>Hold styr på hver en krone fra start til slut</h3>
+                    <p>Se præcis hvad du bruger og hvad der er tilbage. Kategoriser udgifter og hold budgettet på sporet uden regneark.</p>
+                </div>
+            </div>
+        </div>
+    </section>
 
-                <!-- Ønskeliste -->
-                <div class="feature-card">
-                    <div class="feature-screenshot">
-                        <div class="sim-check-item">
-                            <div class="sim-checkbox checked"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg></div>
-                            <div class="sim-check-text done">AirPods Max</div>
-                            <div class="sim-badge sim-badge-green" style="font-size:9px;">Reserveret</div>
-                        </div>
-                        <div class="sim-check-item">
-                            <div class="sim-checkbox checked"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg></div>
-                            <div class="sim-check-text done">Rejsegavekort</div>
-                            <div class="sim-badge sim-badge-green" style="font-size:9px;">Reserveret</div>
-                        </div>
-                        <div class="sim-check-item">
-                            <div class="sim-checkbox"></div>
-                            <div class="sim-check-text">Bluetooth højtaler</div>
-                            <div class="sim-badge sim-badge-gray" style="font-size:9px;">Ledig</div>
-                        </div>
-                        <div class="sim-check-item">
-                            <div class="sim-checkbox"></div>
-                            <div class="sim-check-text">Pengegave</div>
-                            <div class="sim-badge sim-badge-gray" style="font-size:9px;">Ledig</div>
-                        </div>
+    <!-- Ønskeliste -->
+    <section class="feature-section">
+        <div class="container">
+            <div class="feature-layout">
+                <div class="feature-screenshot">
+                    <div class="sim-check-item">
+                        <div class="sim-checkbox checked"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg></div>
+                        <div class="sim-check-text done">AirPods Max</div>
+                        <div class="sim-badge sim-badge-green">Reserveret</div>
                     </div>
-                    <div class="feature-card-body">
-                        <h3>Ønskeliste</h3>
-                        <p>Ingen dobbeltgaver — gæsterne ser hvad der mangler</p>
+                    <div class="sim-check-item">
+                        <div class="sim-checkbox checked"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg></div>
+                        <div class="sim-check-text done">Rejsegavekort</div>
+                        <div class="sim-badge sim-badge-green">Reserveret</div>
+                    </div>
+                    <div class="sim-check-item">
+                        <div class="sim-checkbox"></div>
+                        <div class="sim-check-text">Bluetooth højtaler</div>
+                        <div class="sim-badge sim-badge-gray">Ledig</div>
+                    </div>
+                    <div class="sim-check-item">
+                        <div class="sim-checkbox"></div>
+                        <div class="sim-check-text">Pengegave til oplevelse</div>
+                        <div class="sim-badge sim-badge-gray">Ledig</div>
+                    </div>
+                    <div class="sim-check-item">
+                        <div class="sim-checkbox"></div>
+                        <div class="sim-check-text">Ny pung</div>
+                        <div class="sim-badge sim-badge-gray">Ledig</div>
                     </div>
                 </div>
+                <div class="feature-text">
+                    <div class="feature-eyebrow">Ønskeliste</div>
+                    <h3>Ingen dobbeltgaver — gæsterne ser hvad der mangler</h3>
+                    <p>Del din ønskeliste og lad gæsterne reservere gaver. Alle kan se hvad der allerede er valgt, så der aldrig kommer to af det samme.</p>
+                </div>
+            </div>
+        </div>
+    </section>
 
-                <!-- Program -->
-                <div class="feature-card">
-                    <div class="feature-screenshot">
-                        <div class="sim-timeline">
-                            <div class="sim-timeline-item">
-                                <div class="sim-timeline-time">13:00</div>
-                                <div class="sim-timeline-title">Kirke — Vor Frue</div>
-                            </div>
-                            <div class="sim-timeline-item">
-                                <div class="sim-timeline-time">15:00</div>
-                                <div class="sim-timeline-title">Velkomstdrink i haven</div>
-                            </div>
-                            <div class="sim-timeline-item">
-                                <div class="sim-timeline-time">16:30</div>
-                                <div class="sim-timeline-title">Middag serveres</div>
-                            </div>
-                            <div class="sim-timeline-item">
-                                <div class="sim-timeline-time">20:00</div>
-                                <div class="sim-timeline-title">Fest & dans</div>
-                            </div>
+    <!-- Program -->
+    <section class="feature-section">
+        <div class="container">
+            <div class="feature-layout">
+                <div class="feature-screenshot">
+                    <div class="sim-timeline">
+                        <div class="sim-timeline-item">
+                            <div class="sim-timeline-time">13:00</div>
+                            <div class="sim-timeline-title">Kirke — Vor Frue Kirke</div>
                         </div>
-                    </div>
-                    <div class="feature-card-body">
-                        <h3>Program</h3>
-                        <p>Alle ved hvad der sker og hvornår — ingen forvirring</p>
+                        <div class="sim-timeline-item">
+                            <div class="sim-timeline-time">15:00</div>
+                            <div class="sim-timeline-title">Velkomstdrink i haven</div>
+                        </div>
+                        <div class="sim-timeline-item">
+                            <div class="sim-timeline-time">16:30</div>
+                            <div class="sim-timeline-title">Middag serveres</div>
+                        </div>
+                        <div class="sim-timeline-item">
+                            <div class="sim-timeline-time">18:30</div>
+                            <div class="sim-timeline-title">Kaffe og kage</div>
+                        </div>
+                        <div class="sim-timeline-item">
+                            <div class="sim-timeline-time">20:00</div>
+                            <div class="sim-timeline-title">Fest og dans</div>
+                        </div>
                     </div>
                 </div>
+                <div class="feature-text">
+                    <div class="feature-eyebrow">Program</div>
+                    <h3>Alle ved hvad der sker og hvornår — ingen forvirring</h3>
+                    <p>Del dagens program med gæsterne så alle er med. Fra kirke til kaffe til dans — det hele er klart og tydeligt.</p>
+                </div>
+            </div>
+        </div>
+    </section>
 
-                <!-- Minder -->
-                <div class="feature-card">
-                    <div class="feature-screenshot">
-                        <div class="sim-photos">
-                            <div class="sim-photo" style="background:var(--accent-light);">&#128247;</div>
-                            <div class="sim-photo" style="background:#FDF6E8;">&#127880;</div>
-                            <div class="sim-photo" style="background:#FAE8E8;">&#128150;</div>
-                            <div class="sim-photo" style="background:#E8F0FE;">&#127874;</div>
-                            <div class="sim-photo" style="background:var(--accent-light);">&#127881;</div>
-                            <div class="sim-photo" style="background:#FDF6E8;">&#128248;</div>
-                        </div>
-                        <div style="margin-top:10px; padding:8px 12px; background:var(--white); border-radius:10px;">
-                            <div style="font-size:11px; color:var(--text-secondary); font-style:italic;">"Tak for en fantastisk dag! Vi elsker jer &#10084;&#65039;"</div>
-                            <div style="font-size:10px; color:var(--text-secondary); margin-top:2px;">— Mormor & Morfar</div>
-                        </div>
+    <!-- Minder -->
+    <section class="feature-section">
+        <div class="container">
+            <div class="feature-layout">
+                <div class="feature-screenshot">
+                    <div class="sim-photos">
+                        <div class="sim-photo" style="background:var(--accent-light);">&#128247;</div>
+                        <div class="sim-photo" style="background:#FDF6E8;">&#127880;</div>
+                        <div class="sim-photo" style="background:#FAE8E8;">&#128150;</div>
+                        <div class="sim-photo" style="background:#E8F0FE;">&#127874;</div>
+                        <div class="sim-photo" style="background:var(--accent-light);">&#127881;</div>
+                        <div class="sim-photo" style="background:#FDF6E8;">&#128248;</div>
                     </div>
-                    <div class="feature-card-body">
-                        <h3>Minder</h3>
-                        <p>Fælles fotoarkiv, gæstebog og mindelinje</p>
+                    <div style="margin-top:14px; padding:12px 16px; background:var(--white); border-radius:12px;">
+                        <div style="font-size:14px; color:var(--text-secondary); font-style:italic;">"Tak for en fantastisk dag! Vi elsker jer"</div>
+                        <div style="font-size:12px; color:var(--text-secondary); margin-top:4px;">— Mormor & Morfar</div>
                     </div>
                 </div>
-
+                <div class="feature-text">
+                    <div class="feature-eyebrow">Minder</div>
+                    <h3>Fælles fotoarkiv, gæstebog og mindelinje</h3>
+                    <p>Saml alle billeder og hilsner fra dagen ét sted. Gæsterne bidrager med fotos og beskeder, så minderne lever videre.</p>
+                </div>
             </div>
         </div>
     </section>
