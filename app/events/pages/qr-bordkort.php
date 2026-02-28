@@ -28,9 +28,9 @@ if (empty($headline) || empty($subtitle)) {
     if (empty($subtitle)) $subtitle = $defaultText['subtitle'];
 }
 
-// Generate QR code URL
+// Generate QR code URL with token for public access
 $destinationPage = $qrDestinations[$destination]['page'] ?? 'photos';
-$eventUrl = getEventGuestUrl($event['slug'], $destinationPage);
+$eventUrl = getEventGuestUrl($event['slug'], $destinationPage, $event['qr_token'] ?? null);
 $qrCodeUrl = generateQRCodeUrl($eventUrl, 400);
 
 // Colors from invitation config

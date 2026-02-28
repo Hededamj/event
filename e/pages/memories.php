@@ -45,7 +45,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['memory_photo'])) {
     // Validate year
     if (!$memoryYear || $memoryYear < $minYear || $memoryYear > $maxYear) {
         setFlash('error', 'Vælg et gyldigt årstal.');
-        redirect("/e/$slug/memories");
+        $redirectUrl = "/e/$slug/memories" . ($qrTokenValid ? '?t=' . urlencode($_GET['t']) : '');
+        redirect($redirectUrl);
     }
 
     // Validate image
@@ -65,9 +66,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['memory_photo'])) {
                 INSERT INTO timeline_memories (event_id, uploaded_by_guest_id, filename, original_filename, caption, memory_year, approved)
                 VALUES (?, ?, ?, ?, ?, ?, TRUE)
             ");
+            $guestId = $currentGuest['id'] ?? null;
             $stmt->execute([
                 $eventId,
-                $currentGuest['id'],
+                $guestId,
                 $filename,
                 $file['name'],
                 $caption ?: null,
@@ -80,7 +82,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['memory_photo'])) {
     } else {
         setFlash('error', implode(' ', $errors));
     }
-    redirect("/e/$slug/memories");
+    $redirectUrl = "/e/$slug/memories" . ($qrTokenValid ? '?t=' . urlencode($_GET['t']) : '');
+    redirect($redirectUrl);
 }
 
 // Get approved memories for this event

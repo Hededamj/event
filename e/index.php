@@ -100,8 +100,15 @@ if (isset($_GET['logout'])) {
 $validPages = ['landing', 'home', 'rsvp', 'wishlist', 'menu', 'schedule', 'photos', 'memories', 'indslag'];
 if (!in_array($page, $validPages)) $page = 'landing';
 
+// Public QR access: photos and memories are accessible with valid ?t= token
+$publicQrPages = ['photos', 'memories'];
+$qrTokenValid = false;
+if (isset($_GET['t']) && !empty($_GET['t']) && in_array($page, $publicQrPages)) {
+    $qrTokenValid = hash_equals($event['qr_token'] ?? '', $_GET['t']);
+}
+
 if ($guestLoggedIn && $page === 'landing') redirect("/e/$slug/home");
-if (!$guestLoggedIn && $page !== 'landing') redirect("/e/$slug/");
+if (!$guestLoggedIn && !$qrTokenValid && $page !== 'landing') redirect("/e/$slug/");
 
 $flash = getFlash();
 
@@ -1186,7 +1193,7 @@ if ($useInvitationLayout) {
          LOGGED IN PAGES
          ============================================ -->
     <div class="app-layout">
-        <main class="app-main">
+        <main class="app-main" <?php if (!$guestLoggedIn): ?>style="margin-right: 0;"<?php endif; ?>>
             <div class="page-container">
                 <?php if ($flash): ?>
                 <div class="flash flash-<?= $flash['type'] ?>">
@@ -1210,7 +1217,8 @@ if ($useInvitationLayout) {
             </div>
         </main>
 
-        <!-- Right-side Navigation -->
+        <?php if ($guestLoggedIn): ?>
+        <!-- Right-side Navigation (only for logged-in guests) -->
         <nav class="app-nav">
             <div class="nav-brand"><?= strtoupper(substr($event['main_person_name'] ?? 'E', 0, 1)) ?></div>
 
@@ -1233,6 +1241,7 @@ if ($useInvitationLayout) {
                 </a>
             </div>
         </nav>
+        <?php endif; ?>
     </div>
     <?php endif; ?>
 </body>

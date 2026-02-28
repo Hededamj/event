@@ -57,13 +57,18 @@ function generateQRCodeBase64(string $data, int $size = 300): ?string {
  *
  * @param string $slug The event slug
  * @param string $page Optional specific page
+ * @param string|null $qrToken Optional QR token for public access (photos/memories)
  * @return string Full URL to the guest page
  */
-function getEventGuestUrl(string $slug, string $page = ''): string {
+function getEventGuestUrl(string $slug, string $page = '', ?string $qrToken = null): string {
     $baseUrl = baseUrl();
     $path = "/e/" . urlencode($slug) . "/";
     if ($page) {
         $path .= urlencode($page);
+    }
+    // Append QR token for public pages (photos, memories)
+    if ($qrToken && in_array($page, ['photos', 'memories'])) {
+        $path .= '?t=' . urlencode($qrToken);
     }
     return $baseUrl . $path;
 }

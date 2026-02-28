@@ -70,19 +70,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                 $eventName = $mainPersonName . ($secondaryPersonName ? ' & ' . $secondaryPersonName : '') . 's ' . strtolower($typeName);
             }
 
+            // Generate unique QR token for public photo/memory access
+            $qrToken = bin2hex(random_bytes(8)); // 16 chars hex
+
             // Insert event
             $stmt = $db->prepare("
                 INSERT INTO events (
-                    account_id, event_type_id, slug, status, name,
+                    account_id, event_type_id, slug, qr_token, status, name,
                     main_person_name, secondary_person_name,
                     event_date, event_time, location, address,
                     theme, welcome_text, is_legacy
-                ) VALUES (?, ?, ?, 'active', ?, ?, ?, ?, ?, ?, ?, ?, ?, FALSE)
+                ) VALUES (?, ?, ?, ?, 'active', ?, ?, ?, ?, ?, ?, ?, ?, ?, FALSE)
             ");
             $stmt->execute([
                 $accountId,
                 $eventTypeId ?: null,
                 $slug,
+                $qrToken,
                 $eventName,
                 $mainPersonName,
                 $secondaryPersonName ?: null,

@@ -7,7 +7,8 @@
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['photo'])) {
     if (!verifyCsrfToken($_POST['csrf_token'] ?? '')) {
         setFlash('error', 'Ugyldig anmodning. Prøv igen.');
-        redirect("/e/$slug/photos");
+        $redirectUrl = "/e/$slug/photos" . ($qrTokenValid ? '?t=' . urlencode($_GET['t']) : '');
+        redirect($redirectUrl);
     }
     $file = $_FILES['photo'];
     $errors = validateImageUpload($file);
@@ -22,8 +23,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['photo'])) {
         $filepath = $uploadDir . $filename;
 
         if (move_uploaded_file($file['tmp_name'], $filepath)) {
+            $guestId = $currentGuest['id'] ?? null;
             $stmt = $db->prepare("INSERT INTO photos (event_id, uploaded_by_guest_id, filename, approved) VALUES (?, ?, ?, TRUE)");
-            $stmt->execute([$eventId, $currentGuest['id'], $filename]);
+            $stmt->execute([$eventId, $guestId, $filename]);
             setFlash('success', 'Foto uploadet!');
         } else {
             setFlash('error', 'Kunne ikke uploade billedet. Prøv igen.');
@@ -31,7 +33,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['photo'])) {
     } else {
         setFlash('error', implode(' ', $errors));
     }
-    redirect("/e/$slug/photos");
+    $redirectUrl = "/e/$slug/photos" . ($qrTokenValid ? '?t=' . urlencode($_GET['t']) : '');
+    redirect($redirectUrl);
 }
 
 // Get approved photos
