@@ -1,7 +1,7 @@
 <?php
 /**
  * PartyParart Landing Page
- * Celebrating life's precious moments
+ * Redesigned 2026-02-28 — Focus on signup conversion
  */
 require_once __DIR__ . '/config/database.php';
 require_once __DIR__ . '/includes/functions.php';
@@ -11,8 +11,8 @@ require_once __DIR__ . '/includes/functions.php';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PartyParart — Din perfekte event planner | Planlæg festen nemt</title>
-    <meta name="description" content="Vi gør festplanlægning til en leg. Invitationer, gæstehåndtering, bordplan, budget og meget mere — alt samlet ét sted. Din event-makker fra start til slut.">
+    <title>PartyParart — Planlæg festen, vi holder styr på resten</title>
+    <meta name="description" content="Gratis festplanlægning for alle. Invitationer, gæstehåndtering, toastmaster-koordinering og meget mere — alt samlet ét sted. Fra 5 til 500 gæster.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
@@ -48,7 +48,6 @@ require_once __DIR__ . '/includes/functions.php';
             -webkit-font-smoothing: antialiased;
         }
 
-        /* Subtle grain texture */
         body::before {
             content: '';
             position: fixed;
@@ -115,7 +114,6 @@ require_once __DIR__ . '/includes/functions.php';
         }
 
         .nav-links a:hover { color: var(--accent-dark); }
-
         .nav-links a.btn-primary { color: white; }
         .nav-links a.btn-primary:hover { color: white; }
 
@@ -144,67 +142,68 @@ require_once __DIR__ . '/includes/functions.php';
             box-shadow: 0 12px 40px rgba(143, 165, 131, 0.35);
         }
 
-        .btn-secondary {
-            background: transparent;
-            color: var(--text);
-            border: 2px solid var(--border);
-        }
-
-        .btn-secondary:hover {
-            border-color: var(--accent);
-            color: var(--accent-dark);
-        }
-
         .btn-gold {
             background: var(--warning);
             color: white;
         }
 
         .btn-gold:hover {
-            background: var(--warning-light);
+            background: #B8841F;
             transform: translateY(-2px);
             box-shadow: 0 12px 40px rgba(184, 146, 61, 0.35);
         }
 
-        /* ===== HERO ===== */
+        /* ===== HERO WITH PARALLAX ===== */
         .hero {
             position: relative;
+            min-height: 80vh;
+            display: flex;
+            align-items: flex-end;
             overflow: hidden;
         }
 
-        .hero-image {
+        .hero-bg {
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: -15%;
+            height: 130%;
+            background: url('/billeder/hero-konfirmation.png') center 30% / cover no-repeat;
+            z-index: 0;
+            will-change: transform;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 40%, rgba(0,0,0,0.1) 70%);
+            z-index: 1;
+        }
+
+        .hero .container {
             width: 100%;
-            height: 60vh;
-            min-height: 360px;
-            object-fit: cover;
-            object-position: center 30%;
-            display: block;
+            position: relative;
+            z-index: 2;
         }
 
         .hero-text {
-            padding: 40px 24px 60px;
-            max-width: 600px;
+            padding: 40px 0 60px;
+            max-width: 620px;
         }
 
-        .hero-badge {
+        .hero-free-badge {
             display: inline-flex;
             align-items: center;
             gap: 8px;
             padding: 10px 20px;
-            background: var(--white);
-            border: 1px solid var(--border);
+            background: var(--warning);
             border-radius: 50px;
             font-size: 13px;
-            font-weight: 600;
-            color: var(--accent-dark);
+            font-weight: 700;
+            color: white;
             margin-bottom: 28px;
-            box-shadow: 0 2px 20px rgba(0,0,0,0.04);
-        }
-
-        .hero-badge svg {
-            width: 16px;
-            height: 16px;
-            color: var(--warning);
+            box-shadow: 0 4px 20px rgba(196, 146, 45, 0.4);
         }
 
         .hero h1 {
@@ -214,126 +213,33 @@ require_once __DIR__ . '/includes/functions.php';
             line-height: 1.15;
             margin-bottom: 24px;
             letter-spacing: -0.02em;
+            color: white;
         }
 
         .hero h1 em {
             font-style: italic;
-            color: var(--accent-dark);
+            color: var(--accent-light);
         }
 
         .hero-description {
             font-size: 17px;
-            color: var(--text-secondary);
+            color: rgba(255,255,255,0.85);
             line-height: 1.8;
             margin-bottom: 40px;
         }
 
-        .hero-buttons {
-            display: flex;
-            gap: 16px;
-            flex-wrap: wrap;
-        }
-
-        /* Desktop hero: image as background with text overlay */
         @media (min-width: 1024px) {
             .hero {
                 min-height: 100vh;
-                display: flex;
-                align-items: flex-end;
-            }
-
-            .hero-image {
-                position: absolute;
-                inset: 0;
-                height: 100%;
-                z-index: 0;
-            }
-
-            .hero::after {
-                content: '';
-                position: absolute;
-                inset: 0;
-                background: linear-gradient(to top, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.2) 40%, transparent 70%);
-                z-index: 1;
-            }
-
-            .hero-text {
-                position: relative;
-                z-index: 2;
-                padding: 0 0 80px;
-                max-width: 620px;
-                margin-left: 0;
-            }
-
-            .hero .container {
-                width: 100%;
             }
 
             .hero h1 {
                 font-size: clamp(42px, 5vw, 64px);
-                color: white;
             }
 
-            .hero h1 em {
-                color: var(--accent-light);
+            .hero-text {
+                padding: 0 0 80px;
             }
-
-            .hero-description {
-                color: rgba(255,255,255,0.85);
-            }
-
-            .hero-badge {
-                background: rgba(255,255,255,0.15);
-                backdrop-filter: blur(10px);
-                border-color: rgba(255,255,255,0.2);
-                color: white;
-            }
-
-            .hero-badge svg {
-                color: var(--warning);
-            }
-
-            .hero .btn-secondary {
-                color: white;
-                border-color: rgba(255,255,255,0.4);
-            }
-
-            .hero .btn-secondary:hover {
-                border-color: white;
-                color: white;
-            }
-        }
-
-        /* ===== TRUST BAR ===== */
-        .trust-bar {
-            padding: 60px 0;
-            border-top: 1px solid var(--border);
-            border-bottom: 1px solid var(--border);
-        }
-
-        .trust-bar .container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 60px;
-            flex-wrap: wrap;
-        }
-
-        .trust-item {
-            text-align: center;
-        }
-
-        .trust-number {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 36px;
-            font-weight: 500;
-            color: var(--accent-dark);
-            margin-bottom: 4px;
-        }
-
-        .trust-label {
-            font-size: 13px;
-            color: var(--text-secondary);
         }
 
         /* ===== SHARED SECTION STYLES ===== */
@@ -439,7 +345,6 @@ require_once __DIR__ . '/includes/functions.php';
                 gap: 80px;
             }
 
-            /* Even sections: reverse order (text left, screenshot right) */
             .feature-section:nth-child(even) .feature-layout {
                 direction: rtl;
             }
@@ -449,7 +354,50 @@ require_once __DIR__ . '/includes/functions.php';
             }
         }
 
-        /* Simulated UI elements — scaled up */
+        /* ===== SIMULATED UI ===== */
+        .sim-summary {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px;
+            background: var(--white);
+            border-radius: 12px;
+            margin-bottom: 12px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .sim-summary-stat {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .sim-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .sim-dot-green { background: var(--success); }
+        .sim-dot-gold { background: var(--warning); }
+        .sim-dot-red { background: var(--error); }
+
+        .sim-progress-bar-full {
+            height: 6px;
+            background: var(--border-light);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+
+        .sim-progress-bar-full > div {
+            height: 100%;
+            border-radius: 3px;
+            background: var(--accent);
+        }
+
         .sim-row {
             display: flex;
             align-items: center;
@@ -461,9 +409,7 @@ require_once __DIR__ . '/includes/functions.php';
             font-size: 14px;
         }
 
-        .sim-row:last-child {
-            margin-bottom: 0;
-        }
+        .sim-row:last-child { margin-bottom: 0; }
 
         .sim-row-left {
             display: flex;
@@ -492,77 +438,62 @@ require_once __DIR__ . '/includes/functions.php';
             white-space: nowrap;
         }
 
-        .sim-badge-green {
+        .sim-badge-green { background: var(--accent-light); color: var(--accent-dark); }
+        .sim-badge-gold { background: #FDF6E8; color: #96700A; }
+        .sim-badge-gray { background: #F3F2F0; color: var(--text-secondary); }
+
+        .sim-name { font-weight: 500; color: var(--text); }
+        .sim-detail { color: var(--text-secondary); font-size: 12px; }
+
+        .sim-btn-reminder {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
             background: var(--accent-light);
+            color: var(--accent-dark);
+            border-radius: 50px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-top: 12px;
+        }
+
+        /* Mini invitation preview */
+        .sim-mini-invite {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: linear-gradient(135deg, var(--accent-light), #F5EDE4);
+            border-radius: 12px;
+            margin-bottom: 12px;
+            font-size: 13px;
+        }
+
+        .sim-mini-invite-icon {
+            width: 36px;
+            height: 36px;
+            background: var(--accent);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .sim-mini-invite-text {
+            font-weight: 600;
             color: var(--accent-dark);
         }
 
-        .sim-badge-gold {
-            background: #FDF6E8;
-            color: #96700A;
-        }
-
-        .sim-badge-blue {
-            background: #E8F0FE;
-            color: #1A56DB;
-        }
-
-        .sim-badge-gray {
-            background: #F3F2F0;
+        .sim-mini-invite-sub {
+            font-size: 11px;
             color: var(--text-secondary);
         }
 
-        .sim-badge-blush {
-            background: #FAE8E8;
-            color: #8B4545;
-        }
-
-        .sim-name {
-            font-weight: 500;
-            color: var(--text);
-        }
-
-        .sim-detail {
-            color: var(--text-secondary);
-            font-size: 12px;
-        }
-
-        /* Budget progress bar */
-        .sim-progress-wrap {
-            margin-bottom: 14px;
-        }
-
-        .sim-progress-wrap:last-child {
-            margin-bottom: 0;
-        }
-
-        .sim-progress-label {
-            display: flex;
-            justify-content: space-between;
-            font-size: 13px;
-            margin-bottom: 6px;
-            color: var(--text-secondary);
-        }
-
-        .sim-progress-label span:last-child {
-            font-weight: 600;
-            color: var(--text);
-        }
-
-        .sim-progress {
-            height: 10px;
-            background: var(--border-light, #EDEAE5);
-            border-radius: 5px;
-            overflow: hidden;
-        }
-
-        .sim-progress-bar {
-            height: 100%;
-            border-radius: 5px;
-            background: var(--accent);
-        }
-
-        /* Timeline */
+        /* Timeline (Toastmaster) */
         .sim-timeline {
             position: relative;
             padding-left: 24px;
@@ -582,6 +513,9 @@ require_once __DIR__ . '/includes/functions.php';
             position: relative;
             padding: 10px 0 10px 16px;
             font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
 
         .sim-timeline-item::before {
@@ -596,6 +530,17 @@ require_once __DIR__ . '/includes/functions.php';
             border: 2px solid var(--surface);
         }
 
+        .sim-timeline-item.active::before {
+            background: var(--warning);
+            box-shadow: 0 0 0 4px rgba(196, 146, 45, 0.2);
+        }
+
+        .sim-timeline-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
         .sim-timeline-time {
             font-size: 12px;
             color: var(--accent-dark);
@@ -607,112 +552,258 @@ require_once __DIR__ . '/includes/functions.php';
             color: var(--text);
         }
 
-        /* Table layout for bordplan */
-        .sim-tables {
-            display: flex;
-            gap: 16px;
-            justify-content: center;
-            flex-wrap: wrap;
+        .sim-timeline-icon {
+            font-size: 16px;
+            flex-shrink: 0;
         }
 
-        .sim-table {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            border: 2px solid var(--accent);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            background: var(--white);
-        }
-
-        .sim-table-label {
-            font-size: 10px;
+        .sim-timeline-badge {
+            padding: 3px 10px;
+            border-radius: 50px;
+            font-size: 11px;
             font-weight: 600;
-            color: var(--accent-dark);
+        }
+
+        .sim-now-marker {
+            position: absolute;
+            left: -2px;
+            width: calc(100% + 26px);
+            height: 2px;
+            background: var(--warning);
+            z-index: 1;
+        }
+
+        .sim-now-label {
+            position: absolute;
+            right: 0;
+            top: -8px;
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--warning);
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
 
-        .sim-table-count {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 28px;
-            font-weight: 500;
-            color: var(--text);
-            line-height: 1;
+        /* ===== EVENT TYPES ===== */
+        .event-types {
+            padding: 80px 0;
         }
 
-        .sim-table-names {
-            font-size: 10px;
-            color: var(--text-secondary);
-            text-align: center;
-            line-height: 1.2;
-        }
-
-        /* Photo grid */
-        .sim-photos {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 8px;
-        }
-
-        .sim-photo {
-            aspect-ratio: 1;
-            border-radius: 10px;
+        .event-types-grid {
             display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
+            gap: 20px;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch;
+            padding-bottom: 8px;
         }
 
-        /* Checklist / wishlist */
-        .sim-check-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 10px 16px;
+        .event-types-grid::-webkit-scrollbar { display: none; }
+
+        .event-type-card {
             background: var(--white);
-            border-radius: 12px;
-            margin-bottom: 8px;
-            font-size: 14px;
+            border-radius: 24px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            flex: 0 0 200px;
+            scroll-snap-align: start;
         }
 
-        .sim-check-item:last-child {
-            margin-bottom: 0;
+        .event-type-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.08);
+            border-color: var(--accent);
         }
 
-        .sim-checkbox {
-            width: 22px;
-            height: 22px;
-            border-radius: 6px;
-            border: 2px solid var(--border);
+        .event-type-card img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .event-type-card-body {
+            padding: 20px;
+            text-align: center;
+        }
+
+        .event-type-card h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 20px;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .event-type-card p {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        /* Placeholder card (no image) */
+        .event-type-placeholder {
+            height: 180px;
             display: flex;
             align-items: center;
             justify-content: center;
-            flex-shrink: 0;
+            font-size: 48px;
+            background: linear-gradient(135deg, var(--surface), var(--border-light));
         }
 
-        .sim-checkbox.checked {
-            background: var(--accent);
-            border-color: var(--accent);
-            color: white;
+        @media (min-width: 768px) {
+            .event-types { padding: 120px 0; }
+            .event-types-grid {
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                gap: 24px;
+                overflow: visible;
+            }
+            .event-type-card { flex: none; }
         }
 
-        .sim-checkbox svg {
-            width: 14px;
-            height: 14px;
+        @media (min-width: 1200px) {
+            .event-types-grid {
+                grid-template-columns: repeat(7, 1fr);
+            }
         }
 
-        .sim-check-text {
-            flex: 1;
+        /* ===== VENDOR / MARKETPLACE ===== */
+        .vendors {
+            padding: 80px 0;
+            background: var(--surface);
+        }
+
+        .vendor-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        .vendor-card {
+            background: var(--white);
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
+        }
+
+        .vendor-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.06);
+        }
+
+        .vendor-card-img {
+            height: 140px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+        }
+
+        .vendor-card-body {
+            padding: 20px;
+        }
+
+        .vendor-card-category {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--accent);
+            margin-bottom: 6px;
+        }
+
+        .vendor-card-name {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 20px;
             font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .vendor-card-meta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .vendor-card-stars {
+            color: var(--warning);
+            letter-spacing: 1px;
+        }
+
+        .vendor-card-price {
+            font-weight: 600;
             color: var(--text);
         }
 
-        .sim-check-text.done {
-            text-decoration: line-through;
-            color: var(--text-secondary);
+        .vendor-cta {
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        .vendor-cta a {
+            color: var(--accent-dark);
+            font-weight: 600;
+            text-decoration: none;
+            font-size: 15px;
+            border-bottom: 2px solid var(--accent-light);
+            padding-bottom: 2px;
+            transition: border-color 0.3s;
+        }
+
+        .vendor-cta a:hover { border-color: var(--accent-dark); }
+
+        @media (min-width: 768px) {
+            .vendors { padding: 120px 0; }
+            .vendor-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .vendor-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        /* ===== ATMOSPHERE BREAK ===== */
+        .atmosphere-break {
+            height: 400px;
+            background: url('/billeder/stemning-stort-arrangement.png') center/cover no-repeat;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .atmosphere-break::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,0.45);
+        }
+
+        .atmosphere-break p {
+            position: relative;
+            z-index: 1;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(28px, 5vw, 48px);
+            font-style: italic;
+            font-weight: 400;
+            color: white;
+            text-align: center;
+            padding: 0 24px;
+            max-width: 700px;
+            line-height: 1.3;
+        }
+
+        @media (min-width: 1024px) {
+            .atmosphere-break {
+                height: 500px;
+                background-attachment: fixed;
+            }
         }
 
         /* ===== INVITATION SHOWCASE ===== */
@@ -727,17 +818,14 @@ require_once __DIR__ . '/includes/functions.php';
         .invitation-showcase::before {
             content: '';
             position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
+            inset: 0;
             background: linear-gradient(135deg, rgba(143, 165, 131, 0.1) 0%, transparent 50%);
         }
 
         .invitation-content {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 80px;
+            grid-template-columns: 1fr;
+            gap: 60px;
             align-items: center;
             position: relative;
             z-index: 1;
@@ -804,9 +892,7 @@ require_once __DIR__ . '/includes/functions.php';
             margin: 0;
         }
 
-        .invitation-preview {
-            position: relative;
-        }
+        .invitation-preview { position: relative; }
 
         .preview-phone {
             background: #0a0a0a;
@@ -823,16 +909,12 @@ require_once __DIR__ . '/includes/functions.php';
             display: flex;
             flex-direction: column;
             justify-content: flex-end;
-            padding: 0;
             position: relative;
             overflow: hidden;
         }
 
-        .preview-slider {
-            position: absolute;
-            inset: 0;
-            z-index: 0;
-        }
+        .preview-slider { position: absolute; inset: 0; z-index: 0; }
+
         .preview-slide {
             position: absolute;
             inset: 0;
@@ -841,9 +923,8 @@ require_once __DIR__ . '/includes/functions.php';
             opacity: 0;
             transition: opacity 1.2s ease-in-out;
         }
-        .preview-slide.active {
-            opacity: 1;
-        }
+
+        .preview-slide.active { opacity: 1; }
 
         .preview-screen::before {
             content: '';
@@ -918,168 +999,38 @@ require_once __DIR__ . '/includes/functions.php';
             text-transform: uppercase;
         }
 
-        /* ===== EVENT TYPES ===== */
-        .event-types {
-            padding: 80px 0;
-        }
-
-        .event-types-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 20px;
-        }
-
-        .event-type-card {
-            background: var(--white);
-            border-radius: 24px;
-            overflow: hidden;
-            border: 1px solid var(--border);
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .event-type-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 30px 60px rgba(0,0,0,0.08);
-            border-color: var(--accent);
-        }
-
-        .event-type-card img {
-            width: 100%;
-            height: 220px;
-            object-fit: cover;
-            display: block;
-        }
-
-        .event-type-card-body {
-            padding: 24px;
-            text-align: center;
-        }
-
-        .event-type-card h3 {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 22px;
-            font-weight: 500;
-            margin-bottom: 6px;
-        }
-
-        .event-type-card p {
-            font-size: 14px;
-            color: var(--text-secondary);
-        }
-
-        @media (min-width: 768px) {
-            .event-types { padding: 120px 0; }
-            .event-types-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 24px;
-            }
-            .event-type-card:last-child {
-                grid-column: 1 / -1;
-                max-width: calc(50% - 12px);
-                margin: 0 auto;
-            }
-            .event-type-card img { height: 250px; }
-        }
-
         @media (min-width: 1024px) {
-            .event-types-grid {
-                grid-template-columns: repeat(5, 1fr);
-            }
-            .event-type-card:last-child {
-                grid-column: auto;
-                max-width: none;
-                margin: 0;
-            }
-            .event-type-card img { height: 200px; }
-        }
-
-        /* ===== ATMOSPHERE BREAK ===== */
-        .atmosphere-break {
-            height: 400px;
-            background: url('/billeder/stemning-stort-arrangement.png') center/cover no-repeat;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-        }
-
-        .atmosphere-break::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: rgba(0,0,0,0.45);
-        }
-
-        .atmosphere-break p {
-            position: relative;
-            z-index: 1;
-            font-family: 'Cormorant Garamond', serif;
-            font-size: clamp(28px, 5vw, 48px);
-            font-style: italic;
-            font-weight: 400;
-            color: white;
-            text-align: center;
-            padding: 0 24px;
-            max-width: 700px;
-            line-height: 1.3;
-        }
-
-        @media (min-width: 1024px) {
-            .atmosphere-break {
-                height: 500px;
-                background-attachment: fixed;
+            .invitation-content {
+                grid-template-columns: 1fr 1fr;
+                gap: 80px;
             }
         }
 
-        /* ===== TESTIMONIAL ===== */
-        .testimonial {
+        /* ===== EARLY ADOPTER ===== */
+        .early-adopter {
             padding: 120px 0;
             background: var(--white);
         }
 
-        .testimonial-content {
-            max-width: 800px;
+        .early-adopter-content {
+            max-width: 700px;
             margin: 0 auto;
             text-align: center;
         }
 
-        .testimonial-quote {
+        .early-adopter h2 {
             font-family: 'Cormorant Garamond', serif;
-            font-size: clamp(24px, 3vw, 36px);
-            font-style: italic;
-            line-height: 1.6;
-            margin-bottom: 40px;
-            color: var(--text);
+            font-size: clamp(28px, 4vw, 42px);
+            font-weight: 500;
+            line-height: 1.2;
+            margin-bottom: 20px;
         }
 
-        .testimonial-author {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 16px;
-        }
-
-        .testimonial-avatar {
-            width: 56px;
-            height: 56px;
-            background: linear-gradient(135deg, var(--accent-light), var(--blush));
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 24px;
-            color: white;
-        }
-
-        .testimonial-info h4 {
-            font-size: 16px;
-            font-weight: 600;
-        }
-
-        .testimonial-info p {
-            font-size: 14px;
+        .early-adopter p {
+            font-size: 17px;
             color: var(--text-secondary);
+            line-height: 1.8;
+            margin-bottom: 40px;
         }
 
         /* ===== CTA ===== */
@@ -1178,17 +1129,51 @@ require_once __DIR__ . '/includes/functions.php';
             color: rgba(255,255,255,0.4);
         }
 
-        /* ===== RESPONSIVE ===== */
-        @media (max-width: 1024px) {
-            .invitation-content { grid-template-columns: 1fr; }
-            .invitation-preview { margin-top: 60px; }
+        /* ===== MOBILE NAV ===== */
+        .mobile-toggle {
+            display: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
         }
 
+        .mobile-toggle svg {
+            width: 24px;
+            height: 24px;
+            color: var(--text);
+        }
+
+        /* ===== RESPONSIVE ===== */
         @media (max-width: 768px) {
-            .nav-links { display: none; }
+            .mobile-toggle { display: block; }
+
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: var(--white);
+                flex-direction: column;
+                padding: 24px;
+                gap: 20px;
+                box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+                border-top: 1px solid var(--border);
+            }
+
+            .nav-links.open { display: flex; }
+
             .cta-box { padding: 60px 32px; border-radius: 28px; }
             .footer-content { flex-direction: column; gap: 24px; text-align: center; }
             .footer-links { flex-wrap: wrap; justify-content: center; gap: 24px; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                transition-duration: 0.01ms !important;
+                animation-duration: 0.01ms !important;
+            }
         }
     </style>
 </head>
@@ -1196,61 +1181,68 @@ require_once __DIR__ . '/includes/functions.php';
     <header class="header" id="header">
         <div class="container">
             <a href="/" class="logo">Party<span>Parart</span></a>
-            <nav class="nav-links">
+            <button class="mobile-toggle" id="mobileToggle" aria-label="Åbn menu">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+            </button>
+            <nav class="nav-links" id="navLinks">
                 <a href="#features">Funktioner</a>
                 <a href="#events">Arrangementer</a>
                 <a href="/app/auth/login.php">Log ind</a>
-                <a href="/app/auth/register.php" class="btn btn-primary">Kom i gang gratis</a>
+                <a href="/app/auth/register.php" class="btn btn-primary">Prøv gratis</a>
             </nav>
         </div>
     </header>
 
+    <!-- HERO with parallax -->
     <section class="hero">
-        <img src="/billeder/hero-konfirmation.png"
-             alt="Konfirmationsfest i haven med lyskæder, glade gæster og dansk sommer"
-             class="hero-image"
-             loading="eager"
-             fetchpriority="high">
+        <div class="hero-bg" id="heroBg"></div>
         <div class="container">
             <div class="hero-text">
-                <div class="hero-badge">
-                    <svg fill="currentColor" viewBox="0 0 20 20"><path d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"/></svg>
-                    Din perfekte event planner
+                <div class="hero-free-badge">
+                    &#10022; Alle funktioner gratis frem til juni 2026
                 </div>
-                <h1>Lad <em>festen</em> begynde</h1>
+                <h1>Planlæg <em>festen</em> — vi holder styr på resten</h1>
                 <p class="hero-description">
-                    Uanset om det er 20 eller 500 gæster — vi giver dig overblikket,
-                    så du kan fokusere på det vigtige. Alt samlet ét sted: invitationer,
-                    gæster, bordplan, budget og meget mere.
+                    Fra studentergilde til bryllup, fra 5 til 500 gæster — PartyParart giver dig overblikket, så du kan nyde festen.
                 </p>
-                <div class="hero-buttons">
-                    <a href="/app/auth/register.php" class="btn btn-primary">
-                        Start dit arrangement
-                        <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
-                        </svg>
-                    </a>
-                    <a href="#features" class="btn btn-secondary">Se hvordan det virker</a>
-                </div>
+                <a href="/app/auth/register.php" class="btn btn-primary">
+                    Opret dit arrangement gratis
+                    <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                    </svg>
+                </a>
             </div>
         </div>
     </section>
 
+    <!-- FEATURES INTRO -->
     <div class="features-intro" id="features">
         <div class="container">
             <div class="section-header">
                 <div class="section-eyebrow">Funktioner</div>
                 <h2>Alt du behøver — samlet ét sted</h2>
-                <p>Din event-makker fra start til slut. Vi giver dig overblikket, så du kan fokusere på det vigtige.</p>
+                <p>Fra invitationer til toastmaster-koordinering. Vi giver dig overblikket, så du kan fokusere på festen.</p>
             </div>
         </div>
     </div>
 
-    <!-- Invitationer -->
+    <!-- Feature 1: Invitationer + RSVP -->
     <section class="feature-section">
         <div class="container">
             <div class="feature-layout">
                 <div class="feature-screenshot">
+                    <div class="sim-mini-invite">
+                        <div class="sim-mini-invite-icon">&#9993;</div>
+                        <div>
+                            <div class="sim-mini-invite-text">Sofies Konfirmation</div>
+                            <div class="sim-mini-invite-sub">34 invitationer sendt</div>
+                        </div>
+                    </div>
+                    <div class="sim-summary">
+                        <div class="sim-summary-stat"><div class="sim-dot sim-dot-green"></div> 12 bekræftet</div>
+                        <div class="sim-summary-stat"><div class="sim-dot sim-dot-gold"></div> 3 afventer</div>
+                        <div class="sim-summary-stat"><div class="sim-dot sim-dot-red"></div> 1 afbud</div>
+                    </div>
                     <div class="sim-row">
                         <div class="sim-row-left">
                             <div class="sim-avatar" style="background:#6B8F5E;">MJ</div>
@@ -1281,294 +1273,262 @@ require_once __DIR__ . '/includes/functions.php';
                         </div>
                         <div class="sim-badge sim-badge-green">Bekræftet</div>
                     </div>
-                    <div class="sim-row">
-                        <div class="sim-row-left">
-                            <div class="sim-avatar" style="background:#7C6DAF;">PH</div>
-                            <div>
-                                <div class="sim-name">Peter Hansen</div>
-                                <div class="sim-detail">Sendt for 3 dage siden</div>
-                            </div>
-                        </div>
-                        <div class="sim-badge sim-badge-gray">Afventer</div>
-                    </div>
                 </div>
                 <div class="feature-text">
                     <div class="feature-eyebrow">Invitationer</div>
-                    <h3>Fuldt overblik over tilmeldingerne af dine gæster</h3>
-                    <p>Send smukke, personlige invitationer og følg med i realtid. Se hvem der har åbnet, bekræftet eller stadig mangler at svare — alt samlet ét sted.</p>
+                    <h3>Send smukke invitationer og følg hvert eneste svar</h3>
+                    <p>Design din invitation, send den direkte til gæsterne, og se i realtid hvem der har åbnet, bekræftet eller afslået. Ingen manuelt regneark — alt opdateres automatisk.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Gæstehåndtering -->
+    <!-- Feature 2: Gæstehåndtering -->
     <section class="feature-section">
         <div class="container">
             <div class="feature-layout">
                 <div class="feature-screenshot">
-                    <div class="sim-row">
-                        <div class="sim-row-left">
-                            <div class="sim-avatar" style="background:#6B8F5E;">AH</div>
-                            <div>
-                                <div class="sim-name">Anna Hansen</div>
-                                <div class="sim-detail">2 voksne, 1 barn</div>
-                            </div>
-                        </div>
-                        <div class="sim-badge sim-badge-blush">Glutenfri</div>
+                    <div class="sim-summary">
+                        <div class="sim-summary-stat"><div class="sim-dot sim-dot-green"></div> 24 bekræftet</div>
+                        <div class="sim-summary-stat"><div class="sim-dot sim-dot-gold"></div> 8 afventer</div>
+                        <div class="sim-summary-stat"><div class="sim-dot sim-dot-red"></div> 2 afbud</div>
                     </div>
-                    <div class="sim-row">
-                        <div class="sim-row-left">
-                            <div class="sim-avatar" style="background:#7C6DAF;">KS</div>
-                            <div>
-                                <div class="sim-name">Klaus Sørensen</div>
-                                <div class="sim-detail">1 voksen</div>
-                            </div>
-                        </div>
-                        <div class="sim-badge sim-badge-gray">Ingen allergier</div>
+                    <div class="sim-progress-bar-full">
+                        <div style="width: 70%;"></div>
                     </div>
-                    <div class="sim-row">
-                        <div class="sim-row-left">
-                            <div class="sim-avatar" style="background:#C4922D;">BM</div>
-                            <div>
-                                <div class="sim-name">Birgitte Møller</div>
-                                <div class="sim-detail">2 voksne</div>
+                    <div style="margin-top: 16px;">
+                        <div class="sim-row">
+                            <div class="sim-row-left">
+                                <div class="sim-avatar" style="background:#6B8F5E;">AH</div>
+                                <div>
+                                    <div class="sim-name">Anna Hansen</div>
+                                    <div class="sim-detail">2 voksne, 1 barn</div>
+                                </div>
                             </div>
+                            <div class="sim-badge sim-badge-green">Bekræftet</div>
                         </div>
-                        <div class="sim-badge sim-badge-blush">Laktosefri</div>
+                        <div class="sim-row">
+                            <div class="sim-row-left">
+                                <div class="sim-avatar" style="background:#C4922D;">KS</div>
+                                <div>
+                                    <div class="sim-name">Klaus Sørensen</div>
+                                    <div class="sim-detail">1 voksen</div>
+                                </div>
+                            </div>
+                            <div class="sim-badge sim-badge-gold">Afventer</div>
+                        </div>
+                        <div class="sim-row">
+                            <div class="sim-row-left">
+                                <div class="sim-avatar" style="background:#7C6DAF;">BM</div>
+                                <div>
+                                    <div class="sim-name">Birgitte Møller</div>
+                                    <div class="sim-detail">2 voksne</div>
+                                </div>
+                            </div>
+                            <div class="sim-badge sim-badge-gold">Afventer</div>
+                        </div>
                     </div>
-                    <div class="sim-row">
-                        <div class="sim-row-left">
-                            <div class="sim-avatar" style="background:#D4A5A5;">ML</div>
-                            <div>
-                                <div class="sim-name">Martin Larsen</div>
-                                <div class="sim-detail">2 voksne, 2 børn</div>
-                            </div>
-                        </div>
-                        <div class="sim-badge sim-badge-blush">Nøddeallergi</div>
+                    <div class="sim-btn-reminder">
+                        &#9993; Send påmindelse til 8 afventende
                     </div>
                 </div>
                 <div class="feature-text">
                     <div class="feature-eyebrow">Gæstehåndtering</div>
-                    <h3>Allergier, børn, voksne — du har styr på alle detaljer</h3>
-                    <p>Se med det samme hvor mange voksne og børn der kommer, hvem der har allergier, og hvilke særlige hensyn du skal tage. Ingen overraskelser på dagen.</p>
+                    <h3>Ved altid præcis hvem der kommer — og hvem du mangler svar fra</h3>
+                    <p>Følg alle tilmeldinger ét sted. Se hvem der har bekræftet, hvem der mangler at svare, og hvor mange du skal planlægge efter. Slut med at tælle svar på tværs af sms'er og mails.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Bordplan -->
-    <section class="feature-section">
-        <div class="container">
-            <div class="feature-layout">
-                <div class="feature-screenshot">
-                    <div class="sim-tables">
-                        <div class="sim-table">
-                            <div class="sim-table-label">Bord 1</div>
-                            <div class="sim-table-count">8</div>
-                            <div class="sim-table-names">Familie</div>
-                        </div>
-                        <div class="sim-table">
-                            <div class="sim-table-label">Bord 2</div>
-                            <div class="sim-table-count">6</div>
-                            <div class="sim-table-names">Venner</div>
-                        </div>
-                        <div class="sim-table">
-                            <div class="sim-table-label">Bord 3</div>
-                            <div class="sim-table-count">8</div>
-                            <div class="sim-table-names">Kolleger</div>
-                        </div>
-                        <div class="sim-table">
-                            <div class="sim-table-label">Bord 4</div>
-                            <div class="sim-table-count">6</div>
-                            <div class="sim-table-names">Naboer</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="feature-text">
-                    <div class="feature-eyebrow">Bordplan</div>
-                    <h3>Den rigtige person ved det rigtige bord, uden kaos</h3>
-                    <p>Planlæg bordplanen visuelt og sørg for den perfekte placering. Træk og slip gæster mellem borde og se det hele falde på plads.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Toastmaster -->
+    <!-- Feature 3: Toastmaster -->
     <section class="feature-section">
         <div class="container">
             <div class="feature-layout">
                 <div class="feature-screenshot">
                     <div class="sim-timeline">
                         <div class="sim-timeline-item">
-                            <div class="sim-timeline-time">15:30</div>
-                            <div class="sim-timeline-title">Velkomsttale — Far</div>
+                            <div class="sim-timeline-left">
+                                <div class="sim-timeline-time">15:30</div>
+                                <div class="sim-timeline-icon">&#127908;</div>
+                                <div class="sim-timeline-title">Velkomsttale — Far</div>
+                            </div>
+                            <div class="sim-timeline-badge sim-badge-green">Klar</div>
+                        </div>
+                        <div class="sim-timeline-item active" style="position:relative;">
+                            <div class="sim-now-marker" style="top:0;">
+                                <div class="sim-now-label">Nu</div>
+                            </div>
+                            <div class="sim-timeline-left">
+                                <div class="sim-timeline-time">16:00</div>
+                                <div class="sim-timeline-icon">&#127925;</div>
+                                <div class="sim-timeline-title">Sang — Mormor & Morfar</div>
+                            </div>
+                            <div class="sim-timeline-badge sim-badge-gold">I gang</div>
                         </div>
                         <div class="sim-timeline-item">
-                            <div class="sim-timeline-time">16:00</div>
-                            <div class="sim-timeline-title">Sang — Mormor & Morfar</div>
+                            <div class="sim-timeline-left">
+                                <div class="sim-timeline-time">17:15</div>
+                                <div class="sim-timeline-icon">&#127908;</div>
+                                <div class="sim-timeline-title">Tale — Bedste veninde</div>
+                            </div>
+                            <div class="sim-timeline-badge sim-badge-green">Klar</div>
                         </div>
                         <div class="sim-timeline-item">
-                            <div class="sim-timeline-time">17:15</div>
-                            <div class="sim-timeline-title">Tale — Bedste veninde</div>
+                            <div class="sim-timeline-left">
+                                <div class="sim-timeline-time">18:00</div>
+                                <div class="sim-timeline-icon">&#129513;</div>
+                                <div class="sim-timeline-title">Quiz — Onkel Henrik</div>
+                            </div>
+                            <div class="sim-timeline-badge sim-badge-green">Klar</div>
                         </div>
                         <div class="sim-timeline-item">
-                            <div class="sim-timeline-time">18:00</div>
-                            <div class="sim-timeline-title">Quiz — Onkel Henrik</div>
-                        </div>
-                        <div class="sim-timeline-item">
-                            <div class="sim-timeline-time">19:00</div>
-                            <div class="sim-timeline-title">Overraskelse — Kusine Marie</div>
+                            <div class="sim-timeline-left">
+                                <div class="sim-timeline-time">19:00</div>
+                                <div class="sim-timeline-icon">&#127873;</div>
+                                <div class="sim-timeline-title">Overraskelse — Kusine Marie</div>
+                            </div>
+                            <div class="sim-timeline-badge sim-badge-gray">Afventer</div>
                         </div>
                     </div>
                 </div>
                 <div class="feature-text">
                     <div class="feature-eyebrow">Toastmaster</div>
-                    <h3>Styring af taler så festen flyder uden akavede pauser</h3>
-                    <p>Koordiner taler, sange og indslag med fuld kontrol. Toastmasteren ser hele programmet og holder styr på timingen.</p>
+                    <h3>Giv din toastmaster et værktøj — ikke en hovedpine</h3>
+                    <p>Del programmet med din toastmaster så de kan koordinere taler, sange og overraskelser. Alle ved hvornår de er på — ingen akavet stilhed, ingen overlap.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Budget -->
-    <section class="feature-section">
+    <!-- EVENT TYPES -->
+    <section class="event-types" id="events">
         <div class="container">
-            <div class="feature-layout">
-                <div class="feature-screenshot">
-                    <div class="sim-progress-wrap">
-                        <div class="sim-progress-label"><span>Forplejning</span><span>8.500 kr</span></div>
-                        <div class="sim-progress"><div class="sim-progress-bar" style="width:75%;"></div></div>
-                    </div>
-                    <div class="sim-progress-wrap">
-                        <div class="sim-progress-label"><span>Lokale & udstyr</span><span>5.000 kr</span></div>
-                        <div class="sim-progress"><div class="sim-progress-bar" style="width:100%; background:var(--warning);"></div></div>
-                    </div>
-                    <div class="sim-progress-wrap">
-                        <div class="sim-progress-label"><span>Underholdning</span><span>2.200 kr</span></div>
-                        <div class="sim-progress"><div class="sim-progress-bar" style="width:45%;"></div></div>
-                    </div>
-                    <div class="sim-progress-wrap">
-                        <div class="sim-progress-label"><span>Dekoration & blomster</span><span>1.800 kr</span></div>
-                        <div class="sim-progress"><div class="sim-progress-bar" style="width:60%; background:var(--blush);"></div></div>
-                    </div>
-                    <div class="sim-progress-wrap">
-                        <div class="sim-progress-label"><span>Fotograf</span><span>3.500 kr</span></div>
-                        <div class="sim-progress"><div class="sim-progress-bar" style="width:100%; background:var(--accent-dark);"></div></div>
+            <div class="section-header">
+                <div class="section-eyebrow">Arrangementer</div>
+                <h2>Til alle livets fester — store som små</h2>
+                <p>Uanset hvilken fejring du planlægger, har vi værktøjerne til at gøre det uforglemmelig.</p>
+            </div>
+            <div class="event-types-grid">
+                <div class="event-type-card">
+                    <img src="/billeder/kort-konfirmation.png" alt="Konfirmation" loading="lazy" style="object-position: center 15%;">
+                    <div class="event-type-card-body">
+                        <h3>Konfirmation</h3>
+                        <p>Fejr den store dag</p>
                     </div>
                 </div>
-                <div class="feature-text">
-                    <div class="feature-eyebrow">Budget</div>
-                    <h3>Hold styr på hver en krone fra start til slut</h3>
-                    <p>Se præcis hvad du bruger og hvad der er tilbage. Kategoriser udgifter og hold budgettet på sporet uden regneark.</p>
+                <div class="event-type-card">
+                    <img src="/billeder/kort-bryllup.png" alt="Bryllup" loading="lazy" style="object-position: center 20%;">
+                    <div class="event-type-card-body">
+                        <h3>Bryllup</h3>
+                        <p>Den perfekte dag</p>
+                    </div>
+                </div>
+                <div class="event-type-card">
+                    <img src="/billeder/kort-foedselsdag.png" alt="Fødselsdag" loading="lazy">
+                    <div class="event-type-card-body">
+                        <h3>Fødselsdag</h3>
+                        <p>Fra 18 til 70 år</p>
+                    </div>
+                </div>
+                <div class="event-type-card">
+                    <img src="/billeder/kort-jubileum.png" alt="Jubilæum" loading="lazy">
+                    <div class="event-type-card-body">
+                        <h3>Jubilæum</h3>
+                        <p>Fejr milepælene</p>
+                    </div>
+                </div>
+                <div class="event-type-card">
+                    <div class="event-type-placeholder">&#127891;</div>
+                    <div class="event-type-card-body">
+                        <h3>Studenterfest</h3>
+                        <p>Fejr huen med stil</p>
+                    </div>
+                </div>
+                <div class="event-type-card">
+                    <div class="event-type-placeholder">&#127875;</div>
+                    <div class="event-type-card-body">
+                        <h3>Halloweenfest</h3>
+                        <p>Uhyggeligt sjovt</p>
+                    </div>
+                </div>
+                <div class="event-type-card">
+                    <img src="/billeder/kort-temafest.png" alt="Temafest" loading="lazy">
+                    <div class="event-type-card-body">
+                        <h3>Temafest</h3>
+                        <p>Giv festen et tema</p>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Ønskeliste -->
-    <section class="feature-section">
+    <!-- VENDOR / MARKETPLACE -->
+    <section class="vendors">
         <div class="container">
-            <div class="feature-layout">
-                <div class="feature-screenshot">
-                    <div class="sim-check-item">
-                        <div class="sim-checkbox checked"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg></div>
-                        <div class="sim-check-text done">AirPods Max</div>
-                        <div class="sim-badge sim-badge-green">Reserveret</div>
-                    </div>
-                    <div class="sim-check-item">
-                        <div class="sim-checkbox checked"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg></div>
-                        <div class="sim-check-text done">Rejsegavekort</div>
-                        <div class="sim-badge sim-badge-green">Reserveret</div>
-                    </div>
-                    <div class="sim-check-item">
-                        <div class="sim-checkbox"></div>
-                        <div class="sim-check-text">Bluetooth højtaler</div>
-                        <div class="sim-badge sim-badge-gray">Ledig</div>
-                    </div>
-                    <div class="sim-check-item">
-                        <div class="sim-checkbox"></div>
-                        <div class="sim-check-text">Pengegave til oplevelse</div>
-                        <div class="sim-badge sim-badge-gray">Ledig</div>
-                    </div>
-                    <div class="sim-check-item">
-                        <div class="sim-checkbox"></div>
-                        <div class="sim-check-text">Ny pung</div>
-                        <div class="sim-badge sim-badge-gray">Ledig</div>
+            <div class="section-header">
+                <div class="section-eyebrow">Markedsplads</div>
+                <h2>Find de rette leverandører til din fest</h2>
+                <p>Gennemse lokale caterere, fotografer, DJs, blomsterdekoratører og meget mere — direkte fra din festside. Læs anmeldelser, sammenlign priser, og book med ét klik.</p>
+            </div>
+            <div class="vendor-grid">
+                <div class="vendor-card">
+                    <div class="vendor-card-img" style="background: linear-gradient(135deg, #E8F0E4, #D4E4CD);">&#127860;</div>
+                    <div class="vendor-card-body">
+                        <div class="vendor-card-category">Catering</div>
+                        <div class="vendor-card-name">Skovriderkroen</div>
+                        <div class="vendor-card-meta">
+                            <div class="vendor-card-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                            <div class="vendor-card-price">Fra 149 kr/kuvert</div>
+                        </div>
                     </div>
                 </div>
-                <div class="feature-text">
-                    <div class="feature-eyebrow">Ønskeliste</div>
-                    <h3>Ingen dobbeltgaver — gæsterne ser hvad der mangler</h3>
-                    <p>Del din ønskeliste og lad gæsterne reservere gaver. Alle kan se hvad der allerede er valgt, så der aldrig kommer to af det samme.</p>
+                <div class="vendor-card">
+                    <div class="vendor-card-img" style="background: linear-gradient(135deg, #FDF6E8, #F5EDE4);">&#128247;</div>
+                    <div class="vendor-card-body">
+                        <div class="vendor-card-category">Fotografi</div>
+                        <div class="vendor-card-name">Fotograf Mikkelsen</div>
+                        <div class="vendor-card-meta">
+                            <div class="vendor-card-stars">&#9733;&#9733;&#9733;&#9733;&#9734;</div>
+                            <div class="vendor-card-price">Fra 3.500 kr</div>
+                        </div>
+                    </div>
                 </div>
+                <div class="vendor-card">
+                    <div class="vendor-card-img" style="background: linear-gradient(135deg, #E8E0F0, #D8D0E8);">&#127911;</div>
+                    <div class="vendor-card-body">
+                        <div class="vendor-card-category">Underholdning</div>
+                        <div class="vendor-card-name">DJ Eastbeat</div>
+                        <div class="vendor-card-meta">
+                            <div class="vendor-card-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                            <div class="vendor-card-price">Fra 4.000 kr</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="vendor-card">
+                    <div class="vendor-card-img" style="background: linear-gradient(135deg, #FAE8E8, #F0D8D8);">&#127803;</div>
+                    <div class="vendor-card-body">
+                        <div class="vendor-card-category">Blomster & dekoration</div>
+                        <div class="vendor-card-name">Blomster af Maria</div>
+                        <div class="vendor-card-meta">
+                            <div class="vendor-card-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                            <div class="vendor-card-price">Fra 2.500 kr</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="vendor-cta">
+                <a href="/app/auth/register.php">Se alle leverandører &rarr;</a>
             </div>
         </div>
     </section>
 
-    <!-- Program -->
-    <section class="feature-section">
-        <div class="container">
-            <div class="feature-layout">
-                <div class="feature-screenshot">
-                    <div class="sim-timeline">
-                        <div class="sim-timeline-item">
-                            <div class="sim-timeline-time">13:00</div>
-                            <div class="sim-timeline-title">Kirke — Vor Frue Kirke</div>
-                        </div>
-                        <div class="sim-timeline-item">
-                            <div class="sim-timeline-time">15:00</div>
-                            <div class="sim-timeline-title">Velkomstdrink i haven</div>
-                        </div>
-                        <div class="sim-timeline-item">
-                            <div class="sim-timeline-time">16:30</div>
-                            <div class="sim-timeline-title">Middag serveres</div>
-                        </div>
-                        <div class="sim-timeline-item">
-                            <div class="sim-timeline-time">18:30</div>
-                            <div class="sim-timeline-title">Kaffe og kage</div>
-                        </div>
-                        <div class="sim-timeline-item">
-                            <div class="sim-timeline-time">20:00</div>
-                            <div class="sim-timeline-title">Fest og dans</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="feature-text">
-                    <div class="feature-eyebrow">Program</div>
-                    <h3>Alle ved hvad der sker og hvornår — ingen forvirring</h3>
-                    <p>Del dagens program med gæsterne så alle er med. Fra kirke til kaffe til dans — det hele er klart og tydeligt.</p>
-                </div>
-            </div>
-        </div>
+    <!-- ATMOSPHERE BREAK with parallax -->
+    <section class="atmosphere-break" aria-label="Stemningsbillede">
+        <p>Din fest. Dit overblik. Helt gratis.</p>
     </section>
 
-    <!-- Minder -->
-    <section class="feature-section">
-        <div class="container">
-            <div class="feature-layout">
-                <div class="feature-screenshot">
-                    <div class="sim-photos">
-                        <div class="sim-photo" style="background:var(--accent-light);">&#128247;</div>
-                        <div class="sim-photo" style="background:#FDF6E8;">&#127880;</div>
-                        <div class="sim-photo" style="background:#FAE8E8;">&#128150;</div>
-                        <div class="sim-photo" style="background:#E8F0FE;">&#127874;</div>
-                        <div class="sim-photo" style="background:var(--accent-light);">&#127881;</div>
-                        <div class="sim-photo" style="background:#FDF6E8;">&#128248;</div>
-                    </div>
-                    <div style="margin-top:14px; padding:12px 16px; background:var(--white); border-radius:12px;">
-                        <div style="font-size:14px; color:var(--text-secondary); font-style:italic;">"Tak for en fantastisk dag! Vi elsker jer"</div>
-                        <div style="font-size:12px; color:var(--text-secondary); margin-top:4px;">— Mormor & Morfar</div>
-                    </div>
-                </div>
-                <div class="feature-text">
-                    <div class="feature-eyebrow">Minder</div>
-                    <h3>Fælles fotoarkiv, gæstebog og mindelinje</h3>
-                    <p>Saml alle billeder og hilsner fra dagen ét sted. Gæsterne bidrager med fotos og beskeder, så minderne lever videre.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
+    <!-- INVITATION SHOWCASE -->
     <section class="invitation-showcase">
         <div class="container">
             <div class="invitation-content">
@@ -1593,7 +1553,7 @@ require_once __DIR__ . '/includes/functions.php';
                             </div>
                             <div>
                                 <h4>Personlig hilsen til hver gæst</h4>
-                                <p>"Kære Mormor & Morfar" – hver gæst føler sig speciel</p>
+                                <p>"Kære Mormor & Morfar" — hver gæst føler sig speciel</p>
                             </div>
                         </div>
                         <div class="invitation-feature">
@@ -1649,81 +1609,31 @@ require_once __DIR__ . '/includes/functions.php';
         </div>
     </section>
 
-    <section class="event-types" id="events">
+    <!-- EARLY ADOPTER -->
+    <section class="early-adopter">
         <div class="container">
-            <div class="section-header">
-                <div class="section-eyebrow">Arrangementer</div>
-                <h2>Til alle livets store øjeblikke</h2>
-                <p>Uanset hvilken fejring du planlægger, har vi værktøjerne til at gøre det perfekt.</p>
-            </div>
-            <div class="event-types-grid">
-                <div class="event-type-card">
-                    <img src="/billeder/kort-konfirmation.png" alt="Ung konfirmand med blomsterkrans i haven" loading="lazy" style="object-position: center 15%;">
-                    <div class="event-type-card-body">
-                        <h3>Konfirmation</h3>
-                        <p>Fejr den store dag med stil</p>
-                    </div>
-                </div>
-                <div class="event-type-card">
-                    <img src="/billeder/kort-bryllup.png" alt="Brudepar danser første dans under lyskæder" loading="lazy" style="object-position: center 20%;">
-                    <div class="event-type-card-body">
-                        <h3>Bryllup</h3>
-                        <p>Planlæg den perfekte dag</p>
-                    </div>
-                </div>
-                <div class="event-type-card">
-                    <img src="/billeder/kort-foedselsdag.png" alt="Kvinde med krone puster lys ud på fødselsdagskage" loading="lazy">
-                    <div class="event-type-card-body">
-                        <h3>Fødselsdag</h3>
-                        <p>Mærkedage fortjener at fejres</p>
-                    </div>
-                </div>
-                <div class="event-type-card">
-                    <img src="/billeder/kort-jubileum.png" alt="Mand griner ved 50 års jubilæumsfest med guldballoner" loading="lazy">
-                    <div class="event-type-card-body">
-                        <h3>Jubilæum</h3>
-                        <p>Fejr milepælene sammen</p>
-                    </div>
-                </div>
-                <div class="event-type-card">
-                    <img src="/billeder/kort-temafest.png" alt="Familie i kostumer til hyggelig Halloween-temafest" loading="lazy">
-                    <div class="event-type-card-body">
-                        <h3>Temafest</h3>
-                        <p>Giv festen et unikt tema</p>
-                    </div>
-                </div>
+            <div class="early-adopter-content">
+                <div class="section-eyebrow">Bliv en del af holdet</div>
+                <h2>Vær blandt de første der prøver PartyParart</h2>
+                <p>Vi er i gang med at bygge Danmarks bedste festplanlægger — og lige nu er alle funktioner gratis. Hjælp os med at gøre platformen endnu bedre.</p>
+                <a href="/app/auth/register.php" class="btn btn-primary">
+                    Opret dit arrangement gratis
+                    <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                    </svg>
+                </a>
             </div>
         </div>
     </section>
 
-    <section class="atmosphere-break" aria-label="Stemningsbillede fra stort arrangement">
-        <p>Fra intime middage til store fejringer</p>
-    </section>
-
-    <section class="testimonial">
-        <div class="container">
-            <div class="testimonial-content">
-                <div class="testimonial-quote">
-                    "PartyParart gjorde planlægningen af Sofies konfirmation så nem. Gæsterne var begejstrede for invitationerne, og jeg havde fuldstændig overblik over alt. Kan varmt anbefales!"
-                </div>
-                <div class="testimonial-author">
-                    <div class="testimonial-avatar">M</div>
-                    <div class="testimonial-info">
-                        <h4>Maria Jensen</h4>
-                        <p>Mor til konfirmand, Roskilde</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
+    <!-- CTA -->
     <section class="cta">
         <div class="container">
             <div class="cta-box">
-                <h2>Vi gør festplanlægning til en leg</h2>
-                <p>Start dit arrangement gratis i dag og oplev hvordan det føles at have en event-makker fra start til slut.</p>
+                <h2>Alt er gratis frem til juni — kom i gang på 30 sekunder</h2>
+                <p>Opret dit arrangement, inviter dine gæster, og oplev hvordan det føles at have fuldstændig overblik.</p>
                 <a href="/app/auth/register.php" class="btn">
-                    Kom i gang gratis
+                    Opret dit arrangement gratis
                     <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
                     </svg>
@@ -1738,25 +1648,39 @@ require_once __DIR__ . '/includes/functions.php';
                 <div class="footer-logo">Party<span>Parart</span></div>
                 <div class="footer-links">
                     <a href="#">Om os</a>
-                    <a href="#">Priser</a>
                     <a href="#">Kontakt</a>
                     <a href="#">Privatlivspolitik</a>
                 </div>
-                <div class="footer-copy">© 2025 PartyParart. Alle rettigheder forbeholdes.</div>
+                <div class="footer-copy">&copy; 2026 PartyParart. Alle rettigheder forbeholdes.</div>
             </div>
         </div>
     </footer>
 
     <script>
+        // Mobile menu toggle
+        const mobileToggle = document.getElementById('mobileToggle');
+        const navLinks = document.getElementById('navLinks');
+        mobileToggle.addEventListener('click', () => {
+            navLinks.classList.toggle('open');
+        });
+
         // Header scroll effect
         const header = document.getElementById('header');
         window.addEventListener('scroll', () => {
-            if (window.scrollY > 50) {
-                header.classList.add('scrolled');
-            } else {
-                header.classList.remove('scrolled');
-            }
-        });
+            header.classList.toggle('scrolled', window.scrollY > 50);
+        }, { passive: true });
+
+        // Hero parallax effect
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (!prefersReducedMotion) {
+            const heroBg = document.getElementById('heroBg');
+            window.addEventListener('scroll', () => {
+                const scrolled = window.scrollY;
+                if (scrolled < window.innerHeight) {
+                    heroBg.style.transform = 'translateY(' + (scrolled * 0.3) + 'px)';
+                }
+            }, { passive: true });
+        }
 
         // Invitation preview slider
         const slides = document.querySelectorAll('.preview-slide');
