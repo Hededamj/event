@@ -458,6 +458,86 @@ require_once __DIR__ . '/includes/functions.php';
             margin-top: 12px;
         }
 
+        /* Invitation card mockup */
+        .sim-invitation-card-wrap {
+            padding: 24px;
+            background: linear-gradient(135deg, #F5EDE4, var(--surface));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .sim-invitation-card {
+            width: 100%;
+            max-width: 320px;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+            background: #1A1A1A;
+        }
+
+        .sim-invitation-img {
+            height: 200px;
+            background-size: cover;
+            background-position: center 15%;
+            position: relative;
+        }
+
+        .sim-invitation-body {
+            padding: 28px 24px;
+            text-align: center;
+            color: white;
+        }
+
+        .sim-invitation-ornament {
+            font-size: 11px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.45);
+            margin-bottom: 8px;
+        }
+
+        .sim-invitation-type {
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+            font-size: 15px;
+            color: var(--blush);
+            margin-bottom: 4px;
+        }
+
+        .sim-invitation-name {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 32px;
+            font-weight: 400;
+            line-height: 1.1;
+            margin-bottom: 20px;
+        }
+
+        .sim-invitation-details {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-bottom: 20px;
+        }
+
+        .sim-invitation-detail {
+            font-size: 12px;
+            color: rgba(255,255,255,0.7);
+        }
+
+        .sim-invitation-rsvp {
+            display: inline-block;
+            padding: 10px 28px;
+            background: rgba(255,255,255,0.15);
+            border: 1px solid rgba(255,255,255,0.25);
+            border-radius: 50px;
+            font-size: 12px;
+            font-weight: 600;
+            color: white;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
         /* Mini invitation preview */
         .sim-mini-invite {
             display: flex;
@@ -806,8 +886,8 @@ require_once __DIR__ . '/includes/functions.php';
             }
         }
 
-        /* ===== INVITATION SHOWCASE ===== */
-        .invitation-showcase {
+        /* ===== MEMORIES SHOWCASE ===== */
+        .memories-showcase {
             padding: 120px 0;
             background: var(--text);
             color: white;
@@ -815,14 +895,14 @@ require_once __DIR__ . '/includes/functions.php';
             overflow: hidden;
         }
 
-        .invitation-showcase::before {
+        .memories-showcase::before {
             content: '';
             position: absolute;
             inset: 0;
             background: linear-gradient(135deg, rgba(143, 165, 131, 0.1) 0%, transparent 50%);
         }
 
-        .invitation-content {
+        .memories-content {
             display: grid;
             grid-template-columns: 1fr;
             gap: 60px;
@@ -831,11 +911,7 @@ require_once __DIR__ . '/includes/functions.php';
             z-index: 1;
         }
 
-        .invitation-text .section-eyebrow {
-            color: var(--warning);
-        }
-
-        .invitation-text h2 {
+        .memories-text h2 {
             font-family: 'Cormorant Garamond', serif;
             font-size: clamp(32px, 4vw, 48px);
             font-weight: 500;
@@ -843,27 +919,27 @@ require_once __DIR__ . '/includes/functions.php';
             margin-bottom: 24px;
         }
 
-        .invitation-text p {
+        .memories-text p {
             font-size: 17px;
             color: rgba(255,255,255,0.7);
             line-height: 1.8;
             margin-bottom: 32px;
         }
 
-        .invitation-features {
+        .memories-features {
             display: flex;
             flex-direction: column;
             gap: 20px;
             margin-bottom: 40px;
         }
 
-        .invitation-feature {
+        .memories-feature {
             display: flex;
             align-items: flex-start;
             gap: 16px;
         }
 
-        .invitation-feature-icon {
+        .memories-feature-icon {
             width: 40px;
             height: 40px;
             background: rgba(255,255,255,0.1);
@@ -874,133 +950,117 @@ require_once __DIR__ . '/includes/functions.php';
             flex-shrink: 0;
         }
 
-        .invitation-feature-icon svg {
+        .memories-feature-icon svg {
             width: 20px;
             height: 20px;
             color: var(--warning);
         }
 
-        .invitation-feature h4 {
+        .memories-feature h4 {
             font-size: 16px;
             font-weight: 600;
             margin-bottom: 4px;
         }
 
-        .invitation-feature p {
+        .memories-feature p {
             font-size: 14px;
             color: rgba(255,255,255,0.6);
             margin: 0;
         }
 
-        .invitation-preview { position: relative; }
+        /* Memories timeline mockup */
+        .memories-preview { position: relative; }
 
-        .preview-phone {
-            background: #0a0a0a;
-            border-radius: 40px;
-            padding: 12px;
-            box-shadow: 0 40px 80px rgba(0,0,0,0.4);
-            max-width: 340px;
+        .memories-timeline-mock {
+            background: #252525;
+            border-radius: 24px;
+            padding: 32px;
+            max-width: 380px;
             margin: 0 auto;
+            box-shadow: 0 40px 80px rgba(0,0,0,0.3);
         }
 
-        .preview-screen {
-            border-radius: 32px;
-            aspect-ratio: 9/16;
+        .memories-timeline-header {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        .memories-timeline-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 24px;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .memories-timeline-sub {
+            font-size: 13px;
+            color: rgba(255,255,255,0.5);
+        }
+
+        .memories-timeline-line {
             display: flex;
-            flex-direction: column;
-            justify-content: flex-end;
-            position: relative;
+            gap: 12px;
+            margin-bottom: 24px;
             overflow: hidden;
         }
 
-        .preview-slider { position: absolute; inset: 0; z-index: 0; }
-
-        .preview-slide {
-            position: absolute;
-            inset: 0;
-            background-size: cover;
-            background-position: center 15%;
-            opacity: 0;
-            transition: opacity 1.2s ease-in-out;
+        .memories-timeline-entry {
+            flex: 1;
+            text-align: center;
         }
 
-        .preview-slide.active { opacity: 1; }
-
-        .preview-screen::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(to bottom, transparent 25%, rgba(0,0,0,0.75) 100%);
+        .memories-timeline-year {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--warning);
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
         }
 
-        .preview-content {
-            position: relative;
-            z-index: 1;
-            padding: 32px 24px;
+        .memories-timeline-photo {
+            width: 100%;
+            aspect-ratio: 1;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin-bottom: 8px;
         }
 
-        .preview-ornament {
-            font-size: 13px;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            color: rgba(255,255,255,0.5);
-            margin-bottom: 12px;
+        .memories-timeline-caption {
+            font-size: 11px;
+            color: rgba(255,255,255,0.6);
+            line-height: 1.3;
         }
 
-        .preview-event-type {
+        .memories-guestbook-mock {
+            border-top: 1px solid rgba(255,255,255,0.1);
+            padding-top: 20px;
+        }
+
+        .memories-guestbook-entry {
+            padding: 16px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+        }
+
+        .memories-guestbook-quote {
             font-family: 'Cormorant Garamond', serif;
             font-style: italic;
             font-size: 16px;
-            color: var(--blush);
-            margin-bottom: 6px;
+            color: rgba(255,255,255,0.8);
+            line-height: 1.5;
+            margin-bottom: 8px;
         }
 
-        .preview-name {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 38px;
-            font-weight: 400;
-            line-height: 1.1;
-            margin-bottom: 20px;
-        }
-
-        .preview-details {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            margin-bottom: 20px;
-        }
-
-        .preview-detail {
-            display: flex;
-            align-items: center;
-            gap: 10px;
+        .memories-guestbook-author {
             font-size: 12px;
-            color: rgba(255,255,255,0.75);
-        }
-
-        .preview-detail svg {
-            width: 14px;
-            height: 14px;
-            flex-shrink: 0;
-            color: var(--blush);
-        }
-
-        .preview-rsvp {
-            display: inline-block;
-            padding: 10px 24px;
-            background: rgba(255,255,255,0.15);
-            backdrop-filter: blur(8px);
-            border: 1px solid rgba(255,255,255,0.25);
-            border-radius: 50px;
-            font-size: 12px;
-            font-weight: 600;
-            color: white;
-            letter-spacing: 1px;
-            text-transform: uppercase;
+            color: rgba(255,255,255,0.4);
         }
 
         @media (min-width: 1024px) {
-            .invitation-content {
+            .memories-content {
                 grid-template-columns: 1fr 1fr;
                 gap: 80px;
             }
@@ -1220,7 +1280,7 @@ require_once __DIR__ . '/includes/functions.php';
         <div class="container">
             <div class="section-header">
                 <div class="section-eyebrow">Funktioner</div>
-                <h2>Alt du behøver — samlet ét sted</h2>
+                <h2>Alt du behøver —<br>samlet &eacute;t&nbsp;sted</h2>
                 <p>Fra invitationer til toastmaster-koordinering. Vi giver dig overblikket, så du kan fokusere på festen.</p>
             </div>
         </div>
@@ -1230,48 +1290,20 @@ require_once __DIR__ . '/includes/functions.php';
     <section class="feature-section">
         <div class="container">
             <div class="feature-layout">
-                <div class="feature-screenshot">
-                    <div class="sim-mini-invite">
-                        <div class="sim-mini-invite-icon">&#9993;</div>
-                        <div>
-                            <div class="sim-mini-invite-text">Sofies Konfirmation</div>
-                            <div class="sim-mini-invite-sub">34 invitationer sendt</div>
-                        </div>
-                    </div>
-                    <div class="sim-summary">
-                        <div class="sim-summary-stat"><div class="sim-dot sim-dot-green"></div> 12 bekræftet</div>
-                        <div class="sim-summary-stat"><div class="sim-dot sim-dot-gold"></div> 3 afventer</div>
-                        <div class="sim-summary-stat"><div class="sim-dot sim-dot-red"></div> 1 afbud</div>
-                    </div>
-                    <div class="sim-row">
-                        <div class="sim-row-left">
-                            <div class="sim-avatar" style="background:#6B8F5E;">MJ</div>
-                            <div>
-                                <div class="sim-name">Mette Jensen</div>
-                                <div class="sim-detail">Sendt i går</div>
+                <div class="feature-screenshot sim-invitation-card-wrap">
+                    <div class="sim-invitation-card">
+                        <div class="sim-invitation-img" style="background-image: url('/billeder/kort-konfirmation.png');"></div>
+                        <div class="sim-invitation-body">
+                            <div class="sim-invitation-ornament">&#10045; Du er inviteret &#10045;</div>
+                            <div class="sim-invitation-type">Konfirmation</div>
+                            <div class="sim-invitation-name">Sofies<br>Konfirmation</div>
+                            <div class="sim-invitation-details">
+                                <div class="sim-invitation-detail">&#128197; Lørdag d. 18. maj 2025</div>
+                                <div class="sim-invitation-detail">&#128336; Kl. 13:00 &mdash; Kirke &bull; Kl. 15:00 &mdash; Fest</div>
+                                <div class="sim-invitation-detail">&#128205; Skovriderkroen, Charlottenlund</div>
                             </div>
+                            <div class="sim-invitation-rsvp">Bekræft deltagelse</div>
                         </div>
-                        <div class="sim-badge sim-badge-green">Bekræftet</div>
-                    </div>
-                    <div class="sim-row">
-                        <div class="sim-row-left">
-                            <div class="sim-avatar" style="background:#C4922D;">TN</div>
-                            <div>
-                                <div class="sim-name">Thomas Nielsen</div>
-                                <div class="sim-detail">Sendt i går</div>
-                            </div>
-                        </div>
-                        <div class="sim-badge sim-badge-gold">Åbnet</div>
-                    </div>
-                    <div class="sim-row">
-                        <div class="sim-row-left">
-                            <div class="sim-avatar" style="background:#D4A5A5;">LP</div>
-                            <div>
-                                <div class="sim-name">Line Pedersen</div>
-                                <div class="sim-detail">Sendt for 2 dage siden</div>
-                            </div>
-                        </div>
-                        <div class="sim-badge sim-badge-green">Bekræftet</div>
                     </div>
                 </div>
                 <div class="feature-text">
@@ -1528,41 +1560,41 @@ require_once __DIR__ . '/includes/functions.php';
         <p>Din fest. Dit overblik. Helt gratis.</p>
     </section>
 
-    <!-- INVITATION SHOWCASE -->
-    <section class="invitation-showcase">
+    <!-- MEMORIES SHOWCASE -->
+    <section class="memories-showcase">
         <div class="container">
-            <div class="invitation-content">
-                <div class="invitation-text">
-                    <div class="section-eyebrow">Invitationer</div>
-                    <h2>Invitationer der gør indtryk</h2>
-                    <p>Skab personlige invitationer med smukke billeder, elegante skrifttyper og din helt egen stil. Vores invitationssystem gør det nemt at imponere dine gæster fra første øjeblik.</p>
+            <div class="memories-content">
+                <div class="memories-text">
+                    <div class="section-eyebrow" style="color:var(--warning);">Minder</div>
+                    <h2>Saml minderne fra hele livet — ét sted</h2>
+                    <p>Lad gæsterne uploade billeder og beskeder, og byg en smuk mindelinje fra den fejredes liv. Fra barndomsbilleder til festens bedste øjeblikke — alt samlet i ét fælles arkiv.</p>
 
-                    <div class="invitation-features">
-                        <div class="invitation-feature">
-                            <div class="invitation-feature-icon">
+                    <div class="memories-features">
+                        <div class="memories-feature">
+                            <div class="memories-feature-icon">
                                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                             </div>
                             <div>
-                                <h4>Fullscreen billede-slideshow</h4>
-                                <p>Vis dine bedste billeder i et smukt animeret slideshow</p>
+                                <h4>Fælles billedarkiv</h4>
+                                <p>Gæsterne uploader direkte fra telefonen — alle billeder samles automatisk</p>
                             </div>
                         </div>
-                        <div class="invitation-feature">
-                            <div class="invitation-feature-icon">
-                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                        <div class="memories-feature">
+                            <div class="memories-feature-icon">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                             </div>
                             <div>
-                                <h4>Personlig hilsen til hver gæst</h4>
-                                <p>"Kære Mormor & Morfar" — hver gæst føler sig speciel</p>
+                                <h4>Foto-mindelinje</h4>
+                                <p>En tidslinje gennem livet — fra barndom til i dag, med billeder og hilsner</p>
                             </div>
                         </div>
-                        <div class="invitation-feature">
-                            <div class="invitation-feature-icon">
-                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"/></svg>
+                        <div class="memories-feature">
+                            <div class="memories-feature-icon">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
                             </div>
                             <div>
-                                <h4>Vælg dit eget design</h4>
-                                <p>Farver, skrifttyper og layouts der matcher din stil</p>
+                                <h4>Gæstebog med hilsner</h4>
+                                <p>Personlige beskeder der bevares for altid</p>
                             </div>
                         </div>
                     </div>
@@ -1574,33 +1606,38 @@ require_once __DIR__ . '/includes/functions.php';
                         </svg>
                     </a>
                 </div>
-                <div class="invitation-preview">
-                    <div class="preview-phone">
-                        <div class="preview-screen">
-                            <div class="preview-slider">
-                                <div class="preview-slide active" style="background-image: url('/billeder/kort-konfirmation.png')"></div>
-                                <div class="preview-slide" style="background-image: url('/billeder/Ungdom med basketball p%C3%A5 banen.png')"></div>
-                                <div class="preview-slide" style="background-image: url('/billeder/Venner i skolegangen, smil og latter.png')"></div>
+                <div class="memories-preview">
+                    <div class="memories-timeline-mock">
+                        <div class="memories-timeline-header">
+                            <div class="memories-timeline-title">Sofies Mindelinje</div>
+                            <div class="memories-timeline-sub">24 billeder &bull; 8 hilsner</div>
+                        </div>
+                        <div class="memories-timeline-line">
+                            <div class="memories-timeline-entry">
+                                <div class="memories-timeline-year">2011</div>
+                                <div class="memories-timeline-photo" style="background: linear-gradient(135deg, #E8F0E4, #D4E4CD);">&#128476;</div>
+                                <div class="memories-timeline-caption">Den lille prinsesse</div>
                             </div>
-                            <div class="preview-content">
-                                <div class="preview-ornament">&#10045; Du er inviteret &#10045;</div>
-                                <div class="preview-event-type">Konfirmation</div>
-                                <div class="preview-name">Sofies<br>Konfirmation</div>
-                                <div class="preview-details">
-                                    <div class="preview-detail">
-                                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                                        Lørdag d. 18. maj 2025
-                                    </div>
-                                    <div class="preview-detail">
-                                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                                        Kl. 13:00 - Kirke &bull; Kl. 15:00 - Fest
-                                    </div>
-                                    <div class="preview-detail">
-                                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-                                        Skovriderkroen, Charlottenlund
-                                    </div>
-                                </div>
-                                <div class="preview-rsvp">Bekræft deltagelse</div>
+                            <div class="memories-timeline-entry">
+                                <div class="memories-timeline-year">2016</div>
+                                <div class="memories-timeline-photo" style="background: linear-gradient(135deg, #FDF6E8, #F5EDE4);">&#9917;</div>
+                                <div class="memories-timeline-caption">Fodboldstjernen</div>
+                            </div>
+                            <div class="memories-timeline-entry">
+                                <div class="memories-timeline-year">2022</div>
+                                <div class="memories-timeline-photo" style="background: linear-gradient(135deg, #E8E0F0, #D8D0E8);">&#127891;</div>
+                                <div class="memories-timeline-caption">Sidste skoledag</div>
+                            </div>
+                            <div class="memories-timeline-entry">
+                                <div class="memories-timeline-year">2025</div>
+                                <div class="memories-timeline-photo" style="background: linear-gradient(135deg, #FAE8E8, #F0D8D8);">&#127881;</div>
+                                <div class="memories-timeline-caption">Konfirmationen!</div>
+                            </div>
+                        </div>
+                        <div class="memories-guestbook-mock">
+                            <div class="memories-guestbook-entry">
+                                <div class="memories-guestbook-quote">"Tak for en fantastisk dag! Vi er så stolte af dig"</div>
+                                <div class="memories-guestbook-author">— Mormor & Morfar</div>
                             </div>
                         </div>
                     </div>
@@ -1682,16 +1719,6 @@ require_once __DIR__ . '/includes/functions.php';
             }, { passive: true });
         }
 
-        // Invitation preview slider
-        const slides = document.querySelectorAll('.preview-slide');
-        if (slides.length > 1) {
-            let current = 0;
-            setInterval(() => {
-                slides[current].classList.remove('active');
-                current = (current + 1) % slides.length;
-                slides[current].classList.add('active');
-            }, 4000);
-        }
     </script>
 </body>
 </html>
