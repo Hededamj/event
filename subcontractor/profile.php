@@ -18,7 +18,7 @@ $vendorId = isset($_GET['id']) ? (int) $_GET['id'] : 0;
 
 if ($vendorId <= 0) {
     http_response_code(404);
-    die('Leverandor ikke fundet.');
+    die('Leverandør ikke fundet.');
 }
 
 $db = getDB();
@@ -34,7 +34,7 @@ $vendor = $stmt->fetch();
 
 if (!$vendor) {
     http_response_code(404);
-    die('Leverandor ikke fundet.');
+    die('Leverandør ikke fundet.');
 }
 
 // Increment view count
@@ -1428,7 +1428,7 @@ function renderStars(float $rating, string $class = ''): string {
                 <div class="tab-empty">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
                     <h3>Ingen ydelser listet endnu</h3>
-                    <p>Denne leverandor har ikke tilfojet ydelser endnu.</p>
+                    <p>Denne leverandør har ikke tilføjet ydelser endnu.</p>
                 </div>
             <?php else: ?>
                 <?php foreach ($services as $service): ?>
@@ -1460,7 +1460,7 @@ function renderStars(float $rating, string $class = ''): string {
                             <?php endif; ?>
                             <a href="/subcontractor/book.php?vendor_id=<?= $vendorId ?>&service_id=<?= (int) $service['id'] ?>" class="btn btn-primary btn-sm">
                                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
-                                Send foresporgsel
+                                Send forespørgsel
                             </a>
                         </div>
                     </div>
@@ -1476,7 +1476,7 @@ function renderStars(float $rating, string $class = ''): string {
                 <div class="tab-empty">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                     <h3>Ingen billeder endnu</h3>
-                    <p>Denne leverandor har ikke tilfojet billeder til sit galleri endnu.</p>
+                    <p>Denne leverandør har ikke tilføjet billeder til sit galleri endnu.</p>
                 </div>
             <?php else: ?>
                 <div class="profile-gallery-grid">
@@ -1521,7 +1521,7 @@ function renderStars(float $rating, string $class = ''): string {
                 <div class="tab-empty">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/></svg>
                     <h3>Ingen anmeldelser endnu</h3>
-                    <p>Denne leverandor har ikke modtaget anmeldelser endnu.</p>
+                    <p>Denne leverandør har ikke modtaget anmeldelser endnu.</p>
                 </div>
             <?php else: ?>
                 <!-- Rating summary + distribution -->
@@ -1586,11 +1586,11 @@ function renderStars(float $rating, string $class = ''): string {
     <!-- ============================================ -->
     <aside class="profile-sidebar">
         <div class="sidebar-cta-card">
-            <h3 class="sidebar-cta-title">Kontakt denne leverandor</h3>
-            <p class="sidebar-cta-text">Intresseret i <?= htmlspecialchars($vendor['company_name']) ?>? Send en foresporgsel for at modtage et tilbud.</p>
+            <h3 class="sidebar-cta-title">Kontakt denne leverandør</h3>
+            <p class="sidebar-cta-text">Intresseret i <?= htmlspecialchars($vendor['company_name']) ?>? Send en forespørgsel for at modtage et tilbud.</p>
             <a href="/subcontractor/book.php?vendor_id=<?= $vendorId ?>" class="btn btn-primary btn-lg">
                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
-                Send foresporgsel
+                Send forespørgsel
             </a>
             <div class="sidebar-cta-stats">
                 <?php if ((float) $vendor['avg_rating'] > 0): ?>
@@ -1712,7 +1712,7 @@ function renderStars(float $rating, string $class = ''): string {
 
     <!-- Simple public footer -->
     <footer class="mp-footer">
-        <p>&copy; <?= date('Y') ?> PartyParart &mdash; <a href="/subcontractor/">Find leverandorer</a> &middot; <a href="/subcontractor/dashboard/register.php">Bliv leverandor</a></p>
+        <p>&copy; <?= date('Y') ?> PartyParart &mdash; <a href="/subcontractor/">Find leverandører</a> &middot; <a href="/subcontractor/dashboard/register.php">Bliv leverandør</a></p>
     </footer>
 </body>
 </html>

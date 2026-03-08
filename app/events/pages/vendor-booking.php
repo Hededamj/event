@@ -116,7 +116,7 @@ $statusLabels = [
     'quoted'     => 'Tilbud modtaget',
     'accepted'   => 'Accepteret',
     'deposited'  => 'Depositum betalt',
-    'confirmed'  => 'Bekraeftet',
+    'confirmed'  => 'Bekræftet',
     'completed'  => 'Afsluttet',
     'reviewed'   => 'Anmeldt',
     'cancelled'  => 'Annulleret',
@@ -393,7 +393,7 @@ if (!empty($booking['event_date'])) {
     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
     </svg>
-    Tilbage til leverandorer
+    Tilbage til leverandører
 </a>
 
 <div class="booking-grid">
@@ -411,7 +411,7 @@ if (!empty($booking['event_date'])) {
             </div>
 
             <div class="info-row">
-                <span class="info-label">Leverandor</span>
+                <span class="info-label">Leverandør</span>
                 <span class="info-value">
                     <a href="<?= htmlspecialchars($vendorProfileUrl) ?>" target="_blank" style="color: var(--accent-dark); text-decoration: none;">
                         <?= htmlspecialchars($booking['vendor_company_name']) ?>
@@ -425,7 +425,7 @@ if (!empty($booking['event_date'])) {
             <div class="info-row">
                 <span class="info-label">Ydelse</span>
                 <span class="info-value">
-                    <?= htmlspecialchars($booking['service_title'] ?? 'Generel foresporgsel') ?>
+                    <?= htmlspecialchars($booking['service_title'] ?? 'Generel forespørgsel') ?>
                     <?php if (!empty($booking['service_price_from'])): ?>
                         <span style="color: var(--text-secondary); font-weight: 400;">
                             (fra <?= number_format((float)$booking['service_price_from'], 2, ',', '.') ?> kr)
@@ -467,7 +467,7 @@ if (!empty($booking['event_date'])) {
             </div>
 
             <div class="financial-row">
-                <span>Leverandorens pris</span>
+                <span>Leverandørens pris</span>
                 <span style="font-weight: 500;"><?= number_format((float)$booking['quoted_price'], 2, ',', '.') ?> kr</span>
             </div>
             <div class="financial-row">
@@ -489,7 +489,7 @@ if (!empty($booking['event_date'])) {
         <!-- Quoted: Show vendor's message and accept/decline buttons -->
         <div class="card">
             <div class="card-header">
-                <h3 class="card-title">Leverandorens tilbud</h3>
+                <h3 class="card-title">Leverandørens tilbud</h3>
             </div>
 
             <?php if (!empty($booking['vendor_message'])): ?>
@@ -526,7 +526,7 @@ if (!empty($booking['event_date'])) {
                         <textarea name="reason" class="form-input" rows="3" placeholder="Fortael hvorfor du afviser tilbuddet..."></textarea>
                     </div>
                     <div style="margin-top: 12px; display: flex; gap: 12px;">
-                        <button type="submit" class="btn btn-danger">Bekraeft afvisning</button>
+                        <button type="submit" class="btn btn-danger">Bekræft afvisning</button>
                         <button type="button" class="btn btn-secondary" onclick="document.getElementById('declineSection').style.display='none';">Annuller</button>
                     </div>
                 </form>
@@ -541,7 +541,7 @@ if (!empty($booking['event_date'])) {
                 <h3 class="card-title">Betal depositum</h3>
             </div>
             <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 20px;">
-                Dit tilbud er accepteret. Betal depositum for at bekraefte bookingen.
+                Dit tilbud er accepteret. Betal depositum for at bekræfte bookingen.
             </p>
             <a href="/subcontractor/payment.php?booking_id=<?= $bookingId ?>" class="btn btn-sage">
                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:16px;height:16px;">
@@ -556,7 +556,7 @@ if (!empty($booking['event_date'])) {
         <!-- Deposited/Confirmed: Vendor contact info + countdown -->
         <div class="card">
             <div class="card-header">
-                <h3 class="card-title">Leverandorkontakt</h3>
+                <h3 class="card-title">Leverandørkontakt</h3>
             </div>
 
             <?php if (!empty($booking['vendor_phone'])): ?>
@@ -662,7 +662,7 @@ if (!empty($booking['event_date'])) {
 
                     <div class="form-group" style="margin-bottom: 20px;">
                         <label class="form-label">Din anmeldelse</label>
-                        <textarea name="review_text" class="form-input" rows="4" placeholder="Fortael om din oplevelse med denne leverandor..."></textarea>
+                        <textarea name="review_text" class="form-input" rows="4" placeholder="Fortael om din oplevelse med denne leverandør..."></textarea>
                     </div>
 
                     <button type="submit" class="btn btn-primary">
@@ -681,7 +681,7 @@ if (!empty($booking['event_date'])) {
                 <h3 class="card-title">Problemer?</h3>
             </div>
             <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 16px;">
-                Hvis du har oplevet problemer med leverandoren, kan du anmode om refundering.
+                Hvis du har oplevet problemer med leverandøren, kan du anmode om refundering.
             </p>
             <a href="mailto:support@partyparart.dk?subject=Refundering%20-%20Booking%20%23<?= $bookingId ?>" class="btn btn-danger">
                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:16px;height:16px;">
@@ -837,7 +837,7 @@ if (!empty($booking['event_date'])) {
                 <?php endif; ?>
 
                 <a href="?id=<?= $eventId ?>&page=vendors" class="btn btn-secondary" style="width: 100%; justify-content: center; margin-top: 8px;">
-                    Alle leverandorer
+                    Alle leverandører
                 </a>
             </div>
         </div>

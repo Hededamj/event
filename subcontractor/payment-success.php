@@ -57,7 +57,7 @@ if ($booking && !$error) {
 
 $depositumAmount = $booking ? (float) $booking['depositum_amount'] : 0;
 
-$pageTitle = 'Betaling bekraeftet';
+$pageTitle = 'Betaling bekræftet';
 require_once __DIR__ . '/includes/marketplace-header.php';
 ?>
 
@@ -217,14 +217,14 @@ require_once __DIR__ . '/includes/marketplace-header.php';
                         </svg>
                     </div>
 
-                    <h1 class="success-title">Betaling bekraeftet!</h1>
+                    <h1 class="success-title">Betaling bekræftet!</h1>
                     <p class="success-subtitle">
-                        Depositum pa <?= formatCurrency($depositumAmount) ?> er betalt. Leverandoren vil bekraefte din booking.
+                        Depositum pa <?= formatCurrency($depositumAmount) ?> er betalt. Leverandøren vil bekræfte din booking.
                     </p>
 
                     <div class="success-details">
                         <div class="success-detail-row">
-                            <span class="success-detail-label">Leverandor</span>
+                            <span class="success-detail-label">Leverandør</span>
                             <span class="success-detail-value"><?= escape($booking['vendor_company_name']) ?></span>
                         </div>
                         <?php if (!empty($booking['service_title'])): ?>
@@ -257,7 +257,7 @@ require_once __DIR__ . '/includes/marketplace-header.php';
     </main>
 
     <footer class="mp-footer">
-        <p>&copy; <?= date('Y') ?> PartyParart &mdash; <a href="/subcontractor/">Find leverandorer</a></p>
+        <p>&copy; <?= date('Y') ?> PartyParart &mdash; <a href="/subcontractor/">Find leverandører</a></p>
     </footer>
 
     <script>

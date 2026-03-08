@@ -76,7 +76,7 @@ if (($_GET['action'] ?? '') === 'export') {
     fprintf($output, chr(0xEF) . chr(0xBB) . chr(0xBF));
 
     // Header row
-    fputcsv($output, ['Booking ID', 'Dato', 'Arrangor', 'Arrangor email', 'Leverandor', 'Leverandor email', 'Ydelse', 'Tilbudt pris', 'Depositum', 'Kommission', 'Leverandor udbetaling', 'Status'], ';');
+    fputcsv($output, ['Booking ID', 'Dato', 'Arrangør', 'Arrangør email', 'Leverandør', 'Leverandør email', 'Ydelse', 'Tilbudt pris', 'Depositum', 'Kommission', 'Leverandør udbetaling', 'Status'], ';');
 
     foreach ($exportRows as $row) {
         fputcsv($output, $row, ';');
@@ -149,13 +149,13 @@ $bookingBadgeMap = [
     'completed' => 'badge-success', 'reviewed' => 'badge-success'
 ];
 $bookingTextMap = [
-    'deposited' => 'Depositum', 'confirmed' => 'Bekraeftet',
+    'deposited' => 'Depositum', 'confirmed' => 'Bekræftet',
     'completed' => 'Afsluttet', 'reviewed' => 'Anmeldt'
 ];
 ?>
 
 <header class="platform-header">
-    <h1 class="page-title">Leverandor-udbetalinger</h1>
+    <h1 class="page-title">Leverandør-udbetalinger</h1>
     <div class="header-actions">
         <a href="?action=export<?= $fromDate ? '&from=' . urlencode($fromDate) : '' ?><?= $toDate ? '&to=' . urlencode($toDate) : '' ?>"
            class="btn btn-secondary">
@@ -184,7 +184,7 @@ $bookingTextMap = [
             </div>
         </div>
         <div class="stat-card">
-            <div class="stat-label">Total udbetalt til leverandorer</div>
+            <div class="stat-label">Total udbetalt til leverandører</div>
             <div class="stat-value text-success"><?= number_format($revenue['total_vendor_payouts'], 2, ',', '.') ?> kr.</div>
         </div>
         <div class="stat-card">
@@ -227,12 +227,12 @@ $bookingTextMap = [
                         <tr>
                             <th>Dato</th>
                             <th>Arrangor</th>
-                            <th>Leverandor</th>
+                            <th>Leverandør</th>
                             <th>Ydelse</th>
                             <th>Tilbudt pris</th>
                             <th>Depositum</th>
                             <th>Kommission</th>
-                            <th>Leverandor-udbetaling</th>
+                            <th>Leverandør-udbetaling</th>
                             <th>Status</th>
                         </tr>
                     </thead>

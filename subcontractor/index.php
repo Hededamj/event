@@ -962,7 +962,7 @@ require_once __DIR__ . '/includes/marketplace-header.php';
 </section>
 
 <!-- ============================================
-     4. "Bliv leverandor" CTA Section
+     4. "Bliv leverandør" CTA Section
      ============================================ -->
 <section class="mp-cta-section">
     <div class="mp-cta-inner">

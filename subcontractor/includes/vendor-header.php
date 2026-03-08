@@ -79,7 +79,7 @@ try {
     <aside class="ds-sidebar" id="vendorSidebar">
         <div class="ds-sidebar-header">
             <a href="/subcontractor/dashboard/" class="ds-sidebar-logo ds-sidebar-logo-text">PartyParart</a>
-            <div class="ds-sidebar-subtitle"><?= htmlspecialchars($currentVendor['company_name'] ?? 'Leverandor') ?></div>
+            <div class="ds-sidebar-subtitle"><?= htmlspecialchars($currentVendor['company_name'] ?? 'Leverandør') ?></div>
         </div>
 
         <nav class="ds-sidebar-nav">

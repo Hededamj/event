@@ -34,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)
             ");
             $stmt->execute([$eventId, $companyName, $category, $contactName, $email, $phone, $agreedPrice, $notes]);
-            setFlash('success', 'Leverandor tilfojet.');
+            setFlash('success', 'Leverandør tilføjet.');
         }
         redirect("?id=$eventId&page=vendors");
 
@@ -56,7 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                 WHERE id = ? AND event_id = ?
             ");
             $stmt->execute([$companyName, $category, $contactName, $email, $phone, $agreedPrice, $notes, $id, $eventId]);
-            setFlash('success', 'Leverandor opdateret.');
+            setFlash('success', 'Leverandør opdateret.');
         }
         redirect("?id=$eventId&page=vendors");
 
@@ -66,7 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         if ($id) {
             $stmt = $db->prepare("DELETE FROM manual_vendors WHERE id = ? AND event_id = ?");
             $stmt->execute([$id, $eventId]);
-            setFlash('success', 'Leverandor slettet.');
+            setFlash('success', 'Leverandør slettet.');
         }
         redirect("?id=$eventId&page=vendors");
 
@@ -128,7 +128,7 @@ $statusLabels = [
     'quoted'     => 'Tilbud modtaget',
     'accepted'   => 'Accepteret',
     'deposited'  => 'Depositum betalt',
-    'confirmed'  => 'Bekraeftet',
+    'confirmed'  => 'Bekræftet',
     'completed'  => 'Afsluttet',
     'reviewed'   => 'Anmeldt',
     'cancelled'  => 'Annulleret',
@@ -156,14 +156,14 @@ $statusColors = [
 
 <div class="page-header-actions">
     <div>
-        <h2 class="section-title">Leverandorer fra markedspladsen</h2>
+        <h2 class="section-title">Leverandører fra markedspladsen</h2>
         <p class="section-subtitle"><?= count($bookings) ?> booking<?= count($bookings) !== 1 ? 's' : '' ?></p>
     </div>
     <a href="/subcontractor/" class="btn btn-primary">
         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:16px;height:16px;">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
         </svg>
-        Find leverandor
+        Find leverandør
     </a>
 </div>
 
@@ -174,7 +174,7 @@ $statusColors = [
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"></path>
         </svg>
         <h3>Ingen bookinger endnu</h3>
-        <p>Find leverandorer pa markedspladsen og send en bookingforesporgsel.</p>
+        <p>Find leverandører på markedspladsen og send en bookingforespørgsel.</p>
         <a href="/subcontractor/" class="btn btn-primary" style="margin-top: 16px;">Udforsk markedspladsen</a>
     </div>
 </div>
@@ -184,7 +184,7 @@ $statusColors = [
         <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
             <thead>
                 <tr style="border-bottom: 2px solid var(--border);">
-                    <th style="text-align: left; padding: 12px 8px; font-weight: 600; color: var(--text-secondary);">Leverandor</th>
+                    <th style="text-align: left; padding: 12px 8px; font-weight: 600; color: var(--text-secondary);">Leverandør</th>
                     <th style="text-align: left; padding: 12px 8px; font-weight: 600; color: var(--text-secondary);">Ydelse</th>
                     <th style="text-align: right; padding: 12px 8px; font-weight: 600; color: var(--text-secondary);">Pris</th>
                     <th style="text-align: right; padding: 12px 8px; font-weight: 600; color: var(--text-secondary);">Depositum</th>
@@ -235,7 +235,7 @@ $statusColors = [
                                 <?php break;
                             case 'deposited':
                             case 'confirmed': ?>
-                                <span style="display: inline-block; padding: 4px 10px; border-radius: 8px; font-size: 12px; font-weight: 600; background: #D1FAE5; color: #065F46;">Bekraeftet</span>
+                                <span style="display: inline-block; padding: 4px 10px; border-radius: 8px; font-size: 12px; font-weight: 600; background: #D1FAE5; color: #065F46;">Bekræftet</span>
                                 <a href="<?= $bookingDetailUrl ?>" class="btn btn-sm btn-secondary" style="margin-left: 4px;">Beskeder</a>
                                 <?php break;
                             case 'completed': ?>
@@ -266,14 +266,14 @@ $statusColors = [
 
 <div class="page-header-actions" style="margin-top: 40px;">
     <div>
-        <h2 class="section-title">Mine egne leverandorer</h2>
-        <p class="section-subtitle"><?= count($manualVendors) ?> leverandor<?= count($manualVendors) !== 1 ? 'er' : '' ?></p>
+        <h2 class="section-title">Mine egne leverandører</h2>
+        <p class="section-subtitle"><?= count($manualVendors) ?> leverandør<?= count($manualVendors) !== 1 ? 'er' : '' ?></p>
     </div>
     <button type="button" class="btn btn-primary" onclick="showManualAddModal()">
         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:16px;height:16px;">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
         </svg>
-        Tilfoj leverandor
+        Tilføj leverandør
     </button>
 </div>
 
@@ -283,9 +283,9 @@ $statusColors = [
         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
         </svg>
-        <h3>Ingen manuelle leverandorer endnu</h3>
-        <p>Tilfoj leverandorer du har booket udenfor markedspladsen.</p>
-        <button type="button" class="btn btn-primary" style="margin-top: 16px;" onclick="showManualAddModal()">Tilfoj leverandor</button>
+        <h3>Ingen manuelle leverandører endnu</h3>
+        <p>Tilføj leverandører du har booket udenfor markedspladsen.</p>
+        <button type="button" class="btn btn-primary" style="margin-top: 16px;" onclick="showManualAddModal()">Tilføj leverandør</button>
     </div>
 </div>
 <?php else: ?>
@@ -346,12 +346,12 @@ $statusColors = [
                         </form>
                     </td>
                     <td style="padding: 12px 8px; text-align: right; white-space: nowrap;">
-                        <button type="button" class="btn btn-sm btn-secondary" onclick='editManualVendor(<?= json_encode($mv) ?>)'>
+                        <button type="button" class="btn btn-sm btn-secondary" onclick='editManualVendor(<?= htmlspecialchars(json_encode($mv), ENT_QUOTES, "UTF-8") ?>)'>
                             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:14px;height:14px;">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
                             </svg>
                         </button>
-                        <form method="POST" style="display: inline;" onsubmit="return confirm('Slet denne leverandor?');">
+                        <form method="POST" style="display: inline;" onsubmit="return confirm('Slet denne leverandør?');">
                             <?= accountCsrfField() ?>
                             <input type="hidden" name="action" value="delete_manual">
                             <input type="hidden" name="id" value="<?= $mv['id'] ?>">
@@ -377,14 +377,14 @@ $statusColors = [
 
 <div class="card" style="margin-top: 40px;">
     <div class="card-header">
-        <h3 class="card-title">Leverandoroversigt</h3>
+        <h3 class="card-title">Leverandøroversigt</h3>
     </div>
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 24px; text-align: center;">
         <div>
             <div style="font-family: var(--font-display); font-size: 28px; font-weight: 500; color: var(--text);">
                 <?= number_format($grandTotal, 0, ',', '.') ?> kr
             </div>
-            <div style="font-size: 13px; color: var(--text-secondary); margin-top: 4px;">Samlet leverandorudgift</div>
+            <div style="font-size: 13px; color: var(--text-secondary); margin-top: 4px;">Samlet leverandørudgift</div>
         </div>
         <div>
             <div style="font-family: var(--font-display); font-size: 28px; font-weight: 500; color: var(--accent-dark);">
@@ -402,7 +402,7 @@ $statusColors = [
             <div style="font-family: var(--font-display); font-size: 28px; font-weight: 500; color: var(--warning);">
                 <?= number_format($grandTotal - $totalPaid, 0, ',', '.') ?> kr
             </div>
-            <div style="font-size: 13px; color: var(--text-secondary); margin-top: 4px;">Udestaaende</div>
+            <div style="font-size: 13px; color: var(--text-secondary); margin-top: 4px;">Udestående</div>
         </div>
     </div>
     <?php if ($grandTotal > 0): ?>
@@ -427,7 +427,7 @@ $statusColors = [
 <div class="modal-overlay" id="manualAddModal">
     <div class="modal" style="max-width: 520px;">
         <div class="modal-header">
-            <h3>Tilfoj leverandor</h3>
+            <h3>Tilføj leverandør</h3>
             <button type="button" class="modal-close" onclick="hideManualAddModal()">&times;</button>
         </div>
         <form method="POST">
@@ -481,7 +481,7 @@ $statusColors = [
 <div class="modal-overlay" id="manualEditModal">
     <div class="modal" style="max-width: 520px;">
         <div class="modal-header">
-            <h3>Rediger leverandor</h3>
+            <h3>Rediger leverandør</h3>
             <button type="button" class="modal-close" onclick="hideManualEditModal()">&times;</button>
         </div>
         <form method="POST">

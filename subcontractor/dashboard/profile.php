@@ -18,7 +18,7 @@ $stmt->execute([$vendorId]);
 $vendor = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if (!$vendor) {
-    setFlash('error', 'Leverandor ikke fundet.');
+    setFlash('error', 'Leverandør ikke fundet.');
     redirect('/subcontractor/dashboard/');
 }
 
@@ -45,7 +45,7 @@ if (!is_dir($uploadDir)) {
 // ── Handle POST ─────────────────────────────────────────────────
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!verifyVendorCsrfToken($_POST['csrf_token'] ?? '')) {
-        $errors[] = 'Ugyldig anmodning. Prov igen.';
+        $errors[] = 'Ugyldig anmodning. Prøv igen.';
     } else {
         // Collect form data
         $formData = [
@@ -76,7 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $ext = strtolower(pathinfo($_FILES['logo']['name'], PATHINFO_EXTENSION));
                 $newLogoFilename = 'vendor_' . $vendorId . '_logo_' . time() . '.' . $ext;
                 if (!move_uploaded_file($_FILES['logo']['tmp_name'], $uploadDir . '/' . $newLogoFilename)) {
-                    $errors[] = 'Logo upload fejlede. Prov igen.';
+                    $errors[] = 'Logo upload fejlede. Prøv igen.';
                     $newLogoFilename = null;
                 }
             }
@@ -92,7 +92,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $ext = strtolower(pathinfo($_FILES['cover']['name'], PATHINFO_EXTENSION));
                 $newCoverFilename = 'vendor_' . $vendorId . '_cover_' . time() . '.' . $ext;
                 if (!move_uploaded_file($_FILES['cover']['tmp_name'], $uploadDir . '/' . $newCoverFilename)) {
-                    $errors[] = 'Cover-billede upload fejlede. Prov igen.';
+                    $errors[] = 'Cover-billede upload fejlede. Prøv igen.';
                     $newCoverFilename = null;
                 }
             }

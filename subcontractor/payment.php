@@ -300,7 +300,7 @@ require_once __DIR__ . '/includes/marketplace-header.php';
                     <!-- Payment Summary -->
                     <div class="payment-summary">
                         <div class="payment-summary-row">
-                            <span class="payment-summary-label">Leverandor</span>
+                            <span class="payment-summary-label">Leverandør</span>
                             <span class="payment-summary-value"><?= escape($booking['vendor_company_name']) ?></span>
                         </div>
                         <?php if (!empty($booking['service_title'])): ?>
@@ -334,7 +334,7 @@ require_once __DIR__ . '/includes/marketplace-header.php';
                         </svg>
                         <div class="payment-guarantee-text">
                             <strong>PartyParart-garantien</strong>
-                            Dit depositum er beskyttet af PartyParart-garantien. Leverer leverandoren ikke som aftalt, refunderer vi dit fulde depositum.
+                            Dit depositum er beskyttet af PartyParart-garantien. Leverer leverandøren ikke som aftalt, refunderer vi dit fulde depositum.
                         </div>
                     </div>
 
@@ -359,7 +359,7 @@ require_once __DIR__ . '/includes/marketplace-header.php';
     </main>
 
     <footer class="mp-footer">
-        <p>&copy; <?= date('Y') ?> PartyParart &mdash; <a href="/subcontractor/">Find leverandorer</a></p>
+        <p>&copy; <?= date('Y') ?> PartyParart &mdash; <a href="/subcontractor/">Find leverandører</a></p>
     </footer>
 
     <script>

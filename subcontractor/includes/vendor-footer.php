@@ -2,7 +2,7 @@
     </main>
 
     <footer class="ds-footer">
-        <p>PartyParart Leverandorportal</p>
+        <p>PartyParart Leverandørportal</p>
     </footer>
 
     <script src="/subcontractor/assets/js/subcontractor.js"></script>

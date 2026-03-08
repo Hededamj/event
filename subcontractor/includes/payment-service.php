@@ -27,8 +27,8 @@ function createConnectAccount(string $email, string $companyName): ?string {
             'name' => $companyName
         ],
         'capabilities' => [
-            'card_payments' => ['requested' => 'true'],
-            'transfers' => ['requested' => 'true']
+            'card_payments' => ['requested' => true],
+            'transfers' => ['requested' => true]
         ]
     ]);
 

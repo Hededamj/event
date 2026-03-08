@@ -1,6 +1,6 @@
 /**
  * Subcontractor Module - Client-Side JavaScript
- * PartyParart Leverandorportal
+ * PartyParart Leverandørportal
  *
  * Vanilla JS — no library dependencies.
  */

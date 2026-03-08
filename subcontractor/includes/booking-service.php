@@ -674,7 +674,7 @@ function mapVendorCategoryToBudget(string $vendorCategorySlug): string {
  * Called when a booking transitions to 'deposited' or 'confirmed'.
  *
  * Looks up (or creates) a budget_item whose title starts with
- * "Leverandor: {vendor_company_name}" for the same event.
+ * "Leverandør: {vendor_company_name}" for the same event.
  *
  * @param int $bookingId Booking to sync
  * @return void
@@ -714,10 +714,10 @@ function syncBookingToBudget(int $bookingId): void {
 
         $companyName = $booking['vendor_company_name'];
         $serviceTitle = $booking['service_title'] ?? '';
-        $titlePrefix = "Leverandor: " . $companyName;
+        $titlePrefix = "Leverandør: " . $companyName;
         $fullTitle = $serviceTitle
-            ? "Leverandor: {$companyName} - {$serviceTitle}"
-            : "Leverandor: {$companyName}";
+            ? "Leverandør: {$companyName} - {$serviceTitle}"
+            : "Leverandør: {$companyName}";
 
         $budgetCategory = mapVendorCategoryToBudget($booking['vendor_category_slug'] ?? '');
 
@@ -849,7 +849,7 @@ function syncManualVendorToBudget(int $manualVendorId): void {
         }
 
         $companyName = $vendor['company_name'];
-        $titlePrefix = "Leverandor: " . $companyName;
+        $titlePrefix = "Leverandør: " . $companyName;
         $fullTitle = $titlePrefix;
 
         $budgetCategory = mapManualCategoryToBudget($vendor['category'] ?? '');
@@ -938,7 +938,7 @@ function updateBudgetPaymentStatus(int $bookingId): void {
             return;
         }
 
-        $titlePrefix = "Leverandor: " . $booking['vendor_company_name'];
+        $titlePrefix = "Leverandør: " . $booking['vendor_company_name'];
 
         // Find the linked budget item
         $stmt = $db->prepare("

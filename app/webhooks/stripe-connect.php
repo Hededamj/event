@@ -46,7 +46,22 @@ if (!$event || !isset($event['type'])) {
 $db = getDB();
 
 // Log webhook event (for debugging)
-error_log('Stripe Connect webhook received: ' . $event['type'] . ' - ' . ($event['id'] ?? 'no-id'));
+$webhookEventId = $event['id'] ?? null;
+error_log('Stripe Connect webhook received: ' . $event['type'] . ' - ' . ($webhookEventId ?? 'no-id'));
+
+// Idempotency check: skip if we've already processed this webhook event
+if ($webhookEventId) {
+    $stmt = $db->prepare("
+        SELECT 1 FROM processed_webhooks WHERE stripe_event_id = ? LIMIT 1
+    ");
+    $stmt->execute([$webhookEventId]);
+    if ($stmt->fetch()) {
+        error_log("Stripe Connect webhook: Already processed event $webhookEventId, skipping");
+        http_response_code(200);
+        echo json_encode(['received' => true, 'duplicate' => true]);
+        exit;
+    }
+}
 
 try {
     switch ($event['type']) {
@@ -190,6 +205,19 @@ try {
         default:
             error_log('Stripe Connect webhook: Unhandled event type: ' . $event['type']);
             break;
+    }
+
+    // Record processed webhook for idempotency
+    if ($webhookEventId) {
+        try {
+            $stmt = $db->prepare("
+                INSERT IGNORE INTO processed_webhooks (stripe_event_id, event_type, processed_at)
+                VALUES (?, ?, NOW())
+            ");
+            $stmt->execute([$webhookEventId, $event['type']]);
+        } catch (Exception $logErr) {
+            error_log('Stripe Connect webhook: Failed to log processed event: ' . $logErr->getMessage());
+        }
     }
 
     // Return success

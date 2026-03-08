@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     WHERE id = ?
                 ");
                 $stmt->execute([$adminId, $vendorId]);
-                setFlash('success', 'Leverandor godkendt');
+                setFlash('success', 'Leverandør godkendt');
                 break;
 
             case 'reject':
@@ -33,19 +33,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     WHERE id = ?
                 ");
                 $stmt->execute([$reason ?: null, $vendorId]);
-                setFlash('success', 'Leverandor afvist');
+                setFlash('success', 'Leverandør afvist');
                 break;
 
             case 'suspend':
                 $stmt = $db->prepare("UPDATE vendors SET status = 'suspended' WHERE id = ?");
                 $stmt->execute([$vendorId]);
-                setFlash('success', 'Leverandor suspenderet');
+                setFlash('success', 'Leverandør suspenderet');
                 break;
 
             case 'activate':
                 $stmt = $db->prepare("UPDATE vendors SET status = 'approved' WHERE id = ?");
                 $stmt->execute([$vendorId]);
-                setFlash('success', 'Leverandor genaktiveret');
+                setFlash('success', 'Leverandør genaktiveret');
                 break;
         }
         redirect(BASE_PATH . '/admin-platform/vendors.php');
@@ -182,7 +182,7 @@ $totalCommission = $db->query("
 ?>
 
 <header class="platform-header">
-    <h1 class="page-title">Leverandorer</h1>
+    <h1 class="page-title">Leverandører</h1>
     <div class="header-actions">
         <?php if (($statusCounts['pending'] ?? 0) > 0): ?>
             <span class="badge badge-warning" style="font-size: 0.9rem; padding: 0.5rem 1rem;">
@@ -203,7 +203,7 @@ $totalCommission = $db->query("
     <!-- Stats -->
     <div class="stats-grid mb-lg">
         <div class="stat-card">
-            <div class="stat-label">Total leverandorer</div>
+            <div class="stat-label">Total leverandører</div>
             <div class="stat-value"><?= number_format(array_sum($statusCounts)) ?></div>
         </div>
         <div class="stat-card">
@@ -268,7 +268,7 @@ $totalCommission = $db->query("
         <?php if (empty($vendors)): ?>
             <div class="empty-state">
                 <div class="empty-state-icon"><svg width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11.42 15.17 17.25 21A2.652 2.652 0 0 0 21 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 1 1-3.586-3.586l6.837-5.63m5.108-.233c.55-.164 1.163-.188 1.743-.14a4.5 4.5 0 0 0 4.486-6.336l-3.276 3.277a3.004 3.004 0 0 1-2.25-2.25l3.276-3.276a4.5 4.5 0 0 0-6.336 4.486c.091 1.076-.071 2.264-.904 2.95l-.102.085"/></svg></div>
-                <p>Ingen leverandorer fundet</p>
+                <p>Ingen leverandører fundet</p>
             </div>
         <?php else: ?>
             <div class="table-container">
@@ -349,7 +349,7 @@ $totalCommission = $db->query("
                                                 <?= csrfField() ?>
                                                 <input type="hidden" name="vendor_id" value="<?= $vendor['id'] ?>">
                                                 <button type="submit" name="action" value="suspend" class="btn btn-danger btn-sm"
-                                                        onclick="return confirm('Suspender denne leverandor?')">
+                                                        onclick="return confirm('Suspender denne leverandør?')">
                                                     Suspender
                                                 </button>
                                             </form>
@@ -414,7 +414,7 @@ $totalCommission = $db->query("
 <!-- Reject Modal -->
 <div id="rejectModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
     <div style="background: white; border-radius: 12px; padding: 2rem; max-width: 400px; width: 90%;">
-        <h3 style="margin-bottom: 1rem;">Afvis leverandor</h3>
+        <h3 style="margin-bottom: 1rem;">Afvis leverandør</h3>
         <form method="POST">
             <?= csrfField() ?>
             <input type="hidden" name="vendor_id" id="rejectVendorId" value="">
@@ -423,11 +423,11 @@ $totalCommission = $db->query("
             <div class="form-group">
                 <label class="form-label">Arsag (valgfrit)</label>
                 <textarea name="rejection_reason" class="form-input" rows="3"
-                          placeholder="Beskriv hvorfor leverandoren afvises..."></textarea>
+                          placeholder="Beskriv hvorfor leverandøren afvises..."></textarea>
             </div>
 
             <div class="flex gap-sm">
-                <button type="submit" class="btn btn-danger">Afvis leverandor</button>
+                <button type="submit" class="btn btn-danger">Afvis leverandør</button>
                 <button type="button" class="btn btn-secondary" onclick="hideRejectModal()">Annuller</button>
             </div>
         </form>

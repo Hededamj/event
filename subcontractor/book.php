@@ -26,7 +26,7 @@ $vendorId = isset($_GET['vendor_id']) ? (int) $_GET['vendor_id'] : 0;
 $serviceId = isset($_GET['service_id']) ? (int) $_GET['service_id'] : null;
 
 if ($vendorId <= 0) {
-    setFlash('error', 'Leverandor ikke fundet.');
+    setFlash('error', 'Leverandør ikke fundet.');
     redirect('/subcontractor/');
 }
 
@@ -41,7 +41,7 @@ $stmt->execute([$vendorId]);
 $vendor = $stmt->fetch();
 
 if (!$vendor) {
-    setFlash('error', 'Leverandor ikke fundet eller ikke godkendt.');
+    setFlash('error', 'Leverandør ikke fundet eller ikke godkendt.');
     redirect('/subcontractor/');
 }
 
@@ -102,7 +102,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Verify CSRF
     $csrfToken = $_POST['csrf_token'] ?? '';
     if (!verifyAccountCsrfToken($csrfToken)) {
-        $errors[] = 'Ugyldig sikkerhedstoken. Prov venligst igen.';
+        $errors[] = 'Ugyldig sikkerhedstoken. Prøv venligst igen.';
     }
 
     // Collect form data
@@ -141,10 +141,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         );
 
         if ($result['success']) {
-            setFlash('success', 'Din foresporgsel er sendt! Leverandoren vender tilbage med et tilbud.');
+            setFlash('success', 'Din forespørgsel er sendt! Leverandøren vender tilbage med et tilbud.');
             redirect('/app/events/manage.php?event=' . $eventId . '&page=vendors');
         } else {
-            $errors[] = $result['error'] ?? 'Der opstod en fejl. Prov venligst igen.';
+            $errors[] = $result['error'] ?? 'Der opstod en fejl. Prøv venligst igen.';
         }
     }
 }
@@ -166,7 +166,7 @@ $eventsJson = json_encode(array_map(function ($e) {
 // Page title
 // ============================================================
 
-$pageTitle = 'Send foresporgsel til ' . escape($vendor['company_name']);
+$pageTitle = 'Send forespørgsel til' . escape($vendor['company_name']);
 
 require_once __DIR__ . '/includes/marketplace-header.php';
 ?>
@@ -745,8 +745,8 @@ a { color: inherit; text-decoration: none; }
         Tilbage til <?= escape($vendor['company_name']) ?>
     </a>
 
-    <h1 class="book-page-title">Send foresporgsel</h1>
-    <p class="book-page-subtitle">Udfyld formularen for at sende en foresporgsel til <?= escape($vendor['company_name']) ?>. De vender tilbage med et tilbud.</p>
+    <h1 class="book-page-title">Send forespørgsel</h1>
+    <p class="book-page-subtitle">Udfyld formularen for at sende en forespørgsel til <?= escape($vendor['company_name']) ?>. De vender tilbage med et tilbud.</p>
 
     <!-- Errors -->
     <?php if (!empty($errors)): ?>
@@ -773,7 +773,7 @@ a { color: inherit; text-decoration: none; }
                     <div class="book-no-events">
                         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                         <h3>Du har ingen events endnu</h3>
-                        <p>For at sende en foresporgsel skal du forst oprette et event.</p>
+                        <p>For at sende en forespørgsel skal du forst oprette et event.</p>
                         <a href="/app/events/create.php?return=<?= urlencode('/subcontractor/book.php?vendor_id=' . $vendorId . ($serviceId ? '&service_id=' . $serviceId : '')) ?>" class="book-no-events-btn">
                             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:18px;height:18px;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
                             Opret et event
@@ -845,7 +845,7 @@ a { color: inherit; text-decoration: none; }
                     <!-- Message -->
                     <div class="book-form-group">
                         <label class="book-form-label" for="message">
-                            Besked til leverandoren <span class="required">*</span>
+                            Besked til leverandøren <span class="required">*</span>
                         </label>
                         <textarea
                             class="book-form-textarea"
@@ -864,7 +864,7 @@ a { color: inherit; text-decoration: none; }
                     <div class="book-submit-section">
                         <button type="submit" class="book-submit-btn">
                             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
-                            Send foresporgsel
+                            Send forespørgsel
                         </button>
                         <a href="/subcontractor/profile.php?id=<?= $vendorId ?>" class="book-cancel-link">Annuller</a>
                     </div>

@@ -22,7 +22,7 @@ $stmt->execute([$vendorId]);
 $vendor = $stmt->fetch();
 
 if (!$vendor) {
-    setFlash('error', 'Leverandor ikke fundet');
+    setFlash('error', 'Leverandør ikke fundet');
     redirect(BASE_PATH . '/admin-platform/vendors.php');
 }
 
@@ -138,7 +138,7 @@ $bookingBadgeMap = [
 ];
 $bookingTextMap = [
     'requested' => 'Anmodet', 'quoted' => 'Tilbudt', 'accepted' => 'Accepteret',
-    'deposited' => 'Depositum', 'confirmed' => 'Bekraeftet', 'completed' => 'Afsluttet',
+    'deposited' => 'Depositum', 'confirmed' => 'Bekræftet', 'completed' => 'Afsluttet',
     'reviewed' => 'Anmeldt', 'cancelled' => 'Annulleret', 'refunded' => 'Refunderet',
     'disputed' => 'Tvist'
 ];
@@ -146,7 +146,7 @@ $bookingTextMap = [
 
 <header class="platform-header">
     <h1 class="page-title">
-        <a href="<?= BASE_PATH ?>/admin-platform/vendors.php" style="color: var(--text-secondary); text-decoration: none;">Leverandorer</a>
+        <a href="<?= BASE_PATH ?>/admin-platform/vendors.php" style="color: var(--text-secondary); text-decoration: none;">Leverandører</a>
         &rsaquo; <?= escape($vendor['company_name']) ?>
     </h1>
     <div class="header-actions">
@@ -178,7 +178,7 @@ $bookingTextMap = [
             <div class="stat-value"><?= number_format($earnings['total_commission'], 2, ',', '.') ?> kr.</div>
         </div>
         <div class="stat-card">
-            <div class="stat-label">Udbetalt til leverandor</div>
+            <div class="stat-label">Udbetalt til leverandør</div>
             <div class="stat-value text-success"><?= number_format($earnings['total_paid_out'], 2, ',', '.') ?> kr.</div>
         </div>
     </div>
@@ -348,7 +348,7 @@ $bookingTextMap = [
                     <input type="hidden" name="action" value="save_notes">
                     <div class="form-group">
                         <textarea name="admin_notes" class="form-input" rows="4"
-                                  placeholder="Interne noter om denne leverandor..."><?= escape($vendor['admin_notes'] ?? '') ?></textarea>
+                                  placeholder="Interne noter om denne leverandør..."><?= escape($vendor['admin_notes'] ?? '') ?></textarea>
                     </div>
                     <button type="submit" class="btn btn-secondary">Gem noter</button>
                 </form>
@@ -491,7 +491,7 @@ $bookingTextMap = [
                     <?php endif; ?>
                     <?php if (!empty($review['vendor_response'])): ?>
                         <div style="margin-top: var(--space-sm); padding: var(--space-sm); background: var(--surface); border-radius: var(--radius-md);">
-                            <div class="text-xs text-muted">Svar fra leverandor:</div>
+                            <div class="text-xs text-muted">Svar fra leverandør:</div>
                             <div class="text-sm"><?= nl2br(escape($review['vendor_response'])) ?></div>
                         </div>
                     <?php endif; ?>

@@ -344,7 +344,7 @@ $isCurrentMonth = ($month === $currentMonth && $year === $currentYear);
                 </svg>
             </div>
             <h3>Ingen bookinger i <?= $danishMonths[$month] ?></h3>
-            <p>Du har ingen bekraeftede bookinger i denne maaned.</p>
+            <p>Du har ingen bekræftede bookinger i denne maaned.</p>
         </div>
     </div>
 </div>

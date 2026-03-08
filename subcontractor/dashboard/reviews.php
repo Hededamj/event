@@ -17,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($action === 'respond') {
         // Verify CSRF
         if (!verifyVendorCsrfToken($_POST['csrf_token'] ?? '')) {
-            setFlash('error', 'Ugyldig anmodning. Prov igen.');
+            setFlash('error', 'Ugyldig anmodning. Prøv igen.');
             redirect('/subcontractor/dashboard/reviews.php');
         }
 
@@ -44,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($success) {
             setFlash('success', 'Dit svar er blevet gemt.');
         } else {
-            setFlash('error', 'Kunne ikke gemme svaret. Prov igen.');
+            setFlash('error', 'Kunne ikke gemme svaret. Prøv igen.');
         }
 
         redirect('/subcontractor/dashboard/reviews.php');
