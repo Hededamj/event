@@ -49,7 +49,7 @@ function calculateCommission(float $depositumAmount): float {
  * @return float The vendor payout (85% of depositum)
  */
 function calculateVendorPayout(float $depositumAmount): float {
-    return round($depositumAmount * (1 - COMMISSION_RATE), 2);
+    return round($depositumAmount - calculateCommission($depositumAmount), 2);
 }
 
 // ============================================================

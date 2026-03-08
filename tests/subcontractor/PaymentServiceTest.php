@@ -70,7 +70,7 @@ echo "\n=== Vendor Payout Calculation ===\n";
 
 assert_equals(212.50, calculateVendorPayout(250.00), 'Standard payout (250 * 85%)');
 assert_equals(0.00, calculateVendorPayout(0.00), 'Zero depositum payout');
-assert_equals(106.68, calculateVendorPayout(125.50), 'Odd depositum payout (rounding)');
+assert_equals(106.67, calculateVendorPayout(125.50), 'Odd depositum payout (dep - commission)');
 assert_equals(2125.00, calculateVendorPayout(2500.00), 'Large payout');
 
 // ============================================================
