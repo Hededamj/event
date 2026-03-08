@@ -12,7 +12,7 @@ $daysUntil = $eventDate ? (int)ceil((strtotime($eventDate) - time()) / 86400) : 
 <!-- Stats Grid -->
 <div class="stats-grid">
     <div class="stat-card">
-        <div class="stat-label">Inviterede gæster</div>
+        <div class="stat-label">Inviterede personer</div>
         <div class="stat-value"><?= (int)$guestStats['total_guests'] ?></div>
     </div>
     <div class="stat-card">
@@ -34,8 +34,8 @@ $daysUntil = $eventDate ? (int)ceil((strtotime($eventDate) - time()) / 86400) : 
     </div>
     <?php endif; ?>
     <div class="stat-card">
-        <div class="stat-label">Samlet antal (voksne + børn)</div>
-        <div class="stat-value"><?= (int)$guestStats['total_adults'] + (int)$guestStats['total_children'] ?></div>
+        <div class="stat-label">Heraf voksne / børn</div>
+        <div class="stat-value"><?= (int)$guestStats['total_adults'] ?>v + <?= (int)$guestStats['total_children'] ?>b</div>
     </div>
 </div>
 

@@ -562,13 +562,13 @@ endif;
             Mangler invitation (<?= $invitationsNotSent ?>)
         </a>
         <a href="?id=<?= $eventId ?>&page=guests&filter=pending" class="filter-tab <?= $filter === 'pending' ? 'active' : '' ?>">
-            Afventer (<?= $guestStats['pending'] ?>)
+            Afventer (<?= $guestStats['pending'] ?> pers.)
         </a>
         <a href="?id=<?= $eventId ?>&page=guests&filter=yes" class="filter-tab <?= $filter === 'yes' ? 'active' : '' ?>">
-            Kommer (<?= $guestStats['accepted'] ?>)
+            Kommer (<?= $guestStats['accepted'] ?> pers.)
         </a>
         <a href="?id=<?= $eventId ?>&page=guests&filter=no" class="filter-tab <?= $filter === 'no' ? 'active' : '' ?>">
-            Afbud (<?= $guestStats['declined'] ?>)
+            Afbud (<?= $guestStats['declined'] ?> pers.)
         </a>
     </div>
     <form class="search-form" method="GET">

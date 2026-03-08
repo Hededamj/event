@@ -16,10 +16,11 @@ foreach ($userEvents as $event) {
     // Get guest counts
     $stmt = $db->prepare("
         SELECT
-            COUNT(*) as total_guests,
-            SUM(CASE WHEN rsvp_status = 'accepted' THEN 1 ELSE 0 END) as accepted,
-            SUM(CASE WHEN rsvp_status = 'declined' THEN 1 ELSE 0 END) as declined,
-            SUM(CASE WHEN rsvp_status = 'pending' THEN 1 ELSE 0 END) as pending
+            COUNT(*) as total_invitations,
+            COALESCE(SUM(adults_count + children_count), 0) as total_guests,
+            SUM(CASE WHEN rsvp_status = 'yes' THEN adults_count + children_count ELSE 0 END) as accepted,
+            SUM(CASE WHEN rsvp_status = 'no' THEN adults_count + children_count ELSE 0 END) as declined,
+            SUM(CASE WHEN rsvp_status = 'pending' THEN adults_count + children_count ELSE 0 END) as pending
         FROM guests
         WHERE event_id = ?
     ");
