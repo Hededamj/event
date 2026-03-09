@@ -6,6 +6,7 @@
  */
 
 require_once __DIR__ . '/../../config/database.php';
+require_once __DIR__ . '/referral-service.php';
 
 // Financial constants
 if (!defined('DEPOSITUM_RATE')) define('DEPOSITUM_RATE', 0.25);
@@ -150,9 +151,10 @@ function submitQuote(int $bookingId, int $vendorId, float $price, string $messag
             return ['success' => false, 'error' => 'Prisen skal være større end nul'];
         }
 
-        // Calculate financial breakdown
+        // Calculate financial breakdown using per-vendor configurable rate
+        $commissionRate = getEffectiveCommissionRate($vendorId);
         $depositum = round($price * DEPOSITUM_RATE, 2);
-        $commission = round($depositum * COMMISSION_RATE, 2);
+        $commission = round($depositum * $commissionRate, 2);
         $vendorPayout = round($depositum - $commission, 2);
 
         $db->beginTransaction();
@@ -279,7 +281,28 @@ function confirmBooking(int $bookingId): bool {
         ");
         $stmt->execute([$bookingId]);
 
-        return $stmt->rowCount() > 0;
+        if ($stmt->rowCount() === 0) {
+            return false;
+        }
+
+        // Calculate and record agent provision if vendor was referred
+        $stmt = $db->prepare("SELECT vendor_id, depositum_amount FROM bookings WHERE id = ? LIMIT 1");
+        $stmt->execute([$bookingId]);
+        $booking = $stmt->fetch();
+
+        if ($booking && $booking['depositum_amount'] > 0) {
+            $provision = calculateAgentProvision((int)$booking['vendor_id'], (float)$booking['depositum_amount']);
+            if ($provision) {
+                $stmt = $db->prepare("
+                    UPDATE bookings SET agent_provision_amount = ?, referral_link_id = ?
+                    WHERE id = ?
+                ");
+                $stmt->execute([$provision['amount'], $provision['referral_link_id'], $bookingId]);
+                recordAgentProvision($provision['referral_link_id'], $provision['amount']);
+            }
+        }
+
+        return true;
     } catch (Exception $e) {
         error_log("confirmBooking failed: " . $e->getMessage());
         return false;

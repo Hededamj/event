@@ -8,10 +8,27 @@ require_once __DIR__ . '/../../config/database.php';
 require_once __DIR__ . '/../../includes/functions.php';
 require_once __DIR__ . '/../includes/vendor-auth.php';
 require_once __DIR__ . '/../includes/vendor-validation.php';
+require_once __DIR__ . '/../includes/referral-service.php';
 
 // Redirect if already logged in as vendor
 if (isVendorLoggedIn()) {
     redirect('/subcontractor/dashboard/');
+}
+
+// Handle referral code from ?ref= parameter
+$referralAgent = null;
+if (!empty($_GET['ref'])) {
+    $refCode = trim($_GET['ref']);
+    $referralAgent = getAgentByCode($refCode);
+    if ($referralAgent && $referralAgent['is_active']) {
+        $_SESSION['referral_code'] = $refCode;
+    }
+} elseif (!empty($_SESSION['referral_code'])) {
+    $referralAgent = getAgentByCode($_SESSION['referral_code']);
+    if (!$referralAgent || !$referralAgent['is_active']) {
+        unset($_SESSION['referral_code']);
+        $referralAgent = null;
+    }
 }
 
 $errors = [];
@@ -61,6 +78,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             );
 
             if ($result['success']) {
+                // Record referral if there's a referral code in session
+                if (!empty($_SESSION['referral_code']) && !empty($result['vendor_id'])) {
+                    $agent = getAgentByCode($_SESSION['referral_code']);
+                    if ($agent && $agent['is_active']) {
+                        recordReferral((int)$agent['id'], (int)$result['vendor_id']);
+                    }
+                    unset($_SESSION['referral_code']);
+                }
+
                 // Redirect to login with flash message
                 setFlash('success', 'Din registrering er modtaget! Vi gennemgår din ansøgning hurtigst muligt.');
                 redirect('/subcontractor/dashboard/login.php');
@@ -516,6 +542,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
 
             <div class="register-card">
+                <?php if ($referralAgent): ?>
+                    <div style="background: rgba(168,181,160,0.15); border: 1px solid var(--accent-light); padding: 14px 18px; border-radius: 14px; margin-bottom: 24px; display: flex; align-items: center; gap: 10px;">
+                        <svg width="20" height="20" fill="none" stroke="var(--accent-dark)" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                        <span style="font-size: 14px; color: var(--accent-dark); font-weight: 500;">Anbefalet af <?= htmlspecialchars($referralAgent['account_name']) ?></span>
+                    </div>
+                <?php endif; ?>
+
                 <?php if (!empty($errors)): ?>
                     <div class="error-list">
                         <ul>

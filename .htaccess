@@ -29,6 +29,9 @@ RewriteRule ^dashboard/?$ /app/dashboard.php [L]
 RewriteRule ^partners/?$ /partners/index.php [L]
 RewriteRule ^partners/login/?$ /partners/login.php [L]
 
+# Vendor landing page
+RewriteRule ^bliv-leverandor/?$ /bliv-leverandor.php [QSA,L]
+
 # App routes (let PHP handle the routing directly)
 # Dashboard
 RewriteRule ^app/?$ /app/dashboard.php [L]
