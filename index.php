@@ -168,7 +168,7 @@ require_once __DIR__ . '/includes/functions.php';
             right: 0;
             top: -15%;
             height: 130%;
-            background: url('/billeder/hero-konfirmation.png') center 30% / cover no-repeat;
+            background: url('/billeder/hero-konfirmation.webp') center 30% / cover no-repeat;
             z-index: 0;
             will-change: transform;
         }
@@ -851,7 +851,7 @@ require_once __DIR__ . '/includes/functions.php';
         /* ===== ATMOSPHERE BREAK ===== */
         .atmosphere-break {
             height: 400px;
-            background: url('/billeder/stemning-stort-arrangement.png') center/cover no-repeat;
+            background: url('/billeder/stemning-stort-arrangement.webp') center/cover no-repeat;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -1292,7 +1292,7 @@ require_once __DIR__ . '/includes/functions.php';
             <div class="feature-layout">
                 <div class="feature-screenshot sim-invitation-card-wrap">
                     <div class="sim-invitation-card">
-                        <div class="sim-invitation-img" style="background-image: url('/billeder/kort-konfirmation.png');"></div>
+                        <div class="sim-invitation-img" style="background-image: url('/billeder/kort-konfirmation.webp');"></div>
                         <div class="sim-invitation-body">
                             <div class="sim-invitation-ornament">&#10045; Du er inviteret &#10045;</div>
                             <div class="sim-invitation-type">Konfirmation</div>
@@ -1443,49 +1443,70 @@ require_once __DIR__ . '/includes/functions.php';
             </div>
             <div class="event-types-grid">
                 <div class="event-type-card">
-                    <img src="/billeder/kort-konfirmation.png" alt="Konfirmation" loading="lazy" style="object-position: center 15%;">
+                    <picture>
+                        <source srcset="/billeder/kort-konfirmation.webp" type="image/webp">
+                        <img src="/billeder/kort-konfirmation.jpg" alt="Konfirmation" loading="lazy" style="object-position: center 15%;">
+                    </picture>
                     <div class="event-type-card-body">
                         <h3>Konfirmation</h3>
                         <p>Fejr den store dag</p>
                     </div>
                 </div>
                 <div class="event-type-card">
-                    <img src="/billeder/kort-bryllup.png" alt="Bryllup" loading="lazy" style="object-position: center 20%;">
+                    <picture>
+                        <source srcset="/billeder/kort-bryllup.webp" type="image/webp">
+                        <img src="/billeder/kort-bryllup.jpg" alt="Bryllup" loading="lazy" style="object-position: center 20%;">
+                    </picture>
                     <div class="event-type-card-body">
                         <h3>Bryllup</h3>
                         <p>Den perfekte dag</p>
                     </div>
                 </div>
                 <div class="event-type-card">
-                    <img src="/billeder/kort-foedselsdag.png" alt="Fødselsdag" loading="lazy">
+                    <picture>
+                        <source srcset="/billeder/kort-foedselsdag.webp" type="image/webp">
+                        <img src="/billeder/kort-foedselsdag.jpg" alt="Fødselsdag" loading="lazy">
+                    </picture>
                     <div class="event-type-card-body">
                         <h3>Fødselsdag</h3>
                         <p>Fra 18 til 70 år</p>
                     </div>
                 </div>
                 <div class="event-type-card">
-                    <img src="/billeder/kort-jubileum.png" alt="Jubilæum" loading="lazy">
+                    <picture>
+                        <source srcset="/billeder/kort-jubileum.webp" type="image/webp">
+                        <img src="/billeder/kort-jubileum.jpg" alt="Jubilæum" loading="lazy">
+                    </picture>
                     <div class="event-type-card-body">
                         <h3>Jubilæum</h3>
                         <p>Fejr milepælene</p>
                     </div>
                 </div>
                 <div class="event-type-card">
-                    <img src="/billeder/kort-studenterfest.png" alt="Studenterfest" loading="lazy">
+                    <picture>
+                        <source srcset="/billeder/kort-studenterfest.webp" type="image/webp">
+                        <img src="/billeder/kort-studenterfest.jpg" alt="Studenterfest" loading="lazy">
+                    </picture>
                     <div class="event-type-card-body">
                         <h3>Studenterfest</h3>
                         <p>Fejr huen med stil</p>
                     </div>
                 </div>
                 <div class="event-type-card">
-                    <img src="/billeder/kort-halloween.png" alt="Halloweenfest" loading="lazy">
+                    <picture>
+                        <source srcset="/billeder/kort-halloween.webp" type="image/webp">
+                        <img src="/billeder/kort-halloween.jpg" alt="Halloweenfest" loading="lazy">
+                    </picture>
                     <div class="event-type-card-body">
                         <h3>Halloweenfest</h3>
                         <p>Uhyggeligt sjovt</p>
                     </div>
                 </div>
                 <div class="event-type-card">
-                    <img src="/billeder/kort-temafest.png" alt="Temafest" loading="lazy">
+                    <picture>
+                        <source srcset="/billeder/kort-temafest.webp" type="image/webp">
+                        <img src="/billeder/kort-temafest.jpg" alt="Temafest" loading="lazy">
+                    </picture>
                     <div class="event-type-card-body">
                         <h3>Temafest</h3>
                         <p>Giv festen et tema</p>
@@ -1505,7 +1526,7 @@ require_once __DIR__ . '/includes/functions.php';
             </div>
             <div class="vendor-grid">
                 <div class="vendor-card">
-                    <img class="vendor-card-img" src="/billeder/vendor-catering.png" alt="Catering" loading="lazy" style="width:100%;object-fit:cover;">
+                    <picture><source srcset="/billeder/vendor-catering.webp" type="image/webp"><img class="vendor-card-img" src="/billeder/vendor-catering.jpg" alt="Catering" loading="lazy" style="width:100%;object-fit:cover;"></picture>
                     <div class="vendor-card-body">
                         <div class="vendor-card-category">Catering</div>
                         <div class="vendor-card-name">Skovriderkroen</div>
@@ -1516,7 +1537,7 @@ require_once __DIR__ . '/includes/functions.php';
                     </div>
                 </div>
                 <div class="vendor-card">
-                    <img class="vendor-card-img" src="/billeder/vendor-fotograf.png" alt="Fotograf" loading="lazy" style="width:100%;object-fit:cover;">
+                    <picture><source srcset="/billeder/vendor-fotograf.webp" type="image/webp"><img class="vendor-card-img" src="/billeder/vendor-fotograf.jpg" alt="Fotograf" loading="lazy" style="width:100%;object-fit:cover;"></picture>
                     <div class="vendor-card-body">
                         <div class="vendor-card-category">Fotografi</div>
                         <div class="vendor-card-name">Fotograf Mikkelsen</div>
@@ -1527,7 +1548,7 @@ require_once __DIR__ . '/includes/functions.php';
                     </div>
                 </div>
                 <div class="vendor-card">
-                    <img class="vendor-card-img" src="/billeder/vendor-dj.png" alt="DJ" loading="lazy" style="width:100%;object-fit:cover;">
+                    <picture><source srcset="/billeder/vendor-dj.webp" type="image/webp"><img class="vendor-card-img" src="/billeder/vendor-dj.jpg" alt="DJ" loading="lazy" style="width:100%;object-fit:cover;"></picture>
                     <div class="vendor-card-body">
                         <div class="vendor-card-category">Underholdning</div>
                         <div class="vendor-card-name">DJ Eastbeat</div>
@@ -1538,7 +1559,7 @@ require_once __DIR__ . '/includes/functions.php';
                     </div>
                 </div>
                 <div class="vendor-card">
-                    <img class="vendor-card-img" src="/billeder/vendor-blomster.png" alt="Blomster & dekoration" loading="lazy" style="width:100%;object-fit:cover;">
+                    <picture><source srcset="/billeder/vendor-blomster.webp" type="image/webp"><img class="vendor-card-img" src="/billeder/vendor-blomster.jpg" alt="Blomster & dekoration" loading="lazy" style="width:100%;object-fit:cover;"></picture>
                     <div class="vendor-card-body">
                         <div class="vendor-card-category">Blomster & dekoration</div>
                         <div class="vendor-card-name">Blomster af Maria</div>
@@ -1615,22 +1636,22 @@ require_once __DIR__ . '/includes/functions.php';
                         <div class="memories-timeline-line">
                             <div class="memories-timeline-entry">
                                 <div class="memories-timeline-year">2011</div>
-                                <div class="memories-timeline-photo" style="background: url('/billeder/minde-barndom.png') center/cover;"></div>
+                                <div class="memories-timeline-photo" style="background: url('/billeder/minde-barndom.webp') center/cover;"></div>
                                 <div class="memories-timeline-caption">Den lille prinsesse</div>
                             </div>
                             <div class="memories-timeline-entry">
                                 <div class="memories-timeline-year">2016</div>
-                                <div class="memories-timeline-photo" style="background: url('/billeder/minde-sport.png') center/cover;"></div>
+                                <div class="memories-timeline-photo" style="background: url('/billeder/minde-sport.webp') center/cover;"></div>
                                 <div class="memories-timeline-caption">Ridestjernen</div>
                             </div>
                             <div class="memories-timeline-entry">
                                 <div class="memories-timeline-year">2022</div>
-                                <div class="memories-timeline-photo" style="background: url('/billeder/minde-skole.png') center/cover;"></div>
+                                <div class="memories-timeline-photo" style="background: url('/billeder/minde-skole.webp') center/cover;"></div>
                                 <div class="memories-timeline-caption">Sidste skoledag</div>
                             </div>
                             <div class="memories-timeline-entry">
                                 <div class="memories-timeline-year">2025</div>
-                                <div class="memories-timeline-photo" style="background: url('/billeder/minde-konfirmation.png') center/cover;"></div>
+                                <div class="memories-timeline-photo" style="background: url('/billeder/minde-konfirmation.webp') center/cover;"></div>
                                 <div class="memories-timeline-caption">Konfirmationen!</div>
                             </div>
                         </div>
