@@ -86,7 +86,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         /* Mobile branded header */
         .auth-visual {
-            background: linear-gradient(160deg, var(--accent) 0%, var(--accent-dark) 100%);
             padding: 24px 20px;
             text-align: center;
             color: var(--text-on-dark);
@@ -94,18 +93,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             overflow: hidden;
         }
 
+        .visual-mosaic {
+            position: absolute;
+            inset: 0;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1fr 1fr;
+            gap: 0;
+        }
+
+        .visual-mosaic picture {
+            width: 100%;
+            height: 100%;
+            display: block;
+            overflow: hidden;
+        }
+
+        .visual-mosaic-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
         .auth-visual::before {
             content: '';
             position: absolute;
             inset: 0;
-            background:
-                radial-gradient(circle at 20% 80%, rgba(255,255,255,0.1) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(255,255,255,0.08) 0%, transparent 40%);
+            background: linear-gradient(160deg, rgba(122,139,114,0.88) 0%, rgba(44,44,44,0.82) 100%);
+            z-index: 1;
         }
 
         .visual-content {
             position: relative;
-            z-index: 1;
+            z-index: 2;
         }
 
         .visual-icon {
@@ -450,6 +471,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 height: 80px;
                 border-radius: 24px;
                 margin-bottom: 32px;
+                backdrop-filter: blur(12px);
             }
 
             .visual-icon svg {
@@ -460,6 +482,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             .visual-title {
                 font-size: 32px;
                 margin-bottom: 16px;
+                text-shadow: 0 2px 12px rgba(0,0,0,0.15);
             }
 
             .visual-text {
@@ -498,6 +521,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
     <div class="auth-layout">
         <div class="auth-visual">
+            <div class="visual-mosaic">
+                <picture><source srcset="/billeder/kort-studenterfest.webp" type="image/webp"><img class="visual-mosaic-img" src="/billeder/kort-studenterfest.jpg" alt="" loading="eager"></picture>
+                <picture><source srcset="/billeder/kort-temafest.webp" type="image/webp"><img class="visual-mosaic-img" src="/billeder/kort-temafest.jpg" alt="" loading="eager"></picture>
+                <picture><source srcset="/billeder/kort-halloween.webp" type="image/webp"><img class="visual-mosaic-img" src="/billeder/kort-halloween.jpg" alt="" loading="eager"></picture>
+                <picture><source srcset="/billeder/kort-bryllup.webp" type="image/webp"><img class="visual-mosaic-img" src="/billeder/kort-bryllup.jpg" alt="" loading="eager"></picture>
+            </div>
             <div class="visual-content">
                 <div class="visual-icon">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
