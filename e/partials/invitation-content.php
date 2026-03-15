@@ -16,19 +16,19 @@ $showGreeting = $layoutStyle !== 'fullscreen'; // Greeting shown in hero for ful
 ?>
 
 <?php if ($showGreeting): ?>
-<p class="greeting"><?= htmlspecialchars($greeting) ?></p>
+<p class="greeting" data-editable="greeting_template"><?= htmlspecialchars($greeting) ?></p>
 <?php endif; ?>
 
 <?php if (!empty($config['headline_text']) && $layoutStyle !== 'fullscreen'): ?>
-<h1 class="headline"><?= htmlspecialchars($config['headline_text']) ?></h1>
+<h1 class="headline" data-editable="headline_text"><?= htmlspecialchars($config['headline_text']) ?></h1>
 <?php endif; ?>
 
 <?php if (!empty($config['invitation_message'])): ?>
-<div class="message"><?= nl2br(htmlspecialchars($config['invitation_message'])) ?></div>
+<div class="message" data-editable="invitation_message"><?= nl2br(htmlspecialchars($config['invitation_message'])) ?></div>
 <?php endif; ?>
 
 <?php if ($eventDate): ?>
-<div class="event-details">
+<div class="event-details" data-section="details">
     <div class="detail-item">
         <div class="detail-icon">
             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -73,7 +73,7 @@ $showGreeting = $layoutStyle !== 'fullscreen'; // Greeting shown in hero for ful
 <?php endif; ?>
 
 <?php if (!empty($config['show_countdown']) && $eventDate): ?>
-<div class="countdown" id="countdown">
+<div class="countdown" id="countdown" data-section="countdown">
     <div class="countdown-item">
         <div class="countdown-value" id="countdown-days">--</div>
         <div class="countdown-label">Dage</div>
@@ -89,20 +89,20 @@ $showGreeting = $layoutStyle !== 'fullscreen'; // Greeting shown in hero for ful
 </div>
 <script>
 (function() {
-    const eventDate = new Date('<?= $event['event_date'] ?><?= $event['event_time'] ? 'T' . $event['event_time'] : 'T12:00:00' ?>');
+    var eventDate = new Date('<?= $event['event_date'] ?><?= $event['event_time'] ? 'T' . $event['event_time'] : 'T12:00:00' ?>');
 
     function updateCountdown() {
-        const now = new Date();
-        const diff = eventDate - now;
+        var now = new Date();
+        var diff = eventDate - now;
 
         if (diff <= 0) {
             document.getElementById('countdown').style.display = 'none';
             return;
         }
 
-        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        var days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        var hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        var minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
 
         document.getElementById('countdown-days').textContent = days;
         document.getElementById('countdown-hours').textContent = hours;
@@ -116,7 +116,7 @@ $showGreeting = $layoutStyle !== 'fullscreen'; // Greeting shown in hero for ful
 <?php endif; ?>
 
 <?php if (!empty($galleryImages)): ?>
-<div class="gallery">
+<div class="gallery" data-section="gallery">
     <?php foreach (array_slice($galleryImages, 0, 6) as $image): ?>
     <div class="gallery-item" style="background-image: url(<?= htmlspecialchars($image['url']) ?>)"></div>
     <?php endforeach; ?>
@@ -124,7 +124,7 @@ $showGreeting = $layoutStyle !== 'fullscreen'; // Greeting shown in hero for ful
 <?php endif; ?>
 
 <?php if (!empty($config['show_rsvp'])): ?>
-<div class="rsvp-section">
+<div class="rsvp-section" data-section="rsvp">
     <h3>Svar på invitationen</h3>
     <p>Vi vil elske at høre om du kan deltage</p>
     <a href="#" class="rsvp-btn">
@@ -137,5 +137,5 @@ $showGreeting = $layoutStyle !== 'fullscreen'; // Greeting shown in hero for ful
 <?php endif; ?>
 
 <?php if (!empty($config['closing_text'])): ?>
-<p class="closing"><?= htmlspecialchars($config['closing_text']) ?></p>
+<p class="closing" data-editable="closing_text"><?= htmlspecialchars($config['closing_text']) ?></p>
 <?php endif; ?>

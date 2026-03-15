@@ -1,28 +1,23 @@
 <?php
 /**
- * Invitation Konfigurator
- * 6-step wizard for configuring event invitations
+ * Invitation Editor
+ * Layout showcase + sidebar/editor workspace
  */
-
 require_once __DIR__ . '/../../../includes/invitation-functions.php';
 
-// Get invitation config
 $invitationConfig = getInvitationConfig($db, $eventId);
-$templates = getInvitationTemplates($db, $event['event_type_id']);
 $images = getInvitationImages($db, $eventId);
+$readiness = isInvitationReadyToPublish($db, $eventId);
 
-// Organize images by role
+// Organize images
 $heroImage = null;
 $galleryImages = [];
 foreach ($images as $image) {
-    if ($image['image_role'] === 'hero') {
-        $heroImage = $image;
-    } else {
-        $galleryImages[] = $image;
-    }
+    if ($image['image_role'] === 'hero') $heroImage = $image;
+    else $galleryImages[] = $image;
 }
 
-// Handle form submission
+// Handle POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!verifyAccountCsrfToken($_POST['csrf_token'] ?? '')) {
         setFlash('error', 'Ugyldig anmodning. Prøv igen.');
@@ -30,1363 +25,505 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     $action = $_POST['action'] ?? '';
 
-    if ($action === 'apply-template') {
-        $templateId = (int)($_POST['template_id'] ?? 0);
-        if ($templateId && applyTemplateToConfig($db, $eventId, $templateId)) {
-            setFlash('success', 'Skabelon anvendt!');
-        } else {
-            setFlash('error', 'Kunne ikke anvende skabelon.');
+    if ($action === 'select-layout') {
+        $layout = $_POST['layout_style'] ?? 'split';
+        $allowed = ['split', 'centered', 'fullscreen', 'minimal', 'classic', 'slideshow'];
+        if (in_array($layout, $allowed)) {
+            saveInvitationConfig($db, $eventId, array_merge((array)$invitationConfig, ['layout_style' => $layout]));
         }
-        redirect("/app/events/manage.php?id=$eventId&page=invitation&step=2");
-    }
-
-    if ($action === 'save-config') {
-        $data = [
-            'layout_style' => $_POST['layout_style'] ?? 'split',
-            'font_style' => $_POST['font_style'] ?? 'elegant',
-            'color_primary' => $_POST['color_primary'] ?? '#1A1A1A',
-            'color_secondary' => $_POST['color_secondary'] ?? '#8FA583',
-            'color_accent' => $_POST['color_accent'] ?? '#B8923D',
-            'color_text' => $_POST['color_text'] ?? '#1A1A1A',
-            'color_background' => $_POST['color_background'] ?? '#FAF9F7',
-            'greeting_template' => $_POST['greeting_template'] ?? 'Kære {guest_name}',
-            'headline_text' => $_POST['headline_text'] ?? '',
-            'invitation_message' => $_POST['invitation_message'] ?? '',
-            'closing_text' => $_POST['closing_text'] ?? '',
-            'show_countdown' => isset($_POST['show_countdown']) ? 1 : 0,
-            'show_map' => isset($_POST['show_map']) ? 1 : 0,
-            'show_schedule' => isset($_POST['show_schedule']) ? 1 : 0,
-            'show_rsvp' => isset($_POST['show_rsvp']) ? 1 : 0,
-        ];
-
-        if (saveInvitationConfig($db, $eventId, $data)) {
-            setFlash('success', 'Invitation gemt!');
-        } else {
-            setFlash('error', 'Kunne ikke gemme invitation.');
-        }
-
-        // Redirect to next step if specified
-        $nextStep = isset($_POST['redirect_step']) ? (int)$_POST['redirect_step'] : null;
-        if ($nextStep) {
-            redirect("/app/events/manage.php?id=$eventId&page=invitation&step=$nextStep");
-        } else {
-            redirect("/app/events/manage.php?id=$eventId&page=invitation");
-        }
+        redirect("/app/events/manage.php?id=$eventId&page=invitation&mode=editor");
     }
 
     if ($action === 'publish') {
-        $publish = isset($_POST['publish']);
-        if (setInvitationPublished($db, $eventId, $publish)) {
-            setFlash('success', $publish ? 'Invitation offentliggjort!' : 'Invitation skjult.');
-        }
-        redirect("/app/events/manage.php?id=$eventId&page=invitation&step=6");
+        $publish = (int)($_POST['publish'] ?? 0);
+        setInvitationPublished($db, $eventId, $publish === 1);
+        setFlash('success', $publish ? 'Invitation offentliggjort!' : 'Invitation skjult.');
+        redirect("/app/events/manage.php?id=$eventId&page=invitation&mode=editor");
     }
 }
 
-// Current step (from URL or default)
-$step = isset($_GET['step']) ? (int)$_GET['step'] : 1;
-$step = max(1, min(6, $step));
+// Determine mode
+$mode = $_GET['mode'] ?? '';
+$hasLayout = !empty($invitationConfig['id']) && !empty($invitationConfig['layout_style']);
+if ($mode !== 'showcase' && $hasLayout) $mode = 'editor';
+else if (!$hasLayout) $mode = 'showcase';
 
-// Readiness check
-$readiness = isInvitationReadyToPublish($db, $eventId);
+// Prepare config JSON for JS
+$configJson = htmlspecialchars(json_encode([
+    'layout_style' => $invitationConfig['layout_style'] ?? 'split',
+    'font_style' => $invitationConfig['font_style'] ?? 'elegant',
+    'color_primary' => $invitationConfig['color_primary'] ?? '#1A1A1A',
+    'color_secondary' => $invitationConfig['color_secondary'] ?? '#8FA583',
+    'color_accent' => $invitationConfig['color_accent'] ?? '#B8923D',
+    'color_text' => $invitationConfig['color_text'] ?? '#1A1A1A',
+    'color_background' => $invitationConfig['color_background'] ?? '#FAF9F7',
+    'greeting_template' => $invitationConfig['greeting_template'] ?? 'Kære {guest_name}',
+    'headline_text' => $invitationConfig['headline_text'] ?? '',
+    'invitation_message' => $invitationConfig['invitation_message'] ?? '',
+    'closing_text' => $invitationConfig['closing_text'] ?? '',
+    'show_countdown' => (int)($invitationConfig['show_countdown'] ?? 1),
+    'show_map' => (int)($invitationConfig['show_map'] ?? 0),
+    'show_schedule' => (int)($invitationConfig['show_schedule'] ?? 1),
+    'show_rsvp' => (int)($invitationConfig['show_rsvp'] ?? 1),
+    'sections_order' => $invitationConfig['sections_order'] ?? null,
+    'template_id' => $invitationConfig['template_id'] ?? null
+]), ENT_QUOTES, 'UTF-8');
+
+// Data arrays
+$layouts = [
+    'split' => ['name' => 'Delt', 'desc' => 'Elegant to-kolonne med sticky billede'],
+    'centered' => ['name' => 'Centreret', 'desc' => 'Billede over centreret indhold'],
+    'fullscreen' => ['name' => 'Fullscreen', 'desc' => 'Dramatisk hero med overlay-tekst'],
+    'minimal' => ['name' => 'Minimal', 'desc' => 'Ren og enkel med cirkulært billede'],
+    'classic' => ['name' => 'Klassisk', 'desc' => 'Traditionelt kort med elegant ramme'],
+    'slideshow' => ['name' => 'Slideshow', 'desc' => 'Filmisk galleri med billede-karrusel']
+];
+
+$colorPresets = [
+    ['name' => 'Nordisk', 'colors' => ['color_primary'=>'#1A1A1A','color_secondary'=>'#8FA583','color_accent'=>'#B8923D','color_text'=>'#1A1A1A','color_background'=>'#FAF9F7']],
+    ['name' => 'Romantisk', 'colors' => ['color_primary'=>'#2D1B1B','color_secondary'=>'#D4A5A5','color_accent'=>'#B88A8A','color_text'=>'#2D1B1B','color_background'=>'#FFF8F6']],
+    ['name' => 'Moderne', 'colors' => ['color_primary'=>'#111827','color_secondary'=>'#3B82F6','color_accent'=>'#8B5CF6','color_text'=>'#1F2937','color_background'=>'#F9FAFB']],
+    ['name' => 'Varm', 'colors' => ['color_primary'=>'#292524','color_secondary'=>'#D97706','color_accent'=>'#B45309','color_text'=>'#292524','color_background'=>'#FFFBEB']],
+    ['name' => 'Mørk', 'colors' => ['color_primary'=>'#F9FAFB','color_secondary'=>'#8FA583','color_accent'=>'#D4AF37','color_text'=>'#E5E7EB','color_background'=>'#1A1A1A']]
+];
+
+$fontStyles = [
+    'elegant' => ['name'=>'Elegant','font'=>"'Cormorant Garamond', serif",'sample'=>'Kære Anna'],
+    'modern' => ['name'=>'Moderne','font'=>"'Inter', sans-serif",'sample'=>'Kære Anna'],
+    'playful' => ['name'=>'Legende','font'=>"'Quicksand', sans-serif",'sample'=>'Kære Anna'],
+    'traditional' => ['name'=>'Traditionel','font'=>"'Playfair Display', serif",'sample'=>'Kære Anna'],
+    'minimal' => ['name'=>'Minimalistisk','font'=>"'DM Sans', sans-serif",'sample'=>'Kære Anna']
+];
+
+$sections = [
+    'countdown' => ['name'=>'Nedtælling','desc'=>'Vis nedtælling til arrangementet','field'=>'show_countdown'],
+    'rsvp' => ['name'=>'RSVP','desc'=>'Vis svar-sektion','field'=>'show_rsvp'],
+    'schedule' => ['name'=>'Program','desc'=>'Vis link til programmet','field'=>'show_schedule'],
+    'map' => ['name'=>'Kort','desc'=>'Vis kort over lokationen','field'=>'show_map']
+];
+
+$currentLayout = $invitationConfig['layout_style'] ?? 'split';
+$currentFont = $invitationConfig['font_style'] ?? 'elegant';
+$isPublished = !empty($invitationConfig['is_published']);
+$publicUrl = '/e/' . htmlspecialchars($event['public_slug'] ?? $eventId);
 ?>
 
-<style>
-    /* Wizard Steps */
-    .wizard-steps {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 32px;
-        padding: 0 20px;
-    }
-
-    .wizard-step {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 8px;
-        flex: 1;
-        position: relative;
-    }
-
-    .wizard-step:not(:last-child)::after {
-        content: '';
-        position: absolute;
-        top: 18px;
-        left: 50%;
-        width: 100%;
-        height: 2px;
-        background: var(--border);
-    }
-
-    .wizard-step.completed:not(:last-child)::after {
-        background: var(--accent);
-    }
-
-    .step-number {
-        width: 36px;
-        height: 36px;
-        border-radius: 50%;
-        background: var(--border);
-        color: var(--text-secondary);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 14px;
-        font-weight: 600;
-        position: relative;
-        z-index: 1;
-        transition: all 0.25s var(--ease-out);
-    }
-
-    .wizard-step.active .step-number {
-        background: var(--accent);
-        color: var(--white);
-        transform: scale(1.1);
-    }
-
-    .wizard-step.completed .step-number {
-        background: var(--accent);
-        color: var(--white);
-    }
-
-    .step-label {
-        font-size: 12px;
-        color: var(--text-secondary);
-        text-align: center;
-    }
-
-    .wizard-step.active .step-label {
-        color: var(--text);
-        font-weight: 600;
-    }
-
-    /* Step Content */
-    .step-content {
-        display: none;
-    }
-
-    .step-content.active {
-        display: block;
-        animation: fadeIn 0.4s var(--ease-out);
-    }
-
-    /* Template Grid */
-    .template-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-        gap: 20px;
-    }
-
-    .template-card {
-        background: var(--white);
-        border: 2px solid var(--border);
-        border-radius: 16px;
-        overflow: hidden;
-        cursor: pointer;
-        transition: all 0.25s var(--ease-out);
-    }
-
-    .template-card:hover {
-        border-color: var(--accent-light);
-        transform: translateY(-2px);
-    }
-
-    .template-card.selected {
-        border-color: var(--accent);
-        box-shadow: 0 0 0 3px rgba(143, 165, 131, 0.2);
-    }
-
-    .template-card.recommended {
-        position: relative;
-    }
-
-    .template-card.recommended::before {
-        content: 'Anbefalet';
-        position: absolute;
-        top: 12px;
-        right: 12px;
-        background: var(--warning);
-        color: var(--white);
-        font-size: 10px;
-        font-weight: 600;
-        padding: 4px 8px;
-        border-radius: 6px;
-        z-index: 1;
-    }
-
-    .template-preview {
-        aspect-ratio: 4/3;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        position: relative;
-        overflow: hidden;
-    }
-
-    .template-preview-mock {
-        width: 90%;
-        height: 85%;
-        border-radius: 6px;
-        display: flex;
-        flex-direction: column;
-        padding: 12px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        position: relative;
-    }
-
-    .template-preview-mock.layout-split {
-        flex-direction: row;
-    }
-
-    .template-preview-mock.layout-split .mock-image {
-        width: 45%;
-        height: 100%;
-        border-radius: 4px;
-    }
-
-    .template-preview-mock.layout-split .mock-content {
-        flex: 1;
-        padding-left: 10px;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        gap: 6px;
-    }
-
-    .template-preview-mock.layout-centered {
-        align-items: center;
-        text-align: center;
-    }
-
-    .template-preview-mock.layout-centered .mock-image {
-        width: 60%;
-        height: 40%;
-        border-radius: 4px;
-        margin-bottom: 8px;
-    }
-
-    .template-preview-mock.layout-fullscreen .mock-image {
-        position: absolute;
-        inset: 0;
-        border-radius: 6px;
-    }
-
-    .template-preview-mock.layout-fullscreen .mock-content {
-        position: relative;
-        z-index: 1;
-        text-align: center;
-        padding-top: 30px;
-    }
-
-    .template-preview-mock.layout-minimal {
-        justify-content: center;
-        align-items: center;
-        text-align: center;
-    }
-
-    .template-preview-mock.layout-minimal .mock-image {
-        display: none;
-    }
-
-    .template-preview-mock.layout-classic {
-        border: 3px double currentColor;
-        align-items: center;
-        text-align: center;
-        padding: 16px;
-    }
-
-    .template-preview-mock.layout-classic .mock-image {
-        width: 50%;
-        height: 35%;
-        border-radius: 4px;
-        margin-bottom: 8px;
-    }
-
-    .mock-title {
-        height: 8px;
-        border-radius: 2px;
-        width: 70%;
-    }
-
-    .mock-text {
-        height: 4px;
-        border-radius: 1px;
-        width: 90%;
-        opacity: 0.5;
-    }
-
-    .mock-text.short {
-        width: 50%;
-    }
-
-    .template-info {
-        padding: 16px;
-    }
-
-    .template-name {
-        font-weight: 600;
-        margin-bottom: 4px;
-    }
-
-    .template-meta {
-        font-size: 12px;
-        color: var(--text-secondary);
-    }
-
-    /* Image Upload */
-    .upload-zone {
-        border: 2px dashed var(--border);
-        border-radius: 16px;
-        padding: 40px;
-        text-align: center;
-        cursor: pointer;
-        transition: all 0.25s var(--ease-out);
-        background: var(--surface);
-    }
-
-    .upload-zone:hover {
-        border-color: var(--accent);
-        background: var(--white);
-    }
-
-    .upload-zone.dragover {
-        border-color: var(--accent);
-        background: rgba(143, 165, 131, 0.1);
-    }
-
-    .upload-zone svg {
-        width: 48px;
-        height: 48px;
-        color: var(--accent);
-        margin-bottom: 16px;
-    }
-
-    .upload-zone h4 {
-        font-size: 16px;
-        margin-bottom: 8px;
-    }
-
-    .upload-zone p {
-        font-size: 13px;
-        color: var(--text-secondary);
-    }
-
-    /* Image Grid */
-    .image-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-        gap: 16px;
-        margin-top: 24px;
-    }
-
-    .image-item {
-        position: relative;
-        aspect-ratio: 1;
-        border-radius: 12px;
-        overflow: hidden;
-        background-size: cover;
-        background-position: center;
-        cursor: grab;
-    }
-
-    .image-item:active {
-        cursor: grabbing;
-    }
-
-    .image-item.hero {
-        grid-column: span 2;
-        grid-row: span 2;
-    }
-
-    .image-overlay {
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 50%);
-        opacity: 0;
-        transition: opacity 0.25s;
-        display: flex;
-        align-items: flex-end;
-        padding: 12px;
-    }
-
-    .image-item:hover .image-overlay {
-        opacity: 1;
-    }
-
-    .image-actions {
-        display: flex;
-        gap: 8px;
-    }
-
-    .image-action {
-        width: 32px;
-        height: 32px;
-        border-radius: 8px;
-        background: var(--white);
-        border: none;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.2s;
-    }
-
-    .image-action:hover {
-        background: var(--surface);
-    }
-
-    .image-action.danger:hover {
-        background: #FDF2F2;
-        color: var(--error);
-    }
-
-    .image-action svg {
-        width: 16px;
-        height: 16px;
-    }
-
-    .hero-badge {
-        position: absolute;
-        top: 12px;
-        left: 12px;
-        background: var(--warning);
-        color: var(--white);
-        font-size: 10px;
-        font-weight: 600;
-        padding: 4px 8px;
-        border-radius: 6px;
-    }
-
-    /* Color Pickers */
-    .color-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-        gap: 20px;
-    }
-
-    .color-picker-group {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        padding: 12px;
-        background: var(--surface);
-        border-radius: 12px;
-    }
-
-    .color-picker-group input[type="color"] {
-        width: 48px;
-        height: 48px;
-        border: none;
-        border-radius: 10px;
-        cursor: pointer;
-        padding: 0;
-    }
-
-    .color-picker-group label {
-        font-size: 14px;
-        font-weight: 500;
-    }
-
-    /* Layout Options */
-    .layout-options {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-        gap: 16px;
-    }
-
-    .layout-option {
-        padding: 20px;
-        border: 2px solid var(--border);
-        border-radius: 14px;
-        text-align: center;
-        cursor: pointer;
-        transition: all 0.25s var(--ease-out);
-    }
-
-    .layout-option:hover {
-        border-color: var(--accent-light);
-    }
-
-    .layout-option.selected {
-        border-color: var(--accent);
-        background: rgba(143, 165, 131, 0.08);
-    }
-
-    .layout-option input {
-        display: none;
-    }
-
-    .layout-icon {
-        width: 48px;
-        height: 48px;
-        margin: 0 auto 12px;
-        background: var(--surface);
-        border-radius: 10px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: var(--accent-dark);
-    }
-
-    .layout-option.selected .layout-icon {
-        background: var(--accent);
-        color: var(--white);
-    }
-
-    .layout-option span {
-        font-size: 13px;
-        font-weight: 500;
-    }
-
-    /* Toggle Switches */
-    .toggle-group {
-        display: flex;
-        flex-direction: column;
-        gap: 16px;
-    }
-
-    .toggle-item {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 16px;
-        background: var(--surface);
-        border-radius: 12px;
-    }
-
-    .toggle-label h4 {
-        font-size: 14px;
-        font-weight: 600;
-        margin-bottom: 2px;
-    }
-
-    .toggle-label p {
-        font-size: 13px;
-        color: var(--text-secondary);
-    }
-
-    .toggle-switch {
-        position: relative;
-        width: 48px;
-        height: 28px;
-    }
-
-    .toggle-switch input {
-        opacity: 0;
-        width: 0;
-        height: 0;
-    }
-
-    .toggle-slider {
-        position: absolute;
-        cursor: pointer;
-        inset: 0;
-        background: var(--border);
-        border-radius: 28px;
-        transition: 0.3s;
-    }
-
-    .toggle-slider::before {
-        position: absolute;
-        content: '';
-        height: 22px;
-        width: 22px;
-        left: 3px;
-        bottom: 3px;
-        background: var(--white);
-        border-radius: 50%;
-        transition: 0.3s;
-    }
-
-    .toggle-switch input:checked + .toggle-slider {
-        background: var(--accent);
-    }
-
-    .toggle-switch input:checked + .toggle-slider::before {
-        transform: translateX(20px);
-    }
-
-    /* Preview Panel */
-    .preview-panel {
-        background: var(--text);
-        border-radius: 20px;
-        overflow: hidden;
-        height: 500px;
-    }
-
-    .preview-header {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        padding: 12px 16px;
-        background: rgba(255,255,255,0.05);
-    }
-
-    .preview-dot {
-        width: 12px;
-        height: 12px;
-        border-radius: 50%;
-        background: rgba(255,255,255,0.2);
-    }
-
-    .preview-dot.red { background: #FF5F57; }
-    .preview-dot.yellow { background: #FEBC2E; }
-    .preview-dot.green { background: #28C840; }
-
-    .preview-frame {
-        width: 100%;
-        height: calc(100% - 40px);
-        border: none;
-        background: var(--surface);
-    }
-
-    /* Publish Section */
-    .publish-card {
-        background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
-        color: var(--white);
-        padding: 32px;
-        border-radius: 20px;
-        text-align: center;
-    }
-
-    .publish-card h3 {
-        font-family: var(--font-display);
-        font-size: 24px;
-        margin-bottom: 12px;
-    }
-
-    .publish-card p {
-        opacity: 0.9;
-        margin-bottom: 24px;
-    }
-
-    .publish-btn {
-        background: var(--white);
-        color: var(--accent-dark);
-        padding: 16px 40px;
-        border: none;
-        border-radius: 12px;
-        font-size: 15px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.25s var(--ease-out);
-    }
-
-    .publish-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 24px rgba(0,0,0,0.15);
-    }
-
-    .publish-btn.unpublish {
-        background: transparent;
-        border: 2px solid var(--white);
-        color: var(--white);
-    }
-
-    .issues-list {
-        background: rgba(255,255,255,0.1);
-        border-radius: 12px;
-        padding: 16px;
-        margin-bottom: 24px;
-        text-align: left;
-    }
-
-    .issues-list h4 {
-        font-size: 14px;
-        margin-bottom: 8px;
-    }
-
-    .issues-list ul {
-        list-style: none;
-        font-size: 13px;
-    }
-
-    .issues-list li {
-        padding: 6px 0;
-        padding-left: 20px;
-        position: relative;
-    }
-
-    .issues-list li::before {
-        content: '!';
-        position: absolute;
-        left: 0;
-        width: 14px;
-        height: 14px;
-        background: var(--warning);
-        border-radius: 50%;
-        font-size: 10px;
-        font-weight: bold;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        top: 8px;
-    }
-
-    /* Wizard Navigation */
-    .wizard-nav {
-        display: flex;
-        justify-content: space-between;
-        margin-top: 32px;
-        padding-top: 24px;
-        border-top: 1px solid var(--border);
-    }
-
-    @media (max-width: 768px) {
-        .wizard-steps {
-            display: none;
-        }
-
-        .template-grid {
-            grid-template-columns: 1fr;
-        }
-
-        .color-grid {
-            grid-template-columns: 1fr;
-        }
-
-        .image-grid {
-            grid-template-columns: repeat(2, 1fr);
-        }
-
-        .image-item.hero {
-            grid-column: span 2;
-            grid-row: span 1;
-            aspect-ratio: 16/9;
-        }
-    }
-</style>
-
-<div class="page-header-actions">
-    <div>
-        <h2 class="section-title">Invitation</h2>
-        <p class="section-subtitle">Design og tilpas din invitation</p>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@400;500;600&family=Playfair+Display:wght@400;500;600&family=Inter:wght@400;500;600&family=Quicksand:wght@400;500;600&family=Nunito:wght@400;500;600&family=Lora:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/invitation-editor.css">
+
+<?php if ($mode === 'showcase'): ?>
+
+<!-- ============ SHOWCASE MODE ============ -->
+<div class="showcase-fullscreen" id="layout-showcase">
+    <div class="showcase-header">
+        <h2>Vælg dit layout</h2>
+        <p>Hover over kortene for at se layoutet i aktion</p>
     </div>
-    <?php if ($invitationConfig['is_published']): ?>
-    <span class="event-badge" style="background: var(--success); color: var(--white);">Offentliggjort</span>
-    <?php endif; ?>
-</div>
 
-<!-- Wizard Steps -->
-<div class="wizard-steps">
-    <?php
-    $steps = [
-        1 => 'Skabelon',
-        2 => 'Billeder',
-        3 => 'Tekst',
-        4 => 'Stil',
-        5 => 'Sektioner',
-        6 => 'Publicer'
-    ];
-    foreach ($steps as $num => $label):
-        $isActive = $step === $num;
-        $isCompleted = $step > $num;
-    ?>
-    <a href="?id=<?= $eventId ?>&page=invitation&step=<?= $num ?>" class="wizard-step <?= $isActive ? 'active' : '' ?> <?= $isCompleted ? 'completed' : '' ?>">
-        <div class="step-number"><?= $num ?></div>
-        <span class="step-label"><?= $label ?></span>
-    </a>
-    <?php endforeach; ?>
-</div>
+    <form method="post" action="/app/events/manage.php?id=<?= $eventId ?>&page=invitation">
+        <?= accountCsrfField() ?>
+        <input type="hidden" name="action" value="select-layout">
+        <input type="hidden" name="layout_style" id="selected-layout" value="">
 
-<!-- Step 1: Choose Template -->
-<div class="step-content <?= $step === 1 ? 'active' : '' ?>">
-    <div class="card">
-        <div class="card-header">
-            <h3 class="card-title">Vælg skabelon</h3>
+        <div class="showcase-grid">
+            <?php foreach ($layouts as $key => $layout): ?>
+            <div class="showcase-card" data-layout="<?= $key ?>">
+                <div class="showcase-preview">
+                    <?php include __DIR__ . '/invitation-showcase-mocks/' . $key . '.php'; ?>
+                </div>
+                <div class="showcase-info">
+                    <h3><?= htmlspecialchars($layout['name']) ?></h3>
+                    <p><?= htmlspecialchars($layout['desc']) ?></p>
+                </div>
+            </div>
+            <?php endforeach; ?>
         </div>
 
-        <div class="template-grid">
-            <?php foreach ($templates as $template): ?>
-            <form method="POST" style="display: contents;">
-                <?= accountCsrfField() ?>
-                <input type="hidden" name="action" value="apply-template">
-                <input type="hidden" name="template_id" value="<?= $template['id'] ?>">
-                <?php
-                $colors = json_decode($template['color_scheme'], true);
-                $bgColor = $colors['background'] ?? '#FAF9F7';
-                $primaryColor = $colors['primary'] ?? '#1A1A1A';
-                $secondaryColor = $colors['secondary'] ?? '#8FA583';
-                $accentColor = $colors['accent'] ?? '#B8923D';
-                ?>
-                <div class="template-card <?= $invitationConfig['template_id'] == $template['id'] ? 'selected' : '' ?> <?= $template['is_recommended'] ? 'recommended' : '' ?>"
-                     onclick="this.closest('form').submit()">
-                    <div class="template-preview" style="background: <?= htmlspecialchars($bgColor) ?>;">
-                        <div class="template-preview-mock layout-<?= htmlspecialchars($template['layout_style']) ?>" style="background: <?= htmlspecialchars($bgColor) ?>; color: <?= htmlspecialchars($primaryColor) ?>;">
-                            <div class="mock-image" style="background: linear-gradient(135deg, <?= htmlspecialchars($secondaryColor) ?> 0%, <?= htmlspecialchars($accentColor) ?> 100%);"></div>
-                            <div class="mock-content">
-                                <div class="mock-title" style="background: <?= htmlspecialchars($primaryColor) ?>;"></div>
-                                <div class="mock-text" style="background: <?= htmlspecialchars($primaryColor) ?>;"></div>
-                                <div class="mock-text short" style="background: <?= htmlspecialchars($accentColor) ?>;"></div>
-                            </div>
+        <div class="showcase-continue">
+            <button type="submit" class="btn btn-primary btn-lg">Fortsæt med valgt layout</button>
+        </div>
+    </form>
+</div>
+
+<?php else: ?>
+
+<!-- ============ EDITOR MODE ============ -->
+<div class="inv-workspace" id="inv-workspace" data-config="<?= $configJson ?>" data-event-id="<?= $eventId ?>">
+
+    <!-- Sidebar -->
+    <div class="inv-sidebar" id="inv-sidebar">
+        <button class="sidebar-collapse-btn" id="sidebar-collapse" title="Skjul sidebar">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+        </button>
+
+        <div class="sidebar-tabs">
+            <button class="sidebar-tab active" data-panel="images" title="Billeder">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+            </button>
+            <button class="sidebar-tab" data-panel="text" title="Tekst">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            </button>
+            <button class="sidebar-tab" data-panel="design" title="Design">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="13.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="10.5" r="2.5"/><circle cx="8.5" cy="7.5" r="2.5"/><circle cx="6.5" cy="12.5" r="2.5"/><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12a10 10 0 0 0 5.012 8.662"/></svg>
+            </button>
+            <button class="sidebar-tab" data-panel="sections" title="Sektioner">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+            </button>
+            <button class="sidebar-tab" data-panel="publish" title="Publicer">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
+            </button>
+        </div>
+
+        <div class="sidebar-panels">
+
+            <!-- Panel: Images -->
+            <div class="sidebar-panel active" id="panel-images">
+                <h3 class="panel-title">Billeder</h3>
+
+                <div class="sidebar-section">
+                    <label class="sidebar-label">Hero-billede</label>
+                    <div class="hero-upload-zone" id="hero-dropzone">
+                        <?php if ($heroImage): ?>
+                        <div class="hero-preview">
+                            <img src="<?= htmlspecialchars($heroImage['image_url']) ?>" alt="Hero">
+                            <button type="button" class="hero-remove-btn" onclick="deleteImage(<?= (int)$heroImage['id'] ?>)" title="Fjern hero-billede">&times;</button>
+                        </div>
+                        <?php else: ?>
+                        <div class="upload-placeholder" id="hero-placeholder">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                            <span>Upload hero-billede</span>
+                        </div>
+                        <?php endif; ?>
+                        <input type="file" id="hero-upload" accept="image/*" class="sr-only">
+                    </div>
+                </div>
+
+                <div class="sidebar-section">
+                    <label class="sidebar-label">Galleri</label>
+                    <div class="gallery-grid">
+                        <?php foreach ($galleryImages as $img): ?>
+                        <div class="gallery-thumb" data-id="<?= (int)$img['id'] ?>">
+                            <img src="<?= htmlspecialchars($img['image_url']) ?>" alt="Galleri">
+                            <button type="button" class="gallery-remove-btn" onclick="deleteImage(<?= (int)$img['id'] ?>)" title="Fjern billede">&times;</button>
+                        </div>
+                        <?php endforeach; ?>
+                        <div class="gallery-upload-slot">
+                            <label class="gallery-add-btn" for="gallery-upload">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                            </label>
+                            <input type="file" id="gallery-upload" accept="image/*" multiple class="sr-only">
                         </div>
                     </div>
-                    <div class="template-info">
-                        <div class="template-name"><?= htmlspecialchars($template['name']) ?></div>
-                        <div class="template-meta"><?= ucfirst($template['layout_style']) ?> • <?= ucfirst($template['font_style']) ?></div>
+                </div>
+            </div>
+
+            <!-- Panel: Text -->
+            <div class="sidebar-panel" id="panel-text">
+                <h3 class="panel-title">Tekst</h3>
+
+                <div class="sidebar-section">
+                    <label class="sidebar-label" for="field-greeting">Hilsen</label>
+                    <input type="text" id="field-greeting" class="sidebar-input" data-field="greeting_template" value="<?= htmlspecialchars($invitationConfig['greeting_template'] ?? 'Kære {guest_name}') ?>">
+                    <span class="form-hint">Brug {guest_name} for gæstens navn</span>
+                </div>
+
+                <div class="sidebar-section">
+                    <label class="sidebar-label" for="field-headline">Overskrift</label>
+                    <input type="text" id="field-headline" class="sidebar-input" data-field="headline_text" value="<?= htmlspecialchars($invitationConfig['headline_text'] ?? '') ?>">
+                </div>
+
+                <div class="sidebar-section">
+                    <label class="sidebar-label" for="field-message">Besked</label>
+                    <textarea id="field-message" class="sidebar-textarea" data-field="invitation_message" rows="6"><?= htmlspecialchars($invitationConfig['invitation_message'] ?? '') ?></textarea>
+                </div>
+
+                <div class="sidebar-section">
+                    <label class="sidebar-label" for="field-closing">Afslutning</label>
+                    <input type="text" id="field-closing" class="sidebar-input" data-field="closing_text" value="<?= htmlspecialchars($invitationConfig['closing_text'] ?? '') ?>">
+                </div>
+            </div>
+
+            <!-- Panel: Design -->
+            <div class="sidebar-panel" id="panel-design">
+                <h3 class="panel-title">Design</h3>
+
+                <div class="sidebar-section">
+                    <label class="sidebar-label" for="layout-change">Layout</label>
+                    <select id="layout-change" class="sidebar-select" data-field="layout_style">
+                        <?php foreach ($layouts as $key => $layout): ?>
+                        <option value="<?= $key ?>" <?= $currentLayout === $key ? 'selected' : '' ?>><?= htmlspecialchars($layout['name']) ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                    <a href="/app/events/manage.php?id=<?= $eventId ?>&page=invitation&mode=showcase" class="sidebar-link">Se alle layouts i fuld visning</a>
+                </div>
+
+                <div class="sidebar-section">
+                    <label class="sidebar-label">Skrifttype</label>
+                    <div class="font-options">
+                        <?php foreach ($fontStyles as $key => $font): ?>
+                        <label class="font-option <?= $currentFont === $key ? 'selected' : '' ?>">
+                            <input type="radio" name="font_style" value="<?= $key ?>" data-field="font_style" <?= $currentFont === $key ? 'checked' : '' ?> class="sr-only">
+                            <span class="font-sample" style="font-family: <?= htmlspecialchars($font['font']) ?>"><?= htmlspecialchars($font['sample']) ?></span>
+                            <span class="font-name"><?= htmlspecialchars($font['name']) ?></span>
+                        </label>
+                        <?php endforeach; ?>
                     </div>
                 </div>
-            </form>
-            <?php endforeach; ?>
-        </div>
-    </div>
 
-    <div class="wizard-nav">
-        <div></div>
-        <a href="?id=<?= $eventId ?>&page=invitation&step=2" class="btn btn-primary">
-            Næste: Billeder
-            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
-            </svg>
-        </a>
-    </div>
-</div>
-
-<!-- Step 2: Upload Images -->
-<div class="step-content <?= $step === 2 ? 'active' : '' ?>">
-    <div class="card">
-        <div class="card-header">
-            <h3 class="card-title">Billeder</h3>
-        </div>
-
-        <input type="file" id="image-upload" accept="image/*" multiple style="display: none;">
-
-        <div class="upload-zone" id="upload-zone" onclick="document.getElementById('image-upload').click()">
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-            </svg>
-            <h4>Træk billeder hertil</h4>
-            <p>eller klik for at vælge filer • JPG, PNG, WebP • Max 10MB</p>
-        </div>
-
-        <div class="image-grid" id="image-grid">
-            <?php if ($heroImage): ?>
-            <div class="image-item hero" style="background-image: url(/uploads/invitations/<?= htmlspecialchars($heroImage['filename']) ?>)" data-id="<?= $heroImage['id'] ?>">
-                <span class="hero-badge">Hovedbillede</span>
-                <div class="image-overlay">
-                    <div class="image-actions">
-                        <button class="image-action danger" onclick="deleteImage(<?= $heroImage['id'] ?>)" title="Slet">
-                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                            </svg>
+                <div class="sidebar-section">
+                    <label class="sidebar-label">Farvepaletter</label>
+                    <div class="color-presets-row">
+                        <?php foreach ($colorPresets as $preset): ?>
+                        <button type="button" class="color-preset-btn" title="<?= htmlspecialchars($preset['name']) ?>" data-colors="<?= htmlspecialchars(json_encode($preset['colors'])) ?>">
+                            <span class="preset-swatch" style="background: <?= htmlspecialchars($preset['colors']['color_secondary']) ?>"></span>
+                            <span class="preset-swatch" style="background: <?= htmlspecialchars($preset['colors']['color_accent']) ?>"></span>
+                            <span class="preset-name"><?= htmlspecialchars($preset['name']) ?></span>
                         </button>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+
+                <div class="sidebar-section">
+                    <label class="sidebar-label">Farver</label>
+                    <div class="color-picker-row">
+                        <label class="color-label">Primær</label>
+                        <input type="color" class="color-input" data-field="color_primary" value="<?= htmlspecialchars($invitationConfig['color_primary'] ?? '#1A1A1A') ?>">
+                    </div>
+                    <div class="color-picker-row">
+                        <label class="color-label">Sekundær</label>
+                        <input type="color" class="color-input" data-field="color_secondary" value="<?= htmlspecialchars($invitationConfig['color_secondary'] ?? '#8FA583') ?>">
+                    </div>
+                    <div class="color-picker-row">
+                        <label class="color-label">Accent</label>
+                        <input type="color" class="color-input" data-field="color_accent" value="<?= htmlspecialchars($invitationConfig['color_accent'] ?? '#B8923D') ?>">
+                    </div>
+                    <div class="color-picker-row">
+                        <label class="color-label">Tekst</label>
+                        <input type="color" class="color-input" data-field="color_text" value="<?= htmlspecialchars($invitationConfig['color_text'] ?? '#1A1A1A') ?>">
+                    </div>
+                    <div class="color-picker-row">
+                        <label class="color-label">Baggrund</label>
+                        <input type="color" class="color-input" data-field="color_background" value="<?= htmlspecialchars($invitationConfig['color_background'] ?? '#FAF9F7') ?>">
                     </div>
                 </div>
             </div>
-            <?php endif; ?>
 
-            <?php foreach ($galleryImages as $image): ?>
-            <div class="image-item" style="background-image: url(/uploads/invitations/<?= htmlspecialchars($image['filename']) ?>)" data-id="<?= $image['id'] ?>">
-                <div class="image-overlay">
-                    <div class="image-actions">
-                        <button class="image-action" onclick="setAsHero(<?= $image['id'] ?>)" title="Sæt som hovedbillede">
-                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path>
-                            </svg>
-                        </button>
-                        <button class="image-action danger" onclick="deleteImage(<?= $image['id'] ?>)" title="Slet">
-                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                            </svg>
-                        </button>
+            <!-- Panel: Sections -->
+            <div class="sidebar-panel" id="panel-sections">
+                <h3 class="panel-title">Sektioner</h3>
+
+                <div class="sidebar-section">
+                    <p class="sidebar-hint">Træk for at ændre rækkefølge. Slå sektioner til/fra.</p>
+                    <div class="section-list" id="section-list">
+                        <?php foreach ($sections as $key => $section): ?>
+                        <div class="section-item" data-section="<?= $key ?>" draggable="true">
+                            <span class="drag-handle">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="5" r="1"/><circle cx="15" cy="5" r="1"/><circle cx="9" cy="12" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="9" cy="19" r="1"/><circle cx="15" cy="19" r="1"/></svg>
+                            </span>
+                            <div class="section-info">
+                                <span class="section-name"><?= htmlspecialchars($section['name']) ?></span>
+                                <span class="section-desc"><?= htmlspecialchars($section['desc']) ?></span>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" data-field="<?= htmlspecialchars($section['field']) ?>" <?= !empty($invitationConfig[$section['field']]) ? 'checked' : '' ?>>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <?php endforeach; ?>
                     </div>
                 </div>
             </div>
-            <?php endforeach; ?>
-        </div>
-    </div>
 
-    <div class="wizard-nav">
-        <a href="?id=<?= $eventId ?>&page=invitation&step=1" class="btn btn-secondary">
-            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-            </svg>
-            Tilbage
-        </a>
-        <a href="?id=<?= $eventId ?>&page=invitation&step=3" class="btn btn-primary">
-            Næste: Tekst
-            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
-            </svg>
-        </a>
-    </div>
-</div>
+            <!-- Panel: Publish -->
+            <div class="sidebar-panel" id="panel-publish">
+                <h3 class="panel-title">Publicer</h3>
 
-<!-- Step 3: Text Content -->
-<div class="step-content <?= $step === 3 ? 'active' : '' ?>">
-    <form method="POST" id="text-form">
-        <?= accountCsrfField() ?>
-        <input type="hidden" name="action" value="save-config">
+                <div class="sidebar-section">
+                    <label class="sidebar-label">Tjekliste</label>
+                    <ul class="publish-checklist">
+                        <li class="checklist-item <?= $heroImage ? 'checked' : '' ?>">
+                            <span class="checklist-icon"><?= $heroImage ? '&#10003;' : '&#9675;' ?></span>
+                            Hero-billede uploadet
+                        </li>
+                        <li class="checklist-item <?= !empty($invitationConfig['invitation_message']) ? 'checked' : '' ?>">
+                            <span class="checklist-icon"><?= !empty($invitationConfig['invitation_message']) ? '&#10003;' : '&#9675;' ?></span>
+                            Invitationsbesked skrevet
+                        </li>
+                    </ul>
+                </div>
 
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">Tekst & indhold</h3>
-            </div>
+                <div class="sidebar-section">
+                    <form method="post" action="/app/events/manage.php?id=<?= $eventId ?>&page=invitation">
+                        <?= accountCsrfField() ?>
+                        <input type="hidden" name="action" value="publish">
+                        <?php if ($isPublished): ?>
+                        <input type="hidden" name="publish" value="0">
+                        <button type="submit" class="btn btn-secondary btn-block">Skjul invitation</button>
+                        <?php else: ?>
+                        <input type="hidden" name="publish" value="1">
+                        <button type="submit" class="btn btn-primary btn-block">Offentliggør invitation</button>
+                        <?php endif; ?>
+                    </form>
+                </div>
 
-            <div class="form-group">
-                <label class="form-label">Hilsen (brug {guest_name} for gæstens navn)</label>
-                <input type="text" name="greeting_template" class="form-input"
-                       value="<?= htmlspecialchars($invitationConfig['greeting_template'] ?? 'Kære {guest_name}') ?>"
-                       placeholder="Kære {guest_name}">
-                <p class="form-hint">Eksempel resultat: "Kære Mormor & Morfar"</p>
-            </div>
-
-            <div class="form-group">
-                <label class="form-label">Overskrift</label>
-                <input type="text" name="headline_text" class="form-input"
-                       value="<?= htmlspecialchars($invitationConfig['headline_text'] ?? '') ?>"
-                       placeholder="<?= htmlspecialchars($event['name']) ?>">
-            </div>
-
-            <div class="form-group">
-                <label class="form-label">Invitationsbesked</label>
-                <textarea name="invitation_message" class="form-input" rows="6"
-                          placeholder="Skriv din personlige invitation her..."><?= htmlspecialchars($invitationConfig['invitation_message'] ?? '') ?></textarea>
-            </div>
-
-            <div class="form-group">
-                <label class="form-label">Afslutning</label>
-                <input type="text" name="closing_text" class="form-input"
-                       value="<?= htmlspecialchars($invitationConfig['closing_text'] ?? '') ?>"
-                       placeholder="Vi glæder os til at se jer!">
-            </div>
-
-            <!-- Hidden fields for other config values -->
-            <input type="hidden" name="layout_style" value="<?= htmlspecialchars($invitationConfig['layout_style']) ?>">
-            <input type="hidden" name="font_style" value="<?= htmlspecialchars($invitationConfig['font_style']) ?>">
-            <input type="hidden" name="color_primary" value="<?= htmlspecialchars($invitationConfig['color_primary']) ?>">
-            <input type="hidden" name="color_secondary" value="<?= htmlspecialchars($invitationConfig['color_secondary']) ?>">
-            <input type="hidden" name="color_accent" value="<?= htmlspecialchars($invitationConfig['color_accent']) ?>">
-            <input type="hidden" name="color_text" value="<?= htmlspecialchars($invitationConfig['color_text']) ?>">
-            <input type="hidden" name="color_background" value="<?= htmlspecialchars($invitationConfig['color_background']) ?>">
-            <?php if ($invitationConfig['show_countdown']): ?><input type="hidden" name="show_countdown" value="1"><?php endif; ?>
-            <?php if ($invitationConfig['show_map']): ?><input type="hidden" name="show_map" value="1"><?php endif; ?>
-            <?php if ($invitationConfig['show_schedule']): ?><input type="hidden" name="show_schedule" value="1"><?php endif; ?>
-            <?php if ($invitationConfig['show_rsvp']): ?><input type="hidden" name="show_rsvp" value="1"><?php endif; ?>
-        </div>
-
-        <div class="wizard-nav">
-            <a href="?id=<?= $eventId ?>&page=invitation&step=2" class="btn btn-secondary">
-                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-                </svg>
-                Tilbage
-            </a>
-            <button type="submit" class="btn btn-primary">
-                Gem & Næste
-                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
-                </svg>
-            </button>
-        </div>
-    </form>
-</div>
-
-<!-- Step 4: Style & Colors -->
-<div class="step-content <?= $step === 4 ? 'active' : '' ?>">
-    <form method="POST" id="style-form">
-        <?= accountCsrfField() ?>
-        <input type="hidden" name="action" value="save-config">
-
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">Layout</h3>
-            </div>
-
-            <div class="layout-options">
-                <?php
-                $layouts = [
-                    'slideshow' => ['name' => 'Slideshow', 'icon' => 'M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z'],
-                    'split' => ['name' => 'Delt', 'icon' => 'M4 5a1 1 0 011-1h6v16H5a1 1 0 01-1-1V5zm10-1h5a1 1 0 011 1v14a1 1 0 01-1 1h-5V4z'],
-                    'centered' => ['name' => 'Centreret', 'icon' => 'M4 6a2 2 0 012-2h12a2 2 0 012 2v12a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm3 2h10v3H7V8zm0 5h10v3H7v-3z'],
-                    'fullscreen' => ['name' => 'Fullscreen', 'icon' => 'M4 3a1 1 0 00-1 1v16a1 1 0 001 1h16a1 1 0 001-1V4a1 1 0 00-1-1H4zm8 7a2 2 0 100-4 2 2 0 000 4zm0 2a4 4 0 110 8 4 4 0 010-8z'],
-                    'minimal' => ['name' => 'Minimal', 'icon' => 'M4 6h16M4 10h16M4 14h10M4 18h6'],
-                    'classic' => ['name' => 'Klassisk', 'icon' => 'M4 4h16v16H4V4zm2 2v12h12V6H6zm3 3h6v2H9V9zm0 4h6v2H9v-2z']
-                ];
-                foreach ($layouts as $key => $layout):
-                ?>
-                <label class="layout-option <?= $invitationConfig['layout_style'] === $key ? 'selected' : '' ?>">
-                    <input type="radio" name="layout_style" value="<?= $key ?>" <?= $invitationConfig['layout_style'] === $key ? 'checked' : '' ?>>
-                    <div class="layout-icon">
-                        <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="<?= $layout['icon'] ?>"></path>
-                        </svg>
+                <?php if ($isPublished): ?>
+                <div class="sidebar-section">
+                    <label class="sidebar-label">Del link</label>
+                    <div class="share-link-row">
+                        <input type="text" class="sidebar-input share-url" id="public-url" value="<?= htmlspecialchars((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http') . '://' . ($_SERVER['HTTP_HOST'] ?? 'partyparart.dk') . $publicUrl) ?>" readonly>
+                        <button type="button" class="btn btn-sm btn-outline" onclick="var btn=this;var url=document.getElementById('public-url');var t=document.createElement('textarea');t.value=url.value;document.body.appendChild(t);t.select();document.execCommand('copy');document.body.removeChild(t);btn.textContent='Kopieret!';setTimeout(function(){btn.textContent='Kopier';},2000);">Kopier</button>
                     </div>
-                    <span><?= $layout['name'] ?></span>
-                </label>
-                <?php endforeach; ?>
-            </div>
-        </div>
+                </div>
 
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">Skrifttype</h3>
+                <div class="sidebar-section">
+                    <a href="/app/events/manage.php?id=<?= $eventId ?>&page=guests" class="btn btn-primary btn-block">Send invitationer</a>
+                </div>
+                <?php endif; ?>
             </div>
 
-            <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500&family=Inter:wght@500&family=Quicksand:wght@500&family=Playfair+Display:wght@500&family=DM+Sans:wght@500&display=swap" rel="stylesheet">
-            <div class="layout-options font-options">
-                <?php
-                $fontStyles = [
-                    'elegant' => ['name' => 'Elegant', 'font' => "'Cormorant Garamond', serif"],
-                    'modern' => ['name' => 'Moderne', 'font' => "'Inter', sans-serif"],
-                    'playful' => ['name' => 'Legende', 'font' => "'Quicksand', sans-serif"],
-                    'traditional' => ['name' => 'Traditionel', 'font' => "'Playfair Display', serif"],
-                    'minimal' => ['name' => 'Minimalistisk', 'font' => "'DM Sans', sans-serif"]
-                ];
-                foreach ($fontStyles as $key => $fontData):
-                ?>
-                <label class="layout-option <?= $invitationConfig['font_style'] === $key ? 'selected' : '' ?>">
-                    <input type="radio" name="font_style" value="<?= $key ?>" <?= $invitationConfig['font_style'] === $key ? 'checked' : '' ?>>
-                    <span class="font-preview" style="font-family: <?= $fontData['font'] ?>; font-size: 20px;"><?= $fontData['name'] ?></span>
-                </label>
-                <?php endforeach; ?>
-            </div>
+        </div><!-- /.sidebar-panels -->
+
+        <div class="save-status" id="save-status">
+            <span class="save-status-text">Gemt</span>
+        </div>
+    </div><!-- /.inv-sidebar -->
+
+    <!-- Preview Panel -->
+    <div class="inv-preview-panel" id="inv-preview-panel">
+        <div class="floating-toolbar" id="floating-toolbar">
+            <button type="button" class="toolbar-btn" data-action="bold" title="Fed"><strong>B</strong></button>
+            <button type="button" class="toolbar-btn" data-action="italic" title="Kursiv"><em>I</em></button>
+            <input type="color" class="toolbar-color-input" id="toolbar-color" title="Tekstfarve">
         </div>
 
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">Farver</h3>
-            </div>
-
-            <div class="color-grid">
-                <div class="color-picker-group">
-                    <input type="color" name="color_primary" value="<?= htmlspecialchars($invitationConfig['color_primary']) ?>">
-                    <label>Primær</label>
-                </div>
-                <div class="color-picker-group">
-                    <input type="color" name="color_secondary" value="<?= htmlspecialchars($invitationConfig['color_secondary']) ?>">
-                    <label>Sekundær</label>
-                </div>
-                <div class="color-picker-group">
-                    <input type="color" name="color_accent" value="<?= htmlspecialchars($invitationConfig['color_accent']) ?>">
-                    <label>Accent</label>
-                </div>
-                <div class="color-picker-group">
-                    <input type="color" name="color_text" value="<?= htmlspecialchars($invitationConfig['color_text']) ?>">
-                    <label>Tekst</label>
-                </div>
-                <div class="color-picker-group">
-                    <input type="color" name="color_background" value="<?= htmlspecialchars($invitationConfig['color_background']) ?>">
-                    <label>Baggrund</label>
-                </div>
-            </div>
+        <div class="inv-preview" id="inv-preview">
+            <p class="preview-loading">Indlæser forhåndsvisning...</p>
         </div>
+    </div><!-- /.inv-preview-panel -->
 
-        <!-- Hidden fields for text content -->
-        <input type="hidden" name="greeting_template" value="<?= htmlspecialchars($invitationConfig['greeting_template']) ?>">
-        <input type="hidden" name="headline_text" value="<?= htmlspecialchars($invitationConfig['headline_text'] ?? '') ?>">
-        <input type="hidden" name="invitation_message" value="<?= htmlspecialchars($invitationConfig['invitation_message'] ?? '') ?>">
-        <input type="hidden" name="closing_text" value="<?= htmlspecialchars($invitationConfig['closing_text'] ?? '') ?>">
-        <?php if ($invitationConfig['show_countdown']): ?><input type="hidden" name="show_countdown" value="1"><?php endif; ?>
-        <?php if ($invitationConfig['show_map']): ?><input type="hidden" name="show_map" value="1"><?php endif; ?>
-        <?php if ($invitationConfig['show_schedule']): ?><input type="hidden" name="show_schedule" value="1"><?php endif; ?>
-        <?php if ($invitationConfig['show_rsvp']): ?><input type="hidden" name="show_rsvp" value="1"><?php endif; ?>
-
-        <div class="wizard-nav">
-            <a href="?id=<?= $eventId ?>&page=invitation&step=3" class="btn btn-secondary">
-                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-                </svg>
-                Tilbage
-            </a>
-            <button type="submit" class="btn btn-primary">
-                Gem & Næste
-                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
-                </svg>
-            </button>
-        </div>
-    </form>
-</div>
-
-<!-- Step 5: Sections -->
-<div class="step-content <?= $step === 5 ? 'active' : '' ?>">
-    <form method="POST" id="sections-form">
-        <?= accountCsrfField() ?>
-        <input type="hidden" name="action" value="save-config">
-
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">Sektioner</h3>
-            </div>
-
-            <div class="toggle-group">
-                <div class="toggle-item">
-                    <div class="toggle-label">
-                        <h4>Nedtælling</h4>
-                        <p>Vis nedtælling til arrangementet</p>
-                    </div>
-                    <label class="toggle-switch">
-                        <input type="checkbox" name="show_countdown" value="1" <?= $invitationConfig['show_countdown'] ? 'checked' : '' ?>>
-                        <span class="toggle-slider"></span>
-                    </label>
-                </div>
-
-                <div class="toggle-item">
-                    <div class="toggle-label">
-                        <h4>RSVP</h4>
-                        <p>Vis svar-sektion på invitationen</p>
-                    </div>
-                    <label class="toggle-switch">
-                        <input type="checkbox" name="show_rsvp" value="1" <?= $invitationConfig['show_rsvp'] ? 'checked' : '' ?>>
-                        <span class="toggle-slider"></span>
-                    </label>
-                </div>
-
-                <div class="toggle-item">
-                    <div class="toggle-label">
-                        <h4>Program</h4>
-                        <p>Vis link til programmet</p>
-                    </div>
-                    <label class="toggle-switch">
-                        <input type="checkbox" name="show_schedule" value="1" <?= $invitationConfig['show_schedule'] ? 'checked' : '' ?>>
-                        <span class="toggle-slider"></span>
-                    </label>
-                </div>
-
-                <div class="toggle-item">
-                    <div class="toggle-label">
-                        <h4>Kort</h4>
-                        <p>Vis kort over lokationen</p>
-                    </div>
-                    <label class="toggle-switch">
-                        <input type="checkbox" name="show_map" value="1" <?= $invitationConfig['show_map'] ? 'checked' : '' ?>>
-                        <span class="toggle-slider"></span>
-                    </label>
-                </div>
-            </div>
-        </div>
-
-        <!-- Hidden fields for other config values -->
-        <input type="hidden" name="layout_style" value="<?= htmlspecialchars($invitationConfig['layout_style']) ?>">
-        <input type="hidden" name="font_style" value="<?= htmlspecialchars($invitationConfig['font_style']) ?>">
-        <input type="hidden" name="color_primary" value="<?= htmlspecialchars($invitationConfig['color_primary']) ?>">
-        <input type="hidden" name="color_secondary" value="<?= htmlspecialchars($invitationConfig['color_secondary']) ?>">
-        <input type="hidden" name="color_accent" value="<?= htmlspecialchars($invitationConfig['color_accent']) ?>">
-        <input type="hidden" name="color_text" value="<?= htmlspecialchars($invitationConfig['color_text']) ?>">
-        <input type="hidden" name="color_background" value="<?= htmlspecialchars($invitationConfig['color_background']) ?>">
-        <input type="hidden" name="greeting_template" value="<?= htmlspecialchars($invitationConfig['greeting_template']) ?>">
-        <input type="hidden" name="headline_text" value="<?= htmlspecialchars($invitationConfig['headline_text'] ?? '') ?>">
-        <input type="hidden" name="invitation_message" value="<?= htmlspecialchars($invitationConfig['invitation_message'] ?? '') ?>">
-        <input type="hidden" name="closing_text" value="<?= htmlspecialchars($invitationConfig['closing_text'] ?? '') ?>">
-
-        <div class="wizard-nav">
-            <a href="?id=<?= $eventId ?>&page=invitation&step=4" class="btn btn-secondary">
-                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-                </svg>
-                Tilbage
-            </a>
-            <button type="submit" class="btn btn-primary">
-                Gem & Næste
-                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
-                </svg>
-            </button>
-        </div>
-    </form>
-</div>
-
-<!-- Step 6: Preview & Publish -->
-<div class="step-content <?= $step === 6 ? 'active' : '' ?>">
-    <div class="card">
-        <div class="card-header">
-            <h3 class="card-title">Preview</h3>
-            <a href="/api/invitation-preview.php?event_id=<?= $eventId ?>" target="_blank" class="btn btn-secondary btn-sm">
-                <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
-                </svg>
-                Åbn i nyt vindue
-            </a>
-        </div>
-
-        <div class="preview-panel">
-            <div class="preview-header">
-                <span class="preview-dot red"></span>
-                <span class="preview-dot yellow"></span>
-                <span class="preview-dot green"></span>
-            </div>
-            <iframe src="/api/invitation-preview.php?event_id=<?= $eventId ?>" class="preview-frame"></iframe>
-        </div>
-    </div>
-
-    <div class="publish-card">
-        <?php if (!$readiness['ready']): ?>
-        <div class="issues-list">
-            <h4>Før du kan offentliggøre:</h4>
-            <ul>
-                <?php foreach ($readiness['issues'] as $issue): ?>
-                <li><?= htmlspecialchars($issue) ?></li>
-                <?php endforeach; ?>
-            </ul>
-        </div>
-        <?php endif; ?>
-
-        <h3><?= $invitationConfig['is_published'] ? 'Invitation er offentliggjort' : 'Klar til at dele?' ?></h3>
-        <p>
-            <?php if ($invitationConfig['is_published']): ?>
-            Din invitation er nu synlig for gæster. Du kan stadig redigere indholdet.
-            <?php else: ?>
-            Når du offentliggør, vil gæster se denne invitation når de logger ind.
-            <?php endif; ?>
-        </p>
-
-        <form method="POST">
-            <?= accountCsrfField() ?>
-            <input type="hidden" name="action" value="publish">
-            <?php if ($invitationConfig['is_published']): ?>
-            <button type="submit" name="publish" value="0" class="publish-btn unpublish">Skjul invitation</button>
-            <?php else: ?>
-            <button type="submit" name="publish" value="1" class="publish-btn" <?= !$readiness['ready'] ? 'disabled style="opacity:0.5;cursor:not-allowed"' : '' ?>>
-                Offentliggør invitation
-            </button>
-            <?php endif; ?>
-        </form>
-    </div>
-
-    <div class="wizard-nav">
-        <a href="?id=<?= $eventId ?>&page=invitation&step=5" class="btn btn-secondary">
-            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-            </svg>
-            Tilbage
-        </a>
-        <a href="?id=<?= $eventId ?>&page=invitation-send" class="btn btn-sage">
-            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
-            </svg>
-            Send invitationer
-        </a>
-    </div>
-</div>
+</div><!-- /.inv-workspace -->
 
 <script>
-const eventId = <?= $eventId ?>;
+// Image upload: Hero
+(function() {
+    var heroDropzone = document.getElementById('hero-dropzone');
+    var heroInput = document.getElementById('hero-upload');
+    if (!heroDropzone || !heroInput) return;
 
-// Image upload handling
-const uploadZone = document.getElementById('upload-zone');
-const imageUpload = document.getElementById('image-upload');
-const imageGrid = document.getElementById('image-grid');
-
-if (uploadZone) {
-    // Drag & drop
-    ['dragenter', 'dragover'].forEach(eventName => {
-        uploadZone.addEventListener(eventName, (e) => {
-            e.preventDefault();
-            uploadZone.classList.add('dragover');
-        });
+    heroDropzone.addEventListener('click', function(e) {
+        if (e.target.closest('.hero-remove-btn')) return;
+        heroInput.click();
     });
 
-    ['dragleave', 'drop'].forEach(eventName => {
-        uploadZone.addEventListener(eventName, (e) => {
-            e.preventDefault();
-            uploadZone.classList.remove('dragover');
-        });
+    heroDropzone.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        heroDropzone.classList.add('dragover');
+    });
+    heroDropzone.addEventListener('dragleave', function() {
+        heroDropzone.classList.remove('dragover');
+    });
+    heroDropzone.addEventListener('drop', function(e) {
+        e.preventDefault();
+        heroDropzone.classList.remove('dragover');
+        if (e.dataTransfer.files.length) {
+            uploadImage(e.dataTransfer.files[0], 'hero');
+        }
     });
 
-    uploadZone.addEventListener('drop', (e) => {
-        const files = e.dataTransfer.files;
-        handleFiles(files);
+    heroInput.addEventListener('change', function() {
+        if (this.files.length) uploadImage(this.files[0], 'hero');
     });
+})();
 
-    // File input change
-    imageUpload.addEventListener('change', () => {
-        handleFiles(imageUpload.files);
+// Image upload: Gallery
+(function() {
+    var galleryInput = document.getElementById('gallery-upload');
+    if (!galleryInput) return;
+
+    galleryInput.addEventListener('change', function() {
+        for (var i = 0; i < this.files.length; i++) {
+            uploadImage(this.files[i], 'gallery');
+        }
     });
-}
+})();
 
-function handleFiles(files) {
-    Array.from(files).forEach(file => {
-        if (!file.type.startsWith('image/')) return;
+function uploadImage(file, role) {
+    var wsEventId = document.getElementById('inv-workspace').getAttribute('data-event-id');
+    var formData = new FormData();
+    formData.append('image', file);
+    formData.append('action', 'upload');
+    formData.append('role', role);
+    formData.append('event_id', wsEventId);
 
-        const formData = new FormData();
-        formData.append('image', file);
-        formData.append('event_id', eventId);
-        formData.append('action', 'upload');
-        formData.append('role', 'gallery');
-
-        fetch('/api/invitation-images.php', {
-            method: 'POST',
-            body: formData
-        })
-        .then(res => res.json())
-        .then(data => {
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', '/api/invitation-images.php', true);
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState !== 4) return;
+        try {
+            var data = JSON.parse(xhr.responseText);
             if (data.success) {
                 location.reload();
             } else {
                 alert(data.error || 'Upload fejlede');
             }
-        })
-        .catch(err => {
-            console.error(err);
+        } catch (e) {
             alert('Upload fejlede');
-        });
-    });
+        }
+    };
+    xhr.onerror = function() { alert('Upload fejlede'); };
+    xhr.send(formData);
 }
 
 function deleteImage(imageId) {
-    if (!confirm('Er du sikker på at du vil slette dette billede?')) return;
+    if (!confirm('Fjern dette billede?')) return;
+    var wsEventId = document.getElementById('inv-workspace').getAttribute('data-event-id');
 
-    fetch('/api/invitation-images.php?event_id=' + eventId + '&action=delete&image_id=' + imageId)
-        .then(res => res.json())
-        .then(data => {
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', '/api/invitation-images.php?event_id=' + wsEventId + '&action=delete&image_id=' + imageId, true);
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState !== 4) return;
+        try {
+            var data = JSON.parse(xhr.responseText);
             if (data.success) {
                 location.reload();
             } else {
-                alert('Kunne ikke slette billede');
+                alert(data.error || 'Kunne ikke fjerne billede');
             }
-        });
+        } catch (e) {
+            alert('Kunne ikke fjerne billede');
+        }
+    };
+    xhr.onerror = function() { alert('Kunne ikke fjerne billede'); };
+    xhr.send();
 }
 
-function setAsHero(imageId) {
-    fetch('/api/invitation-images.php?event_id=' + eventId + '&action=set-role&image_id=' + imageId + '&role=hero')
-        .then(res => res.json())
-        .then(data => {
-            if (data.success) {
-                location.reload();
-            } else {
-                alert('Kunne ikke ændre billede');
-            }
-        });
-}
+// Load preview on ready
+document.addEventListener('DOMContentLoaded', function() {
+    var workspace = document.getElementById('inv-workspace');
+    if (!workspace) return;
 
-// Radio button visual selection
-document.querySelectorAll('.layout-option input[type="radio"]').forEach(radio => {
-    radio.addEventListener('change', () => {
-        const group = radio.closest('.layout-options');
-        group.querySelectorAll('.layout-option').forEach(opt => opt.classList.remove('selected'));
-        radio.closest('.layout-option').classList.add('selected');
-    });
-});
+    var wsConfig = JSON.parse(workspace.getAttribute('data-config'));
+    var wsEventId = workspace.getAttribute('data-event-id');
 
-// Step 3 redirect after save
-document.getElementById('text-form')?.addEventListener('submit', (e) => {
-    const form = e.target;
-    const input = document.createElement('input');
-    input.type = 'hidden';
-    input.name = 'redirect_step';
-    input.value = '4';
-    form.appendChild(input);
-});
-
-// Step 4 redirect after save
-document.getElementById('style-form')?.addEventListener('submit', (e) => {
-    const form = e.target;
-    const input = document.createElement('input');
-    input.type = 'hidden';
-    input.name = 'redirect_step';
-    input.value = '5';
-    form.appendChild(input);
-});
-
-// Step 5 redirect after save
-document.getElementById('sections-form')?.addEventListener('submit', (e) => {
-    const form = e.target;
-    const input = document.createElement('input');
-    input.type = 'hidden';
-    input.name = 'redirect_step';
-    input.value = '6';
-    form.appendChild(input);
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', '/api/invitation-preview.php?format=partial&event_id=' + encodeURIComponent(wsEventId), true);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState !== 4) return;
+        if (xhr.status >= 200 && xhr.status < 300) {
+            document.getElementById('inv-preview').innerHTML = xhr.responseText;
+        } else {
+            document.getElementById('inv-preview').innerHTML = '<p class="preview-error">Kunne ikke indlæse forhåndsvisning</p>';
+        }
+    };
+    xhr.onerror = function() {
+        document.getElementById('inv-preview').innerHTML = '<p class="preview-error">Kunne ikke indlæse forhåndsvisning</p>';
+    };
+    xhr.send(JSON.stringify(wsConfig));
 });
 </script>
+<script src="/assets/js/invitation-editor.js"></script>
+
+<?php endif; ?>

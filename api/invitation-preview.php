@@ -100,7 +100,9 @@ if ($event['event_date']) {
 
 // Output HTML preview
 header('Content-Type: text/html; charset=UTF-8');
-?>
+$isPartial = ($_REQUEST['format'] ?? '') === 'partial';
+
+if (!$isPartial): ?>
 <!DOCTYPE html>
 <html lang="da">
 <head>
@@ -110,6 +112,7 @@ header('Content-Type: text/html; charset=UTF-8');
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@400;500;600&family=Playfair+Display:wght@400;500;600&family=Inter:wght@400;500;600&family=Quicksand:wght@400;500;600&family=Nunito:wght@400;500;600&family=Lora:wght@400;500;600&display=swap" rel="stylesheet">
+<?php endif; ?>
     <style>
         <?= $cssVars ?>
 
@@ -440,9 +443,11 @@ header('Content-Type: text/html; charset=UTF-8');
             }
         }
     </style>
+<?php if (!$isPartial): ?>
 </head>
 <body>
-    <div class="preview-container layout-<?= htmlspecialchars($layoutStyle) ?>">
+<?php endif; ?>
+    <div class="preview-container inv-preview layout-<?= htmlspecialchars($layoutStyle) ?>">
         <?php if ($layoutStyle === 'split'): ?>
             <!-- Split Layout -->
             <div class="hero-section" style="<?= $heroImage ? 'background-image: url(' . htmlspecialchars($heroImage['url']) . ')' : '' ?>">
@@ -498,5 +503,7 @@ header('Content-Type: text/html; charset=UTF-8');
             <?php include __DIR__ . '/../e/partials/invitation-content.php'; ?>
         <?php endif; ?>
     </div>
+<?php if (!$isPartial): ?>
 </body>
 </html>
+<?php endif; ?>
