@@ -92,7 +92,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         /* Mobile branded header (replaces hidden visual panel) */
         .auth-visual {
-            background: linear-gradient(160deg, var(--accent) 0%, var(--accent-dark) 100%);
             padding: 24px 20px;
             text-align: center;
             color: var(--text-on-dark);
@@ -100,24 +99,46 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             overflow: hidden;
         }
 
+        /* Photo mosaic background */
+        .visual-mosaic {
+            position: absolute;
+            inset: 0;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1fr 1fr;
+            gap: 3px;
+        }
+
+        .visual-mosaic-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .visual-mosaic-img:nth-child(1) { object-position: center 20%; }
+        .visual-mosaic-img:nth-child(2) { object-position: center 30%; }
+        .visual-mosaic-img:nth-child(3) { object-position: center 40%; }
+        .visual-mosaic-img:nth-child(4) { object-position: center 25%; }
+
+        /* Dark overlay on photos */
         .auth-visual::before {
             content: '';
             position: absolute;
             inset: 0;
-            background:
-                radial-gradient(circle at 20% 80%, rgba(255,255,255,0.1) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(255,255,255,0.08) 0%, transparent 40%);
+            background: linear-gradient(160deg, rgba(122,139,114,0.88) 0%, rgba(44,44,44,0.82) 100%);
+            z-index: 1;
         }
 
         .visual-content {
             position: relative;
-            z-index: 1;
+            z-index: 2;
         }
 
         .visual-icon {
             width: 48px;
             height: 48px;
             background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(8px);
             border-radius: 14px;
             display: flex;
             align-items: center;
@@ -147,6 +168,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         /* Features list - hidden on mobile, shown on desktop */
         .features-list {
             display: none;
+        }
+
+        /* Photo accent strip on mobile */
+        .visual-photo-strip {
+            display: flex;
+            gap: 8px;
+            margin-top: 16px;
+            justify-content: center;
+        }
+
+        .visual-photo-strip img {
+            width: 56px;
+            height: 56px;
+            border-radius: 12px;
+            object-fit: cover;
+            border: 2px solid rgba(255,255,255,0.3);
         }
 
         /* Form section */
@@ -376,6 +413,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 padding: 32px;
             }
 
+            .visual-mosaic {
+                grid-template-columns: 1fr 1fr 1fr;
+                grid-template-rows: 1fr;
+            }
+
+            .visual-photo-strip img {
+                width: 64px;
+                height: 64px;
+            }
+
             .visual-icon {
                 width: 56px;
                 height: 56px;
@@ -454,11 +501,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 top: 0;
             }
 
+            .visual-mosaic {
+                grid-template-columns: 1fr 1fr;
+                grid-template-rows: 1fr 1fr;
+            }
+
+            .visual-photo-strip {
+                display: none;
+            }
+
             .visual-icon {
                 width: 80px;
                 height: 80px;
                 border-radius: 24px;
                 margin-bottom: 32px;
+                backdrop-filter: blur(12px);
             }
 
             .visual-icon svg {
@@ -469,6 +526,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             .visual-title {
                 font-size: 32px;
                 margin-bottom: 16px;
+                text-shadow: 0 2px 12px rgba(0,0,0,0.15);
             }
 
             .visual-text {
@@ -531,6 +589,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
     <div class="auth-layout">
         <div class="auth-visual">
+            <div class="visual-mosaic">
+                <picture><source srcset="/billeder/kort-konfirmation.webp" type="image/webp"><img class="visual-mosaic-img" src="/billeder/kort-konfirmation.jpg" alt="" loading="eager"></picture>
+                <picture><source srcset="/billeder/kort-bryllup.webp" type="image/webp"><img class="visual-mosaic-img" src="/billeder/kort-bryllup.jpg" alt="" loading="eager"></picture>
+                <picture><source srcset="/billeder/kort-foedselsdag.webp" type="image/webp"><img class="visual-mosaic-img" src="/billeder/kort-foedselsdag.jpg" alt="" loading="eager"></picture>
+                <picture><source srcset="/billeder/kort-jubileum.webp" type="image/webp"><img class="visual-mosaic-img" src="/billeder/kort-jubileum.jpg" alt="" loading="eager"></picture>
+            </div>
             <div class="visual-content">
                 <div class="visual-icon">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -541,6 +605,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <p class="visual-text">
                     Opret din gratis konto og begynd at planlægge dit arrangement med stil.
                 </p>
+                <div class="visual-photo-strip">
+                    <picture><source srcset="/billeder/kort-studenterfest.webp" type="image/webp"><img src="/billeder/kort-studenterfest.jpg" alt="Studenterfest"></picture>
+                    <picture><source srcset="/billeder/kort-temafest.webp" type="image/webp"><img src="/billeder/kort-temafest.jpg" alt="Temafest"></picture>
+                    <picture><source srcset="/billeder/kort-halloween.webp" type="image/webp"><img src="/billeder/kort-halloween.jpg" alt="Halloween"></picture>
+                </div>
                 <div class="features-list">
                     <div class="feature-item">
                         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
