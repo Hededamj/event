@@ -106,13 +106,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             display: grid;
             grid-template-columns: 1fr 1fr;
             grid-template-rows: 1fr 1fr;
-            gap: 3px;
+            gap: 0;
+        }
+
+        .visual-mosaic picture {
+            width: 100%;
+            height: 100%;
+            display: block;
+            overflow: hidden;
         }
 
         .visual-mosaic-img {
             width: 100%;
             height: 100%;
             object-fit: cover;
+            display: block;
         }
 
         .visual-mosaic-img:nth-child(1) { object-position: center 20%; }
