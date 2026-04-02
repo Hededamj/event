@@ -43,12 +43,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             case 'update':
                 $name = trim($_POST['name'] ?? '');
                 $email = trim($_POST['email'] ?? '');
-                $company = trim($_POST['company'] ?? '');
                 $phone = trim($_POST['phone'] ?? '');
 
                 if ($name && $email) {
-                    $stmt = $db->prepare("UPDATE accounts SET name = ?, email = ?, company = ?, phone = ? WHERE id = ?");
-                    $stmt->execute([$name, $email, $company, $phone, $accountId]);
+                    $stmt = $db->prepare("UPDATE accounts SET name = ?, email = ?, phone = ? WHERE id = ?");
+                    $stmt->execute([$name, $email, $phone, $accountId]);
                     setFlash('success', 'Konto opdateret');
                 }
                 break;
@@ -183,11 +182,6 @@ $sessions = $stmt->fetchAll();
                 <div class="form-group">
                     <label class="form-label">Email</label>
                     <input type="email" name="email" class="form-input" value="<?= escape($account['email']) ?>" required>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">Firma</label>
-                    <input type="text" name="company" class="form-input" value="<?= escape($account['company'] ?? '') ?>">
                 </div>
 
                 <div class="form-group">
