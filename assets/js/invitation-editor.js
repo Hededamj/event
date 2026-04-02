@@ -13,6 +13,7 @@
     var activeEditable = null;
     var eventId = null;
     var dragState = null;
+    var globalListenersBound = false;
 
     // ─── Font Map ───────────────────────────────────────────────────────
     var fontMap = {
@@ -145,9 +146,13 @@
     //  SIDEBAR
     // ═══════════════════════════════════════════════════════════════════
 
+    // ─── Step Completion Map ───────────────────────────────────
+    var stepPanels = ['images', 'text', 'design', 'sections', 'publish'];
+
     function initSidebar() {
         initSidebarTabs();
         initSidebarCollapse();
+        initStepNavigation();
         initFontOptions();
         initColorInputs();
         initColorPresets();
@@ -163,22 +168,7 @@
         for (var i = 0; i < tabs.length; i++) {
             tabs[i].addEventListener('click', function() {
                 var panelName = this.getAttribute('data-panel');
-
-                // Deactivate all tabs and panels
-                for (var j = 0; j < tabs.length; j++) {
-                    tabs[j].classList.remove('active');
-                }
-                var panels = document.querySelectorAll('.sidebar-panel');
-                for (var j = 0; j < panels.length; j++) {
-                    panels[j].classList.remove('active');
-                }
-
-                // Activate clicked tab and corresponding panel
-                this.classList.add('active');
-                var panel = document.getElementById('panel-' + panelName);
-                if (panel) {
-                    panel.classList.add('active');
-                }
+                if (panelName) activatePanel(panelName);
             });
         }
     }
@@ -193,6 +183,80 @@
                 workspace.classList.toggle('sidebar-collapsed');
             }
         });
+    }
+
+    function initStepNavigation() {
+        var nextBtns = document.querySelectorAll('.step-next-btn');
+        for (var i = 0; i < nextBtns.length; i++) {
+            nextBtns[i].addEventListener('click', function() {
+                var nextPanel = this.getAttribute('data-next-panel');
+                if (nextPanel) {
+                    activatePanel(nextPanel);
+                }
+            });
+        }
+    }
+
+    function activatePanel(panelName) {
+        var tabs = document.querySelectorAll('.sidebar-tab');
+        var panels = document.querySelectorAll('.sidebar-panel');
+
+        for (var j = 0; j < tabs.length; j++) {
+            tabs[j].classList.remove('active');
+        }
+        for (var j = 0; j < panels.length; j++) {
+            panels[j].classList.remove('active');
+        }
+
+        var tab = document.querySelector('.sidebar-tab[data-panel="' + panelName + '"]');
+        var panel = document.getElementById('panel-' + panelName);
+        if (tab) tab.classList.add('active');
+        if (panel) panel.classList.add('active');
+
+        // Scroll panel to top
+        var panelsContainer = document.querySelector('.sidebar-panels');
+        if (panelsContainer) panelsContainer.scrollTop = 0;
+    }
+
+    function updateStepCompletion() {
+        // Check which steps are complete based on current state
+        var heroExists = document.querySelector('.hero-preview img');
+        var messageField = document.getElementById('field-message');
+        var hasMessage = messageField && messageField.value.trim().length > 0;
+
+        // Publish state is server-rendered, preserve it
+        var publishTab = document.querySelector('.sidebar-tab[data-panel="publish"]');
+        var publishComplete = publishTab && publishTab.classList.contains('completed');
+
+        var completion = {
+            images: !!heroExists,
+            text: !!hasMessage,
+            design: true,
+            sections: true,
+            publish: publishComplete
+        };
+
+        var completedCount = 0;
+        var total = stepPanels.length;
+
+        for (var i = 0; i < stepPanels.length; i++) {
+            var panel = stepPanels[i];
+            var tab = document.querySelector('.sidebar-tab[data-panel="' + panel + '"]');
+            if (!tab) continue;
+
+            if (completion[panel]) {
+                tab.classList.add('completed');
+                completedCount++;
+            } else {
+                tab.classList.remove('completed');
+            }
+        }
+
+        // Update progress bar
+        var fill = document.getElementById('steps-progress-fill');
+        var label = document.getElementById('steps-progress-label');
+        if (fill) fill.style.width = Math.round((completedCount / total) * 100) + '%';
+        if (label) label.textContent = completedCount + '/' + total + ' trin fuldført';
     }
 
     function initFontOptions() {
@@ -288,6 +352,7 @@
                 }
 
                 scheduleAutoSave();
+                updateStepCompletion();
             });
         }
     }
@@ -321,11 +386,34 @@
         var select = document.getElementById('layout-change');
         if (!select) return;
 
+        // Hidden select change handler (for backwards compat)
         select.addEventListener('change', function() {
             config.layout_style = this.value;
             loadPreviewFromServer();
             scheduleAutoSave();
         });
+
+        // Visual layout picker cards
+        var cards = document.querySelectorAll('.layout-picker-card');
+        for (var i = 0; i < cards.length; i++) {
+            cards[i].addEventListener('click', function() {
+                var value = this.getAttribute('data-layout-value');
+                if (!value || value === config.layout_style) return;
+
+                // Update visual state
+                var allCards = document.querySelectorAll('.layout-picker-card');
+                for (var j = 0; j < allCards.length; j++) {
+                    allCards[j].classList.remove('selected');
+                }
+                this.classList.add('selected');
+
+                // Sync hidden select and trigger change
+                select.value = value;
+                config.layout_style = value;
+                loadPreviewFromServer();
+                scheduleAutoSave();
+            });
+        }
     }
 
     // ═══════════════════════════════════════════════════════════════════
@@ -403,23 +491,27 @@
             });
         }
 
-        // Click outside editable → stop editing
-        document.addEventListener('click', function(e) {
-            if (!activeEditable) return;
+        // Click outside editable → stop editing (only bind once)
+        if (!globalListenersBound) {
+            document.addEventListener('click', function(e) {
+                if (!activeEditable) return;
 
-            var toolbar = document.getElementById('floating-toolbar');
-            if (toolbar && toolbar.contains(e.target)) return;
-            if (activeEditable.contains(e.target)) return;
+                var toolbar = document.getElementById('floating-toolbar');
+                if (toolbar && toolbar.contains(e.target)) return;
+                if (activeEditable.contains(e.target)) return;
 
-            stopInlineEdit();
-        });
-
-        // Escape key → stop editing
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape' && activeEditable) {
                 stopInlineEdit();
-            }
-        });
+            });
+
+            // Escape key → stop editing
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && activeEditable) {
+                    stopInlineEdit();
+                }
+            });
+
+            globalListenersBound = true;
+        }
     }
 
     function startInlineEdit(el) {
@@ -509,9 +601,10 @@
 
         var elRect = el.getBoundingClientRect();
         var panelRect = previewPanel.getBoundingClientRect();
+        var scrollTop = previewPanel.scrollTop;
 
         toolbar.style.left = (elRect.left - panelRect.left) + 'px';
-        toolbar.style.top = (elRect.top - panelRect.top - toolbar.offsetHeight - 8) + 'px';
+        toolbar.style.top = (elRect.top - panelRect.top + scrollTop - toolbar.offsetHeight - 8) + 'px';
 
         toolbar.classList.add('visible');
     }
@@ -679,6 +772,7 @@
             initSidebar();
             initPreviewEditor();
             initToolbar();
+            updateStepCompletion();
 
             // Apply initial styles
             if (config.font_style) {
@@ -698,5 +792,26 @@
     } else {
         init();
     }
+
+    // Expose reinit for external callers (e.g. after XHR preview reload)
+    window.reinitPreviewEditor = initPreviewEditor;
+
+    // Expose force auto-save for external callers (e.g. before page reload)
+    window.forceAutoSave = function(callback) {
+        if (saveTimeout) clearTimeout(saveTimeout);
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '/api/invitation-autosave.php', true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === 4 && callback) callback();
+        };
+        xhr.onerror = function() { if (callback) callback(); };
+        var payload = {};
+        for (var key in config) {
+            if (config.hasOwnProperty(key)) payload[key] = config[key];
+        }
+        payload.event_id = eventId;
+        xhr.send(JSON.stringify(payload));
+    };
 
 })();

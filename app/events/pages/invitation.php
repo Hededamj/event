@@ -153,33 +153,67 @@ $publicUrl = '/e/' . htmlspecialchars($event['public_slug'] ?? $eventId);
 <div class="inv-workspace" id="inv-workspace" data-config="<?= $configJson ?>" data-event-id="<?= $eventId ?>">
 
     <!-- Sidebar -->
+    <?php
+    // Calculate step completion
+    $stepsComplete = [
+        'images' => !empty($heroImage),
+        'text' => !empty($invitationConfig['invitation_message']),
+        'design' => true, // always has defaults
+        'sections' => true, // always has defaults
+        'publish' => !empty($invitationConfig['is_published'])
+    ];
+    $completedCount = count(array_filter($stepsComplete));
+    $totalSteps = count($stepsComplete);
+    // Find first incomplete step to auto-open
+    $activePanel = 'images';
+    foreach ($stepsComplete as $panel => $done) {
+        if (!$done) { $activePanel = $panel; break; }
+    }
+    ?>
     <div class="inv-sidebar" id="inv-sidebar">
         <button class="sidebar-collapse-btn" id="sidebar-collapse" title="Skjul sidebar">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
         </button>
 
+        <div class="steps-progress">
+            <div class="steps-progress-bar">
+                <div class="steps-progress-fill" id="steps-progress-fill" style="width: <?= round(($completedCount / $totalSteps) * 100) ?>%"></div>
+            </div>
+            <span class="steps-progress-label" id="steps-progress-label"><?= $completedCount ?>/<?= $totalSteps ?> trin fuldført</span>
+        </div>
+
         <div class="sidebar-tabs">
-            <button class="sidebar-tab active" data-panel="images" title="Billeder">
+            <button class="sidebar-tab<?= $activePanel === 'images' ? ' active' : '' ?><?= $stepsComplete['images'] ? ' completed' : '' ?>" data-panel="images" data-step="1" title="Billeder">
+                <span class="step-number">1</span>
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+                <span class="step-label">Billeder</span>
             </button>
-            <button class="sidebar-tab" data-panel="text" title="Tekst">
+            <button class="sidebar-tab<?= $activePanel === 'text' ? ' active' : '' ?><?= $stepsComplete['text'] ? ' completed' : '' ?>" data-panel="text" data-step="2" title="Tekst">
+                <span class="step-number">2</span>
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                <span class="step-label">Tekst</span>
             </button>
-            <button class="sidebar-tab" data-panel="design" title="Design">
+            <button class="sidebar-tab<?= $activePanel === 'design' ? ' active' : '' ?><?= $stepsComplete['design'] ? ' completed' : '' ?>" data-panel="design" data-step="3" title="Design">
+                <span class="step-number">3</span>
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="13.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="10.5" r="2.5"/><circle cx="8.5" cy="7.5" r="2.5"/><circle cx="6.5" cy="12.5" r="2.5"/><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12a10 10 0 0 0 5.012 8.662"/></svg>
+                <span class="step-label">Design</span>
             </button>
-            <button class="sidebar-tab" data-panel="sections" title="Sektioner">
+            <button class="sidebar-tab<?= $activePanel === 'sections' ? ' active' : '' ?><?= $stepsComplete['sections'] ? ' completed' : '' ?>" data-panel="sections" data-step="4" title="Sektioner">
+                <span class="step-number">4</span>
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+                <span class="step-label">Sektioner</span>
             </button>
-            <button class="sidebar-tab" data-panel="publish" title="Publicer">
+            <button class="sidebar-tab<?= $activePanel === 'publish' ? ' active' : '' ?><?= $stepsComplete['publish'] ? ' completed' : '' ?>" data-panel="publish" data-step="5" title="Publicer">
+                <span class="step-number">5</span>
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
+                <span class="step-label">Publicer</span>
             </button>
         </div>
 
         <div class="sidebar-panels">
 
             <!-- Panel: Images -->
-            <div class="sidebar-panel active" id="panel-images">
+            <div class="sidebar-panel<?= $activePanel === 'images' ? ' active' : '' ?>" id="panel-images">
                 <h3 class="panel-title">Billeder</h3>
 
                 <div class="sidebar-section">
@@ -187,7 +221,7 @@ $publicUrl = '/e/' . htmlspecialchars($event['public_slug'] ?? $eventId);
                     <div class="hero-upload-zone" id="hero-dropzone">
                         <?php if ($heroImage): ?>
                         <div class="hero-preview">
-                            <img src="<?= htmlspecialchars($heroImage['image_url']) ?>" alt="Hero">
+                            <img src="/uploads/invitations/<?= htmlspecialchars($heroImage['filename']) ?>" alt="Hero">
                             <button type="button" class="hero-remove-btn" onclick="deleteImage(<?= (int)$heroImage['id'] ?>)" title="Fjern hero-billede">&times;</button>
                         </div>
                         <?php else: ?>
@@ -205,7 +239,7 @@ $publicUrl = '/e/' . htmlspecialchars($event['public_slug'] ?? $eventId);
                     <div class="gallery-grid">
                         <?php foreach ($galleryImages as $img): ?>
                         <div class="gallery-thumb" data-id="<?= (int)$img['id'] ?>">
-                            <img src="<?= htmlspecialchars($img['image_url']) ?>" alt="Galleri">
+                            <img src="/uploads/invitations/<?= htmlspecialchars($img['filename']) ?>" alt="Galleri">
                             <button type="button" class="gallery-remove-btn" onclick="deleteImage(<?= (int)$img['id'] ?>)" title="Fjern billede">&times;</button>
                         </div>
                         <?php endforeach; ?>
@@ -217,46 +251,80 @@ $publicUrl = '/e/' . htmlspecialchars($event['public_slug'] ?? $eventId);
                         </div>
                     </div>
                 </div>
+
+                <button type="button" class="step-next-btn" data-next-panel="text">
+                    Næste: Tekst
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+                </button>
             </div>
 
             <!-- Panel: Text -->
-            <div class="sidebar-panel" id="panel-text">
+            <div class="sidebar-panel<?= $activePanel === 'text' ? ' active' : '' ?>" id="panel-text">
                 <h3 class="panel-title">Tekst</h3>
+                <p class="panel-desc">Skriv indholdet til din invitation. Klik på teksten i forhåndsvisningen for at redigere direkte.</p>
 
-                <div class="sidebar-section">
-                    <label class="sidebar-label" for="field-greeting">Hilsen</label>
-                    <input type="text" id="field-greeting" class="sidebar-input" data-field="greeting_template" value="<?= htmlspecialchars($invitationConfig['greeting_template'] ?? 'Kære {guest_name}') ?>">
-                    <span class="form-hint">Brug {guest_name} for gæstens navn</span>
+                <div class="field-card">
+                    <label class="field-card-label" for="field-greeting">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                        Hilsen
+                    </label>
+                    <input type="text" id="field-greeting" class="sidebar-input" data-field="greeting_template" placeholder="Kære {guest_name}" value="<?= htmlspecialchars($invitationConfig['greeting_template'] ?? 'Kære {guest_name}') ?>">
+                    <span class="form-hint"><strong>{guest_name}</strong> erstattes med gæstens navn</span>
                 </div>
 
-                <div class="sidebar-section">
-                    <label class="sidebar-label" for="field-headline">Overskrift</label>
-                    <input type="text" id="field-headline" class="sidebar-input" data-field="headline_text" value="<?= htmlspecialchars($invitationConfig['headline_text'] ?? '') ?>">
+                <div class="field-card">
+                    <label class="field-card-label" for="field-headline">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7V4h16v3"/><path d="M9 20h6"/><path d="M12 4v16"/></svg>
+                        Overskrift
+                    </label>
+                    <input type="text" id="field-headline" class="sidebar-input" data-field="headline_text" placeholder="F.eks. Du er inviteret til..." value="<?= htmlspecialchars($invitationConfig['headline_text'] ?? '') ?>">
                 </div>
 
-                <div class="sidebar-section">
-                    <label class="sidebar-label" for="field-message">Besked</label>
-                    <textarea id="field-message" class="sidebar-textarea" data-field="invitation_message" rows="6"><?= htmlspecialchars($invitationConfig['invitation_message'] ?? '') ?></textarea>
+                <div class="field-card field-card--large">
+                    <label class="field-card-label" for="field-message">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                        Besked
+                    </label>
+                    <textarea id="field-message" class="sidebar-textarea" data-field="invitation_message" rows="6" placeholder="Skriv din invitationsbesked her..."><?= htmlspecialchars($invitationConfig['invitation_message'] ?? '') ?></textarea>
                 </div>
 
-                <div class="sidebar-section">
-                    <label class="sidebar-label" for="field-closing">Afslutning</label>
-                    <input type="text" id="field-closing" class="sidebar-input" data-field="closing_text" value="<?= htmlspecialchars($invitationConfig['closing_text'] ?? '') ?>">
+                <div class="field-card">
+                    <label class="field-card-label" for="field-closing">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20l9-5-9-5-9 5 9 5z"/><path d="M12 12l9-5-9-5-9 5 9 5z"/></svg>
+                        Afslutning
+                    </label>
+                    <input type="text" id="field-closing" class="sidebar-input" data-field="closing_text" placeholder="F.eks. Vi glæder os til at se dig!" value="<?= htmlspecialchars($invitationConfig['closing_text'] ?? '') ?>">
                 </div>
+
+                <button type="button" class="step-next-btn" data-next-panel="design">
+                    Næste: Design
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+                </button>
             </div>
 
             <!-- Panel: Design -->
-            <div class="sidebar-panel" id="panel-design">
+            <div class="sidebar-panel<?= $activePanel === 'design' ? ' active' : '' ?>" id="panel-design">
                 <h3 class="panel-title">Design</h3>
 
                 <div class="sidebar-section">
-                    <label class="sidebar-label" for="layout-change">Layout</label>
-                    <select id="layout-change" class="sidebar-select" data-field="layout_style">
+                    <label class="sidebar-label">Layout</label>
+                    <!-- Hidden select for JS compatibility -->
+                    <select id="layout-change" class="sidebar-select sr-only" data-field="layout_style">
                         <?php foreach ($layouts as $key => $layout): ?>
                         <option value="<?= $key ?>" <?= $currentLayout === $key ? 'selected' : '' ?>><?= htmlspecialchars($layout['name']) ?></option>
                         <?php endforeach; ?>
                     </select>
-                    <a href="/app/events/manage.php?id=<?= $eventId ?>&page=invitation&mode=showcase" class="sidebar-link">Se alle layouts i fuld visning</a>
+                    <div class="layout-picker-grid">
+                        <?php foreach ($layouts as $key => $layout): ?>
+                        <button type="button" class="layout-picker-card<?= $currentLayout === $key ? ' selected' : '' ?>" data-layout-value="<?= $key ?>" title="<?= htmlspecialchars($layout['name']) ?>">
+                            <div class="layout-picker-preview">
+                                <?php include __DIR__ . '/invitation-showcase-mocks/' . $key . '.php'; ?>
+                            </div>
+                            <span class="layout-picker-name"><?= htmlspecialchars($layout['name']) ?></span>
+                        </button>
+                        <?php endforeach; ?>
+                    </div>
+                    <a href="/app/events/manage.php?id=<?= $eventId ?>&page=invitation&mode=showcase" class="sidebar-link">Se alle layouts i fuld størrelse</a>
                 </div>
 
                 <div class="sidebar-section">
@@ -308,10 +376,15 @@ $publicUrl = '/e/' . htmlspecialchars($event['public_slug'] ?? $eventId);
                         <input type="color" class="color-input" data-field="color_background" value="<?= htmlspecialchars($invitationConfig['color_background'] ?? '#FAF9F7') ?>">
                     </div>
                 </div>
+
+                <button type="button" class="step-next-btn" data-next-panel="sections">
+                    Næste: Sektioner
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+                </button>
             </div>
 
             <!-- Panel: Sections -->
-            <div class="sidebar-panel" id="panel-sections">
+            <div class="sidebar-panel<?= $activePanel === 'sections' ? ' active' : '' ?>" id="panel-sections">
                 <h3 class="panel-title">Sektioner</h3>
 
                 <div class="sidebar-section">
@@ -334,10 +407,15 @@ $publicUrl = '/e/' . htmlspecialchars($event['public_slug'] ?? $eventId);
                         <?php endforeach; ?>
                     </div>
                 </div>
+
+                <button type="button" class="step-next-btn" data-next-panel="publish">
+                    Næste: Publicer
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+                </button>
             </div>
 
             <!-- Panel: Publish -->
-            <div class="sidebar-panel" id="panel-publish">
+            <div class="sidebar-panel<?= $activePanel === 'publish' ? ' active' : '' ?>" id="panel-publish">
                 <h3 class="panel-title">Publicer</h3>
 
                 <div class="sidebar-section">
@@ -464,7 +542,12 @@ function uploadImage(file, role) {
         try {
             var data = JSON.parse(xhr.responseText);
             if (data.success) {
-                location.reload();
+                // Force save before reload to preserve unsaved changes
+                if (window.forceAutoSave) {
+                    window.forceAutoSave(function() { location.reload(); });
+                } else {
+                    location.reload();
+                }
             } else {
                 alert(data.error || 'Upload fejlede');
             }
@@ -481,7 +564,8 @@ function deleteImage(imageId) {
     var wsEventId = document.getElementById('inv-workspace').getAttribute('data-event-id');
 
     var xhr = new XMLHttpRequest();
-    xhr.open('GET', '/api/invitation-images.php?event_id=' + wsEventId + '&action=delete&image_id=' + imageId, true);
+    xhr.open('POST', '/api/invitation-images.php', true);
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
     xhr.onreadystatechange = function() {
         if (xhr.readyState !== 4) return;
         try {
@@ -496,7 +580,7 @@ function deleteImage(imageId) {
         }
     };
     xhr.onerror = function() { alert('Kunne ikke fjerne billede'); };
-    xhr.send();
+    xhr.send('event_id=' + encodeURIComponent(wsEventId) + '&action=delete&image_id=' + encodeURIComponent(imageId));
 }
 
 // Load preview on ready
@@ -514,6 +598,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (xhr.readyState !== 4) return;
         if (xhr.status >= 200 && xhr.status < 300) {
             document.getElementById('inv-preview').innerHTML = xhr.responseText;
+            if (window.reinitPreviewEditor) window.reinitPreviewEditor();
         } else {
             document.getElementById('inv-preview').innerHTML = '<p class="preview-error">Kunne ikke indlæse forhåndsvisning</p>';
         }
@@ -524,6 +609,6 @@ document.addEventListener('DOMContentLoaded', function() {
     xhr.send(JSON.stringify(wsConfig));
 });
 </script>
-<script src="/assets/js/invitation-editor.js"></script>
-
 <?php endif; ?>
+
+<script src="/assets/js/invitation-editor.js"></script>
