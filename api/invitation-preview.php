@@ -68,11 +68,13 @@ foreach ($images as $image) {
     }
 }
 
-// Sample guest for preview
-$sampleGuest = [
-    'name' => 'Mormor & Morfar',
-    'guest_names' => json_encode(['Mormor', 'Morfar'])
-];
+// Use first real guest for preview, fall back to generic example
+$stmt = $db->prepare("SELECT name, guest_names FROM guests WHERE event_id = ? ORDER BY id ASC LIMIT 1");
+$stmt->execute([$eventId]);
+$sampleGuest = $stmt->fetch();
+if (!$sampleGuest) {
+    $sampleGuest = ['name' => 'Anna', 'guest_names' => null];
+}
 
 // Generate personalized greeting
 $greeting = personalizeGreeting($config['greeting_template'] ?? 'Kære {guest_name}', $sampleGuest);
