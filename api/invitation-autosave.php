@@ -84,6 +84,16 @@ try {
     // Filter incoming fields to allowed only
     $incoming = array_intersect_key($input, array_flip($allowedFields));
 
+    // Validate color fields — must be valid hex color codes
+    $colorFields = ['color_primary', 'color_secondary', 'color_accent', 'color_text', 'color_background'];
+    foreach ($colorFields as $colorField) {
+        if (isset($incoming[$colorField]) && !preg_match('/^#[0-9a-fA-F]{3,8}$/', $incoming[$colorField])) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'error' => 'Ugyldig farveværdi for ' . $colorField]);
+            exit;
+        }
+    }
+
     // Merge with existing config
     $existingConfig = getInvitationConfig($db, $eventId);
     $data = array_merge($existingConfig, $incoming);
@@ -101,6 +111,7 @@ try {
     echo json_encode(['success' => true]);
 
 } catch (Exception $e) {
+    error_log('Invitation autosave error (event ' . ($eventId ?? 'unknown') . '): ' . $e->getMessage());
     http_response_code(500);
-    echo json_encode(['success' => false, 'error' => 'Serverfejl: ' . $e->getMessage()]);
+    echo json_encode(['success' => false, 'error' => 'Der opstod en serverfejl. Prøv igen senere.']);
 }

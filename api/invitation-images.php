@@ -51,6 +51,11 @@ switch ($action) {
         break;
 
     case 'delete':
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(405);
+            echo json_encode(['success' => false, 'error' => 'Kun POST-metode er tilladt']);
+            break;
+        }
         handleDelete($db, $eventId);
         break;
 
@@ -59,6 +64,11 @@ switch ($action) {
         break;
 
     case 'set-role':
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(405);
+            echo json_encode(['success' => false, 'error' => 'Kun POST-metode er tilladt']);
+            break;
+        }
         handleSetRole($db, $eventId);
         break;
 

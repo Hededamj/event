@@ -1,8 +1,10 @@
-<div style="height:100%;background:linear-gradient(135deg,#8FA583,#5A7A4E);position:relative;">
-    <div class="mock-overlay" style="position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,0.2),rgba(0,0,0,0.6));"></div>
-    <div class="mock-hero-text" style="position:absolute;bottom:30%;left:50%;transform:translateX(-50%);text-align:center;">
-        <div style="width:80px;height:8px;background:#fff;border-radius:4px;margin:0 auto 8px;opacity:0.7;"></div>
-        <div style="width:120px;height:16px;background:#fff;border-radius:4px;margin:0 auto 8px;opacity:0.9;"></div>
-        <div style="width:60px;height:6px;background:#fff;border-radius:4px;margin:0 auto;opacity:0.5;"></div>
+<div style="height:100%;position:relative;overflow:hidden;">
+    <img src="/billeder/kort-bryllup.webp" alt="" style="width:100%;height:100%;object-fit:cover;display:block;">
+    <div class="mock-overlay" style="position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,0.1) 0%,rgba(0,0,0,0.6) 100%);"></div>
+    <div class="mock-hero-text" style="position:absolute;bottom:18%;left:0;right:0;text-align:center;padding:0 16px;">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:7px;color:rgba(255,255,255,0.75);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:4px;">Du er inviteret</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:14px;font-weight:500;color:#fff;line-height:1.2;margin-bottom:6px;">Maria & Anders'<br>Bryllup</div>
+        <div style="width:24px;height:1px;background:#B8923D;margin:0 auto 6px;"></div>
+        <div style="font-family:'DM Sans',sans-serif;font-size:6px;color:rgba(255,255,255,0.7);">21. juni 2026 · Frederiksberg Slot</div>
     </div>
 </div>

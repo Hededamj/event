@@ -89,7 +89,7 @@ $showGreeting = $layoutStyle !== 'fullscreen'; // Greeting shown in hero for ful
 </div>
 <script>
 (function() {
-    var eventDate = new Date('<?= $event['event_date'] ?><?= $event['event_time'] ? 'T' . $event['event_time'] : 'T12:00:00' ?>');
+    var eventDate = new Date(<?= json_encode($event['event_date'] . ($event['event_time'] ? 'T' . $event['event_time'] : 'T12:00:00')) ?>);
 
     function updateCountdown() {
         var now = new Date();

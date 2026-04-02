@@ -283,8 +283,20 @@ function uploadInvitationImage(PDO $db, int $eventId, array $file, string $role 
         return ['success' => false, 'error' => 'Filen er for stor. Maksimum er 10MB.'];
     }
 
-    // Generate unique filename
+    // Validate actual image content using getimagesize()
+    $imageInfo = @getimagesize($file['tmp_name']);
+    if ($imageInfo === false) {
+        return ['success' => false, 'error' => 'Filen er ikke et gyldigt billede.'];
+    }
+
+    // Whitelist allowed extensions (case-insensitive)
     $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
+    $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+    if (!in_array(strtolower($ext), $allowedExtensions)) {
+        return ['success' => false, 'error' => 'Ugyldig filendelse. Kun JPG, PNG, GIF og WebP er tilladt.'];
+    }
+
+    // Generate unique filename
     $filename = 'inv_' . $eventId . '_' . uniqid() . '.' . strtolower($ext);
 
     $uploadDir = __DIR__ . '/../uploads/invitations/';
