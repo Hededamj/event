@@ -497,6 +497,29 @@ if (!$isPartial): ?>
             <?php endif; ?>
             <?php include __DIR__ . '/../e/partials/invitation-content.php'; ?>
 
+        <?php elseif ($layoutStyle === 'slideshow'): ?>
+            <!-- Slideshow Layout (preview) -->
+            <div class="hero-section" style="<?= $heroImage ? 'background-image: url(' . htmlspecialchars($heroImage['url']) . ')' : 'background: linear-gradient(135deg, #1a1a1a, #2a2222)' ?>; position: relative;">
+                <div style="position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.85)); pointer-events: none;"></div>
+            </div>
+            <div class="content-section" style="background: #0a0a0a; color: #fff; padding: 32px;">
+                <style>
+                    .layout-slideshow .content-section .greeting,
+                    .layout-slideshow .content-section .headline { color: #fff; }
+                    .layout-slideshow .content-section .message { color: rgba(255,255,255,0.85); }
+                    .layout-slideshow .content-section .closing { color: rgba(255,255,255,0.6); }
+                    .layout-slideshow .content-section .event-details { background: rgba(255,255,255,0.08); }
+                    .layout-slideshow .content-section .detail-icon { background: var(--inv-secondary); color: #fff; }
+                    .layout-slideshow .content-section .detail-content h4 { color: rgba(255,255,255,0.7); }
+                    .layout-slideshow .content-section .detail-content p { color: #fff; }
+                    .layout-slideshow .content-section .countdown-item { background: rgba(255,255,255,0.1); color: #fff; }
+                    .layout-slideshow .content-section .countdown-value { color: #fff; }
+                    .layout-slideshow .content-section .countdown-label { color: rgba(255,255,255,0.7); }
+                    .layout-slideshow .content-section .rsvp-section { background: var(--inv-secondary); }
+                </style>
+                <?php include __DIR__ . '/../e/partials/invitation-content.php'; ?>
+            </div>
+
         <?php else: ?>
             <!-- Classic Layout -->
             <?php if ($heroImage): ?>
