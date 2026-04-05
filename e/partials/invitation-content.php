@@ -123,6 +123,36 @@ $showGreeting = $layoutStyle !== 'fullscreen'; // Greeting shown in hero for ful
 </div>
 <?php endif; ?>
 
+<?php if (!empty($config['show_map']) && !empty($event['location'])): ?>
+<div class="map-section" data-section="map" style="margin: 32px 0;">
+    <h3 style="font-size: 18px; margin-bottom: 12px;">Sådan finder du os</h3>
+    <div style="border-radius: 12px; overflow: hidden; border: 1px solid rgba(0,0,0,0.1);">
+        <iframe
+            width="100%"
+            height="250"
+            style="border:0; display:block;"
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            src="https://www.google.com/maps?q=<?= urlencode($event['location']) ?>&output=embed">
+        </iframe>
+    </div>
+    <p style="margin-top: 8px; font-size: 14px; opacity: 0.7;">
+        <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="vertical-align: -2px;">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+        </svg>
+        <?= htmlspecialchars($event['location']) ?>
+    </p>
+</div>
+<?php endif; ?>
+
+<?php if (!empty($config['show_schedule'])): ?>
+<div class="schedule-section" data-section="schedule" style="margin: 32px 0; text-align: center;">
+    <h3 style="font-size: 18px; margin-bottom: 8px;">Dagens program</h3>
+    <p style="font-size: 14px; opacity: 0.7;">Se hele programmet for dagen på event-siden</p>
+</div>
+<?php endif; ?>
+
 <?php if (!empty($config['show_rsvp'])): ?>
 <div class="rsvp-section" data-section="rsvp">
     <h3>Svar på invitationen</h3>
