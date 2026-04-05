@@ -196,9 +196,11 @@ if ($useInvitationLayout) {
         }
     }
 
-    // Personalized greeting for logged-in guests, generic for public
+    // Personalized greeting for logged-in guests, generic/empty for public
     if ($guestLoggedIn && $currentGuest) {
         $greeting = personalizeGreeting($invitationConfig['greeting_template'] ?? 'Kære {guest_name}', $currentGuest);
+    } elseif (($event['registration_mode'] ?? 'invite') === 'open') {
+        $greeting = ''; // No greeting for open events — nobody to greet
     } else {
         $greeting = 'Du er inviteret';
     }

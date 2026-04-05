@@ -447,6 +447,16 @@ $publicUrl = '/e/' . htmlspecialchars($event['public_slug'] ?? $eventId);
                 </div>
 
                 <?php if ($isPublished): ?>
+                <?php if (($event['registration_mode'] ?? 'invite') === 'open'): ?>
+                <div class="sidebar-section">
+                    <label class="sidebar-label">Del dette link</label>
+                    <p class="sidebar-hint" style="margin-bottom: 8px;">Gæster kan selv tilmelde sig via dette link</p>
+                    <div class="share-link-row">
+                        <input type="text" class="sidebar-input share-url" id="public-url" value="<?= htmlspecialchars((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http') . '://' . ($_SERVER['HTTP_HOST'] ?? 'partyparart.dk') . $publicUrl) ?>" readonly>
+                        <button type="button" class="btn btn-sm btn-outline" onclick="var btn=this;var url=document.getElementById('public-url');navigator.clipboard.writeText(url.value).then(function(){btn.textContent='Kopieret!';setTimeout(function(){btn.textContent='Kopier';},2000);});">Kopier</button>
+                    </div>
+                </div>
+                <?php else: ?>
                 <div class="sidebar-section">
                     <p class="sidebar-hint">Invitationen er live. Hver gæst modtager et personligt link via email.</p>
                 </div>
@@ -454,6 +464,7 @@ $publicUrl = '/e/' . htmlspecialchars($event['public_slug'] ?? $eventId);
                 <div class="sidebar-section">
                     <a href="/app/events/manage.php?id=<?= $eventId ?>&page=guests" class="btn btn-primary btn-block">Send invitationer</a>
                 </div>
+                <?php endif; ?>
                 <?php endif; ?>
             </div>
 
