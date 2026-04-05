@@ -93,6 +93,55 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['guest_code'])) {
     }
 }
 
+// Open registration (self sign-up)
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['open_register']) && ($event['registration_mode'] ?? '') === 'open') {
+    $rateLimit = checkRateLimit($db, 'open_register_' . $eventId, 10, 900);
+
+    if (!$rateLimit['allowed']) {
+        $loginError = 'For mange forsøg. Prøv igen senere.';
+    } else {
+        $regName = trim($_POST['reg_name'] ?? '');
+        $regEmail = trim($_POST['reg_email'] ?? '');
+
+        if (empty($regName)) {
+            $loginError = 'Navn er påkrævet.';
+        } elseif (!empty($regEmail) && !filter_var($regEmail, FILTER_VALIDATE_EMAIL)) {
+            $loginError = 'Ugyldig email-adresse.';
+        } else {
+            // Check for duplicate by email within this event
+            if (!empty($regEmail)) {
+                $stmt = $db->prepare("SELECT id FROM guests WHERE event_id = ? AND email = ? LIMIT 1");
+                $stmt->execute([$eventId, $regEmail]);
+                if ($stmt->fetch()) {
+                    $loginError = 'Denne email er allerede tilmeldt.';
+                }
+            }
+
+            if (empty($loginError)) {
+                $uniqueCode = generateGuestCode();
+                // Ensure code is unique within event
+                $maxAttempts = 10;
+                for ($i = 0; $i < $maxAttempts; $i++) {
+                    $stmt = $db->prepare("SELECT id FROM guests WHERE event_id = ? AND unique_code = ?");
+                    $stmt->execute([$eventId, $uniqueCode]);
+                    if (!$stmt->fetch()) break;
+                    $uniqueCode = generateGuestCode();
+                }
+
+                $stmt = $db->prepare("
+                    INSERT INTO guests (event_id, name, email, unique_code, rsvp_status, self_registered)
+                    VALUES (?, ?, ?, ?, 'pending', 1)
+                ");
+                $stmt->execute([$eventId, $regName, $regEmail ?: null, $uniqueCode]);
+                $newGuestId = $db->lastInsertId();
+
+                loginGuest($newGuestId, $eventId);
+                redirect("/e/$slug/rsvp");
+            }
+        }
+    }
+}
+
 if (isset($_GET['logout'])) {
     logout();
     redirect("/e/$slug/");

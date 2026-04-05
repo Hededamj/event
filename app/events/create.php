@@ -33,6 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     $address = trim($_POST['address'] ?? '');
     $theme = $_POST['theme'] ?? 'elegant';
     $welcomeText = trim($_POST['welcome_text'] ?? '');
+    $registrationMode = in_array($_POST['registration_mode'] ?? '', ['invite', 'open']) ? $_POST['registration_mode'] : 'invite';
 
     // Validation
     if (empty($mainPersonName)) {
@@ -76,17 +77,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
             // Insert event
             $stmt = $db->prepare("
                 INSERT INTO events (
-                    account_id, event_type_id, slug, qr_token, status, name,
+                    account_id, event_type_id, slug, qr_token, status, registration_mode, name,
                     main_person_name, secondary_person_name,
                     event_date, event_time, location, address,
                     theme, welcome_text, is_legacy
-                ) VALUES (?, ?, ?, ?, 'active', ?, ?, ?, ?, ?, ?, ?, ?, ?, FALSE)
+                ) VALUES (?, ?, ?, ?, 'active', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, FALSE)
             ");
             $stmt->execute([
                 $accountId,
                 $eventTypeId ?: null,
                 $slug,
                 $qrToken,
+                $registrationMode,
                 $eventName,
                 $mainPersonName,
                 $secondaryPersonName ?: null,
@@ -310,6 +312,36 @@ $error = $error ?? '';
                     >
                 </div>
 
+            </div>
+
+            <div class="form-section" style="margin-top: 32px;">
+                <label class="form-label">Hvordan tilmelder gæster sig?</label>
+                <div class="registration-mode-grid">
+                    <label class="reg-mode-card selected">
+                        <input type="radio" name="registration_mode" value="invite" checked>
+                        <div class="reg-mode-icon">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M22 11.08V12a10 10 0 11-5.93-9.14"></path>
+                                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                            </svg>
+                        </div>
+                        <h4>Personlige invitationer</h4>
+                        <p>Du tilføjer gæster og sender personlige links</p>
+                    </label>
+                    <label class="reg-mode-card">
+                        <input type="radio" name="registration_mode" value="open">
+                        <div class="reg-mode-icon">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"></path>
+                                <circle cx="9" cy="7" r="4"></circle>
+                                <path d="M23 21v-2a4 4 0 00-3-3.87"></path>
+                                <path d="M16 3.13a4 4 0 010 7.75"></path>
+                            </svg>
+                        </div>
+                        <h4>Åben tilmelding</h4>
+                        <p>Del ét link og lad gæster selv tilmelde sig</p>
+                    </label>
+                </div>
             </div>
 
             <div class="info-box">
@@ -663,6 +695,60 @@ $error = $error ?? '';
             display: none;
         }
     }
+
+    .registration-mode-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        margin-top: 8px;
+    }
+
+    .reg-mode-card {
+        border: 2px solid var(--border, #e0e0e0);
+        border-radius: 12px;
+        padding: 20px;
+        cursor: pointer;
+        transition: all 0.2s;
+        text-align: center;
+    }
+
+    .reg-mode-card:hover {
+        border-color: var(--primary, #8FA583);
+    }
+
+    .reg-mode-card.selected {
+        border-color: var(--primary, #8FA583);
+        background: rgba(143, 165, 131, 0.06);
+    }
+
+    .reg-mode-card input[type="radio"] { display: none; }
+
+    .reg-mode-icon {
+        width: 40px;
+        height: 40px;
+        margin: 0 auto 12px;
+        color: var(--primary, #8FA583);
+    }
+
+    .reg-mode-icon svg { width: 100%; height: 100%; }
+
+    .reg-mode-card h4 {
+        font-size: 15px;
+        font-weight: 600;
+        margin-bottom: 4px;
+    }
+
+    .reg-mode-card p {
+        font-size: 13px;
+        color: var(--text-secondary, #666);
+        margin: 0;
+    }
+
+    @media (max-width: 480px) {
+        .registration-mode-grid {
+            grid-template-columns: 1fr;
+        }
+    }
 </style>
 
 <?php
@@ -757,6 +843,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 secondaryGroup.style.display = 'none';
             }
         });
+    });
+});
+
+// Registration mode card selection
+document.querySelectorAll('.reg-mode-card').forEach(function(card) {
+    card.addEventListener('click', function() {
+        document.querySelectorAll('.reg-mode-card').forEach(function(c) { c.classList.remove('selected'); });
+        this.classList.add('selected');
     });
 });
 </script>

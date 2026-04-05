@@ -46,18 +46,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         $welcomeText = trim($_POST['welcome_text'] ?? '');
         $theme = $_POST['theme'] ?? 'elegant';
         $status = $_POST['status'] ?? 'active';
+        $registrationMode = in_array($_POST['registration_mode'] ?? '', ['invite', 'open']) ? $_POST['registration_mode'] : 'invite';
 
         $stmt = $db->prepare("
             UPDATE events SET
                 name = ?, main_person_name = ?, secondary_person_name = ?,
                 event_date = ?, event_time = ?, location = ?, address = ?,
-                welcome_text = ?, theme = ?, status = ?
+                welcome_text = ?, theme = ?, status = ?, registration_mode = ?
             WHERE id = ? AND account_id = ?
         ");
         $stmt->execute([
             $name, $mainPersonName, $secondaryPersonName ?: null,
             $eventDate, $eventTime ?: null, $location ?: null, $address ?: null,
-            $welcomeText ?: null, $theme, $status,
+            $welcomeText ?: null, $theme, $status, $registrationMode,
             $eventId, $accountId
         ]);
 
@@ -113,6 +114,19 @@ $eventTypes = getAllEventTypes();
                         <option value="completed" <?= ($event['status'] ?? '') === 'completed' ? 'selected' : '' ?>>Afsluttet</option>
                         <option value="archived" <?= ($event['status'] ?? '') === 'archived' ? 'selected' : '' ?>>Arkiveret</option>
                     </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Tilmeldingstype</label>
+                    <select name="registration_mode" class="form-input">
+                        <option value="invite" <?= ($event['registration_mode'] ?? 'invite') === 'invite' ? 'selected' : '' ?>>Personlige invitationer</option>
+                        <option value="open" <?= ($event['registration_mode'] ?? '') === 'open' ? 'selected' : '' ?>>Åben tilmelding</option>
+                    </select>
+                    <p class="form-hint" style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">
+                        <?= ($event['registration_mode'] ?? 'invite') === 'open'
+                            ? 'Alle kan tilmelde sig via den offentlige side'
+                            : 'Du tilføjer gæster og sender personlige links' ?>
+                    </p>
                 </div>
 
                 <div class="form-group">

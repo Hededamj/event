@@ -172,24 +172,48 @@ $showGreeting = $layoutStyle !== 'fullscreen'; // Greeting shown in hero for ful
 
 <?php if (!empty($showLoginInInvitation)): ?>
 <div class="login-section" style="margin-top: 48px; padding: 32px; background: rgba(0,0,0,0.03); border-radius: 16px; text-align: center;">
-    <h3 style="font-family: var(--font-display, 'Cormorant Garamond', serif); font-size: 22px; margin-bottom: 8px;">Har du en invitation?</h3>
-    <p style="font-size: 14px; opacity: 0.7; margin-bottom: 20px;">Indtast din personlige kode for at svare og se flere detaljer</p>
-    <?php if (!empty($loginError)): ?>
-    <div style="background: #B84C4C; color: white; padding: 10px 16px; border-radius: 8px; margin-bottom: 16px; font-size: 14px;">
-        <?= htmlspecialchars($loginError) ?>
-    </div>
+    <?php if (($event['registration_mode'] ?? 'invite') === 'open'): ?>
+        <h3 style="font-family: var(--font-display, 'Cormorant Garamond', serif); font-size: 22px; margin-bottom: 8px;">Tilmeld dig</h3>
+        <p style="font-size: 14px; opacity: 0.7; margin-bottom: 20px;">Udfyld dit navn for at tilmelde dig arrangementet</p>
+        <?php if (!empty($loginError)): ?>
+        <div style="background: #B84C4C; color: white; padding: 10px 16px; border-radius: 8px; margin-bottom: 16px; font-size: 14px;">
+            <?= htmlspecialchars($loginError) ?>
+        </div>
+        <?php endif; ?>
+        <form method="POST" style="max-width: 320px; margin: 0 auto; text-align: left;">
+            <input type="hidden" name="open_register" value="1">
+            <div style="margin-bottom: 12px;">
+                <input type="text" name="reg_name" placeholder="Dit navn" required
+                       style="width: 100%; padding: 14px 16px; border: 2px solid rgba(0,0,0,0.1); border-radius: 10px; font-size: 16px; font-family: inherit; background: white;">
+            </div>
+            <div style="margin-bottom: 12px;">
+                <input type="email" name="reg_email" placeholder="Email (valgfrit)"
+                       style="width: 100%; padding: 14px 16px; border: 2px solid rgba(0,0,0,0.1); border-radius: 10px; font-size: 16px; font-family: inherit; background: white;">
+            </div>
+            <button type="submit" style="width: 100%; padding: 14px; background: var(--inv-secondary, #8FA583); color: white; border: none; border-radius: 10px; font-size: 15px; font-weight: 600; cursor: pointer; font-family: inherit;">
+                Tilmeld mig
+            </button>
+        </form>
+    <?php else: ?>
+        <h3 style="font-family: var(--font-display, 'Cormorant Garamond', serif); font-size: 22px; margin-bottom: 8px;">Har du en invitation?</h3>
+        <p style="font-size: 14px; opacity: 0.7; margin-bottom: 20px;">Indtast din personlige kode for at svare og se flere detaljer</p>
+        <?php if (!empty($loginError)): ?>
+        <div style="background: #B84C4C; color: white; padding: 10px 16px; border-radius: 8px; margin-bottom: 16px; font-size: 14px;">
+            <?= htmlspecialchars($loginError) ?>
+        </div>
+        <?php endif; ?>
+        <form method="POST" style="max-width: 280px; margin: 0 auto;">
+            <input type="text"
+                   name="guest_code"
+                   placeholder="Din kode"
+                   maxlength="8"
+                   autocomplete="off"
+                   required
+                   style="width: 100%; padding: 14px 16px; border: 2px solid rgba(0,0,0,0.1); border-radius: 10px; font-size: 18px; text-align: center; letter-spacing: 3px; text-transform: uppercase; font-family: inherit; background: white; margin-bottom: 12px;">
+            <button type="submit" style="width: 100%; padding: 14px; background: var(--inv-secondary, #8FA583); color: white; border: none; border-radius: 10px; font-size: 15px; font-weight: 600; cursor: pointer; font-family: inherit;">
+                Log ind
+            </button>
+        </form>
     <?php endif; ?>
-    <form method="POST" style="max-width: 280px; margin: 0 auto;">
-        <input type="text"
-               name="guest_code"
-               placeholder="Din kode"
-               maxlength="8"
-               autocomplete="off"
-               required
-               style="width: 100%; padding: 14px 16px; border: 2px solid rgba(0,0,0,0.1); border-radius: 10px; font-size: 18px; text-align: center; letter-spacing: 3px; text-transform: uppercase; font-family: inherit; background: white; margin-bottom: 12px;">
-        <button type="submit" style="width: 100%; padding: 14px; background: var(--inv-secondary, #8FA583); color: white; border: none; border-radius: 10px; font-size: 15px; font-weight: 600; cursor: pointer; font-family: inherit;">
-            Log ind
-        </button>
-    </form>
 </div>
 <?php endif; ?>
