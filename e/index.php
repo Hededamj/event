@@ -54,9 +54,10 @@ if ($guestLoggedIn) {
     $currentGuest = $stmt->fetch();
 }
 
-// Auto-login via URL code
-if (!$guestLoggedIn && isset($_GET['kode']) && !empty($_GET['kode'])) {
-    $code = strtoupper(preg_replace('/[^A-Za-z0-9]/', '', $_GET['kode']));
+// Auto-login via personal URL (?g=CODE or legacy ?kode=CODE)
+$urlCode = $_GET['g'] ?? $_GET['kode'] ?? '';
+if (!$guestLoggedIn && !empty($urlCode)) {
+    $code = strtoupper(preg_replace('/[^A-Za-z0-9]/', '', $urlCode));
     $stmt = $db->prepare("SELECT * FROM guests WHERE event_id = ? AND unique_code = ?");
     $stmt->execute([$eventId, $code]);
     $guest = $stmt->fetch();
@@ -1175,7 +1176,7 @@ if ($useInvitationLayout) {
 
             <div class="login-card">
                 <h2 class="serif">Velkommen</h2>
-                <p>Indtast din personlige kode fra invitationen for at fortsætte.</p>
+                <p>Har du modtaget en invitation? Indtast din kode herunder.</p>
 
                 <?php if (!empty($loginError)): ?>
                 <div class="login-error">

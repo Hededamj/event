@@ -227,13 +227,13 @@ $eventTypes = getAllEventTypes();
         </form>
     </div>
 
-    <!-- Share Link -->
+    <!-- Public Page -->
     <div class="card">
         <div class="card-header">
-            <h2 class="card-title">Gæstelink</h2>
+            <h2 class="card-title">Offentlig side</h2>
         </div>
         <div class="share-section">
-            <p class="share-desc">Del dette link med dine gæster så de kan tilgå deres invitation:</p>
+            <p class="share-desc">Denne side viser din invitation offentligt. Gæster modtager personlige links via email.</p>
             <?php if ($event['slug']): ?>
             <div class="share-link-box">
                 <code id="shareLink"><?= htmlspecialchars(baseUrl()) ?>/e/<?= htmlspecialchars($event['slug']) ?>/</code>

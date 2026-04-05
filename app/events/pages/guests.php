@@ -1427,9 +1427,9 @@ function toggleInvitation(id) {
 }
 
 function copyLink(code) {
-    const fullLink = '<?= $eventBaseUrl ?>?kode=' + code;
+    const fullLink = '<?= $eventBaseUrl ?>?g=' + code;
     navigator.clipboard.writeText(fullLink).then(() => {
-        alert('Link kopieret til udklipsholder!');
+        alert('Personligt link kopieret!');
     });
 }
 

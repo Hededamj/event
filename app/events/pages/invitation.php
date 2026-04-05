@@ -448,11 +448,7 @@ $publicUrl = '/e/' . htmlspecialchars($event['public_slug'] ?? $eventId);
 
                 <?php if ($isPublished): ?>
                 <div class="sidebar-section">
-                    <label class="sidebar-label">Del link</label>
-                    <div class="share-link-row">
-                        <input type="text" class="sidebar-input share-url" id="public-url" value="<?= htmlspecialchars((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http') . '://' . ($_SERVER['HTTP_HOST'] ?? 'partyparart.dk') . $publicUrl) ?>" readonly>
-                        <button type="button" class="btn btn-sm btn-outline" onclick="var btn=this;var url=document.getElementById('public-url');var t=document.createElement('textarea');t.value=url.value;document.body.appendChild(t);t.select();document.execCommand('copy');document.body.removeChild(t);btn.textContent='Kopieret!';setTimeout(function(){btn.textContent='Kopier';},2000);">Kopier</button>
-                    </div>
+                    <p class="sidebar-hint">Invitationen er live. Hver gæst modtager et personligt link via email.</p>
                 </div>
 
                 <div class="sidebar-section">

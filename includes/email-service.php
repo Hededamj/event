@@ -169,7 +169,7 @@ class EmailService {
         $slug = $event['slug'] ?? '';
         $code = $guest['unique_code'] ?? '';
 
-        return "{$baseUrl}/e/{$slug}/?kode={$code}";
+        return "{$baseUrl}/e/{$slug}/?g={$code}";
     }
 
     /**

@@ -143,7 +143,7 @@ $textColor = $config['color_text'] ?? '#1A1A1A';
                                 Denne email er sendt via PartyParart
                             </p>
                             <p style="margin: 0; font-size: 12px; color: #bbbbbb;">
-                                Din personlige kode: <strong><?= htmlspecialchars($guest['unique_code'] ?? '') ?></strong>
+                                Klik på knappen ovenfor for at se din invitation
                             </p>
                         </td>
                     </tr>
