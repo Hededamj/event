@@ -60,30 +60,33 @@ $stmt = $db->prepare("
 $stmt->execute([$eventId]);
 $guests = $stmt->fetchAll();
 
-// Get wishlist items
+// Get wishlist items (columns: title, description, price, url, priority, reserved_by_guest_id)
 $stmt = $db->prepare("
-    SELECT wi.*, g.name as reserved_by_name
-    FROM wishlist_items wi
-    LEFT JOIN guests g ON wi.reserved_by_guest_id = g.id
-    WHERE wi.event_id = ?
-    ORDER BY wi.sort_order, wi.id
+    SELECT w.*, g.name as reserved_by_name
+    FROM wishlist_items w
+    LEFT JOIN guests g ON w.reserved_by_guest_id = g.id
+    WHERE w.event_id = ?
+    ORDER BY w.priority DESC, w.title ASC
 ");
 $stmt->execute([$eventId]);
 $wishlistItems = $stmt->fetchAll();
 
-// Get schedule items
+// Get schedule items (columns: time, title, description)
 $stmt = $db->prepare("
-    SELECT * FROM schedule_items WHERE event_id = ? ORDER BY start_time, sort_order
+    SELECT * FROM schedule_items WHERE event_id = ? ORDER BY time ASC, id ASC
 ");
 $stmt->execute([$eventId]);
 $scheduleItems = $stmt->fetchAll();
 
-// Get menu items
-$stmt = $db->prepare("
-    SELECT * FROM menu_items WHERE event_id = ? ORDER BY category, sort_order
-");
-$stmt->execute([$eventId]);
-$menuItems = $stmt->fetchAll();
+// Get menu items by course (columns: course, name, description, sort_order)
+$courses = ['starter' => 'Forret', 'main' => 'Hovedret', 'dessert' => 'Dessert', 'drinks' => 'Drikkevarer', 'snacks' => 'Snacks'];
+$menuItems = [];
+foreach ($courses as $key => $label) {
+    $stmt = $db->prepare("SELECT * FROM menu_items WHERE event_id = ? AND course = ? ORDER BY sort_order ASC");
+    $stmt->execute([$eventId, $key]);
+    $menuItems[$key] = $stmt->fetchAll();
+}
+$menuCount = array_sum(array_map('count', $menuItems));
 
 // Public URL
 $publicUrl = '/e/' . ($event['slug'] ?? $eventId);
@@ -265,9 +268,12 @@ $eventTextMap = ['active' => 'Aktiv', 'draft' => 'Kladde', 'completed' => 'Afslu
                 <?php foreach ($wishlistItems as $item): ?>
                     <div style="display: flex; justify-content: space-between; align-items: center; padding: var(--space-sm) 0; border-bottom: 1px solid var(--border);">
                         <div>
-                            <div class="font-medium"><?= escape($item['name']) ?></div>
+                            <div class="font-medium"><?= escape($item['title']) ?></div>
                             <?php if (!empty($item['description'])): ?>
                                 <div class="text-xs text-muted"><?= escape($item['description']) ?></div>
+                            <?php endif; ?>
+                            <?php if (!empty($item['price'])): ?>
+                                <div class="text-xs text-muted"><?= number_format($item['price'], 0, ',', '.') ?> kr</div>
                             <?php endif; ?>
                         </div>
                         <?php if ($item['reserved_by_guest_id']): ?>
@@ -287,7 +293,7 @@ $eventTextMap = ['active' => 'Aktiv', 'draft' => 'Kladde', 'completed' => 'Afslu
                 <?php foreach ($scheduleItems as $item): ?>
                     <div style="display: flex; gap: var(--space-sm); padding: var(--space-sm) 0; border-bottom: 1px solid var(--border);">
                         <div class="font-medium text-sm" style="min-width: 50px;">
-                            <?= $item['start_time'] ? date('H:i', strtotime($item['start_time'])) : '' ?>
+                            <?= $item['time'] ? htmlspecialchars(substr($item['time'], 0, 5)) : '--:--' ?>
                         </div>
                         <div>
                             <div class="font-medium"><?= escape($item['title']) ?></div>
@@ -302,29 +308,22 @@ $eventTextMap = ['active' => 'Aktiv', 'draft' => 'Kladde', 'completed' => 'Afslu
     </div>
 
     <!-- Menu -->
-    <?php if (!empty($menuItems)): ?>
+    <?php if ($menuCount > 0): ?>
         <div class="card mt-md">
-            <h2 class="card-title">Menu (<?= count($menuItems) ?>)</h2>
-            <div class="table-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Kategori</th>
-                            <th>Ret</th>
-                            <th>Beskrivelse</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($menuItems as $item): ?>
-                            <tr>
-                                <td class="text-sm"><?= escape($item['category'] ?? '-') ?></td>
-                                <td class="font-medium"><?= escape($item['name']) ?></td>
-                                <td class="text-sm text-muted"><?= escape($item['description'] ?? '-') ?></td>
-                            </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
-            </div>
+            <h2 class="card-title">Menu (<?= $menuCount ?>)</h2>
+            <?php foreach ($courses as $courseKey => $courseLabel): ?>
+                <?php if (!empty($menuItems[$courseKey])): ?>
+                    <h3 style="margin-top: var(--space-md); margin-bottom: var(--space-sm); font-size: 14px; color: var(--text-secondary);"><?= $courseLabel ?></h3>
+                    <?php foreach ($menuItems[$courseKey] as $item): ?>
+                        <div style="padding: var(--space-xs) 0; border-bottom: 1px solid var(--border);">
+                            <div class="font-medium"><?= escape($item['name']) ?></div>
+                            <?php if (!empty($item['description'])): ?>
+                                <div class="text-xs text-muted"><?= escape($item['description']) ?></div>
+                            <?php endif; ?>
+                        </div>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+            <?php endforeach; ?>
         </div>
     <?php endif; ?>
 </div>
