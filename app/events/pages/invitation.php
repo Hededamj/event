@@ -17,6 +17,20 @@ foreach ($images as $image) {
     else $galleryImages[] = $image;
 }
 
+// Count content for publish checklist
+$guestSections = [
+    ['label' => 'Program', 'sql' => "SELECT COUNT(*) FROM schedule_items WHERE event_id = ?"],
+    ['label' => 'Ønskeliste', 'sql' => "SELECT COUNT(*) FROM wishlist_items WHERE event_id = ?"],
+    ['label' => 'Galleri', 'sql' => "SELECT COUNT(*) FROM photos WHERE event_id = ?"],
+    ['label' => 'Minder', 'sql' => "SELECT COUNT(*) FROM timeline_memories WHERE event_id = ?"],
+];
+foreach ($guestSections as &$sec) {
+    $stmt = $db->prepare($sec['sql']);
+    $stmt->execute([$eventId]);
+    $sec['count'] = (int)$stmt->fetchColumn();
+}
+unset($sec);
+
 // Handle POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!verifyAccountCsrfToken($_POST['csrf_token'] ?? '')) {
@@ -429,6 +443,23 @@ $publicUrl = '/e/' . htmlspecialchars($event['slug'] ?? $eventId);
                             <span class="checklist-icon"><?= !empty($invitationConfig['invitation_message']) ? '&#10003;' : '&#9675;' ?></span>
                             Invitationsbesked skrevet
                         </li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <label class="sidebar-label">Gæster ser</label>
+                    <ul class="publish-checklist">
+                        <?php foreach ($guestSections as $sec): ?>
+                        <li class="checklist-item <?= $sec['count'] > 0 ? 'checked' : '' ?>">
+                            <span class="checklist-icon"><?= $sec['count'] > 0 ? '&#10003;' : '&#9675;' ?></span>
+                            <?= htmlspecialchars($sec['label']) ?>
+                            <?php if ($sec['count'] > 0): ?>
+                                <span style="opacity: 0.5; font-size: 12px;"> — <?= $sec['count'] ?> <?= $sec['count'] === 1 ? 'element' : 'elementer' ?></span>
+                            <?php else: ?>
+                                <span style="opacity: 0.5; font-size: 12px;"> — skjules</span>
+                            <?php endif; ?>
+                        </li>
+                        <?php endforeach; ?>
                     </ul>
                 </div>
 

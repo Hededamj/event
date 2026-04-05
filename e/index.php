@@ -162,16 +162,37 @@ if (!$guestLoggedIn && !$qrTokenValid && $page !== 'landing') redirect("/e/$slug
 
 $flash = getFlash();
 
-// Navigation items with Phosphor-style icons
-$navItems = [
-    ['slug' => 'home', 'label' => 'Oversigt', 'icon' => 'home'],
-    ['slug' => 'rsvp', 'label' => 'Tilmelding', 'icon' => 'check-circle'],
+// Count content for each section to hide empty ones from guest nav
+$sectionCounts = [];
+$countQueries = [
+    'schedule' => "SELECT COUNT(*) FROM schedule_items WHERE event_id = ?",
+    'wishlist' => "SELECT COUNT(*) FROM wishlist_items WHERE event_id = ?",
+    'photos'   => "SELECT COUNT(*) FROM photos WHERE event_id = ?",
+    'memories' => "SELECT COUNT(*) FROM timeline_memories WHERE event_id = ?",
+    'indslag'  => "SELECT COUNT(*) FROM toastmaster_items WHERE event_id = ?",
+];
+foreach ($countQueries as $key => $sql) {
+    $stmt = $db->prepare($sql);
+    $stmt->execute([$eventId]);
+    $sectionCounts[$key] = (int)$stmt->fetchColumn();
+}
+
+// Navigation items — only show sections with content (home + rsvp always shown)
+$allNavItems = [
+    ['slug' => 'home', 'label' => 'Oversigt', 'icon' => 'home', 'always' => true],
+    ['slug' => 'rsvp', 'label' => 'Tilmelding', 'icon' => 'check-circle', 'always' => true],
     ['slug' => 'schedule', 'label' => 'Program', 'icon' => 'calendar'],
     ['slug' => 'wishlist', 'label' => 'Ønsker', 'icon' => 'gift'],
     ['slug' => 'memories', 'label' => 'Minder', 'icon' => 'clock'],
     ['slug' => 'photos', 'label' => 'Galleri', 'icon' => 'camera'],
     ['slug' => 'indslag', 'label' => 'Indslag', 'icon' => 'microphone'],
 ];
+
+$navItems = array_filter($allNavItems, function($item) use ($sectionCounts) {
+    if (!empty($item['always'])) return true;
+    return ($sectionCounts[$item['slug']] ?? 0) > 0;
+});
+$navItems = array_values($navItems);
 
 // Load invitation configuration
 $invitationConfig = getInvitationConfig($db, $eventId);
