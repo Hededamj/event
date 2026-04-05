@@ -125,9 +125,14 @@ $navItems = [
 
 // Load invitation configuration
 $invitationConfig = getInvitationConfig($db, $eventId);
-$useInvitationLayout = $invitationConfig['is_published'] && $guestLoggedIn && $page === 'home';
+$isInvitationPublished = !empty($invitationConfig['is_published']);
 
-// If invitation is published and guest is on home, render invitation layout
+// Show invitation layout for: logged-in guests on home, OR public visitors on landing
+$useInvitationLayout = $isInvitationPublished && (
+    ($guestLoggedIn && $page === 'home') ||
+    (!$guestLoggedIn && $page === 'landing')
+);
+
 if ($useInvitationLayout) {
     // Get invitation images
     $invitationImages = getInvitationImages($db, $eventId);
@@ -141,8 +146,13 @@ if ($useInvitationLayout) {
         }
     }
 
-    // Prepare personalized content
-    $greeting = personalizeGreeting($invitationConfig['greeting_template'] ?? 'Kære {guest_name}', $currentGuest);
+    // Personalized greeting for logged-in guests, generic for public
+    if ($guestLoggedIn && $currentGuest) {
+        $greeting = personalizeGreeting($invitationConfig['greeting_template'] ?? 'Kære {guest_name}', $currentGuest);
+    } else {
+        $greeting = 'Du er inviteret';
+    }
+
     $fonts = getInvitationFontFamily($invitationConfig['font_style'] ?? 'elegant');
     $cssVars = getInvitationCssVariables($invitationConfig);
 
@@ -159,6 +169,12 @@ if ($useInvitationLayout) {
             'time' => $event['event_time'] ? (new DateTime($event['event_time']))->format('H:i') : null
         ];
     }
+
+    // Flag for showing login form at bottom of invitation (public visitors only)
+    $showLoginInInvitation = !$guestLoggedIn;
+
+    // Alias for invitation-content.php partial which expects $config
+    $config = $invitationConfig;
 
     // Render the invitation layout
     $layoutFile = __DIR__ . '/layouts/invitation-' . ($invitationConfig['layout_style'] ?? 'split') . '.php';
