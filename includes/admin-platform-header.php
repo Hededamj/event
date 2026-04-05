@@ -211,6 +211,17 @@ $platformName = getPlatformSetting('platform_name', 'EventPlatform');
                 Dashboard
             </a>
 
+            <div class="ds-nav-section-title">Indhold</div>
+            <a href="<?= BASE_PATH ?>/admin-platform/events.php" class="ds-nav-link <?= in_array($currentPage, ['events', 'event-detail']) ? 'active' : '' ?>">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+                Events
+            </a>
+
             <div class="ds-nav-section-title">Brugere</div>
             <a href="<?= BASE_PATH ?>/admin-platform/accounts.php" class="ds-nav-link <?= $currentPage === 'accounts' ? 'active' : '' ?>">
                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

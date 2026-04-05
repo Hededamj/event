@@ -331,10 +331,13 @@ $sessions = $stmt->fetchAll();
                         <?php foreach ($events as $event): ?>
                             <tr>
                                 <td>
-                                    <div class="font-medium"><?= escape($event['name']) ?></div>
-                                    <?php if ($event['slug']): ?>
-                                        <div class="text-xs text-muted">/<?= escape($event['slug']) ?></div>
-                                    <?php endif; ?>
+                                    <a href="<?= BASE_PATH ?>/admin-platform/event-detail.php?id=<?= $event['id'] ?>"
+                                       style="text-decoration: none; color: inherit;">
+                                        <div class="font-medium"><?= escape($event['name']) ?></div>
+                                        <?php if ($event['slug']): ?>
+                                            <div class="text-xs text-muted">/<?= escape($event['slug']) ?></div>
+                                        <?php endif; ?>
+                                    </a>
                                 </td>
                                 <td><?= escape($event['event_type_name'] ?? '-') ?></td>
                                 <td><?= $event['event_date'] ? date('d/m/Y', strtotime($event['event_date'])) : '-' ?></td>
