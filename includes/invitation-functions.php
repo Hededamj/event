@@ -424,7 +424,9 @@ function personalizeGreeting(string $template, array $guest): string {
     if (!empty($guest['guest_names'])) {
         $names = json_decode($guest['guest_names'], true);
         if (is_array($names) && count($names) > 0) {
-            $guestName = implode(' & ', $names);
+            $guestName = implode(' & ', array_map(function($n) {
+                return is_array($n) ? ($n['name'] ?? '') : $n;
+            }, $names));
         }
     }
 
