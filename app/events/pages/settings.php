@@ -262,7 +262,7 @@ $eventTypes = getAllEventTypes();
     <!-- Danger Zone -->
     <div class="card danger-zone">
         <div class="card-header">
-            <h2 class="card-title" style="color: var(--danger);">Farezone</h2>
+            <h2 class="card-title" style="color: var(--error);">Farezone</h2>
         </div>
         <div class="danger-content">
             <div class="danger-item">
@@ -278,7 +278,7 @@ $eventTypes = getAllEventTypes();
 
 <!-- Delete Modal -->
 <div class="modal-overlay" id="deleteModal">
-    <div class="modal">
+    <div class="modal-content">
         <div class="modal-header">
             <h3>Slet arrangement</h3>
             <button type="button" class="modal-close" onclick="hideDeleteModal()">&times;</button>
@@ -295,7 +295,7 @@ $eventTypes = getAllEventTypes();
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" onclick="hideDeleteModal()">Annuller</button>
-                <button type="submit" class="btn btn-danger">Slet permanent</button>
+                <button type="submit" class="btn btn-error">Slet permanent</button>
             </div>
         </form>
     </div>
@@ -315,7 +315,7 @@ $eventTypes = getAllEventTypes();
     .danger-item { display: flex; justify-content: space-between; align-items: center; gap: 24px; }
     .danger-item h4 { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
     .danger-item p { font-size: 14px; color: var(--text-secondary); }
-    .btn-danger { background: var(--danger); color: white; }
+    .btn-danger, .btn-error { background: var(--error); color: white; }
     .delete-warning { background: #fef2f2; border: 1px solid #fecaca; padding: 12px; border-radius: 8px; margin-bottom: 20px; color: #dc2626; font-size: 14px; }
 
     /* Toggle switch */
