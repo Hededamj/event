@@ -1572,6 +1572,7 @@ require_once __DIR__ . '/includes/functions.php';
             </div>
             <div class="vendor-cta">
                 <a href="/app/auth/register.php">Se alle leverandører &rarr;</a>
+                <a href="/bliv-leverandor" style="margin-left: 16px;">Er du leverandør? Bliv en del af os &rarr;</a>
             </div>
         </div>
     </section>
@@ -1707,6 +1708,7 @@ require_once __DIR__ . '/includes/functions.php';
                 <div class="footer-links">
                     <a href="#">Om os</a>
                     <a href="#">Kontakt</a>
+                    <a href="/bliv-leverandor">Bliv leverandør</a>
                     <a href="#">Privatlivspolitik</a>
                 </div>
                 <div class="footer-copy">&copy; 2026 PartyParart. Alle rettigheder forbeholdes.</div>
