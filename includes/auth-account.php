@@ -249,8 +249,9 @@ function getAccountEventCount(int $accountId): int {
 
     $stmt = $db->prepare("
         SELECT COUNT(*) as count
-        FROM event_owners
-        WHERE account_id = ? AND role = 'owner'
+        FROM event_owners eo
+        JOIN events e ON eo.event_id = e.id
+        WHERE eo.account_id = ? AND eo.role = 'owner'
     ");
     $stmt->execute([$accountId]);
     $result = $stmt->fetch();
