@@ -105,7 +105,7 @@ $sections = [
 $currentLayout = $invitationConfig['layout_style'] ?? 'split';
 $currentFont = $invitationConfig['font_style'] ?? 'elegant';
 $isPublished = !empty($invitationConfig['is_published']);
-$publicUrl = '/e/' . htmlspecialchars($event['public_slug'] ?? $eventId);
+$publicUrl = '/e/' . htmlspecialchars($event['slug'] ?? $eventId);
 ?>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
