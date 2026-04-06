@@ -86,7 +86,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         /* Mobile branded header */
         .auth-visual {
-            padding: 24px 20px;
+            padding: 24px 16px;
             text-align: center;
             color: var(--text-on-dark);
             position: relative;
@@ -133,11 +133,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             width: 48px;
             height: 48px;
             background: rgba(255,255,255,0.15);
-            border-radius: 14px;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 12px;
+            margin: 0 auto 16px;
         }
 
         .visual-icon svg {
@@ -164,12 +164,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             flex: 1;
             display: flex;
             flex-direction: column;
-            padding: 24px 20px 32px;
+            padding: 24px 16px 32px;
             background: var(--surface);
         }
 
         .auth-header {
-            margin-bottom: 20px;
+            margin-bottom: 24px;
         }
 
         .auth-logo {
@@ -188,10 +188,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         .auth-title {
             font-family: var(--font-display);
-            font-size: 26px;
+            font-size: 24px;
             font-weight: 400;
             color: var(--text);
-            margin-bottom: 6px;
+            margin-bottom: 8px;
         }
 
         .auth-subtitle {
@@ -203,9 +203,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             background: var(--surface-card);
             border-radius: var(--radius-lg);
             padding: 24px;
-            box-shadow:
-                0 1px 2px rgba(0,0,0,0.04),
-                0 4px 16px rgba(0,0,0,0.04);
+            box-shadow: var(--shadow-md);
             animation: fadeIn 0.6s var(--ease-out);
         }
 
@@ -213,10 +211,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             background: var(--error-light);
             border: 1px solid rgba(193, 75, 75, 0.2);
             color: var(--error);
-            padding: 12px 14px;
+            padding: 12px 16px;
             border-radius: var(--radius-md);
             font-size: 14px;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
             display: flex;
             align-items: center;
             gap: 8px;
@@ -235,12 +233,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             font-size: 14px;
             font-weight: 600;
             color: var(--text);
-            margin-bottom: 6px;
+            margin-bottom: 8px;
         }
 
         .form-input {
             width: 100%;
-            padding: 12px 14px;
+            padding: 12px 16px;
             font-family: var(--font-body);
             font-size: 16px;
             border: 1.5px solid var(--border);
@@ -298,7 +296,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             justify-content: center;
             gap: 8px;
             width: 100%;
-            padding: 14px 24px;
+            padding: 16px 24px;
             font-family: var(--font-body);
             font-size: 15px;
             font-weight: 600;
@@ -328,7 +326,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         .divider {
             display: flex;
             align-items: center;
-            margin: 20px 0;
+            margin: 24px 0;
             color: var(--text-secondary);
             font-size: 13px;
         }
@@ -342,13 +340,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         .divider span {
-            padding: 0 14px;
+            padding: 0 16px;
         }
 
         .alt-link {
             display: block;
             text-align: center;
-            padding: 12px 20px;
+            padding: 12px 24px;
             border: 1.5px solid var(--border);
             border-radius: var(--radius-md);
             color: var(--text);
@@ -364,7 +362,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         .form-footer {
-            margin-top: 20px;
+            margin-top: 24px;
             text-align: center;
         }
 
@@ -391,7 +389,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             .visual-icon {
                 width: 56px;
                 height: 56px;
-                border-radius: 18px;
+                border-radius: 16px;
             }
 
             .visual-icon svg {
@@ -404,13 +402,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
 
             .auth-form-section {
-                padding: 40px;
+                padding: 32px;
                 align-items: center;
                 justify-content: center;
             }
 
             .auth-header {
-                margin-bottom: 28px;
+                margin-bottom: 32px;
                 max-width: 440px;
                 width: 100%;
             }
@@ -428,17 +426,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
 
             .auth-card {
-                padding: 36px;
+                padding: 32px;
                 max-width: 440px;
                 width: 100%;
             }
 
             .form-group {
-                margin-bottom: 20px;
+                margin-bottom: 24px;
             }
 
             .form-input {
-                padding: 14px 16px;
+                padding: 16px;
             }
 
             .btn-submit {
@@ -469,7 +467,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             .visual-icon {
                 width: 80px;
                 height: 80px;
-                border-radius: 24px;
+                border-radius: 16px;
                 margin-bottom: 32px;
                 backdrop-filter: blur(12px);
             }
@@ -496,7 +494,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 width: 55%;
                 min-height: 100vh;
                 min-height: 100dvh;
-                padding: 48px 64px;
+                padding: 48px;
             }
 
             .auth-header {
@@ -513,7 +511,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             .btn-submit:hover {
                 transform: translateY(-2px);
-                box-shadow: 0 8px 24px rgba(44,44,44,0.2);
+                box-shadow: var(--shadow-lg);
             }
         }
     </style>
