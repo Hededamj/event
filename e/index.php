@@ -437,11 +437,9 @@ if ($useInvitationLayout) {
 
         .login-card {
             background: var(--white);
-            border-radius: 20px;
-            padding: 36px;
-            box-shadow:
-                0 1px 2px rgba(0,0,0,0.04),
-                0 4px 16px rgba(0,0,0,0.04);
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
             animation: fadeIn 0.8s var(--ease-out) 0.1s both;
             max-width: 400px;
         }
@@ -456,17 +454,17 @@ if ($useInvitationLayout) {
         .login-card p {
             font-size: 14px;
             color: var(--charcoal-light);
-            margin-bottom: 28px;
+            margin-bottom: 24px;
         }
 
         .code-input-wrapper {
             position: relative;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
         }
 
         .code-input {
             width: 100%;
-            padding: 18px 20px;
+            padding: 16px;
             font-family: var(--font-body);
             font-size: 20px;
             font-weight: 500;
@@ -474,7 +472,7 @@ if ($useInvitationLayout) {
             text-align: center;
             text-transform: uppercase;
             border: 2px solid var(--cream-dark);
-            border-radius: 14px;
+            border-radius: 12px;
             background: var(--cream);
             color: var(--charcoal);
             transition: all 0.3s var(--ease-out);
@@ -512,13 +510,13 @@ if ($useInvitationLayout) {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
+            gap: 8px;
             padding: 16px 32px;
             font-family: var(--font-body);
             font-size: 15px;
             font-weight: 600;
             border: none;
-            border-radius: 14px;
+            border-radius: 12px;
             cursor: pointer;
             text-decoration: none;
             transition: all 0.3s var(--ease-out);
@@ -589,7 +587,7 @@ if ($useInvitationLayout) {
             border-left: 1px solid rgba(0,0,0,0.06);
             display: flex;
             flex-direction: column;
-            padding: 24px 12px;
+            padding: 24px 16px;
             z-index: 100;
             transition: width 0.4s var(--ease-out);
         }
@@ -618,15 +616,15 @@ if ($useInvitationLayout) {
         .nav-links {
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 8px;
             flex: 1;
         }
 
         .nav-link {
             display: flex;
             align-items: center;
-            gap: 14px;
-            padding: 14px;
+            gap: 12px;
+            padding: 12px;
             color: var(--charcoal);
             text-decoration: none;
             border-radius: 12px;
@@ -813,8 +811,7 @@ if ($useInvitationLayout) {
 
         .page-header-subtitle {
             font-size: 15px;
-            color: var(--charcoal);
-            opacity: 0.7;
+            color: var(--charcoal-light);
             margin-top: 8px;
         }
 
@@ -823,29 +820,27 @@ if ($useInvitationLayout) {
            ============================================ */
         .card {
             background: var(--white);
-            border-radius: 20px;
-            padding: 28px;
-            margin-bottom: 20px;
-            box-shadow:
-                0 1px 2px rgba(0,0,0,0.03),
-                0 4px 12px rgba(0,0,0,0.03);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
             animation: fadeIn 0.6s var(--ease-out) both;
         }
 
-        .card:nth-child(2) { animation-delay: 0.05s; }
-        .card:nth-child(3) { animation-delay: 0.1s; }
-        .card:nth-child(4) { animation-delay: 0.15s; }
+        .card:nth-child(2) { animation-delay: 0.1s; }
+        .card:nth-child(3) { animation-delay: 0.2s; }
+        .card:nth-child(4) { animation-delay: 0.3s; }
 
         .card-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 20px;
+            margin-bottom: 24px;
         }
 
         .card-title {
             font-family: var(--font-display);
-            font-size: 22px;
+            font-size: 24px;
             font-weight: 500;
             color: var(--charcoal);
         }
@@ -954,9 +949,7 @@ if ($useInvitationLayout) {
             text-decoration: none;
             color: inherit;
             text-align: center;
-            box-shadow:
-                0 1px 2px rgba(0,0,0,0.03),
-                0 4px 12px rgba(0,0,0,0.03);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
             transition: all 0.3s var(--ease-out);
             animation: fadeIn 0.6s var(--ease-out) both;
         }
@@ -968,18 +961,18 @@ if ($useInvitationLayout) {
 
         .quick-card:hover {
             transform: translateY(-4px);
-            box-shadow: 0 12px 32px rgba(0,0,0,0.08);
+            box-shadow: 0 12px 32px rgba(0,0,0,0.1);
         }
 
         .quick-card-icon {
-            width: 52px;
-            height: 52px;
+            width: 48px;
+            height: 48px;
             background: var(--cream);
-            border-radius: 14px;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 14px;
+            margin: 0 auto 16px;
             color: var(--sage-dark);
             transition: all 0.3s var(--ease-out);
         }
@@ -1017,16 +1010,16 @@ if ($useInvitationLayout) {
             font-size: 14px;
             font-weight: 600;
             color: var(--charcoal);
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
 
         .form-input {
             width: 100%;
-            padding: 16px 18px;
+            padding: 16px;
             font-family: var(--font-body);
             font-size: 15px;
             border: 2px solid var(--cream-dark);
-            border-radius: 14px;
+            border-radius: 12px;
             background: var(--white);
             color: var(--charcoal);
             transition: all 0.3s var(--ease-out);

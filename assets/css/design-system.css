@@ -59,11 +59,19 @@
   --space-xl: 32px;
   --space-2xl: 48px;
 
+  --space-3xl: 64px;
+
   /* Radius */
   --radius-xs: 6px;
   --radius-sm: 8px;
-  --radius-md: 10px;
+  --radius-md: 12px;
   --radius-lg: 16px;
+
+  /* Shadows — 3-tier elevation scale */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 20px 48px rgba(0, 0, 0, 0.15);
 
   /* Layout */
   --sidebar-width: 260px;
@@ -450,7 +458,7 @@ img {
   font-family: var(--font-body);
   font-size: 14px;
   font-weight: 500;
-  line-height: 1;
+  line-height: 1.2;
   border: 1.5px solid transparent;
   cursor: pointer;
   transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
@@ -520,7 +528,7 @@ img {
   background: var(--surface-card);
   border-radius: var(--radius-lg);
   padding: var(--space-lg);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  box-shadow: var(--shadow-sm);
   border: 1px solid var(--border-light);
 }
 
@@ -761,12 +769,12 @@ tr:hover td {
 
 .modal-content {
   background: var(--surface-card);
-  border-radius: 20px;
+  border-radius: var(--radius-lg);
   width: 90%;
   max-width: 520px;
   max-height: 85vh;
   overflow-y: auto;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--shadow-xl);
   transform: translateY(10px);
   transition: transform 0.3s var(--ease-out);
 }

@@ -193,22 +193,22 @@ $currentEventCount = count($userEvents);
 <style>
     .welcome-banner {
         background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
-        border-radius: 20px;
-        padding: 36px;
-        margin-bottom: 32px;
+        border-radius: var(--radius-lg);
+        padding: var(--space-xl);
+        margin-bottom: var(--space-xl);
         color: white;
     }
 
     .welcome-content h2 {
         font-family: var(--font-display);
-        font-size: 28px;
+        font-size: 32px;
         font-weight: 500;
-        margin-bottom: 8px;
+        margin-bottom: var(--space-sm);
     }
 
     .welcome-content p {
         opacity: 0.9;
-        margin-bottom: 24px;
+        margin-bottom: var(--space-lg);
         font-size: 15px;
     }
 
@@ -218,7 +218,7 @@ $currentEventCount = count($userEvents);
     }
 
     .welcome-banner .btn:hover {
-        box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+        box-shadow: var(--shadow-lg);
         transform: translateY(-2px);
     }
 
@@ -231,14 +231,14 @@ $currentEventCount = count($userEvents);
     .event-card {
         background: var(--surface-card);
         border-radius: var(--radius-lg);
-        padding: 28px;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+        padding: var(--space-lg);
+        box-shadow: var(--shadow-sm);
         border: 1px solid var(--border-light);
         transition: all 0.25s var(--ease-out);
     }
 
     .event-card:hover {
-        box-shadow: 0 12px 32px rgba(0,0,0,0.08);
+        box-shadow: var(--shadow-lg);
         transform: translateY(-4px);
     }
 
@@ -246,15 +246,15 @@ $currentEventCount = count($userEvents);
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 16px;
+        margin-bottom: var(--space-md);
     }
 
     .event-type-badge {
-        font-size: 11px;
+        font-size: 12px;
         font-weight: 600;
         color: var(--accent-dark);
         background: var(--accent-light);
-        padding: 6px 12px;
+        padding: var(--space-xs) var(--space-sm);
         border-radius: var(--radius-sm);
         text-transform: uppercase;
         letter-spacing: 0.05em;
@@ -263,7 +263,7 @@ $currentEventCount = count($userEvents);
     .event-status {
         font-size: 12px;
         font-weight: 600;
-        padding: 6px 12px;
+        padding: var(--space-xs) var(--space-sm);
         border-radius: var(--radius-sm);
     }
 
@@ -278,8 +278,8 @@ $currentEventCount = count($userEvents);
     }
 
     .status-completed {
-        background: #E8F0FA;
-        color: #3D6BA8;
+        background: var(--accent-light);
+        color: var(--accent-dark);
     }
 
     .status-archived {
@@ -290,18 +290,18 @@ $currentEventCount = count($userEvents);
     .event-card-title {
         font-family: var(--font-display);
         font-size: 24px;
-        font-weight: 500;
+        font-weight: 600;
         color: var(--text);
-        margin-bottom: 8px;
+        margin-bottom: var(--space-sm);
     }
 
     .event-card-date {
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: var(--space-sm);
         color: var(--text-secondary);
         font-size: 14px;
-        margin-bottom: 24px;
+        margin-bottom: var(--space-lg);
     }
 
     .event-card-date svg {
@@ -318,9 +318,9 @@ $currentEventCount = count($userEvents);
     .event-card-stats {
         display: grid;
         grid-template-columns: repeat(4, 1fr);
-        gap: 12px;
-        margin-bottom: 20px;
-        padding: 20px;
+        gap: var(--space-md);
+        margin-bottom: var(--space-lg);
+        padding: var(--space-md);
         background: var(--surface);
         border-radius: var(--radius-md);
     }
@@ -332,7 +332,7 @@ $currentEventCount = count($userEvents);
     .stat-value {
         display: block;
         font-family: var(--font-display);
-        font-size: 24px;
+        font-size: 28px;
         font-weight: 500;
         color: var(--text);
     }
@@ -352,7 +352,7 @@ $currentEventCount = count($userEvents);
     .stat-label {
         font-size: 12px;
         color: var(--text-secondary);
-        margin-top: 2px;
+        margin-top: var(--space-xs);
     }
 
     .rsvp-progress {
@@ -377,7 +377,7 @@ $currentEventCount = count($userEvents);
 
     .event-card-actions {
         display: flex;
-        gap: 12px;
+        gap: var(--space-sm);
     }
 
     .event-card-create {
