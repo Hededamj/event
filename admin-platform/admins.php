@@ -170,19 +170,19 @@ $accounts = $db->query("
     </div>
     <div style="padding: var(--space-lg);">
         <p class="text-muted text-sm" style="margin-bottom: var(--space-md);">Giv en eksisterende brugerkonto administratoradgang.</p>
-        <form method="POST" style="display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;">
+        <form method="POST" style="display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap;">
             <?= csrfField() ?>
             <input type="hidden" name="action" value="promote">
             <div style="flex:1;min-width:250px;">
                 <label class="form-label" style="display:block;font-size:13px;font-weight:500;margin-bottom:4px;">Vaelg konto</label>
-                <select name="account_id" class="form-input form-select" required style="width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:14px;">
+                <select name="account_id" class="form-input form-select" required style="width:100%;padding:8px 16px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:14px;">
                     <option value="">-- Vaelg en konto --</option>
                     <?php foreach ($accounts as $acc): ?>
                     <option value="<?= $acc['id'] ?>"><?= escape($acc['name']) ?> (<?= escape($acc['email']) ?>)</option>
                     <?php endforeach; ?>
                 </select>
             </div>
-            <button type="submit" class="btn btn-primary" style="padding:10px 20px;" onclick="return confirm('Vil du give denne konto administratorrettigheder?')">Forfrem til admin</button>
+            <button type="submit" class="btn btn-primary" style="padding:8px 16px;" onclick="return confirm('Vil du give denne konto administratorrettigheder?')">Forfrem til admin</button>
         </form>
     </div>
 </div>
@@ -198,23 +198,23 @@ $accounts = $db->query("
 
             <div style="margin-bottom:var(--space-md);">
                 <label class="form-label" style="display:block;font-size:13px;font-weight:500;margin-bottom:4px;">Navn</label>
-                <input type="text" name="name" class="form-input" required style="width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:14px;">
+                <input type="text" name="name" class="form-input" required style="width:100%;padding:8px 16px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:14px;">
             </div>
 
             <div style="margin-bottom:var(--space-md);">
                 <label class="form-label" style="display:block;font-size:13px;font-weight:500;margin-bottom:4px;">Email</label>
-                <input type="email" name="email" class="form-input" required style="width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:14px;">
+                <input type="email" name="email" class="form-input" required style="width:100%;padding:8px 16px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:14px;">
             </div>
 
             <div style="margin-bottom:var(--space-lg);">
                 <label class="form-label" style="display:block;font-size:13px;font-weight:500;margin-bottom:4px;">Adgangskode</label>
-                <input type="password" name="password" class="form-input" required minlength="8" style="width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:14px;">
+                <input type="password" name="password" class="form-input" required minlength="8" style="width:100%;padding:8px 16px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:14px;">
                 <span class="text-muted text-xs" style="display:block;margin-top:4px;">Mindst 8 tegn</span>
             </div>
 
-            <div style="display:flex;gap:12px;justify-content:flex-end;">
-                <button type="button" class="btn" style="background:var(--surface);color:var(--text);border:1px solid var(--border);padding:10px 20px;border-radius:var(--radius-sm);cursor:pointer;" onclick="document.getElementById('create-modal').style.display='none'">Annuller</button>
-                <button type="submit" class="btn btn-primary" style="padding:10px 20px;">Opret administrator</button>
+            <div style="display:flex;gap:8px;justify-content:flex-end;">
+                <button type="button" class="btn" style="background:var(--surface);color:var(--text);border:1px solid var(--border);padding:8px 16px;border-radius:var(--radius-sm);cursor:pointer;" onclick="document.getElementById('create-modal').style.display='none'">Annuller</button>
+                <button type="submit" class="btn btn-primary" style="padding:8px 16px;">Opret administrator</button>
             </div>
         </form>
     </div>

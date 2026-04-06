@@ -103,7 +103,7 @@ $platformName = getPlatformSetting('platform_name', 'EventPlatform');
         .login-card {
             background: var(--surface-card);
             border-radius: var(--radius-lg);
-            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+            box-shadow: var(--shadow-md);
             padding: 2rem;
         }
 

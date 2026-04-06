@@ -104,7 +104,7 @@ if ($refCode) {
 
         /* ===== TOP BAR ===== */
         .topbar {
-            padding: 18px 0;
+            padding: 16px 0;
             background: var(--white);
             border-bottom: 1px solid var(--border);
         }
@@ -139,7 +139,7 @@ if ($refCode) {
         /* ===== HERO ===== */
         .hero {
             background: linear-gradient(135deg, var(--accent-light) 0%, var(--accent) 50%, var(--accent-dark) 100%);
-            padding: 100px 0 110px;
+            padding: 96px 0;
             text-align: center;
             position: relative;
             overflow: hidden;
@@ -164,11 +164,11 @@ if ($refCode) {
             background: rgba(255,255,255,0.2);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255,255,255,0.3);
-            padding: 8px 20px;
+            padding: 8px 16px;
             border-radius: 50px;
             font-size: 14px;
             color: var(--white);
-            margin-bottom: 28px;
+            margin-bottom: 24px;
             font-weight: 500;
         }
 
@@ -178,7 +178,7 @@ if ($refCode) {
             font-weight: 600;
             color: var(--white);
             line-height: 1.15;
-            margin-bottom: 20px;
+            margin-bottom: 24px;
             letter-spacing: -0.02em;
         }
 
@@ -186,15 +186,15 @@ if ($refCode) {
             font-size: clamp(16px, 2vw, 19px);
             color: rgba(255,255,255,0.9);
             max-width: 580px;
-            margin: 0 auto 40px;
+            margin: 0 auto 48px;
             line-height: 1.7;
         }
 
         .btn-cta {
             display: inline-flex;
             align-items: center;
-            gap: 10px;
-            padding: 18px 40px;
+            gap: 8px;
+            padding: 16px 32px;
             font-size: 16px;
             font-weight: 600;
             font-family: var(--font-body);
@@ -205,13 +205,13 @@ if ($refCode) {
             text-decoration: none;
             cursor: pointer;
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
         }
 
         .btn-cta:hover {
             background: #6A7E62;
             transform: translateY(-3px);
-            box-shadow: 0 12px 40px rgba(0,0,0,0.2);
+            box-shadow: 0 12px 32px rgba(0,0,0,0.2);
         }
 
         .btn-cta svg {
@@ -225,14 +225,14 @@ if ($refCode) {
         }
 
         .hero-sub {
-            margin-top: 18px;
+            margin-top: 16px;
             font-size: 14px;
             color: rgba(255,255,255,0.7);
         }
 
         /* ===== SECTIONS SHARED ===== */
         .section {
-            padding: 90px 0;
+            padding: 96px 0;
         }
 
         .section-title {
@@ -250,7 +250,7 @@ if ($refCode) {
             color: var(--text-secondary);
             font-size: 17px;
             max-width: 540px;
-            margin: 0 auto 56px;
+            margin: 0 auto 48px;
         }
 
         /* ===== FORDELE (3 CARDS) ===== */
@@ -266,13 +266,13 @@ if ($refCode) {
             background: var(--surface);
             border: 1px solid var(--border);
             border-radius: 16px;
-            padding: 40px 32px;
+            padding: 32px;
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .card:hover {
             transform: translateY(-4px);
-            box-shadow: 0 16px 48px rgba(0,0,0,0.06);
+            box-shadow: 0 12px 32px rgba(0,0,0,0.06);
             border-color: var(--accent-light);
         }
 
@@ -280,7 +280,7 @@ if ($refCode) {
             width: 52px;
             height: 52px;
             background: var(--accent-light);
-            border-radius: 14px;
+            border-radius: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -353,7 +353,7 @@ if ($refCode) {
             font-family: var(--font-display);
             font-size: 22px;
             font-weight: 600;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             letter-spacing: -0.01em;
         }
 
@@ -371,24 +371,24 @@ if ($refCode) {
         .cat-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 20px;
+            gap: 16px;
         }
 
         .cat-card {
             display: flex;
             align-items: center;
-            gap: 14px;
+            gap: 16px;
             background: var(--surface);
             border: 1px solid var(--border);
             border-radius: 12px;
-            padding: 18px 20px;
+            padding: 16px;
             transition: all 0.3s ease;
         }
 
         .cat-card:hover {
             border-color: var(--accent-light);
             transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(0,0,0,0.04);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.06);
         }
 
         .cat-icon {
@@ -415,7 +415,7 @@ if ($refCode) {
         /* ===== BOTTOM CTA ===== */
         .bottom-cta {
             background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
-            padding: 90px 0;
+            padding: 96px 0;
             text-align: center;
         }
 
@@ -436,7 +436,7 @@ if ($refCode) {
         .bottom-cta .btn-cta:hover {
             background: var(--surface);
             transform: translateY(-3px);
-            box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+            box-shadow: 0 12px 32px rgba(0,0,0,0.15);
         }
 
         .bottom-cta .support-text {
@@ -491,7 +491,7 @@ if ($refCode) {
         @media (max-width: 768px) {
             .cards-row {
                 grid-template-columns: 1fr;
-                gap: 20px;
+                gap: 16px;
             }
 
             .steps {

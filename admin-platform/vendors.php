@@ -413,7 +413,7 @@ $totalCommission = $db->query("
 
 <!-- Reject Modal -->
 <div id="rejectModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
-    <div style="background: white; border-radius: 12px; padding: 2rem; max-width: 400px; width: 90%;">
+    <div style="background: white; border-radius: 16px; padding: 2rem; max-width: 400px; width: 90%;">
         <h3 style="margin-bottom: 1rem;">Afvis leverandør</h3>
         <form method="POST">
             <?= csrfField() ?>
@@ -436,7 +436,7 @@ $totalCommission = $db->query("
 
 <!-- Create Vendor Modal -->
 <div id="createModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
-    <div style="background: white; border-radius: 12px; padding: 2rem; max-width: 480px; width: 90%;">
+    <div style="background: white; border-radius: 16px; padding: 2rem; max-width: 480px; width: 90%;">
         <h3 style="margin-bottom: 1rem;">Opret leverandør</h3>
         <form method="POST">
             <?= csrfField() ?>
