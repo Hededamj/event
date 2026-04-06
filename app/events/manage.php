@@ -128,7 +128,7 @@ $pageTitle = $event['name'] ?? 'Arrangement';
         .nav-left {
             display: flex;
             align-items: center;
-            gap: 20px;
+            gap: 16px;
         }
 
         .back-link {
@@ -138,7 +138,7 @@ $pageTitle = $event['name'] ?? 'Arrangement';
             color: var(--text-secondary);
             text-decoration: none;
             font-size: 14px;
-            padding: 10px 14px;
+            padding: 8px 12px;
             border-radius: var(--radius-md);
             transition: all 0.25s var(--ease-out);
         }
@@ -162,7 +162,7 @@ $pageTitle = $event['name'] ?? 'Arrangement';
 
         .event-badge {
             font-size: 12px;
-            padding: 6px 12px;
+            padding: var(--space-xs) var(--space-sm);
             border-radius: var(--radius-sm);
             background: var(--accent-light);
             color: var(--accent-dark);
@@ -172,7 +172,7 @@ $pageTitle = $event['name'] ?? 'Arrangement';
         .nav-right {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 8px;
         }
 
         .btn-sage {
@@ -211,14 +211,14 @@ $pageTitle = $event['name'] ?? 'Arrangement';
         }
 
         .sidebar-header {
-            padding: 24px 20px;
+            padding: 24px 16px;
             border-bottom: 1px solid rgba(255,255,255,0.08);
         }
 
         .sidebar-logo {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
             font-family: var(--font-display);
             font-size: 20px;
             font-weight: 600;
@@ -237,7 +237,7 @@ $pageTitle = $event['name'] ?? 'Arrangement';
         .sidebar-nav {
             flex: 1;
             overflow-y: auto;
-            padding: 12px;
+            padding: 8px;
         }
 
         .sidebar-nav::-webkit-scrollbar { width: 4px; }
@@ -254,8 +254,8 @@ $pageTitle = $event['name'] ?? 'Arrangement';
         .sidebar-link {
             display: flex;
             align-items: center;
-            gap: 10px;
-            padding: 10px 12px;
+            gap: 8px;
+            padding: 8px 12px;
             color: var(--text-sidebar);
             text-decoration: none;
             font-size: 14px;
@@ -459,9 +459,9 @@ $pageTitle = $event['name'] ?? 'Arrangement';
             left: 0;
             right: 0;
             background: var(--surface-card);
-            border-radius: 20px 20px 0 0;
-            padding: 0 20px 20px;
-            padding-bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+            border-radius: 16px 16px 0 0;
+            padding: 0 16px 16px;
+            padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px));
             transform: translateY(100%);
             transition: transform 0.3s var(--ease-out);
             max-height: 60vh;
@@ -492,7 +492,7 @@ $pageTitle = $event['name'] ?? 'Arrangement';
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 14px 12px;
+            padding: 12px;
             color: var(--text);
             text-decoration: none;
             font-size: 16px;
@@ -538,7 +538,7 @@ $pageTitle = $event['name'] ?? 'Arrangement';
         }
         .stat-card:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+            box-shadow: var(--shadow-md);
         }
 
         /* ===== Quick Actions ===== */
@@ -552,7 +552,7 @@ $pageTitle = $event['name'] ?? 'Arrangement';
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 28px 20px;
+            padding: 24px 16px;
             background: var(--surface);
             border-radius: var(--radius-lg);
             text-decoration: none;
@@ -570,7 +570,7 @@ $pageTitle = $event['name'] ?? 'Arrangement';
             width: 32px;
             height: 32px;
             color: var(--accent-dark);
-            margin-bottom: 14px;
+            margin-bottom: 16px;
         }
 
         .quick-action span {
@@ -590,7 +590,7 @@ $pageTitle = $event['name'] ?? 'Arrangement';
         }
 
         .filter-tab {
-            padding: 10px 18px;
+            padding: 8px 16px;
             font-size: 14px;
             font-weight: 500;
             color: var(--text-secondary);
@@ -618,7 +618,7 @@ $pageTitle = $event['name'] ?? 'Arrangement';
             font-size: 28px;
             font-weight: 500;
             color: var(--text);
-            margin-bottom: 6px;
+            margin-bottom: 8px;
         }
 
         .section-subtitle {
@@ -630,7 +630,7 @@ $pageTitle = $event['name'] ?? 'Arrangement';
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 28px;
+            margin-bottom: 24px;
             flex-wrap: wrap;
             gap: 16px;
         }
@@ -642,11 +642,11 @@ $pageTitle = $event['name'] ?? 'Arrangement';
         .upgrade-notice {
             background: linear-gradient(135deg, #FEF8E8 0%, #FDF3D7 100%);
             border-radius: var(--radius-lg);
-            padding: 24px;
+            padding: var(--space-lg);
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 20px;
+            gap: 16px;
             margin-bottom: 24px;
             border: 1px solid #F5E6B3;
         }
@@ -698,7 +698,7 @@ $pageTitle = $event['name'] ?? 'Arrangement';
             .top-nav { margin-left: 0; }
             .main-content {
                 margin-left: 0;
-                padding-bottom: 80px;
+                padding-bottom: 96px;
             }
             .event-menu-toggle { display: flex; }
             .mobile-bottom-bar { display: flex; }
