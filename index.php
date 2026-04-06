@@ -66,7 +66,7 @@ require_once __DIR__ . '/includes/functions.php';
 
         /* ===== HEADER ===== */
         .header {
-            padding: 20px 0;
+            padding: 24px 0;
             position: fixed;
             top: 0;
             left: 0;
@@ -78,7 +78,7 @@ require_once __DIR__ . '/includes/functions.php';
         }
 
         .header.scrolled {
-            padding: 14px 0;
+            padding: 16px 0;
             box-shadow: 0 2px 40px rgba(0,0,0,0.06);
         }
 
@@ -102,7 +102,7 @@ require_once __DIR__ . '/includes/functions.php';
         .nav-links {
             display: flex;
             align-items: center;
-            gap: 40px;
+            gap: 32px;
         }
 
         .nav-links a {
@@ -218,7 +218,7 @@ require_once __DIR__ . '/includes/functions.php';
 
         .hero h1 em {
             font-style: italic;
-            color: var(--accent-light);
+            color: rgba(255, 255, 255, 0.9);
         }
 
         .hero-description {
@@ -262,8 +262,8 @@ require_once __DIR__ . '/includes/functions.php';
             font-family: 'Cormorant Garamond', serif;
             font-size: clamp(32px, 4vw, 48px);
             font-weight: 500;
-            line-height: 1.2;
-            margin-bottom: 20px;
+            line-height: 1.3;
+            margin-bottom: 24px;
         }
 
         .section-header p {
@@ -274,11 +274,11 @@ require_once __DIR__ . '/includes/functions.php';
 
         /* ===== FEATURES ===== */
         .features-intro {
-            padding: 80px 0 40px;
+            padding: 80px 0 48px;
         }
 
         .feature-section {
-            padding: 60px 0;
+            padding: 64px 0;
         }
 
         .feature-section:nth-child(even) {
@@ -288,14 +288,14 @@ require_once __DIR__ . '/includes/functions.php';
         .feature-layout {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 40px;
+            gap: 48px;
             align-items: center;
         }
 
         .feature-screenshot {
             padding: 32px;
             background: var(--surface);
-            border-radius: 24px;
+            border-radius: 16px;
             border: 1px solid var(--border);
             min-height: 280px;
             display: flex;
@@ -312,7 +312,7 @@ require_once __DIR__ . '/includes/functions.php';
             font-size: clamp(28px, 4vw, 40px);
             font-weight: 500;
             margin-bottom: 16px;
-            line-height: 1.2;
+            line-height: 1.3;
         }
 
         .feature-text p {
@@ -470,7 +470,7 @@ require_once __DIR__ . '/includes/functions.php';
         .sim-invitation-card {
             width: 100%;
             max-width: 320px;
-            border-radius: 20px;
+            border-radius: 16px;
             overflow: hidden;
             box-shadow: 0 20px 60px rgba(0,0,0,0.15);
             background: #1A1A1A;
@@ -682,7 +682,7 @@ require_once __DIR__ . '/includes/functions.php';
 
         .event-type-card {
             background: var(--white);
-            border-radius: 24px;
+            border-radius: 16px;
             overflow: hidden;
             border: 1px solid var(--border);
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
@@ -691,8 +691,8 @@ require_once __DIR__ . '/includes/functions.php';
         }
 
         .event-type-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 30px 60px rgba(0,0,0,0.08);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 32px rgba(0,0,0,0.1);
             border-color: var(--accent);
         }
 
@@ -761,7 +761,7 @@ require_once __DIR__ . '/includes/functions.php';
 
         .vendor-card {
             background: var(--white);
-            border-radius: 20px;
+            border-radius: 16px;
             overflow: hidden;
             border: 1px solid var(--border);
             transition: all 0.3s ease;
@@ -769,7 +769,7 @@ require_once __DIR__ . '/includes/functions.php';
 
         .vendor-card:hover {
             transform: translateY(-4px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.06);
+            box-shadow: 0 12px 32px rgba(0,0,0,0.1);
         }
 
         .vendor-card-img {
@@ -915,7 +915,7 @@ require_once __DIR__ . '/includes/functions.php';
             font-family: 'Cormorant Garamond', serif;
             font-size: clamp(32px, 4vw, 48px);
             font-weight: 500;
-            line-height: 1.2;
+            line-height: 1.3;
             margin-bottom: 24px;
         }
 
@@ -973,7 +973,7 @@ require_once __DIR__ . '/includes/functions.php';
 
         .memories-timeline-mock {
             background: #252525;
-            border-radius: 24px;
+            border-radius: 16px;
             padding: 32px;
             max-width: 380px;
             margin: 0 auto;
@@ -1082,7 +1082,7 @@ require_once __DIR__ . '/includes/functions.php';
             font-family: 'Cormorant Garamond', serif;
             font-size: clamp(28px, 4vw, 42px);
             font-weight: 500;
-            line-height: 1.2;
+            line-height: 1.3;
             margin-bottom: 20px;
         }
 
@@ -1224,7 +1224,7 @@ require_once __DIR__ . '/includes/functions.php';
 
             .nav-links.open { display: flex; }
 
-            .cta-box { padding: 60px 32px; border-radius: 28px; }
+            .cta-box { padding: 48px 32px; border-radius: 16px; }
             .footer-content { flex-direction: column; gap: 24px; text-align: center; }
             .footer-links { flex-wrap: wrap; justify-content: center; gap: 24px; }
         }
